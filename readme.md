@@ -35,7 +35,7 @@ See schema.ini example below:
 Format can be `TabDelimited` for tabs, `CSVDelimited` for commas, for any other delimiter use for example `Format=Delimited(;)`.
 Use `FixedLength` for fixed width text files and set the `Width` for each column.
 
-DateTimeFormat is not case sensitive and uses `dd-mm-yyyy` or `mm/dd/yy` or `yyy-mm-dd hh:nn:ss` etc.
+DateTimeFormat is not case sensitive and uses `dd-mm-yyyy` or `yyyy-mm-dd hh:nn:ss` etc.
 
 DecimalSymbol can be either `.` or `,` and CsvLint will assume the thousand separators symbol is the opposite of the DecimalSymbol.
 
@@ -61,6 +61,7 @@ The CSVLint plugin is work-in-progress, here is list of still missing features
 * Convert decimal symbol to point/comma
 * Count unique values based on column(s)
 * Allow format masks per individual column
+* Support two-digit year date values
 * Support FrictionlessData schema.json format
 * Load/save schema.ini/json
 * Improve automatic datatype detection
