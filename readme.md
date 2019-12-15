@@ -19,8 +19,7 @@ How to use it
 
 Schema.ini
 ----------
-The metadata uses the standard schema.ini format, see documentation [here]
-(https://docs.microsoft.com/en-us/sql/odbc/microsoft/schema-ini-file-text-file-driver?view=sql-server-ver15)
+The metadata uses the standard schema.ini format, see documentation [here](https://docs.microsoft.com/en-us/sql/odbc/microsoft/schema-ini-file-text-file-driver?view=sql-server-ver15)
 
 See schema.ini example below:
 
@@ -34,7 +33,7 @@ See schema.ini example below:
 	Col4=OrderDate dateint Width 10
 
 Format can be `TabDelimited` for tabs, `CSVDelimited` for commas, for any other delimiter use for example `Format=Delimited(;)`.
-Use `Fixed` for fixed width text files and set the `Width` for each column.
+Use `FixedLength` for fixed width text files and set the `Width` for each column.
 
 DateTimeFormat is not case sensitive and uses `dd-mm-yyyy` or `mm/dd/yy` or `yyy-mm-dd hh:nn:ss` etc.
 
@@ -43,7 +42,7 @@ DecimalSymbol can be either `.` or `,` and CsvLint will assume the thousand sepa
 Validating 
 -------------
 When you press "Validate data", the input data will be checked for technical errors,
-the line numbers of any errors will be logging in the textbox on the right.
+the line numbers of any errors will be logged in the textbox on the right.
 Note that input columns that are not in the output rows will not be checked.
 It will check the input data for the following errors:
 
@@ -64,6 +63,8 @@ The CSVLint plugin is work-in-progress, here is list of still missing features
 * Allow format masks per individual column
 * Support FrictionlessData schema.json format
 * Load/save schema.ini/json
+* Improve automatic datatype detection
+* Improve error handling for incorrect input and non-data files
 
 Acknowledgesments
 -----------------
