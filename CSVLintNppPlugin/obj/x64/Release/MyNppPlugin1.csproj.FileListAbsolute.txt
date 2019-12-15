@@ -1,0 +1,7 @@
+C:\Users\Bas\source\repos\MyNppPlugin1\MyNppPlugin1\bin\Release-x64\MyNppPlugin1.dll
+C:\Users\Bas\source\repos\MyNppPlugin1\MyNppPlugin1\bin\Release-x64\MyNppPlugin1.pdb
+C:\Users\Bas\source\repos\MyNppPlugin1\MyNppPlugin1\obj\x64\Release\Kbg.NppPluginNET.frmMyDlg.resources
+C:\Users\Bas\source\repos\MyNppPlugin1\MyNppPlugin1\obj\x64\Release\MyNppPlugin1.Properties.Resources.resources
+C:\Users\Bas\source\repos\MyNppPlugin1\MyNppPlugin1\obj\x64\Release\MyNppPlugin1.csproj.GenerateResource.cache
+C:\Users\Bas\source\repos\MyNppPlugin1\MyNppPlugin1\obj\x64\Release\MyNppPlugin1.dll
+C:\Users\Bas\source\repos\MyNppPlugin1\MyNppPlugin1\obj\x64\Release\MyNppPlugin1.pdb
