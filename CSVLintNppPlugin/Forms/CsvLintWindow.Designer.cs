@@ -28,11 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.txtSchemaIni = new System.Windows.Forms.TextBox();
-            this.txtOutput = new System.Windows.Forms.TextBox();
-            this.btnValidate = new System.Windows.Forms.Button();
             this.btnRefresh = new System.Windows.Forms.Button();
+            this.txtSchemaIni = new System.Windows.Forms.TextBox();
+            this.btnValidate = new System.Windows.Forms.Button();
+            this.txtOutput = new System.Windows.Forms.TextBox();
+            this.tooltipCsvLint = new System.Windows.Forms.ToolTip(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -60,6 +62,19 @@
             this.splitContainer1.SplitterDistance = 390;
             this.splitContainer1.TabIndex = 7;
             // 
+            // btnRefresh
+            // 
+            this.btnRefresh.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnRefresh.Location = new System.Drawing.Point(3, 3);
+            this.btnRefresh.Name = "btnRefresh";
+            this.btnRefresh.Size = new System.Drawing.Size(120, 32);
+            this.btnRefresh.TabIndex = 6;
+            this.btnRefresh.Text = "Refresh from data";
+            this.tooltipCsvLint.SetToolTip(this.btnRefresh, "Automatically detect metadata and column datatypes\r\nfrom the currently selected f" +
+        "ile.");
+            this.btnRefresh.UseVisualStyleBackColor = true;
+            this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
+            // 
             // txtSchemaIni
             // 
             this.txtSchemaIni.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -72,7 +87,18 @@
             this.txtSchemaIni.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.txtSchemaIni.Size = new System.Drawing.Size(374, 302);
             this.txtSchemaIni.TabIndex = 5;
-            this.txtSchemaIni.Text = "test=TABDelimited";
+            // 
+            // btnValidate
+            // 
+            this.btnValidate.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnValidate.Location = new System.Drawing.Point(3, 3);
+            this.btnValidate.Name = "btnValidate";
+            this.btnValidate.Size = new System.Drawing.Size(120, 32);
+            this.btnValidate.TabIndex = 7;
+            this.btnValidate.Text = "Validate data";
+            this.tooltipCsvLint.SetToolTip(this.btnValidate, "Validate currently selected file\r\nbased on metadata on the left.");
+            this.btnValidate.UseVisualStyleBackColor = true;
+            this.btnValidate.Click += new System.EventHandler(this.btnValidate_Click);
             // 
             // txtOutput
             // 
@@ -86,29 +112,6 @@
             this.txtOutput.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.txtOutput.Size = new System.Drawing.Size(761, 300);
             this.txtOutput.TabIndex = 4;
-            this.txtOutput.Text = "test 123";
-            // 
-            // btnValidate
-            // 
-            this.btnValidate.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnValidate.Location = new System.Drawing.Point(3, 3);
-            this.btnValidate.Name = "btnValidate";
-            this.btnValidate.Size = new System.Drawing.Size(120, 32);
-            this.btnValidate.TabIndex = 7;
-            this.btnValidate.Text = "Validate data";
-            this.btnValidate.UseVisualStyleBackColor = true;
-            this.btnValidate.Click += new System.EventHandler(this.btnValidate_Click);
-            // 
-            // btnRefresh
-            // 
-            this.btnRefresh.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnRefresh.Location = new System.Drawing.Point(3, 3);
-            this.btnRefresh.Name = "btnRefresh";
-            this.btnRefresh.Size = new System.Drawing.Size(120, 32);
-            this.btnRefresh.TabIndex = 6;
-            this.btnRefresh.Text = "Refresh from data";
-            this.btnRefresh.UseVisualStyleBackColor = true;
-            this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
             // 
             // CsvLintWindow
             // 
@@ -135,5 +138,6 @@
         private System.Windows.Forms.TextBox txtSchemaIni;
         private System.Windows.Forms.Button btnValidate;
         private System.Windows.Forms.TextBox txtOutput;
+        private System.Windows.Forms.ToolTip tooltipCsvLint;
     }
 }

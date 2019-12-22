@@ -66,13 +66,13 @@
             // lnkGithub
             // 
             this.lnkGithub.AutoSize = true;
-            this.lnkGithub.Location = new System.Drawing.Point(34, 91);
+            this.lnkGithub.Location = new System.Drawing.Point(52, 91);
             this.lnkGithub.Name = "lnkGithub";
-            this.lnkGithub.Size = new System.Drawing.Size(133, 13);
+            this.lnkGithub.Size = new System.Drawing.Size(96, 13);
             this.lnkGithub.TabIndex = 3;
             this.lnkGithub.TabStop = true;
             this.lnkGithub.Tag = "0";
-            this.lnkGithub.Text = "https://github.com/BdR76";
+            this.lnkGithub.Text = "CSVLint on GitHub";
             this.lnkGithub.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.onLinkClicked);
             // 
             // lnkContact
