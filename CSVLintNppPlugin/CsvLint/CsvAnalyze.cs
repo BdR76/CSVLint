@@ -55,12 +55,16 @@ namespace CSV_test_WpfApp.CsvLint
             var wordStarts = new Dictionary<int, int>();                // fixed width data; places after space where characters starts again, or switch from numeric to alphacharacter
             var inQuotes = false;
             var letterFrequencyQuoted = new Dictionary<char, int>();
+            var lineLengths = new Dictionary<int, int>();
 
             // analyse individual character frequencies
             while ((line = s.ReadLine()) != null)
             {
                 // letter freq per line
                 var letterFrequency = new Dictionary<char, int>();
+
+                // line length
+                lineLengths.Increase(line.Length);
 
                 // process characters in this line
                 int spaces = 0, i = 0, num = -1;
@@ -178,6 +182,29 @@ namespace CSV_test_WpfApp.CsvLint
             else if (uncertancy < uncertancyQuoted || (uncertancy == uncertancyQuoted && lineCount > linesQuoted)) // It was better ignoring quotes!
                 result.TextQualifier = '\0';
 
+            // head column name
+            result.ColNameHeader = (result.Separator != '\0');
+
+            // Exception, probably not tabular data file
+            if ( (result.Separator == '\0') && (lineLengths.Count > 1) )
+            {
+                // check for typical XML characters
+                var xml1 = (occurrences.ContainsKey('>') ? occurrences['>'] : 0);
+                var xml2 = (occurrences.ContainsKey('<') ? occurrences['<'] : 0);
+
+                // check for binary characters
+                var bin = occurrences.Where(x => (int)x.Key > 128 || (int)x.Key < 32).Sum(x => x.Value);
+
+                // set filetype as first column name, as a hint to user
+                var guess = "Textfile";
+                if ((xml1 > 0) && (xml1 == xml2)) guess = "XML";
+                if (bin > 0) guess = "Binary";
+
+                // add single column and bail!
+                result.AddColumn(1, guess, 9999, ColumnType.String, "");
+                return result;
+            }
+
             // Failed to detect separator, could it be a fixed-width file?
             if (result.Separator == '\0')
             {
@@ -213,9 +240,6 @@ namespace CSV_test_WpfApp.CsvLint
                 foundfieldWidths.Add(-1); // Last column gets "the rest"
                 result.FieldWidths = foundfieldWidths;
             }
-
-            // head column name
-            result.ColNameHeader = (result.Separator != '\0');
 
             // reset string reader to first line is not possible, create a new one
             s = new StringReader(data);

@@ -48,6 +48,15 @@ namespace CSV_test_WpfApp.CsvLint
         /// <param name="data"> csv data </param>
         public void ValidateData(string data, CsvDefinition csvdef)
         {
+            // Exception: nothing to validate
+            if ((csvdef.Fields.Count == 1) && (csvdef.Fields[0].DataType == ColumnType.String) && (csvdef.Fields[0].MaxWidth >= 9999))
+            {
+                // warning message
+                string msg = string.Format("Nothing to inspect, not tabular data ({0}).", csvdef.Fields[0].Name);
+                this.log.Add(new logline(msg, -1, -1));
+                return;
+            }
+
             // start line reader
             var s = new StringReader(data);
             string line;
@@ -166,7 +175,7 @@ namespace CSV_test_WpfApp.CsvLint
             }
 
             // final ready message
-            line = string.Format("Inspected {0} lines, {1} data errors found.", lineCount, (this.log.Count == 0 ? "no" : ""+counterr));
+            line = string.Format("Inspected {0} lines, {1} data errors found.", lineCount, (this.log.Count == 0 ? "no" : "" + counterr));
             this.log.Add(new logline(line, -1, -1));
         }
 
