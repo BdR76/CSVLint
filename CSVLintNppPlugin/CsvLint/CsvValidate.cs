@@ -52,6 +52,7 @@ namespace CSV_test_WpfApp.CsvLint
             var s = new StringReader(data);
             string line;
             int lineCount = 0;
+            int counterr = 0;
 
             // if fixed length what is max line length
             int fixedlength = 0;
@@ -76,6 +77,7 @@ namespace CSV_test_WpfApp.CsvLint
                 if (csvdef.Separator == '\0')
                 {
                     // fixed width columns
+                    int toolong = 0;
                     int pos1 = 0;
                     for (int i = 0; i < csvdef.Fields.Count(); i++)
                     {
@@ -83,7 +85,11 @@ namespace CSV_test_WpfApp.CsvLint
                         int pos2 = csvdef.Fields[i].MaxWidth;
 
                         // if line is too short, columns missing?
-                        if (pos1 >= line.Length) break;
+                        if (pos1 >= line.Length)
+                        {
+                            toolong = -1;
+                            break;
+                        }
 
                         // unexcepted line end or last column, then 'eat up' anything at the end of the line
                         if ( (pos1+pos2 > line.Length) || (i == csvdef.Fields.Count() - 1))
@@ -102,6 +108,7 @@ namespace CSV_test_WpfApp.CsvLint
                     {
                         int dif = line.Length - fixedlength;
                         err = string.Format("Line {0} character(s) too {1}, ", (dif > 0 ? dif : -1 * dif), (dif > 0 ? "long" : "short"));
+                        counterr++;
                     }
 
                 }
@@ -115,6 +122,7 @@ namespace CSV_test_WpfApp.CsvLint
                 if (values.Count != csvdef.Fields.Count)
                 {
                     err = err + string.Format("Too {0} columns, ", (values.Count > csvdef.Fields.Count ? "many" : "few"));
+                    counterr++;
                 }
 
                 // too many or too few columns
@@ -130,12 +138,21 @@ namespace CSV_test_WpfApp.CsvLint
                         if ((lineCount == 1) && (csvdef.ColNameHeader))
                         {
                             // column header
-                            if (val != csvdef.Fields[i].Name) err = err + string.Format("unexpected column name \"{0}\", ", val);
+                            if (val != csvdef.Fields[i].Name)
+                            {
+                                err = err + string.Format("unexpected column name \"{0}\", ", val);
+                                counterr++;
+                            }
                         }
                         else
                         {
                             // data values
-                            err = err + this.EvaluateDataValue(val, csvdef.Fields[i]);
+                            string evalerr = this.EvaluateDataValue(val, csvdef.Fields[i]);
+                            if (evalerr != "")
+                            {
+                                err = err + evalerr;
+                                counterr++;
+                            }
                         }
                     }
                 }
@@ -148,11 +165,9 @@ namespace CSV_test_WpfApp.CsvLint
                 }
             }
 
-            // if no errors
-            if (this.log.Count == 0) {
-                line = string.Format("Inspected {0} lines, no data errors found.", lineCount);
-                this.log.Add(new logline(line, -1, -1));
-            }
+            // final ready message
+            line = string.Format("Inspected {0} lines, {1} data errors found.", lineCount, (this.log.Count == 0 ? "no" : ""+counterr));
+            this.log.Add(new logline(line, -1, -1));
         }
 
         /// <summary>

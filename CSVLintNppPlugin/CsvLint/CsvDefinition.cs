@@ -261,7 +261,7 @@ namespace CSV_test_WpfApp.CsvLint
                         // custom character
                         if ((vallow.Substring(0, 10) == "delimited(") && (vallow.Substring(vallow.Length - 1, 1) == ")"))
                         {
-                            this.Separator = ';';
+                            this.Separator = Val[10]; // first character after "Delimited("
                         };
                     };
 
@@ -412,6 +412,9 @@ namespace CSV_test_WpfApp.CsvLint
                         {
                             int dec = this.NumberDigits;
                             int dig = maxwidth - dec - 1;
+
+                            // data definition error; width shorter than nr of decimals
+                            if (dig < 0) dig = 1;
 
                             mask = string.Format("{0}{1}{2}", mask.PadLeft(dig, '9'), this.DecimalSymbol, mask.PadLeft(dec, '9'));
                         };

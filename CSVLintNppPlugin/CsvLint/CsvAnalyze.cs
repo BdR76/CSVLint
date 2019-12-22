@@ -289,6 +289,7 @@ namespace CSV_test_WpfApp.CsvLint
                             // check each character in string
                             int digits = 0;
                             int point = 0;
+                            int comma = 0;
                             int sep = 0;
                             int other = 0;
                             char sep1 = '\0';
@@ -301,9 +302,14 @@ namespace CSV_test_WpfApp.CsvLint
                                 {
                                     digits++;
                                 }
-                                else if (c == '.' || c == ',')
+                                else if (c == '.')
                                 {
                                     point++;
+                                    dec = c;
+                                }
+                                else if (c == ',')
+                                {
+                                    comma++;
                                     dec = c;
                                 }
                                 else if ("\\/-: ".IndexOf(c) >= 0)
@@ -348,7 +354,7 @@ namespace CSV_test_WpfApp.CsvLint
                                 // numeric integer, examples "123", "-99", "+10" etc.
                                 colstats[i].CountInteger++;
                             }
-                            else if ((digits > 0) && (point > 0) && (other == 0))
+                            else if ((digits > 0) && ( (point == 1) || (comma == 1) ) && (length <= 12) && (other == 0) )
                             {
                                 // numeric integer, examples "12.3", "-99,9" etc.
                                 colstats[i].CountDecimal++;
