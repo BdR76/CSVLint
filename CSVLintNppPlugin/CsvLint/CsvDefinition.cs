@@ -60,7 +60,7 @@ namespace CSV_test_WpfApp.CsvLint
                 int p = (pos1 > pos2 ? pos1 : pos2);
 
                 this.sTag = (pos1 > pos2 ? ",." : ".,");
-                this.iTag = maxwidth - p - 1;
+                this.iTag = mask.Length - p - 1;
             }
         }
         public string iniColDef()
@@ -69,6 +69,10 @@ namespace CSV_test_WpfApp.CsvLint
             // example "Col1=LastName Text Width 50"
             string col = this.Name;
 
+            // add quotes "" only when name contains space
+            if (this.Name.IndexOf(" ") >= 0) col = string.Format("\"{0}\"", col);
+
+            // datatype
             if (this.DataType == ColumnType.String)   col += " Text";
             if (this.DataType == ColumnType.Unknown)  col += " Text";
             if (this.DataType == ColumnType.Integer)  col += " Integer";
@@ -268,11 +272,13 @@ namespace CSV_test_WpfApp.CsvLint
                     // schema.ini DateTimeFormat for all columns
                     if (k == "datetimeformat")
                     {
-                        // internally the datetime mask is c# format,         example "dd/MM/yyyy hh:mm"
+                        // internally the datetime mask is c# format,         example "dd/MM/yyyy HH:mm"
                         // externally the datetime mask is schema.ini format, example "dd/mm/yyyy hh:nn"
+                        // for full date format documentation see https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings?redirectedfrom=MSDN
                         string mask = Val;
                         mask = mask.Replace("m", "M");
                         mask = mask.Replace("n", "m");
+                        mask = mask.Replace("h", "H"); // hh=12h, HH=24h
                         this.DateTimeFormat = mask;
                     }
 
@@ -422,6 +428,20 @@ namespace CSV_test_WpfApp.CsvLint
                         // any left is the name of the column
                         name = Val;
 
+                        // if quotes around name because of spaces
+                        int quote1 = Val.IndexOf('"');
+                        int quote2 = Val.LastIndexOf('"');
+
+                        // check if incorrect and just one quote
+                        if (quote1 == quote2)
+                        {
+                            if (quote1 == 0) quote2 = Val.Length; // only quote at start
+                            if (quote1 > 0) quote1 = -1;          // only quote at end
+                        }
+
+                        // if any quotes around name then remove them
+                        if (quote1 > 0 || quote2 > 0) name = Val.Substring(quote1 + 1, quote2 - quote1 - 1);
+
                         // add columns
                         this.AddColumn(idx, name, maxwidth, datatype, mask);
                     };
@@ -445,11 +465,12 @@ namespace CSV_test_WpfApp.CsvLint
             // schema.ini DateTimeFormat for all columns
             if (this.DateTimeFormat != "")
             {
-                // internally the datetime mask is c# format,         example "dd/MM/yyyy hh:mm"
+                // internally the datetime mask is c# format,         example "dd/MM/yyyy HH:mm"
                 // externally the datetime mask is schema.ini format, example "dd/mm/yyyy hh:nn"
                 string mask = this.DateTimeFormat;
                 mask = mask.Replace("m", "n");
                 mask = mask.Replace("M", "m");
+                mask = mask.Replace("H", "h");
                 res += "DateTimeFormat=" + mask + "\r\n";
             }
 

@@ -26,7 +26,6 @@ namespace CSV_test_WpfApp.CsvLint
             public int CountDecimalPoint = 0;
             public int DecimalDigMax = 0; // maximum digits, example "1234.5" = 4 digits
             public int DecimalDecMax = 0; // maximum decimals, example "123.45" = 2 decimals
-            public int CountDate = 0;
             public int CountDateTime = 0;
             public char DateSep = '\0';
             public int DateMax1 = 0;
@@ -192,13 +191,13 @@ namespace CSV_test_WpfApp.CsvLint
                 var xml1 = (occurrences.ContainsKey('>') ? occurrences['>'] : 0);
                 var xml2 = (occurrences.ContainsKey('<') ? occurrences['<'] : 0);
 
-                // check for binary characters
-                var bin = occurrences.Where(x => (int)x.Key > 128 || (int)x.Key < 32).Sum(x => x.Value);
+                // check for binary characters, chr(31) or lower and not TAB
+                var bin = occurrences.Where(x => (int)x.Key < 32 && (int)x.Key != 9).Sum(x => x.Value);
 
                 // set filetype as first column name, as a hint to user
                 var guess = "Textfile";
-                if ((xml1 > 0) && (xml1 == xml2)) guess = "XML";
                 if (bin > 0) guess = "Binary";
+                if ((xml1 > 0) && (xml1 == xml2)) guess = "XML";
 
                 // add single column and bail!
                 result.AddColumn(1, guess, 9999, ColumnType.String, "");
@@ -312,9 +311,10 @@ namespace CSV_test_WpfApp.CsvLint
 
                             // check each character in string
                             int digits = 0;
+                            int sign = 0;
                             int point = 0;
                             int comma = 0;
-                            int sep = 0;
+                            int datesep = 0;
                             int other = 0;
                             char sep1 = '\0';
                             string datedig1 = "";
@@ -336,9 +336,9 @@ namespace CSV_test_WpfApp.CsvLint
                                     comma++;
                                     dec = c;
                                 }
-                                else if ("\\/-: ".IndexOf(c) >= 0)
+                                else if ("\\/-: ".IndexOf(c) > 0)
                                 {
-                                    sep++;
+                                    datesep++;
                                     if (sep1 == '\0')
                                     {
                                         sep1 = c;
@@ -355,30 +355,30 @@ namespace CSV_test_WpfApp.CsvLint
                                     other++;
                                 };
 
-                                // plus and minus are also just digits, check separately because minus ('-') is also counted as sep
-                                if (c == '+' || c == '-') digits++;
+                                // plus and minus are signs for digits, check separately because minus ('-') is also counted as sep
+                                if (c == '+' || c == '-') sign++;
                             }
 
                             // date, examples "31-12-2019", "1/1/2019", "2019-12-31" etc.
-                            if ((length >= 8) && (length <= 10) && (sep == 2) && (other == 0))
+                            if ((length >= 8) && (length <= 10) && (datesep == 2) && (other == 0))
                             {
-                                colstats[i].CountDate++;
-                                colstats[i].DateSep = sep1;
-                                if (colstats[i].DateMax1 < ddmax) colstats[i].DateMax1 = ddmax;
-                            }
-                            else if ((length >= 14) && (length <= 23) && (sep <= 6) && (other == 0))
-                            {
-                                // date, examples "31-12-2019 23:59:00", "1/1/2019 12:00", "2019-12-31 23:59:59.000" etc.
                                 colstats[i].CountDateTime++;
                                 colstats[i].DateSep = sep1;
                                 if (colstats[i].DateMax1 < ddmax) colstats[i].DateMax1 = ddmax;
                             }
-                            else if ((digits > 0) && (point == 0) && (length <= 8) && (other == 0))
+                            // or datetime, examples "31-12-2019 23:59:00", "1/1/2019 12:00", "2019-12-31 23:59:59.000" etc.
+                            else if ((length >= 13) && (length <= 23) && (datesep >= 2) && (datesep <= 6) && (other == 0))
+                            {
+                                colstats[i].CountDateTime++;
+                                colstats[i].DateSep = sep1;
+                                if (colstats[i].DateMax1 < ddmax) colstats[i].DateMax1 = ddmax;
+                            }
+                            else if ((digits > 0) && (point == 0) && (sign <= 1) && (length <= 8) && (other == 0))
                             {
                                 // numeric integer, examples "123", "-99", "+10" etc.
                                 colstats[i].CountInteger++;
                             }
-                            else if ((digits > 0) && ( (point == 1) || (comma == 1) ) && (length <= 12) && (other == 0) )
+                            else if ((digits > 0) && ( (point == 1) || (comma == 1) ) && (sign <= 1) && (length <= 12) && (datesep == 0) && (other == 0))
                             {
                                 // numeric integer, examples "12.3", "-99,9" etc.
                                 colstats[i].CountDecimal++;
@@ -408,11 +408,11 @@ namespace CSV_test_WpfApp.CsvLint
                 string name = stats.Name;
                 string mask = "";
                 ColumnType typ = ColumnType.String;
-                if ((stats.CountInteger > stats.CountString) && (stats.CountInteger > stats.CountDecimal) && (stats.CountInteger > stats.CountDate))
+                if ((stats.CountInteger > stats.CountString) && (stats.CountInteger > stats.CountDecimal) && (stats.CountInteger > stats.CountDateTime))
                 {
                     typ = ColumnType.Integer;
                 }
-                else if ((stats.CountDecimal > stats.CountString) && (stats.CountDecimal > stats.CountInteger) && (stats.CountDecimal > stats.CountDate))
+                else if ((stats.CountDecimal > stats.CountString) && (stats.CountDecimal > stats.CountInteger) && (stats.CountDecimal > stats.CountDateTime))
                 {
                     typ = ColumnType.Decimal;
                     char dec = (stats.CountDecimalPoint > stats.CountDecimalComma ? '.' : ',');
@@ -433,7 +433,7 @@ namespace CSV_test_WpfApp.CsvLint
                     // keep global nr of decimal places
                     if (result.NumberDigits < stats.DecimalDecMax) result.NumberDigits = stats.DecimalDecMax;
                 }
-                else if ((stats.CountDate > stats.CountString) && (stats.CountDate > stats.CountInteger) && (stats.CountDate > stats.CountDecimal))
+                else if ((stats.CountDateTime > stats.CountString) && (stats.CountDateTime > stats.CountInteger) && (stats.CountDateTime > stats.CountDecimal))
                 {
                     typ = ColumnType.DateTime;
                     // dateformat order, educated guess
@@ -453,6 +453,13 @@ namespace CSV_test_WpfApp.CsvLint
                         part2 = "MM";
                         part3 = "dd";
                     }
+                    // if first separator is ':' it's probably a time value example "01:23:45.678"
+                    if (stats.DateSep == ':')
+                    {
+                        part1 = "HH";
+                        part2 = "mm";
+                        part3 = "ss";
+                    }
 
                     // build mask
                     mask = string.Format("{0}{1}{2}{3}{4}", part1, stats.DateSep, part2, stats.DateSep, part3);
@@ -470,7 +477,7 @@ namespace CSV_test_WpfApp.CsvLint
                     }
 
                     // also includes time
-                    if (stats.MaxWidth >= 13) mask = mask + " hh:mm"; // example "01-01-2019 12:00"
+                    if (stats.MaxWidth >= 13) mask = mask + " HH:mm"; // example "01-01-2019 12:00"
                     if (stats.MaxWidth > 16) mask = mask + ":ss";    // example "1-1-2019 2:00:00"
                     if (stats.MaxWidth > 19) mask = mask + ".fff";   // example "01-01-2019 12:00:00.000"
 
