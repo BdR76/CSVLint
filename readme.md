@@ -21,7 +21,7 @@ How to install
 --------------
 The distributed output file is `CSVLint.dll`. In your \Notepad++\plugins\ folder, create a new folder `CSVLint` and place the .dll file there, so:
 
-* copy the file [.\CSVLintNppPlugin\bin\Release\CSVLint.dll](/tree/master/CSVLintNppPlugin/bin/Release/)
+* copy the file [.\CSVLintNppPlugin\bin\Release\CSVLint.dll](/CSVLintNppPlugin/bin/Release/)
 * to new folder .\Program Files (x86)\Notepad++\plugins\CSVLint\CSVLint.dll
 	
 For the 64-bit version it is the same, except the output file is in [\Release-x64\](/tree/master/CSVLintNppPlugin/bin/Release-x64/) and Notepad++ is in the `.\Program Files\Notepad++\` folder.
@@ -74,14 +74,14 @@ The CSVLint plugin is work-in-progress, here is list of still missing features
 * Support FrictionlessData schema.json format
 * Load/save schema.ini/json
 * Improve automatic datatype detection
-* Improve error handling for incorrect input and non-data files
 * Add feature GUI click to jump to error line
 * Add feature generate import scripts (SQL, SPSS, Python(?), XML+column=xpath?)
+* Add feature display columns as [colors](https://community.notepad-plus-plus.org/topic/13921/setting-text-color-via-a-net-plugin) (custom Lexer?)
 
 Acknowledgements
 ----------------
 Thanks to kbilsted for providing the excellent [NotepadPlusPlusPluginPack.Net](https://github.com/kbilsted/NotepadPlusPlusPluginPack.Net)
-and [others](https://github.com/jokedst/CsvQuery) for sharing their plugins on github.
+and [jokedst](https://github.com/jokedst/CsvQuery) and others for sharing their plugins on github.
 This plugin couldn't have been created without their examples.
 
 History
