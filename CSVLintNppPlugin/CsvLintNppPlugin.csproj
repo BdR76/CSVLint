@@ -68,7 +68,7 @@
     <Compile Include="CsvLint\CsvDefinition.cs" />
     <Compile Include="CsvLint\CsvEdit.cs" />
     <Compile Include="CsvLint\CsvValidate.cs" />
-    <Compile Include="CsvLint\Helper.cs" />
+    <Compile Include="Tools\Helper.cs" />
     <Compile Include="Forms\AboutForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -83,6 +83,7 @@
     <Compile Include="Forms\CsvLintWindow.Designer.cs">
       <DependentUpon>CsvLintWindow.cs</DependentUpon>
     </Compile>
+    <Compile Include="PluginInfrastructure\ScintillaStreams.cs" />
     <Compile Include="PluginInfrastructure\Win32.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="PluginInfrastructure\GatewayDomain.cs" />
@@ -104,6 +105,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="PluginInfrastructure\UnmanagedExports.cs" />
+    <Compile Include="Tools\ConcatenatingStream.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Forms\AboutForm.resx">

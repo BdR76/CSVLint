@@ -145,6 +145,9 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
             return Equals((Position)obj);
         }
 
+        public static implicit operator Position(int i) => new Position(i);
+        public static implicit operator int(Position i) => i.pos;
+
         public override int GetHashCode()
         {
             return pos;

@@ -7,6 +7,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
     {
         internal static NppData nppData;
         internal static FuncItems _funcItems = new FuncItems();
+        protected static ScintillaGateway[] scintillaGateways = new ScintillaGateway[2];
 
         internal static void SetCommand(int index, string commandName, NppFuncItemDelegate functionPointer)
         {
@@ -49,6 +50,23 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public static Func<IScintillaGateway> GetGatewayFactory()
         {
             return gatewayFactory;
+        }
+
+        /// <summary> Get gateway to currently active scintilla  </summary>
+        /// <remarks>
+        /// Notepad++ has two instances of Scintilla - the main one, and a second one that is only used when you show two documents side-by-side.
+        /// Since a document can be moved between these at any time, we need to check current scintilla constantly (or listen to events, but meh)
+        /// </remarks>
+        public static ScintillaGateway CurrentScintillaGateway
+        {
+            get
+            {
+                Win32.SendMessage(nppData._nppHandle, (uint)NppMsg.NPPM_GETCURRENTSCINTILLA, 0, out int curScintilla);
+                return scintillaGateways[curScintilla] ?? (scintillaGateways[curScintilla] = new ScintillaGateway(
+                           curScintilla == 0
+                               ? nppData._scintillaMainHandle
+                               : nppData._scintillaSecondHandle));
+            }
         }
     }
 }

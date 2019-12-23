@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CSV_test_WpfApp.CsvLint
+namespace CSVLint.Tools
 {
     static class Helper
     {

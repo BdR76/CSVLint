@@ -12,7 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CSV_test_WpfApp.CsvLint
+namespace CSVLint
 {
     /// <summary>
     /// Type of data in a column. Higher values can always include lower (i.e. a decimal column can have an integer, but not the other way)
@@ -59,18 +59,22 @@ namespace CSV_test_WpfApp.CsvLint
                 int pos2 = mask.IndexOf(',');
                 int p = (pos1 > pos2 ? pos1 : pos2);
 
+                // sTag, thousand and decimand characters
                 this.sTag = (pos1 > pos2 ? ",." : ".,");
+
+                // iTag, max decimal places
                 this.iTag = mask.Length - p - 1;
             }
         }
-        public string iniColDef()
+        public string iniColDef(bool quotename)
         {
             // format as inifile column line
             // example "Col1=LastName Text Width 50"
             string col = this.Name;
 
             // add quotes "" only when name contains space
-            if (this.Name.IndexOf(" ") >= 0) col = string.Format("\"{0}\"", col);
+            //if (this.Name.IndexOf(" ") >= 0) col = string.Format("\"{0}\"", col);
+            if (quotename) col = string.Format("\"{0}\"", col);
 
             // datatype
             if (this.DataType == ColumnType.String)   col += " Text";
@@ -514,11 +518,20 @@ namespace CSV_test_WpfApp.CsvLint
             // Can be set to any single character that is used to separate the whole from the fractional part of a currency amount.
             //if (this.CurrencyDecimalSymbol != '\0') res += "CurrencyDecimalSymbol=" + this.CurrencyDecimalSymbol + "\r\n";
 
+            // either all column names are in quotes or none, not mixed
+            bool quotename = false;
+            foreach (var fld in this.Fields)
+                if (fld.Name.IndexOf(" ") >= 0)
+                {
+                    quotename = true;
+                    break;
+                } 
+
             // schema.ini all columns
             for (int i = 0; i < this.Fields.Count; i++)
             {
                 // "Col1=LastName Text Width 50"
-                res += string.Format("Col{0}={1}\r\n", (i + 1), this.Fields[i].iniColDef());
+                res += string.Format("Col{0}={1}\r\n", (i + 1), this.Fields[i].iniColDef(quotename));
             }
 
             return res;

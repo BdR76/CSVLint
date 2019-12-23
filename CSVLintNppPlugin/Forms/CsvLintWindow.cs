@@ -6,7 +6,8 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Forms;
-using CSV_test_WpfApp.CsvLint;
+using CSVLint;
+using CsvQuery.PluginInfrastructure;
 using Kbg.NppPluginNET.PluginInfrastructure;
 
 namespace Kbg.NppPluginNET
@@ -21,11 +22,11 @@ namespace Kbg.NppPluginNET
         private void btnRefresh_Click(object sender, EventArgs e)
         {
             // interface to Notepad++
-            IntPtr currentScint = PluginBase.GetCurrentScintilla();
-            ScintillaGateway scintillaGateway = new ScintillaGateway(currentScint);
+            ScintillaGateway scintillaGateway = PluginBase.CurrentScintillaGateway;
 
             // get text
             var textLength = scintillaGateway.GetTextLength();
+            //string lines = scintillaGateway.GetText(Math.Min(1000000, textLength)); // TODO sample size as settings
             string lines = scintillaGateway.GetText(textLength);
 
             // analyze and determine csv definition
@@ -33,17 +34,18 @@ namespace Kbg.NppPluginNET
 
             // display csv definition
             txtSchemaIni.Text = csvdef.getIniLines();
+            txtOutput.Clear();
         }
 
         private void btnValidate_Click(object sender, EventArgs e)
         {
             // interface to Notepad++
-            IntPtr currentScint = PluginBase.GetCurrentScintilla();
-            ScintillaGateway scintillaGateway = new ScintillaGateway(currentScint);
+            ScintillaGateway scintillaGateway = PluginBase.CurrentScintillaGateway;
 
-            // get text
+            // get sample of text
             var textLength = scintillaGateway.GetTextLength();
-            string lines = scintillaGateway.GetText(textLength);
+            //string lines = scintillaGateway.GetTextRange(Math.Min(100000, textLength));
+            string sample = scintillaGateway.GetText(Math.Min(100000, textLength));
 
             // get csv definition from ini lines
             string inilines = txtSchemaIni.Text;
@@ -74,7 +76,11 @@ namespace Kbg.NppPluginNET
 
                 // validate data
                 CsvValidate csvval = new CsvValidate();
-                csvval.ValidateData(lines, csvdef);
+
+                var sr = ScintillaStreams.StreamAllText();
+
+                //csvval.ValidateData(sample, csvdef);
+                csvval.ValidateData(sr, csvdef);
 
                 // display output message or errors
                 string msg = csvval.report();

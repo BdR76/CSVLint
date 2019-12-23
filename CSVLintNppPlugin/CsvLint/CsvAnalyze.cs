@@ -9,8 +9,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CSVLint.Tools;
 
-namespace CSV_test_WpfApp.CsvLint
+namespace CSVLint
 {
     class CsvAnalyze
     {
@@ -200,7 +201,7 @@ namespace CSV_test_WpfApp.CsvLint
                 if ((xml1 > 0) && (xml1 == xml2)) guess = "XML";
 
                 // add single column and bail!
-                result.AddColumn(1, guess, 9999, ColumnType.String, "");
+                result.AddColumn(guess, 9999, ColumnType.String, "");
                 return result;
             }
 

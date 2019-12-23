@@ -12,7 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CSV_test_WpfApp.CsvLint
+namespace CSVLint
 {
     class logline
     {
@@ -46,7 +46,7 @@ namespace CSV_test_WpfApp.CsvLint
         ///     validate csv data against the definition of a CsvDefinition 
         /// </summary>
         /// <param name="data"> csv data </param>
-        public void ValidateData(string data, CsvDefinition csvdef)
+        public void ValidateData(StreamReader data, CsvDefinition csvdef)
         {
             // Exception: nothing to validate
             if ((csvdef.Fields.Count == 1) && (csvdef.Fields[0].DataType == ColumnType.String) && (csvdef.Fields[0].MaxWidth >= 9999))
@@ -58,8 +58,7 @@ namespace CSV_test_WpfApp.CsvLint
             }
 
             // start line reader
-            var s = new StringReader(data);
-            string line;
+            string line = "";
             int lineCount = 0;
             int counterr = 0;
 
@@ -74,103 +73,107 @@ namespace CSV_test_WpfApp.CsvLint
             }
 
             // read all lines
-            while ((line = s.ReadLine()) != null)
+            while (line != null)
             {
-                // next line
-                lineCount++;
-
-                string err = "";
-
-                // get values from line
-                List<string> values = new List<string>();
-                if (csvdef.Separator == '\0')
+                line = data.ReadLine();
+                if (line != null)
                 {
-                    // fixed width columns
-                    int toolong = 0;
-                    int pos1 = 0;
-                    for (int i = 0; i < csvdef.Fields.Count(); i++)
+                    // next line
+                    lineCount++;
+
+                    string err = "";
+
+                    // get values from line
+                    List<string> values = new List<string>();
+                    if (csvdef.Separator == '\0')
                     {
-                        // next column width, last column gets the rest
-                        int pos2 = csvdef.Fields[i].MaxWidth;
-
-                        // if line is too short, columns missing?
-                        if (pos1 >= line.Length)
+                        // fixed width columns
+                        int toolong = 0;
+                        int pos1 = 0;
+                        for (int i = 0; i < csvdef.Fields.Count(); i++)
                         {
-                            toolong = -1;
-                            break;
+                            // next column width, last column gets the rest
+                            int pos2 = csvdef.Fields[i].MaxWidth;
+
+                            // if line is too short, columns missing?
+                            if (pos1 >= line.Length)
+                            {
+                                toolong = -1;
+                                break;
+                            }
+
+                            // unexcepted line end or last column, then 'eat up' anything at the end of the line
+                            if ((pos1 + pos2 > line.Length) || (i == csvdef.Fields.Count() - 1))
+                            {
+                                pos2 = line.Length - pos1;
+                            }
+
+                            // get column value
+                            string val = line.Substring(pos1, pos2);
+                            values.Add(val);
+                            pos1 = pos1 + pos2;
                         }
 
-                        // unexcepted line end or last column, then 'eat up' anything at the end of the line
-                        if ( (pos1+pos2 > line.Length) || (i == csvdef.Fields.Count() - 1))
+                        // too many or too few characters in line
+                        if (fixedlength != line.Length)
                         {
-                            pos2 = line.Length - pos1;
+                            int dif = line.Length - fixedlength;
+                            err = string.Format("Line {0} character(s) too {1}, ", (dif > 0 ? dif : -1 * dif), (dif > 0 ? "long" : "short"));
+                            counterr++;
                         }
 
-                        // get column value
-                        string val = line.Substring(pos1, pos2);
-                        values.Add(val);
-                        pos1 = pos1 + pos2;
+                    }
+                    else
+                    {
+                        // delimited columns
+                        values = line.Split(csvdef.Separator).ToList();
                     }
 
-                    // too many or too few characters in line
-                    if (fixedlength != line.Length)
+                    // too many or too few columns
+                    if (values.Count != csvdef.Fields.Count)
                     {
-                        int dif = line.Length - fixedlength;
-                        err = string.Format("Line {0} character(s) too {1}, ", (dif > 0 ? dif : -1 * dif), (dif > 0 ? "long" : "short"));
+                        err = err + string.Format("Too {0} columns, ", (values.Count > csvdef.Fields.Count ? "many" : "few"));
                         counterr++;
                     }
 
-                }
-                else
-                {
-                    // delimited columns
-                    values = line.Split(csvdef.Separator).ToList();
-                }
-
-                // too many or too few columns
-                if (values.Count != csvdef.Fields.Count)
-                {
-                    err = err + string.Format("Too {0} columns, ", (values.Count > csvdef.Fields.Count ? "many" : "few"));
-                    counterr++;
-                }
-
-                // too many or too few columns
-                for (var i = 0; i < values.Count; i++)
-                {
-                    // next value and column number
-                    string val = values[i];
-
-                    // within bounds of column definition and non-empty value
-                    if ((i < csvdef.Fields.Count) && (val != ""))
+                    // too many or too few columns
+                    for (var i = 0; i < values.Count; i++)
                     {
-                        // column header or actual data value
-                        if ((lineCount == 1) && (csvdef.ColNameHeader))
+                        // next value and column number
+                        string val = values[i];
+
+                        // within bounds of column definition and non-empty value
+                        if ((i < csvdef.Fields.Count) && (val != ""))
                         {
-                            // column header
-                            if (val != csvdef.Fields[i].Name)
+                            // column header or actual data value
+                            if ((lineCount == 1) && (csvdef.ColNameHeader))
                             {
-                                err = err + string.Format("unexpected column name \"{0}\", ", val);
-                                counterr++;
+                                // column header
+                                if (val != csvdef.Fields[i].Name)
+                                {
+                                    err = err + string.Format("unexpected column name \"{0}\", ", val);
+                                    counterr++;
+                                }
                             }
-                        }
-                        else
-                        {
-                            // data values
-                            string evalerr = this.EvaluateDataValue(val, csvdef.Fields[i]);
-                            if (evalerr != "")
+                            else
                             {
-                                err = err + evalerr;
-                                counterr++;
+                                // data values
+                                string evalerr = this.EvaluateDataValue(val, csvdef.Fields[i], i);
+                                if (evalerr != "")
+                                {
+                                    err = err + evalerr;
+                                    counterr++;
+                                }
                             }
                         }
                     }
-                }
 
-                // log any errors
-                if (err != "")
-                {
-                    err = err.Remove(err.Length - 2); // remove last comma ", "
-                    this.log.Add(new logline(err, lineCount, 1));
+                    // log any errors
+                    if (err != "")
+                    {
+                        err = err.Remove(err.Length - 2); // remove last comma ", "
+                        this.log.Add(new logline(err, lineCount, 1));
+                    }
                 }
             }
 
@@ -183,12 +186,12 @@ namespace CSV_test_WpfApp.CsvLint
         ///     validate csv data against the definition of a CsvDefinition 
         /// </summary>
         /// <param name="data"> csv data </param>
-        private string EvaluateDataValue(string val, CsvColumn coldef)
+        private string EvaluateDataValue(string val, CsvColumn coldef, int idx)
         {
 
             // error result
             string err = "";
-            int colnr = (coldef.Index + 1);
+            int colnr = idx + 1;
 
             // check if value is too long
             if (val.Length > coldef.MaxWidth)
