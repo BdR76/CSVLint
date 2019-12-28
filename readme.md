@@ -37,8 +37,8 @@ See schema.ini example below:
 	DateTimeFormat=dd-mm-yyyy
 	DecimalSymbol=.
 	NumberDigits=2
-	Col1=OrderId int Width 8
-	Col2=Quantity Int Width 3
+	Col1=OrderId Integer Width 8
+	Col2=Quantity Integer Width 3
 	Col3=PartName Text Width 50
 	Col4=OrderDate DateTime Width 10
 
