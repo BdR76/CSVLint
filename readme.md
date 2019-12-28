@@ -36,17 +36,19 @@ See schema.ini example below:
 	Format=TabDelimited
 	DateTimeFormat=dd-mm-yyyy
 	DecimalSymbol=.
+	NumberDigits=2
 	Col1=OrderId int Width 8
 	Col2=Quantity Int Width 3
-	Col2=PartName Text Width 50
+	Col3=PartName Text Width 50
 	Col4=OrderDate DateTime Width 10
 
 Format can be `TabDelimited` for tabs, `CSVDelimited` for commas, for any other delimiter use for example `Format=Delimited(;)`.
 Use `FixedLength` for fixed width text files and set the `Width` for each column.
 
-DateTimeFormat is not case sensitive and uses `dd-mm-yyyy` or `yyyy-mm-dd hh:nn:ss` etc.
+DateTimeFormat is not case sensitive and uses `dd/mm/yyyy` or `yyyy-mm-dd hh:nn:ss` etc.
 
 DecimalSymbol can be either `.` or `,` and CsvLint will assume the thousand separators symbol is the opposite of the DecimalSymbol.
+Define the maximum decimals digits for example `NumberDigits=2` for values like "1.23" or "-45.67" etc.
 
 Validating 
 ----------
