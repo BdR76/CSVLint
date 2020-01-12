@@ -374,7 +374,7 @@ namespace CSVLint
                                 colstats[i].DateSep = sep1;
                                 if (colstats[i].DateMax1 < ddmax) colstats[i].DateMax1 = ddmax;
                             }
-                            else if ((digits > 0) && (point == 0) && (sign <= 1) && (length <= 8) && (other == 0))
+                            else if ((digits > 0) && (point != 1) && (comma != 1) && (sign <= 1) && (length <= 8) && (other == 0))
                             {
                                 // numeric integer, examples "123", "-99", "+10" etc.
                                 colstats[i].CountInteger++;
