@@ -1,0 +1,20 @@
+20171016104951P0345643Tj.             Hekking                  Gedoogstraat            00012 1403ETJuinen                  M19410810E
+20190225104458P0664521H.P.  van der   Vaart                    Dorpsplein              00001A1234ABTer Weksel              M19390517E
+20190225104458P1162195L.              Sanders                  Goedeplein              00125 5121XEMeerdijk                M19610502V
+20181008110042P1269903J.              Harmsen                  Slechtestraat           00030C5121XEMeerdijk                V19750219V
+20181008110042P1484487H.              Stubbe                   Korteknallersweg        00066A4373BBBiggeveen               M19600520V
+20181008110042P1851367F.J.  van       Fleppensteyn             Korteknallersweg        00066B4373BBBiggeveen               M19600520V
+20190930153058P2033155J.              Flodder                  Zonnedael               00073 6132APAmstelhaeghe            M19541202E
+20171016104951P2401259K.              Flodder                  Zonnedael               00073 6132APAmstelhaeghe            V19630609V
+20171016104951P2664481D.F.            Duck                     Kwakstraat              00013 9684VEDuckstad                M19340609V
+20171016104951P2689736G.              Geluk                    Guusweg                 00777 9684ENGansdorp                M19480707V
+20190930153058P2759550S.              Klinkhamer               Kameleonweg             00049 8404GMLenten                  M19391124V
+20181008110042P2923814H.              Klinkhamer               Kameleonweg             00049 8404GMLenten                  M19391124E
+20181008110042P3476643A.              Flier                    Kwikstaart              00046 3641ZLDokkum                  M19690509V
+20190225104458P3787075A.    van       Pijkeren                 Kwikstaart              00026 3641ZLDokkum                  V19750601E
+20181008110042P3829148H.              Roelink                  Kwikstaart              00024 3641ZLDokkum                  V19801223E
+20180219140759P3997676R.              Batsbak                  Verlengde Hoogstraat    00009B5271XTMaaskantje              M19780716E
+20190930153058P4356838R.              Biemans                  Verlengde Hoogstraat    00009B5271XTMaaskantje              M19830000E
+20181008110042P4413412J.    de        Cock                     Kattenburgergracht      00023 1018KNAmsterdam               M19280402V
+20181008110042P4431024D.              Vledder                  3e Goudsbloemdwarsstraat00002 1015KAAmsterdam               M19630502E
+20180219140759P4816766V.              Prins                    Blankenstraat           00002 1018SBAmsterdam               V19580108V
