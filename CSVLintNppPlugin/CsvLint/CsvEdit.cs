@@ -4,6 +4,8 @@
 // based input and CsvDefinition
 // makes changes to both the data and the CsvDefinition
 // -------------------------------------
+using CsvQuery.PluginInfrastructure;
+using Kbg.NppPluginNET.PluginInfrastructure;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +22,9 @@ namespace CSVLint
         /// <param name="data"> csv data </param>
         public void UpdateAllDateFormat(string data)
         {
-            // TODO implement
+            // read all text and replace
+            var sr = ScintillaStreams.StreamAllText();
+            ScintillaGateway scintillaGateway = PluginBase.CurrentScintillaGateway;
         }
 
         /// <summary>

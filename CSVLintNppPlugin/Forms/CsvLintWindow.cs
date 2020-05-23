@@ -87,5 +87,26 @@ namespace Kbg.NppPluginNET
                 txtOutput.Text = msg;
             }
         }
+
+        private void btnEdit_Click(object sender, EventArgs e)
+        {
+            // create dictionary
+            CsvEdit csvedit = new CsvEdit();
+
+
+            //csvedit.doTest();
+            //
+            //var sr = ScintillaStreams.StreamAllText();
+            //ScintillaGateway scintillaGateway = PluginBase.CurrentScintillaGateway;
+            //
+            //scintillaGateway.SetText();
+            //
+            ////csvval.ValidateData(sample, csvdef);
+            //csvval.ValidateData(sr, csvdef);
+            //
+            //// display output message or errors
+            //string msg = csvval.report();
+            //txtOutput.Text = msg;
+        }
     }
 }

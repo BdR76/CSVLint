@@ -12,6 +12,8 @@ namespace Kbg.NppPluginNET
     class Main
     {
         internal const string PluginName = "CsvLint";
+        public static Settings Settings = new Settings();
+
         static string iniFilePath = null;
         static bool someSetting = false;
         static CsvLintWindow frmCsvLintDlg = null;
@@ -19,7 +21,6 @@ namespace Kbg.NppPluginNET
         static Bitmap tbBmp = CSVLintNppPlugin.Properties.Resources.csvlint2;
         static Bitmap tbBmp_tbTab = CSVLintNppPlugin.Properties.Resources.csvlint_bmp2;
         static Icon tbIcon = null;
-
 
         public static void OnNotification(ScNotification notification)
         {  
@@ -45,8 +46,9 @@ namespace Kbg.NppPluginNET
             // menu items
             //PluginBase.SetCommand(0, "MyMenuCommand", myMenuFunction, new ShortcutKey(false, false, false, Keys.None));
             PluginBase.SetCommand(0, "CSV Lint window", myDockableDialog); idMyDlg = 0;
-            PluginBase.SetCommand(1, "---", null);
-            PluginBase.SetCommand(2, "About", doAboutForm);
+            PluginBase.SetCommand(1, "&Settings", Settings.ShowDialog);
+            PluginBase.SetCommand(2, "---", null);
+            PluginBase.SetCommand(3, "About", doAboutForm);
         }
 
         internal static void SetToolBarIcon()
