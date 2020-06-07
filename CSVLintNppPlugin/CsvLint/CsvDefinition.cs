@@ -207,8 +207,21 @@ namespace CSVLint
         }
         public void AddColumn(int idx, string name, int maxwidth, ColumnType datatype, string mask)
         {
-            // use default mask when datetime without mask
-            if ((datatype == ColumnType.DateTime) && (mask == "")) mask = this.DateTimeFormat;
+            if (datatype == ColumnType.DateTime)
+            {
+                // for now, can only have one datemask format allowed
+                if ((this.DateTimeFormat != "") && (this.DateTimeFormat != mask))
+                {
+                    // this is a second datetime column but with different mask, so change it from datatime to text
+                    datatype = ColumnType.String;
+                    mask = "";
+                }
+                else
+                {
+                    // use default mask when datetime without mask
+                    if (mask == "") mask = this.DateTimeFormat;
+                }
+            }
 
             // new column
             CsvColumn col = new CsvColumn(idx, name, maxwidth, datatype, mask);

@@ -288,7 +288,13 @@ namespace CSVLint
                     if (i > colstats.Count()-1) colstats.Add(new CsvColumStats());
 
                     // next value to evaluate
-                    string val = values[i];
+                    string val = values[i].Trim();
+
+                    // adjust for quoted values
+                    if (val[0] == '"')
+                    {
+                        val = val.Trim('"');
+                    }
 
                     // assume first line only contains column header names
                     if (lineCount == 1)
@@ -313,6 +319,7 @@ namespace CSVLint
                             // check each character in string
                             int digits = 0;
                             int sign = 0;
+                            int signpos = 0;
                             int point = 0;
                             int comma = 0;
                             int datesep = 0;
@@ -321,29 +328,34 @@ namespace CSVLint
                             string datedig1 = "";
                             int ddmax = 0;
                             char dec = '\0';
-                            foreach (char c in val)
+
+                            int vallength = val.Length;
+                            for (int charidx = 0; charidx < vallength; charidx++)
                             {
-                                if (c >= '0' && c <= '9')
+                                char ch = val[charidx];
+
+                                if (ch >= '0' && ch <= '9')
                                 {
                                     digits++;
                                 }
-                                else if (c == '.')
+                                else if (ch == '.')
                                 {
                                     point++;
-                                    dec = c;
+                                    dec = ch;
                                 }
-                                else if (c == ',')
+                                else if (ch == ',')
                                 {
                                     comma++;
-                                    dec = c;
+                                    dec = ch;
                                 }
-                                else if ("\\/-: ".IndexOf(c) > 0)
+                                else if ("\\/-: ".IndexOf(ch) > 0)
                                 {
                                     datesep++;
                                     if (sep1 == '\0')
                                     {
-                                        sep1 = c;
-                                        datedig1 = val.Substring(0, val.IndexOf(c));
+                                        // check if numeric up to the first separator
+                                        sep1 = ch;
+                                        datedig1 = val.Substring(0, val.IndexOf(ch));
                                         bool isNumeric = int.TryParse(datedig1, out int n);
                                         if (isNumeric)
                                         {
@@ -357,7 +369,11 @@ namespace CSVLint
                                 };
 
                                 // plus and minus are signs for digits, check separately because minus ('-') is also counted as sep
-                                if (c == '+' || c == '-') sign++;
+                                if (ch == '+' || ch == '-')
+                                {
+                                    sign++;
+                                    signpos = charidx;
+                                }
                             }
 
                             // date, examples "31-12-2019", "1/1/2019", "2019-12-31" etc.
@@ -374,7 +390,7 @@ namespace CSVLint
                                 colstats[i].DateSep = sep1;
                                 if (colstats[i].DateMax1 < ddmax) colstats[i].DateMax1 = ddmax;
                             }
-                            else if ((digits > 0) && (point != 1) && (comma != 1) && (sign <= 1) && (length <= 8) && (other == 0))
+                            else if ((digits > 0) && (point != 1) && (comma != 1) && (sign <= 1) && (signpos == 0) && (length <= 8) && (other == 0))
                             {
                                 // numeric integer, examples "123", "-99", "+10" etc.
                                 colstats[i].CountInteger++;

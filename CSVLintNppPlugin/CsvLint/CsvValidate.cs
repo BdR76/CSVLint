@@ -140,7 +140,13 @@ namespace CSVLint
                     for (var i = 0; i < values.Count; i++)
                     {
                         // next value and column number
-                        string val = values[i];
+                        string val = values[i].Trim();
+
+                        // adjust for quoted values
+                        if (val[0] == '"')
+                        {
+                            val = val.Trim('"');
+                        }
 
                         // within bounds of column definition and non-empty value
                         if ((i < csvdef.Fields.Count) && (val != ""))
