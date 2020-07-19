@@ -36,8 +36,22 @@ namespace CSVLint
         public int MaxWidth;
         public ColumnType DataType;
         public string Mask;
+        public char DecimalSymbol = '.';
+        public int Decimals = 0;
         public string sTag; // depends on datatype, datetime="" , float=",." or ".,"
         public int iTag;    // depends on datatype, datetime=nr digits year (2 or 4), float=max decimals
+
+        public CsvColumn(int idx)
+        {
+            this.Index = idx;
+            this.Name = string.Format("F{0}", idx);
+            this.MaxWidth = 50;
+            this.DataType = ColumnType.String;
+            this.Mask = "";
+
+            this.Initialize();
+        }
+
         public CsvColumn(int idx, string name, int maxwidth, ColumnType datatype, string mask)
         {
             this.Index = idx;
@@ -46,47 +60,30 @@ namespace CSVLint
             this.DataType = datatype;
             this.Mask = mask;
 
+            this.Initialize();
+        }
+
+        private void Initialize()
+        {
             this.sTag = "";
             this.iTag = -1;
 
-            if (datatype == ColumnType.DateTime)
+            if (this.DataType == ColumnType.DateTime)
             {
             }
 
-            if (datatype == ColumnType.Decimal)
+            if (this.DataType == ColumnType.Decimal)
             {
-                int pos1 = mask.IndexOf('.');
-                int pos2 = mask.IndexOf(',');
+                int pos1 = this.Mask.IndexOf('.');
+                int pos2 = this.Mask.IndexOf(',');
                 int p = (pos1 > pos2 ? pos1 : pos2);
 
                 // sTag, thousand and decimand characters
                 this.sTag = (pos1 > pos2 ? ",." : ".,");
 
                 // iTag, max decimal places
-                this.iTag = mask.Length - p - 1;
+                this.iTag = this.Mask.Length - p - 1;
             }
-        }
-        public string iniColDef(bool quotename)
-        {
-            // format as inifile column line
-            // example "Col1=LastName Text Width 50"
-            string col = this.Name;
-
-            // add quotes "" only when name contains space
-            //if (this.Name.IndexOf(" ") >= 0) col = string.Format("\"{0}\"", col);
-            if (quotename) col = string.Format("\"{0}\"", col);
-
-            // datatype
-            if (this.DataType == ColumnType.String)   col += " Text";
-            if (this.DataType == ColumnType.Unknown)  col += " Text";
-            if (this.DataType == ColumnType.Integer)  col += " Integer";
-            if (this.DataType == ColumnType.Decimal)  col += " Float";
-            if (this.DataType == ColumnType.DateTime) col += " DateTime";
-
-            //col += " " + this.Mask;
-            col += " Width " + this.MaxWidth;
-
-            return col;
         }
     }
 
@@ -209,17 +206,24 @@ namespace CSVLint
         {
             if (datatype == ColumnType.DateTime)
             {
-                // for now, can only have one datemask format allowed
-                if ((this.DateTimeFormat != "") && (this.DateTimeFormat != mask))
-                {
-                    // this is a second datetime column but with different mask, so change it from datatime to text
-                    datatype = ColumnType.String;
-                    mask = "";
-                }
-                else
-                {
-                    // use default mask when datetime without mask
-                    if (mask == "") mask = this.DateTimeFormat;
+                // allow different datemask formats per column, but keep track of first datetime format as schema.ini global
+
+                // datetime column MUST have a mask
+                if (mask == "") mask = (this.DateTimeFormat == "" ? "yyyy-MM-dd" : this.DateTimeFormat);
+
+                // remember first datetime mask as the schema.ini global datetime mask
+                if (this.DateTimeFormat == "") this.DateTimeFormat = mask;
+            }
+
+            if (datatype == ColumnType.Decimal)
+            {
+                // get decimal position or -1 if not found
+                int pos1 = mask.LastIndexOf('.');
+                int pos2 = mask.LastIndexOf(',');
+
+                if ( (pos1 >= 0) || (pos2 >= 0) ) {
+                    this.DecimalSymbol = (pos1 > pos2 ? '.' : ',');
+                    this.NumberDigits = mask.Length - (pos1 > pos2 ? pos1 : pos2) - 1;
                 }
             }
 
@@ -462,6 +466,48 @@ namespace CSVLint
                         // add columns
                         this.AddColumn(idx, name, maxwidth, datatype, mask);
                     };
+                    // allow for comments to alter datatype+mask of certain columns
+                    if (k.Substring(0, 4) == ";col")
+                    {
+                        string s = k.Substring(4, k.Length - 4);
+                        int idxalt = 0;
+                        string datatypestr = "";
+                        try
+                        {
+                            idxalt = Int32.Parse(s) - 1;
+                        }
+                        catch (FormatException)
+                        {
+                            Console.WriteLine($"Unable to parse '{idxalt}'");
+                        }
+
+                        ColumnType datatypealt = ColumnType.String;
+
+                        // check for valid datatype must be at end of line
+                        int posalt = Val.LastIndexOf("DateTime");
+                        if (posalt >= 0)
+                        {
+                            int spcalt = Val.IndexOf(" ", posalt);
+                            datatypestr = Val.Substring(posalt, spcalt - posalt);
+                            Val = Val.Substring(spcalt, Val.Length-spcalt).Trim();
+                        }
+                        if (datatypestr == "DateTime") datatypealt = ColumnType.DateTime;
+
+                        // if alternative datatype found
+                        if (datatypealt != ColumnType.String)
+                        {
+                            // look for index
+                            for (int x = 0; x < this.Fields.Count; x++)
+                            {
+                                if (this.Fields[x].Index == idxalt)
+                                {
+                                    this.Fields[x].DataType = datatypealt;
+                                    this.Fields[x].MaxWidth = Val.Length;
+                                    this.Fields[x].Mask = Val;
+                                }
+                            };
+                        }
+                    }
                 }
             }
         }
@@ -538,13 +584,45 @@ namespace CSVLint
                 {
                     quotename = true;
                     break;
-                } 
+                }
 
             // schema.ini all columns
             for (int i = 0; i < this.Fields.Count; i++)
             {
+                // format as inifile column line
+                // example "Col1=LastName Text Width 50"
+                CsvColumn col = this.Fields[i];
+                string def = col.Name;
+                string com = "";
+
+                // add quotes "" only when name contains space
+                //if (this.Name.IndexOf(" ") >= 0) def = string.Format("\"{0}\"", col.Name);
+                if (quotename) def = string.Format("\"{0}\"", col.Name);
+
+                // datatype
+                if (col.DataType == ColumnType.String) def += " Text";
+                if (col.DataType == ColumnType.Unknown) def += " Text";
+                if (col.DataType == ColumnType.Integer) def += " Integer";
+                if (col.DataType == ColumnType.Decimal) def += " Float";
+                if (col.DataType == ColumnType.DateTime) {
+                    // exception when datetime format different
+                    if (col.Mask == this.DateTimeFormat) {
+                        def += " DateTime";
+                    } else {
+                        // schma.ini doesn't support multiple datetime formats
+                        com = string.Format(";Col{0}={1} DateTime {2}\r\n", (i + 1), def, col.Mask);
+                        def += " Text";
+                    }
+                }
+
+                //col += " " + this.Mask;
+                def += " Width " + col.MaxWidth;
+
                 // "Col1=LastName Text Width 50"
-                res += string.Format("Col{0}={1}\r\n", (i + 1), this.Fields[i].iniColDef(quotename));
+                res += string.Format("Col{0}={1}\r\n", (i + 1), def);
+
+                // add alternative column format as comment
+                if (com != "") res += com;
             }
 
             return res;

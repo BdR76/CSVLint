@@ -46,6 +46,10 @@ namespace CSVLint
             string line;
             int lineCount = 0, linesQuoted = 0;
 
+            // -----------------------------------------------------------------------------
+            // determine separator character or fixed length
+            // -----------------------------------------------------------------------------
+
             // statistics about this data
             var frequencies = new List<Dictionary<char, int>>();        // frequencies of letters per line
             var occurrences = new Dictionary<char, int>();              // occurences of letters in entire dataset
@@ -186,7 +190,7 @@ namespace CSVLint
             result.ColNameHeader = (result.Separator != '\0');
 
             // Exception, probably not tabular data file
-            if ( (result.Separator == '\0') && (lineLengths.Count > 1) )
+            if ( (result.Separator == '\0') && ( (lineLengths.Count > 1) || (lineCount <= 1) ) )
             {
                 // check for typical XML characters
                 var xml1 = (occurrences.ContainsKey('>') ? occurrences['>'] : 0);
@@ -235,17 +239,21 @@ namespace CSVLint
 
                 foundfieldWidths.Sort();
 
-
                 if (foundfieldWidths.Count < 3) return result; // unlikely fixed width
                 foundfieldWidths.Add(-1); // Last column gets "the rest"
                 result.FieldWidths = foundfieldWidths;
             }
 
+            // -----------------------------------------------------------------------------
+            // determine data types for columns
+            // -----------------------------------------------------------------------------
+
             // reset string reader to first line is not possible, create a new one
             s = new StringReader(data);
 
             // examine data and keep statistics for each column
-            List<CsvColumStats> colstats = new List<CsvColumStats>();
+            List<CsvAnalyzeColumn> colstats = new List<CsvAnalyzeColumn>();
+            //List<CsvColumStats> colstats = new List<CsvColumStats>();
             lineCount = 0;
 
             // examine data
@@ -285,225 +293,22 @@ namespace CSVLint
                 for (int i = 0; i < values.Count(); i++)
                 {
                     // add columnstats if needed
-                    if (i > colstats.Count()-1) colstats.Add(new CsvColumStats());
+                    if (i > colstats.Count() - 1) colstats.Add(new CsvAnalyzeColumn(i));
 
                     // next value to evaluate
-                    string val = values[i].Trim();
-
-                    // adjust for quoted values
-                    if (val[0] == '"')
-                    {
-                        val = val.Trim('"');
-                    }
-
-                    // assume first line only contains column header names
-                    if (lineCount == 1)
-                    {
-                        colstats[i].Name = (result.ColNameHeader ? val : "F"+(i+1) );
-                    }
-
-                    // data lines
-                    if ((lineCount > 1) || (!result.ColNameHeader))
-                        {
-                        int length = val.Count();
-
-                        // only consider non-empty values, ignore empty strings
-                        if (length > 0) {
-
-                            // keep minimum width
-                            if (length < colstats[i].MinWidth) colstats[i].MinWidth = length;
-
-                            // keep maximum width
-                            if (length > colstats[i].MaxWidth) colstats[i].MaxWidth = length;
-
-                            // check each character in string
-                            int digits = 0;
-                            int sign = 0;
-                            int signpos = 0;
-                            int point = 0;
-                            int comma = 0;
-                            int datesep = 0;
-                            int other = 0;
-                            char sep1 = '\0';
-                            string datedig1 = "";
-                            int ddmax = 0;
-                            char dec = '\0';
-
-                            int vallength = val.Length;
-                            for (int charidx = 0; charidx < vallength; charidx++)
-                            {
-                                char ch = val[charidx];
-
-                                if (ch >= '0' && ch <= '9')
-                                {
-                                    digits++;
-                                }
-                                else if (ch == '.')
-                                {
-                                    point++;
-                                    dec = ch;
-                                }
-                                else if (ch == ',')
-                                {
-                                    comma++;
-                                    dec = ch;
-                                }
-                                else if ("\\/-: ".IndexOf(ch) > 0)
-                                {
-                                    datesep++;
-                                    if (sep1 == '\0')
-                                    {
-                                        // check if numeric up to the first separator
-                                        sep1 = ch;
-                                        datedig1 = val.Substring(0, val.IndexOf(ch));
-                                        bool isNumeric = int.TryParse(datedig1, out int n);
-                                        if (isNumeric)
-                                        {
-                                            if (ddmax < n) ddmax = n;
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    other++;
-                                };
-
-                                // plus and minus are signs for digits, check separately because minus ('-') is also counted as sep
-                                if (ch == '+' || ch == '-')
-                                {
-                                    sign++;
-                                    signpos = charidx;
-                                }
-                            }
-
-                            // date, examples "31-12-2019", "1/1/2019", "2019-12-31" etc.
-                            if ((length >= 8) && (length <= 10) && (datesep == 2) && (other == 0))
-                            {
-                                colstats[i].CountDateTime++;
-                                colstats[i].DateSep = sep1;
-                                if (colstats[i].DateMax1 < ddmax) colstats[i].DateMax1 = ddmax;
-                            }
-                            // or datetime, examples "31-12-2019 23:59:00", "1/1/2019 12:00", "2019-12-31 23:59:59.000" etc.
-                            else if ((length >= 13) && (length <= 23) && (datesep >= 2) && (datesep <= 6) && (other == 0))
-                            {
-                                colstats[i].CountDateTime++;
-                                colstats[i].DateSep = sep1;
-                                if (colstats[i].DateMax1 < ddmax) colstats[i].DateMax1 = ddmax;
-                            }
-                            else if ((digits > 0) && (point != 1) && (comma != 1) && (sign <= 1) && (signpos == 0) && (length <= 8) && (other == 0))
-                            {
-                                // numeric integer, examples "123", "-99", "+10" etc.
-                                colstats[i].CountInteger++;
-                            }
-                            else if ((digits > 0) && ( (point == 1) || (comma == 1) ) && (sign <= 1) && (length <= 12) && (datesep == 0) && (other == 0))
-                            {
-                                // numeric integer, examples "12.3", "-99,9" etc.
-                                colstats[i].CountDecimal++;
-                                if (dec == '.') colstats[i].CountDecimalPoint++;
-                                if (dec == ',') colstats[i].CountDecimalComma++;
-
-                                // maximum decimal places, example "1234.567" = 4 digits and 3 decimals
-                                int countdec = val.Length - val.LastIndexOf(dec) - 1;
-                                int countdig = val.Length - countdec - 1;
-                                if (countdec > colstats[i].DecimalDecMax) colstats[i].DecimalDecMax = countdec;
-                                if (countdig > colstats[i].DecimalDigMax) colstats[i].DecimalDigMax = countdig;
-                            }
-                            else
-                            {
-                                // any other
-                                colstats[i].CountString++;
-                            };
-                        }
-                    }
+                    colstats[i].InputData(values[i]);
                 }
             }
 
             // add columns as actual fields
             int idx = 0;
-            foreach (CsvColumStats stats in colstats)
+            foreach (CsvAnalyzeColumn stats in colstats)
             {
-                string name = stats.Name;
-                string mask = "";
-                ColumnType typ = ColumnType.String;
-                if ((stats.CountInteger > stats.CountString) && (stats.CountInteger > stats.CountDecimal) && (stats.CountInteger > stats.CountDateTime))
-                {
-                    typ = ColumnType.Integer;
-                }
-                else if ((stats.CountDecimal > stats.CountString) && (stats.CountDecimal > stats.CountInteger) && (stats.CountDecimal > stats.CountDateTime))
-                {
-                    typ = ColumnType.Decimal;
-                    char dec = (stats.CountDecimalPoint > stats.CountDecimalComma ? '.' : ',');
+                // get data type up
+                CSVLint.CsvColumn col = stats.InferDatatype();
 
-                    // mask, example "9999.99"
-                    mask = string.Format("{0}{1}{2}", mask.PadLeft(stats.DecimalDigMax, '9'), dec, mask.PadLeft(stats.DecimalDecMax, '9'));
-
-                    // Note: when dataset contains values "12.345" and "1234.5" then maxlength=6
-                    // However then DecimalDigMax=4 and DecimalDigMax=3 so mask is "9999.999" and maxlength should be 8 (not 6)
-                    if (mask.Length < stats.MaxWidth)
-                    {
-                        stats.MaxWidth = mask.Length;
-                    };
-
-                    // keep global decimal point character
-                    result.DecimalSymbol = dec;
-
-                    // keep global nr of decimal places
-                    if (result.NumberDigits < stats.DecimalDecMax) result.NumberDigits = stats.DecimalDecMax;
-                }
-                else if ((stats.CountDateTime > stats.CountString) && (stats.CountDateTime > stats.CountInteger) && (stats.CountDateTime > stats.CountDecimal))
-                {
-                    typ = ColumnType.DateTime;
-                    // dateformat order, educated guess
-                    var part1 = "MM";
-                    var part2 = "dd";
-                    var part3 = "yyyy";
-                    // if the first digit higher than 12, then it cannot be a month
-                    if ((stats.DateMax1 > 12) && (stats.DateMax1 <= 31))
-                    {
-                        part1 = "dd";
-                        part2 = "MM";
-                    }
-                    // if the first digit higher than 1000, then probably year
-                    if (stats.DateMax1 > 1000)
-                    {
-                        part1 = "yyyy";
-                        part2 = "MM";
-                        part3 = "dd";
-                    }
-                    // if first separator is ':' it's probably a time value example "01:23:45.678"
-                    if (stats.DateSep == ':')
-                    {
-                        part1 = "HH";
-                        part2 = "mm";
-                        part3 = "ss";
-                    }
-
-                    // build mask
-                    mask = string.Format("{0}{1}{2}{3}{4}", part1, stats.DateSep, part2, stats.DateSep, part3);
-
-                    // build mask, fixed length date "dd-mm-yyyy" or not "d-m-yyyy"
-                    if (stats.MinWidth < stats.MaxWidth)
-                    {
-                        mask = mask.Replace("dd", "d").Replace("MM", "M");
-                    }
-
-                    // single digit year, example "31-12-99"
-                    if ((stats.MinWidth == stats.MaxWidth) && (stats.MinWidth == 8))
-                    {
-                        mask = mask.Replace("yyyy", "yy");
-                    }
-
-                    // also includes time
-                    if (stats.MaxWidth >= 13) mask = mask + " HH:mm"; // example "01-01-2019 12:00"
-                    if (stats.MaxWidth > 16) mask = mask + ":ss";    // example "1-1-2019 2:00:00"
-                    if (stats.MaxWidth > 19) mask = mask + ".fff";   // example "01-01-2019 12:00:00.000"
-
-                    // keep global datetime format
-                    result.DateTimeFormat = mask;
-                };
-
-                // add column 
-                result.AddColumn(idx, name, stats.MaxWidth, typ, mask);
+                // add column
+                result.AddColumn(idx, col.Name, col.MaxWidth, col.DataType, col.Mask);
 
                 idx++;
             }
@@ -555,6 +360,7 @@ namespace CSVLint
                 return separator.Value;
 
             uncertancy++;
+
             // Ok, I have no idea
             return '\0';
         }

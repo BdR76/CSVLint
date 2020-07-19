@@ -4,6 +4,7 @@
 // and report any data errors
 // -------------------------------------
 
+using Kbg.NppPluginNET;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -84,11 +85,10 @@ namespace CSVLint
                     string err = "";
 
                     // get values from line
-                    List<string> values = new List<string>();
+                    List<String> values = new List<String>();
                     if (csvdef.Separator == '\0')
                     {
                         // fixed width columns
-                        int toolong = 0;
                         int pos1 = 0;
                         for (int i = 0; i < csvdef.Fields.Count(); i++)
                         {
@@ -96,11 +96,7 @@ namespace CSVLint
                             int pos2 = csvdef.Fields[i].MaxWidth;
 
                             // if line is too short, columns missing?
-                            if (pos1 >= line.Length)
-                            {
-                                toolong = -1;
-                                break;
-                            }
+                            if (pos1 >= line.Length) break;
 
                             // unexcepted line end or last column, then 'eat up' anything at the end of the line
                             if ((pos1 + pos2 > line.Length) || (i == csvdef.Fields.Count() - 1))
@@ -140,35 +136,39 @@ namespace CSVLint
                     for (var i = 0; i < values.Count; i++)
                     {
                         // next value and column number
-                        string val = values[i].Trim();
+                        String val = values[i];
+                        val = val.Trim();
 
-                        // adjust for quoted values
-                        if (val[0] == '"')
+                        if (val != "")
                         {
-                            val = val.Trim('"');
-                        }
-
-                        // within bounds of column definition and non-empty value
-                        if ((i < csvdef.Fields.Count) && (val != ""))
-                        {
-                            // column header or actual data value
-                            if ((lineCount == 1) && (csvdef.ColNameHeader))
+                            // adjust for quoted values
+                            if (val[0] == '"')
                             {
-                                // column header
-                                if (val != csvdef.Fields[i].Name)
-                                {
-                                    err = err + string.Format("unexpected column name \"{0}\", ", val);
-                                    counterr++;
-                                }
+                                val = val.Trim('"');
                             }
-                            else
+
+                            // within bounds of column definition and non-empty value
+                            if (i < csvdef.Fields.Count)
                             {
-                                // data values
-                                string evalerr = this.EvaluateDataValue(val, csvdef.Fields[i], i);
-                                if (evalerr != "")
+                                // column header or actual data value
+                                if ((lineCount == 1) && (csvdef.ColNameHeader))
                                 {
-                                    err = err + evalerr;
-                                    counterr++;
+                                    // column header
+                                    if (val != csvdef.Fields[i].Name)
+                                    {
+                                        err = err + string.Format("unexpected column name \"{0}\", ", val);
+                                        counterr++;
+                                    }
+                                }
+                                else
+                                {
+                                    // data values
+                                    string evalerr = this.EvaluateDataValue(val, csvdef.Fields[i], i);
+                                    if (evalerr != "")
+                                    {
+                                        err = err + evalerr;
+                                        counterr++;
+                                    }
                                 }
                             }
                         }
@@ -199,6 +199,9 @@ namespace CSVLint
             string err = "";
             int colnr = idx + 1;
 
+            // ignore null values
+            if (val == Main.Settings.NullValue) val = "";
+            
             // check if value is too long
             if (val.Length > coldef.MaxWidth)
             {

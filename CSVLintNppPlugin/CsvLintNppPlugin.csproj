@@ -65,10 +65,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CsvLint\CsvAnalyze.cs" />
+    <Compile Include="CsvLint\CsvAnalyzeColumn.cs" />
     <Compile Include="CsvLint\CsvDefinition.cs" />
     <Compile Include="CsvLint\CsvEdit.cs" />
+    <Compile Include="CsvLint\CsvGenerateCode.cs" />
     <Compile Include="CsvLint\CsvValidate.cs" />
-    <Compile Include="Settings.cs" />
+    <Compile Include="Tools\Settings.cs" />
     <Compile Include="Tools\Helper.cs" />
     <Compile Include="Forms\AboutForm.cs">
       <SubType>Form</SubType>
