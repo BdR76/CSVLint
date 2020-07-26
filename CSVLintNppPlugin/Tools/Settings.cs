@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
 using CsvQuery.PluginInfrastructure;
+using System.Text.RegularExpressions;
 
 namespace Kbg.NppPluginNET
 {
@@ -15,9 +16,57 @@ namespace Kbg.NppPluginNET
     {
 
         [Description("Preferred characters when automatically detecting the separator character. For special characters like tab, use \\t or \\x09."), Category("General"), DefaultValue(",;|\\t")]
-        public string Separators { get; set; } = ",;|\\t:";
+        public String Separators
+        {
+            get
+            {
+                return this._strSeparators;
+            }
+            set
+            {
+                // set string representation, may include "SysYear"
+                this._strTwoDigitYearMax = value;
 
-        [Description("Keyword for null values."), Category("General"), DefaultValue("NULL")]
+                // set actual character values
+                // replace escaped special characters, example "\t" "\x1b" etc.
+                Regex ItemRegex = new Regex(@"(\\x[0-9A-Fa-f]+)|(\\[tr])", RegexOptions.Compiled);
+                foreach (Match ItemMatch in ItemRegex.Matches(value))
+                {
+                    char c = ItemMatch[0];
+                    if (ItemMatch.Length > 1)
+                    {
+                        String ltr = ItemMatch.Substring(1, 1);
+                        c = '\0';
+
+                        // check for default characters
+                        if (ltr == "t") c = '\t';
+                        if (ltr == "r") c = '\r';
+                        if (ltr == "a") c = '\a';
+
+                        // check for x09 etc.
+                        if (ltr == "x")
+                        {
+                            String hexnr = ItemMatch.Substring(2, ItemMatch.Length - 2);
+                            int number = Convert.ToInt32(hexnr, 16);
+                            c = Convert.ToChar(number);
+                        }
+                    }
+                    // add to list
+                    if (c != '\0')
+                    {
+                        //.add(c);
+                    }
+                }
+
+                this.charSeparators = this.getYearFromString(value);
+                //default = ",;|\\t:";
+            }
+        }
+        // actual year value as int
+        public char charSeparators;
+        private String _strSeparators;
+
+        [Description("Keyword for null values, case-sensitive."), Category("General"), DefaultValue("NULL")]
         public String NullValue { get; set; }
 
         [Description("Trim values before analyzing or editing (recommended)."), Category("General"), DefaultValue(true)]

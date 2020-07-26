@@ -139,6 +139,12 @@ namespace CSVLint
                         String val = values[i];
                         val = val.Trim();
 
+                        // null values
+                        if (val == Main.Settings.NullValue)
+                        {
+                            val = "";
+                        }
+
                         if (val != "")
                         {
                             // adjust for quoted values
@@ -302,7 +308,9 @@ namespace CSVLint
                                        DateTimeStyles.None,
                                        out dateValue))
             {
-                isDate = true;
+                // check year range
+                int year = dateValue.Year;
+                isDate = (year >= Main.Settings.YearMinimum && year <= Main.Settings.YearMaximum);
             };
 
             return isDate;

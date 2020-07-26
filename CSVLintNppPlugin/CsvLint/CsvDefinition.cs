@@ -502,7 +502,6 @@ namespace CSVLint
                                 if (this.Fields[x].Index == idxalt)
                                 {
                                     this.Fields[x].DataType = datatypealt;
-                                    this.Fields[x].MaxWidth = Val.Length;
                                     this.Fields[x].Mask = Val;
                                 }
                             };
