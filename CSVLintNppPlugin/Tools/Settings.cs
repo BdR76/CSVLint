@@ -15,7 +15,7 @@ namespace Kbg.NppPluginNET
     public class Settings : SettingsBase
     {
 
-        [Description("Preferred characters when automatically detecting the separator character. For special characters like tab, use \\t or \\x09."), Category("General"), DefaultValue(",;|\\t")]
+        [Description("Preferred characters when automatically detecting the separator character. For special characters like tab, use \\t or \\u0009."), Category("General"), DefaultValue(",;\\t|")]
         public String Separators
         {
             get
@@ -25,45 +25,52 @@ namespace Kbg.NppPluginNET
             set
             {
                 // set string representation, may include "SysYear"
-                this._strTwoDigitYearMax = value;
+                this._strSeparators = value;
+                if (this._strSeparators.Trim() == "") this._strSeparators = ",;\\t|"; // default
+
+                // clear characters list
+                this._charSeparators = "";
 
                 // set actual character values
                 // replace escaped special characters, example "\t" "\x1b" etc.
-                Regex ItemRegex = new Regex(@"(\\x[0-9A-Fa-f]+)|(\\[tr])", RegexOptions.Compiled);
-                foreach (Match ItemMatch in ItemRegex.Matches(value))
+                Regex ItemRegex = new Regex(@"(\\u[0-9a-fA-F]{4}|\\[trnae]|.)", RegexOptions.Compiled);
+                foreach (Match ItemMatch in ItemRegex.Matches(this._strSeparators))
                 {
-                    char c = ItemMatch[0];
+                    char c = '\0';
                     if (ItemMatch.Length > 1)
                     {
-                        String ltr = ItemMatch.Substring(1, 1);
+                        String ltr = ItemMatch.ToString().Substring(1, 1);
                         c = '\0';
 
                         // check for default characters
-                        if (ltr == "t") c = '\t';
-                        if (ltr == "r") c = '\r';
-                        if (ltr == "a") c = '\a';
+                        if (ltr == "t") c = '\t'; // tab
+                        if (ltr == "r") c = '\r'; // carriage return
+                        if (ltr == "n") c = '\n'; // life feed
+                        if (ltr == "a") c = '\a'; // bell
+                        if (ltr == "e") c = '\u0027'; // escape
 
                         // check for x09 etc.
-                        if (ltr == "x")
+                        if (ltr == "u")
                         {
-                            String hexnr = ItemMatch.Substring(2, ItemMatch.Length - 2);
+                            String hexnr = ItemMatch.ToString().Substring(2, ItemMatch.Length - 2);
                             int number = Convert.ToInt32(hexnr, 16);
                             c = Convert.ToChar(number);
                         }
                     }
+                    else
+                    {
+                        c = ItemMatch.ToString()[0];
+                    }
                     // add to list
                     if (c != '\0')
                     {
-                        //.add(c);
+                        this._charSeparators += c;
                     }
                 }
-
-                this.charSeparators = this.getYearFromString(value);
-                //default = ",;|\\t:";
             }
         }
         // actual year value as int
-        public char charSeparators;
+        public String _charSeparators;
         private String _strSeparators;
 
         [Description("Keyword for null values, case-sensitive."), Category("General"), DefaultValue("NULL")]
