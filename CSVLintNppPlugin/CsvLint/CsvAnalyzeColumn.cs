@@ -87,8 +87,10 @@ namespace CSVLint
                     int datesep = 0;
                     int other = 0;
                     char sep1 = '\0';
+                    char sep2 = '\0';
                     string datedig1 = "";
-                    int ddmax = 0;
+                    int ddmax1 = 0;
+                    int ddmax2 = 0;
                     char dec = '\0';
 
                     // inspect all characters of string
@@ -101,17 +103,12 @@ namespace CSVLint
                         {
                             digits++;
                         }
-                        else if (ch == '.')
-                        {
-                            point++;
-                            dec = ch;
-                        }
                         else if (ch == ',')
                         {
                             comma++;
                             dec = ch;
                         }
-                        else if ("\\/-: ".IndexOf(ch) > 0)
+                        else if ("\\/-:. ".IndexOf(ch) > 0)
                         {
                             datesep++;
                             if (sep1 == '\0')
@@ -119,10 +116,24 @@ namespace CSVLint
                                 // check if numeric up to the first separator
                                 sep1 = ch;
                                 datedig1 = data.Substring(0, data.IndexOf(ch));
+                                // keep max number example 31-12-2020 -> keep 31
                                 bool isNumeric = int.TryParse(datedig1, out int n);
                                 if (isNumeric)
                                 {
-                                    if (ddmax < n) ddmax = n;
+                                    if (ddmax1 < n) ddmax1 = n;
+                                }
+                            }
+                            else if (sep2 == '\0')
+                            {
+                                // check if numeric up to the first separator
+                                sep2 = ch;
+                                int pos1 = data.IndexOf(sep1) + 1;
+                                datedig1 = data.Substring(pos1, data.IndexOf(ch, pos1) - pos1);
+                                // keep max number example 31-12-2020 -> keep 31
+                                bool isNumeric = int.TryParse(datedig1, out int n);
+                                if (isNumeric)
+                                {
+                                    if (ddmax2 < n) ddmax2 = n;
                                 }
                             }
                         }
@@ -131,7 +142,13 @@ namespace CSVLint
                             other++;
                         };
 
-                        // plus and minus are signs for digits, check separately because minus ('-') is also counted as sep
+                        // dot is decimal separator, check separately because dot is also counted as date separator, example "12.03.2018"
+                        if (ch == '.')
+                        {
+                            point++;
+                            dec = ch;
+                        }
+                        // plus and minus are signs for digits, check separately because minus ('-') is also counted as date separator, example "31-12-1999"
                         if (ch == '+' || ch == '-')
                         {
                             sign++;
@@ -145,15 +162,17 @@ namespace CSVLint
                     if ((length >= 8) && (length <= 10) && (datesep == 2) && (other == 0))
                     {
                         this.CountDateTime++;
-                        this.DateSep = sep1;
-                        if (this.DateMax1 < ddmax) this.DateMax1 = ddmax;
+                        if (this.DateSep == '\0') this.DateSep = sep1;
+                        if (this.DateMax1 < ddmax1) this.DateMax1 = ddmax1;
+                        if (this.DateMax2 < ddmax2) this.DateMax2 = ddmax2;
                     }
                     // or datetime, examples "31-12-2019 23:59:00", "1/1/2019 12:00", "2019-12-31 23:59:59.000" etc.
                     else if ((length >= 13) && (length <= 23) && (datesep >= 2) && (datesep <= 6) && (other == 0))
                     {
                         this.CountDateTime++;
-                        this.DateSep = sep1;
-                        if (this.DateMax1 < ddmax) this.DateMax1 = ddmax;
+                        if (this.DateSep == '\0') this.DateSep = sep1;
+                        if (this.DateMax1 < ddmax1) this.DateMax1 = ddmax1;
+                        if (this.DateMax2 < ddmax2) this.DateMax2 = ddmax2;
                     }
                     else if ((digits > 0) && (point != 1) && (comma != 1) && (sign <= 1) && (signpos == 0) && (length <= 8) && (other == 0))
                     {
@@ -226,15 +245,21 @@ namespace CSVLint
             else if ((this.CountDateTime > this.CountString) && (this.CountDateTime > this.CountInteger) && (this.CountDateTime > this.CountDecimal))
             {
                 result.DataType = ColumnType.DateTime;
-                // dateformat order, educated guess
-                var part1 = "MM";
-                var part2 = "dd";
+                // dateformat order, assume normal format (TODO: get system default here, how?)
+                var part1 = "dd";
+                var part2 = "MM";
                 var part3 = "yyyy";
-                // if the first digit higher than 12, then it cannot be a month
-                if ((this.DateMax1 > 12) && (this.DateMax1 <= 31))
+                // if the first number is higher than 12 and second number is max 12, then most probable day-month format
+                if ((this.DateMax1 > 12) && (this.DateMax1 <= 31) && (this.DateMax2 >= 1) && (this.DateMax2 <= 12))
                 {
                     part1 = "dd";
                     part2 = "MM";
+                }
+                // if the first number is max 12 and second number is higher than 12, then most probable month-day format
+                if ((this.DateMax1 >= 1) && (this.DateMax1 <= 12) && (this.DateMax2 > 12) && (this.DateMax2 <= 31))
+                {
+                    part1 = "MM";
+                    part2 = "dd";
                 }
                 // if the first digit higher than 1000, then probably year
                 if (this.DateMax1 > 1000)

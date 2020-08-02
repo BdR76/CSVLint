@@ -4,8 +4,9 @@ CSV Lint - Notepad++ plugin
 CSVLint is a plug-in for Notepad++ to validate and reformat tabular data files.
 You can take a dataset and:
 
-* Validate data
+* Automatically detect columns and datatypes
 * Create schema.ini based on data
+* Validate data against schema.ini
 
 ![preview screenshot](/csvlint_preview.png?raw=true "CSVLint plug-in preview")
 
@@ -88,7 +89,8 @@ The CSVLint plugin is work-in-progress, here is list of still missing features
 * Add feature GUI click to jump to error line
 * Add feature generate import scripts (SQL, SPSS, Python(?), XML+column=xpath?)
 * Add feature display columns as [colors](https://community.notepad-plus-plus.org/topic/13921/setting-text-color-via-a-net-plugin) (custom Lexer?)
-* Search/replace in single column, set of columns (option only replace n-th occurance?)
+* Search for value in column, search next empty/non-empty in column
+* Search/replace in single column, multiple columns (option only replace n-th occurance? example "datetime(2008, 1, 1, 12, 59, 00)" replace ', ' with '-' or ':')
 * Search/replace only n-th occurance? Or only empty occurance?
 * Split column into new column ("123/456" -> "123", "456")
 * Support code=label values (in schema.json?) + error check + replace-code-with-label

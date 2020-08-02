@@ -3,6 +3,7 @@
 // Analyze csv data return a CsvDefinition,
 // infer settings, dateformat, columns, widths etc. from input data,
 // -------------------------------------
+using Kbg.NppPluginNET;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -319,8 +320,8 @@ namespace CSVLint
 
         private static char GetSeparatorFromVariance(Dictionary<char, float> variances, Dictionary<char, int> occurrences, int lineCount, out int uncertancy)
         {
-            //var preferredSeparators = Main.Settings.Separators.Replace("\\t", "\t");
-            var preferredSeparators = "\t,;|";
+            //var preferredSeparators = "\t,;|";
+            var preferredSeparators = Main.Settings._charSeparators;
             uncertancy = 0;
 
             // The char with lowest variance is most likely the separator
@@ -330,6 +331,14 @@ namespace CSVLint
                 .OrderByDescending(x => occurrences[x.Key])
                 .Select(x => (char?)x.Key)
                 .FirstOrDefault();
+
+            // The char with lowest variance is most likely the separator
+            // Optimistic: check prefered with 0 variance 
+            //var separator = variances
+            //    .Where(x => x.Value == 0f && preferredSeparators.IndexOf(x.Key) != -1)
+            //    .OrderByDescending(x => occurrences[x.Key])
+            //    .Select(x => (char?)x.Key)
+            //    .FirstOrDefault();
 
             if (separator != null)
                 return separator.Value;
