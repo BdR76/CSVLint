@@ -230,7 +230,7 @@ namespace CSVLint
                         break;
                     case ColumnType.DateTime:
                         typ = "datetime";
-                        valid = EvaluateDateTime(val, coldef);
+                        valid = EvaluateDateTime(val, coldef, out msg);
                         break;
                 };
 
@@ -297,10 +297,12 @@ namespace CSVLint
         ///     validate datetime value
         /// </summary>
         /// <param name="val"> datetime value, example "31-12-2019", "12/31/2019", "2019-12-31 23:59" etc.</param>
-        private bool EvaluateDateTime(string val, CsvColumn coldef)
+        private bool EvaluateDateTime(string val, CsvColumn coldef, out string err)
         {
             bool isDate = false;
             DateTime dateValue;
+
+            err = "";
 
             // check if valid date using DateTime
             if (DateTime.TryParseExact(val, coldef.Mask,
@@ -308,9 +310,16 @@ namespace CSVLint
                                        DateTimeStyles.None,
                                        out dateValue))
             {
+                // valid date
+                isDate = true;
+
                 // check year range
                 int year = dateValue.Year;
-                isDate = (year >= Main.Settings.YearMinimum && year <= Main.Settings.YearMaximum);
+                if (year < Main.Settings.YearMinimum || year > Main.Settings.YearMaximum)
+				{
+                    isDate = false;
+                    err = "is out of range";
+				};
             };
 
             return isDate;

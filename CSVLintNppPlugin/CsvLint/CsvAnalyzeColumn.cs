@@ -279,12 +279,6 @@ namespace CSVLint
                 // build mask
                 mask = string.Format("{0}{1}{2}{3}{4}", part1, this.DateSep, part2, this.DateSep, part3);
 
-                // build mask, fixed length date "dd-mm-yyyy" or not "d-m-yyyy"
-                if (this.MinWidth < this.MaxWidth)
-                {
-                    mask = mask.Replace("dd", "d").Replace("MM", "M");
-                }
-
                 // single digit year, example "31-12-99"
                 if ((this.MinWidth == this.MaxWidth) && (this.MinWidth == 8))
                 {
@@ -295,6 +289,12 @@ namespace CSVLint
                 if (this.MaxWidth >= 13) mask = mask + " HH:mm"; // example "01-01-2019 12:00"
                 if (this.MaxWidth > 16) mask = mask + ":ss";    // example "1-1-2019 2:00:00"
                 if (this.MaxWidth > 19) mask = mask + ".fff";   // example "01-01-2019 12:00:00.000"
+
+                // build mask, fixed length date "dd-mm-yyyy" or not fixed length "d-m-yyyy" without prefix zeroes
+                if (this.MinWidth < this.MaxWidth)
+                {
+                    mask = mask.Replace("dd", "d").Replace("MM", "M").Replace("HH", "H");
+                }
             };
 
             // keep global datetime format

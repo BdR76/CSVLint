@@ -97,7 +97,7 @@ namespace Kbg.NppPluginNET
         [Description("Maximum errors output, limit errors logging, or 0 for no limit."), Category("Validate"), DefaultValue(0)]
         public int MaxErrors { get; set; }
 
-        [Description("Pivot year for two digit year date values. For example, when set to 2025 the year values 24 and 26 will be interpreted as year 2024 and 1926 respectively. Set as SysYear+5 for current year plus 5."), Category("Edit"), DefaultValue("SysYear")]
+        [Description("Maximum year for two digit year date values. For example, when set to 2024 the year values 24 and 25 will be interpreted as 2024 and 1925. Set as SysYear for current year."), Category("Edit"), DefaultValue("SysYear")]
         public String TwoDigitYearMax
         {
             get
