@@ -17,6 +17,7 @@ namespace CSVLint
         public int Index = 0;
         public int MinWidth = 9999;
         public int MaxWidth = 0;
+        public int FixedWidth = 0; // fixed width
         public int CountAll = 0;
         public int CountEmpty = 0;
         public int CountString = 0;
@@ -37,12 +38,13 @@ namespace CSVLint
             this.Index = idx;
         }
 
-        public void InputData(String data)
+        public void InputData(String data, bool fixedwidth)
         {
             // count how many values
             this.CountAll++;
 
             // next value to evaluate
+            int length = data.Length;
             data = data.Trim();
 
             // adjust for quoted values
@@ -56,17 +58,18 @@ namespace CSVLint
             {
                 this.Name = data;
 
-                // col header = false ?? first row contains data, not header names
-                //if (this.Name == "") {
-                //    this.Name = "F" + (this.Index + 1);
-                //}
+                // TODO: determine if first row is actually header names
+                if (this.Name == "") {
+                    this.Name = "F" + (this.Index + 1);
+                }
             }
             else
             {
-                var length = data.Length;
+                // for fixed length files, the MaxWidth should be length of not-trimmed data
+                if (!fixedwidth) length = data.Length;
 
                 // check for empty values, count empty strings
-                if (length == 0)
+                if (data.Length == 0)
                 {
                     this.CountEmpty++;
                 }

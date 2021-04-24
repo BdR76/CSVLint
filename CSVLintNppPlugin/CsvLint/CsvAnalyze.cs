@@ -250,6 +250,7 @@ namespace CSVLint
             // -----------------------------------------------------------------------------
 
             // reset string reader to first line is not possible, create a new one
+            bool fixedwidth = (result.Separator == '\0');
             s = new StringReader(data);
 
             // examine data and keep statistics for each column
@@ -265,7 +266,7 @@ namespace CSVLint
 
                 // get values from line
                 List<string> values = new List<string>();
-                if (result.Separator == '\0')
+                if (fixedwidth)
                 {
                     // fixed width columns
                     int pos1 = 0;
@@ -297,7 +298,7 @@ namespace CSVLint
                     if (i > colstats.Count() - 1) colstats.Add(new CsvAnalyzeColumn(i));
 
                     // next value to evaluate
-                    colstats[i].InputData(values[i]);
+                    colstats[i].InputData(values[i], fixedwidth);
                 }
             }
 

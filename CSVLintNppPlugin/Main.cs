@@ -18,8 +18,8 @@ namespace Kbg.NppPluginNET
         static bool someSetting = false;
         static CsvLintWindow frmCsvLintDlg = null;
         static int idMyDlg = -1;
-        static Bitmap tbBmp = CSVLintNppPlugin.Properties.Resources.csvlint2;
-        static Bitmap tbBmp_tbTab = CSVLintNppPlugin.Properties.Resources.csvlint_bmp2;
+        static Bitmap tbBmp = CSVLintNppPlugin.Properties.Resources.csvlint;
+        static Bitmap tbBmp_tbTab = CSVLintNppPlugin.Properties.Resources.csvlint;
         static Icon tbIcon = null;
 
         public static void OnNotification(ScNotification notification)
@@ -65,7 +65,6 @@ namespace Kbg.NppPluginNET
         {
             Win32.WritePrivateProfileString("SomeSection", "SomeKey", someSetting ? "1" : "0", iniFilePath);
         }
-
 
         internal static void doAboutForm()
         {

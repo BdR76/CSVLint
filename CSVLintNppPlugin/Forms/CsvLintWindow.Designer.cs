@@ -30,7 +30,6 @@
         {
             this.components = new System.ComponentModel.Container();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.btnEdit = new System.Windows.Forms.Button();
             this.btnRefresh = new System.Windows.Forms.Button();
             this.txtSchemaIni = new System.Windows.Forms.TextBox();
             this.btnValidate = new System.Windows.Forms.Button();
@@ -52,7 +51,6 @@
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.btnEdit);
             this.splitContainer1.Panel1.Controls.Add(this.btnRefresh);
             this.splitContainer1.Panel1.Controls.Add(this.txtSchemaIni);
             // 
@@ -63,17 +61,6 @@
             this.splitContainer1.Size = new System.Drawing.Size(1170, 354);
             this.splitContainer1.SplitterDistance = 390;
             this.splitContainer1.TabIndex = 7;
-            // 
-            // btnEdit
-            // 
-            this.btnEdit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnEdit.Location = new System.Drawing.Point(307, 4);
-            this.btnEdit.Name = "btnEdit";
-            this.btnEdit.Size = new System.Drawing.Size(70, 31);
-            this.btnEdit.TabIndex = 7;
-            this.btnEdit.Text = "Edit123";
-            this.btnEdit.UseVisualStyleBackColor = true;
-            this.btnEdit.Click += new System.EventHandler(this.btnEdit_Click);
             // 
             // btnRefresh
             // 
@@ -118,13 +105,16 @@
             this.txtOutput.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtOutput.BackColor = System.Drawing.SystemColors.Control;
             this.txtOutput.Font = new System.Drawing.Font("Courier New", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtOutput.Location = new System.Drawing.Point(3, 41);
             this.txtOutput.Multiline = true;
             this.txtOutput.Name = "txtOutput";
+            this.txtOutput.ReadOnly = true;
             this.txtOutput.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.txtOutput.Size = new System.Drawing.Size(761, 300);
             this.txtOutput.TabIndex = 4;
+            this.txtOutput.DoubleClick += new System.EventHandler(this.txtOutput_DoubleClick);
             // 
             // CsvLintWindow
             // 
@@ -152,6 +142,5 @@
         private System.Windows.Forms.Button btnValidate;
         private System.Windows.Forms.TextBox txtOutput;
         private System.Windows.Forms.ToolTip tooltipCsvLint;
-        private System.Windows.Forms.Button btnEdit;
     }
 }

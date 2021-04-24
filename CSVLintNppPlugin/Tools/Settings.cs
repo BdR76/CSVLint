@@ -93,6 +93,9 @@ namespace Kbg.NppPluginNET
 
         [Description("Maximum length of an integer before it's considered a string instead"), Category("General"), DefaultValue(10)]
         public int IntegerDigitsMax { get; set; }
+		
+        [Description("Decimal values allow leading zero values, for example accept values like .5"), Category("General"), DefaultValue(false)]
+        public bool DecimalLeadingZeroIn { get; set; }
 
         [Description("Maximum errors output, limit errors logging, or 0 for no limit."), Category("Validate"), DefaultValue(0)]
         public int MaxErrors { get; set; }
@@ -117,11 +120,14 @@ namespace Kbg.NppPluginNET
         public int intTwoDigitYearMax;
         private String _strTwoDigitYearMax;
 
+        [Description("Month abbreviations for detecting or generating date format 'mmmm', comma separated list of 12 names."), Category("Validate"), DefaultValue("jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec")]
+        public String MonthAbbrev { get; set; }
+
         [Description("Create new file when making edits."), Category("Edit"), DefaultValue(true)]
         public bool CreateNewFile { get; set; }
 
-        [Description("Decimal values remove leading zero, for example change 0.12 to .12"), Category("Edit"), DefaultValue(true)]
-        public bool DecimalLeadingZero { get; set; }
+        [Description("Decimal values remove leading zero, for example output 0.5 as .5"), Category("Edit"), DefaultValue(false)]
+        public bool DecimalLeadingZeroOut { get; set; }
 
         // helper function for "SysYear" as year values
         private int getYearFromString(String yr)
