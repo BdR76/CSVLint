@@ -63,9 +63,9 @@ namespace CSVLintNppPlugin.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap csvlint_bmp1 {
+        internal static System.Drawing.Bitmap clover {
             get {
-                object obj = ResourceManager.GetObject("csvlint_bmp1", resourceCulture);
+                object obj = ResourceManager.GetObject("clover", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -73,9 +73,9 @@ namespace CSVLintNppPlugin.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap csvlint_bmp2 {
+        internal static System.Drawing.Bitmap csvlint {
             get {
-                object obj = ResourceManager.GetObject("csvlint_bmp2", resourceCulture);
+                object obj = ResourceManager.GetObject("csvlint", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -83,9 +83,9 @@ namespace CSVLintNppPlugin.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap csvlint1 {
+        internal static System.Drawing.Bitmap easteregg {
             get {
-                object obj = ResourceManager.GetObject("csvlint1", resourceCulture);
+                object obj = ResourceManager.GetObject("easteregg", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -93,9 +93,9 @@ namespace CSVLintNppPlugin.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap csvlint2 {
+        internal static System.Drawing.Bitmap oliebol {
             get {
-                object obj = ResourceManager.GetObject("csvlint2", resourceCulture);
+                object obj = ResourceManager.GetObject("oliebol", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -103,19 +103,9 @@ namespace CSVLintNppPlugin.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap star {
+        internal static System.Drawing.Bitmap pumpkin {
             get {
-                object obj = ResourceManager.GetObject("star", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap star_bmp {
-            get {
-                object obj = ResourceManager.GetObject("star_bmp", resourceCulture);
+                object obj = ResourceManager.GetObject("pumpkin", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

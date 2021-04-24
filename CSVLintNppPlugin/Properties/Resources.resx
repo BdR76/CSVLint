@@ -118,22 +118,19 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="csvlint1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>csvlint1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="easteregg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\easteregg1_32px.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="csvlint2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="csvlint" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>csvlint2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="csvlint_bmp1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>csvlint1.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="oliebol" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\oliebol1_32px.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="csvlint_bmp2" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>csvlint_bmp2.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="clover" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\clover_32px.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="star" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>star.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="star_bmp" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>star_bmp.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="pumpkin" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\pumpkin_32px.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>
