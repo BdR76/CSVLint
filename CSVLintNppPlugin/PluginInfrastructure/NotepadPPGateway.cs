@@ -47,26 +47,11 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
 			return path.ToString();
 		}
 
-        public void SetCurrentLanguage(LangType language)
-        {
-            Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_SETCURRENTLANGTYPE, Unused, (int)language);
-        }
-
-        /// <summary>
-        /// Gets the ID of the current tab in Notepad++
-        /// </summary>
-        /// <returns></returns>
-	    public static IntPtr GetCurrentBufferId()
-        {
-            return Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_GETCURRENTBUFFERID, Unused, Unused);
-        }
-
-        public void OpenFileInNpp(string filename)
-        {
-            // NPPM_DOOPEN
-            Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_DOOPEN, Unused, filename);
-        }
-    }
+		public void SetCurrentLanguage(LangType language)
+		{
+			Win32.SendMessage(PluginBase.nppData._nppHandle, (uint) NppMsg.NPPM_SETCURRENTLANGTYPE, Unused, (int) language);
+		}
+	}
 
 	/// <summary>
 	/// This class holds helpers for sending messages defined in the Resource_h.cs file. It is at the moment
