@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Forms;
 using CSVLint;
+using CSVLintNppPlugin.Forms;
 using CsvQuery.PluginInfrastructure;
 using Kbg.NppPluginNET.PluginInfrastructure;
 
@@ -157,6 +158,26 @@ namespace Kbg.NppPluginNET
                 //scintillaGateway.FindText(0, errval);
                 scintillaGateway.SetSelection(selpos, selpos + errval.Length);
             }
+        }
+
+        private void btnReformat_Click(object sender, EventArgs e)
+        {
+            string msg = "no update -> cancel button";
+            var frmedit = new ReformatForm();
+            frmedit.InitialiseSetting("yyyy-mm-dd hh:nn:ss", ";", ",");
+            DialogResult r = frmedit.ShowDialog();
+            if (r == DialogResult.OK)
+            {
+                string editDataTime = frmedit.newDataTime;
+                string editDecimal = frmedit.newDecimal;
+                string editSeparator = frmedit.newSeparator;
+
+                msg = String.Format("TODO: implement update\r\nDateTime update = {0}\r\nDecimal update = {1}\r\nSepatator update = {2}", frmedit.newDataTime, frmedit.newDecimal, frmedit.newSeparator);
+                // clicked OK
+            }
+            frmedit.Dispose();
+
+            MessageBox.Show(msg);
         }
     }
 }

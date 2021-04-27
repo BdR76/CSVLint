@@ -144,11 +144,6 @@ namespace Kbg.NppPluginNET
         //        if (daymonth == 101) picOliebol.Visible = true;  // January 1st
         //    };
         //}
-
-        private void btnOk_Click(object sender, EventArgs e)
-        {
-            Close();
-        }
         private void onLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             LinkLabel lbl = (sender as LinkLabel);

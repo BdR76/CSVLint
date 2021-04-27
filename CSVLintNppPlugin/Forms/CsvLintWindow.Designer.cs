@@ -30,6 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.btnReformat = new System.Windows.Forms.Button();
             this.btnRefresh = new System.Windows.Forms.Button();
             this.txtSchemaIni = new System.Windows.Forms.TextBox();
             this.btnValidate = new System.Windows.Forms.Button();
@@ -51,6 +52,7 @@
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.btnReformat);
             this.splitContainer1.Panel1.Controls.Add(this.btnRefresh);
             this.splitContainer1.Panel1.Controls.Add(this.txtSchemaIni);
             // 
@@ -61,6 +63,18 @@
             this.splitContainer1.Size = new System.Drawing.Size(1170, 354);
             this.splitContainer1.SplitterDistance = 390;
             this.splitContainer1.TabIndex = 7;
+            // 
+            // btnReformat
+            // 
+            this.btnReformat.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnReformat.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnReformat.Location = new System.Drawing.Point(305, 3);
+            this.btnReformat.Name = "btnReformat";
+            this.btnReformat.Size = new System.Drawing.Size(72, 32);
+            this.btnReformat.TabIndex = 7;
+            this.btnReformat.Text = "Reformat";
+            this.btnReformat.UseVisualStyleBackColor = true;
+            this.btnReformat.Click += new System.EventHandler(this.btnReformat_Click);
             // 
             // btnRefresh
             // 
@@ -142,5 +156,6 @@
         private System.Windows.Forms.Button btnValidate;
         private System.Windows.Forms.TextBox txtOutput;
         private System.Windows.Forms.ToolTip tooltipCsvLint;
+        private System.Windows.Forms.Button btnReformat;
     }
 }
