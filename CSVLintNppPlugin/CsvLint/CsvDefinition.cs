@@ -516,10 +516,10 @@ namespace CSVLint
 
             // defaults
             if (this.Separator == '\t') res += "Format=TabDelimited\r\n";
-            if (this.Separator == ',')  res += "Format=CSVDelimited\r\n";
+            if (this.Separator == ',') res += "Format=CSVDelimited\r\n";
             if (this.Separator == '\0') res += "Format=FixedLength\r\n";
             // custom character
-            if (res == "")              res += "Format=Delimited(" + this.Separator + ")\r\n";
+            if (res == "") res += "Format=Delimited(" + this.Separator + ")\r\n";
 
 
             res += "ColNameHeader=" + this.ColNameHeader + "\r\n";
@@ -603,11 +603,15 @@ namespace CSVLint
                 if (col.DataType == ColumnType.Unknown) def += " Text";
                 if (col.DataType == ColumnType.Integer) def += " Integer";
                 if (col.DataType == ColumnType.Decimal) def += " Float";
-                if (col.DataType == ColumnType.DateTime) {
+                if (col.DataType == ColumnType.DateTime)
+                {
                     // exception when datetime format different
-                    if (col.Mask == this.DateTimeFormat) {
+                    if (col.Mask == this.DateTimeFormat)
+                    {
                         def += " DateTime";
-                    } else {
+                    }
+                    else
+                    {
                         // schma.ini doesn't support multiple datetime formats
                         com = string.Format(";Col{0}={1} DateTime {2}\r\n", (i + 1), def, col.Mask);
                         def += " Text";
@@ -623,6 +627,43 @@ namespace CSVLint
                 // add alternative column format as comment
                 if (com != "") res += com;
             }
+
+            return res;
+        }
+
+        /// <summary>
+        /// Parse one line of input data based on the CsvDefinition
+        /// </summary>
+        public string[] ParseData(string line)
+        {
+            string[] res;
+
+            res = line.Split(Separator);
+
+            return res;
+        }
+
+        /// <summary>
+        ///  Based on the CsvDefinition, take array of data values and constructs one line of output
+        /// </summary>
+        public String ConstructLine(string[] data)
+        {
+            String res = "";
+
+            for (int c = 0; c < this.Fields.Count; c++)
+            {
+                if (this.Separator == '\0')
+                {
+                    // fixed width
+                    int wid = this.Fields[c].MaxWidth;
+                    res += data[c].PadLeft(wid, ' ');
+                }
+                else
+                {
+                    // character separated
+                    res += data[c] + this.Separator;
+                }
+            };
 
             return res;
         }

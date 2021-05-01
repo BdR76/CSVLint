@@ -19,6 +19,7 @@ namespace CSVLintNppPlugin.Forms
         public string newDataTime { get; set; }
         public string newDecimal { get; set; }
         public string newSeparator { get; set; }
+        public bool updateSeparator { get; set; }
 
         public void InitialiseSetting(string dtFormat, string decSep, string colSep)
         {
@@ -51,9 +52,14 @@ namespace CSVLintNppPlugin.Forms
         private void ReformatForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             // pass new values to previous form
-            newDataTime  = (chkDateTime.Checked  ? cmbDateTime.Text  : "");
-            newDecimal   = (chkDecimal.Checked   ? cmbDecimal.Text   : "");
+            newDataTime  = (chkDateTime.Checked  ? cmbDateTime.Text : "");
+            newDecimal   = (chkDecimal.Checked   ? cmbDecimal.Text : "");
             newSeparator = (chkSeparator.Checked ? cmbSeparator.Text : "");
+            updateSeparator = (chkSeparator.Checked);
+
+            // exception
+            if (newSeparator == "{Tab}") newSeparator = "\t";
+            if (newSeparator == "{Fixed width}") newSeparator = "\0";
         }
     }
 }

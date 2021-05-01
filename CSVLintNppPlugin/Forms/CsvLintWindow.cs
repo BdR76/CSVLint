@@ -39,6 +39,42 @@ namespace Kbg.NppPluginNET
             txtOutput.Clear();
         }
 
+        private CsvDefinition getCurrentCsvDef()
+        {
+            CsvDefinition csvdef;
+
+            // get csv definition from ini lines
+            string inilines = txtSchemaIni.Text;
+
+            // get key values from  ini lines
+            var enstr = inilines.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)
+               .Select(part => part.Split('='));
+
+            // check for duplicate keys before turning into dictionary
+            var dup = enstr.GroupBy(x => x[0])
+                          .Where(g => g.Count() > 1)
+                          .Select(y => y.Key)
+                          .ToList();
+            if (dup.Count > 0)
+            {
+                string errmsg = string.Format("Duplicate key(s) found ({0})", string.Join(",", dup));
+                //throw new System.ArgumentException(err, "Error");
+                //throw new ArgumentOutOfRangeException("error 123", err);
+                MessageBox.Show(errmsg, "Exception", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                csvdef = new CsvDefinition();
+            }
+            else
+            {
+                // create dictionary
+                Dictionary<String, String> keys = enstr.ToDictionary(split => split[0], split => split[1]);
+
+                // create dictionary
+                csvdef = new CsvDefinition(keys);
+            }
+            return csvdef;
+        }
+
         private void btnValidate_Click(object sender, EventArgs e)
         {
             string test = Main.Settings.NullValue;
@@ -60,33 +96,12 @@ namespace Kbg.NppPluginNET
             //string lines = scintillaGateway.GetTextRange(Math.Min(100000, textLength));
             string sample = scintillaGateway.GetText(Math.Min(100000, textLength));
 
-            // get csv definition from ini lines
-            string inilines = txtSchemaIni.Text;
+            // get dictionary
+            CsvDefinition csvdef = getCurrentCsvDef();
 
-            // get key values from  ini lines
-            var enstr = inilines.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)
-               .Select(part => part.Split('='));
-
-            // check for duplicate keys before turning into dictionary
-            var dup = enstr.GroupBy(x => x[0])
-                          .Where(g => g.Count() > 1)
-                          .Select(y => y.Key)
-                          .ToList();
-            if (dup.Count > 0)
+            // check if valid dictionary
+            if (csvdef.Fields.Count > 0)
             {
-                string errmsg = string.Format("Duplicate key(s) found ({0})", string.Join(",", dup));
-                //throw new System.ArgumentException(err, "Error");
-                //throw new ArgumentOutOfRangeException("error 123", err);
-                MessageBox.Show(errmsg, "Exception", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            else
-            {
-                // create dictionary
-                Dictionary<String, String> keys = enstr.ToDictionary(split => split[0], split => split[1]);
-
-                // create dictionary
-                CsvDefinition csvdef = new CsvDefinition(keys);
-
                 // validate data
                 CsvValidate csvval = new CsvValidate();
 
@@ -148,36 +163,85 @@ namespace Kbg.NppPluginNET
                 // interface to Notepad++
                 ScintillaGateway scintillaGateway = PluginBase.CurrentScintillaGateway;
                 scintillaGateway.GotoLine(linenumber - 1); // zero-based index
-                //int pos = scintillaGateway.GetCurrentPos();
-                //int sel_start = scintillaGateway.WordStartPosition(pos, true);
 
                 // set target to current line
                 scintillaGateway.SetTargetStart(Math.Max(scintillaGateway.GetCurrentPos(), scintillaGateway.GetAnchor()));
                 scintillaGateway.SetTargetEnd(scintillaGateway.GetLineEndPosition(linenumber - 1));
-                int selpos = scintillaGateway.SearchInTarget(1, errval);
-                //scintillaGateway.FindText(0, errval);
-                scintillaGateway.SetSelection(selpos, selpos + errval.Length);
+
+                // search in line and SetSelection to the error value
+                int selpos = scintillaGateway.SearchInTarget(errval.Length, errval);
+                if (selpos != -1) {
+                    scintillaGateway.SetSelection(selpos, selpos + errval.Length);
+                }
             }
+        }
+        private bool getReformatParameters(out string dt, out string dec, out string sep, out bool updsep)
+        {
+            // show reformat form
+            var frmedit = new ReformatForm();
+            frmedit.InitialiseSetting("yyyy-MM-dd hh:mm:ss", ".", "|");
+            DialogResult r = frmedit.ShowDialog();
+
+            // user clicked OK or Cancel
+            dt = frmedit.newDataTime;
+            dec = frmedit.newDecimal;
+            sep = frmedit.newSeparator;
+            updsep = frmedit.updateSeparator;
+
+            // clear up
+            frmedit.Dispose();
+
+            // return true (OK) or false (Cancel)
+            return (r == DialogResult.OK);
         }
 
         private void btnReformat_Click(object sender, EventArgs e)
         {
-            string msg = "no update -> cancel button";
-            var frmedit = new ReformatForm();
-            frmedit.InitialiseSetting("yyyy-mm-dd hh:nn:ss", ";", ",");
-            DialogResult r = frmedit.ShowDialog();
-            if (r == DialogResult.OK)
+            string editDataTime;
+            string editDecimal;
+            string editSeparator;
+            bool updateSeparator;
+
+            bool ok = getReformatParameters(out editDataTime, out editDecimal, out editSeparator, out updateSeparator);
+            if (ok)
             {
-                string editDataTime = frmedit.newDataTime;
-                string editDecimal = frmedit.newDecimal;
-                string editSeparator = frmedit.newSeparator;
+                // get dictionary
+                CsvDefinition csvdef = getCurrentCsvDef();
 
-                msg = String.Format("TODO: implement update\r\nDateTime update = {0}\r\nDecimal update = {1}\r\nSepatator update = {2}", frmedit.newDataTime, frmedit.newDecimal, frmedit.newSeparator);
-                // clicked OK
+                // analyze and determine csv definition
+                CsvEdit.ReformatDataFile(csvdef, editDataTime, editDecimal, editSeparator, updateSeparator);
+
+                String msg = "";
+
+                // refresh datadefinition
+                if (editDataTime != "")
+                {
+                    msg += String.Format("Reformat datetime format from \"{0}\" to \"{1}\"\r\n", csvdef.DateTimeFormat, editDataTime);
+                    csvdef.DateTimeFormat = editDataTime;
+                };
+
+                if (editDecimal != "")
+                {
+                    msg += String.Format("Reformat decimal separator from {0} to {1}\r\n", csvdef.DecimalSymbol, editDecimal);
+                    csvdef.DecimalSymbol = editDecimal[0];
+                };
+
+                if (updateSeparator)
+                {
+                    string oldsep = (csvdef.Separator == '\0' ? "{Fixed width}" : (csvdef.Separator == '\t' ? "{Tab}" : csvdef.Separator.ToString()));
+                    string newsep = (editSeparator == "\0" ? "{Fixed width}" : (editSeparator == "\t" ? "{Tab}" : editSeparator));
+
+                    msg += String.Format("Reformat column separator from {0} to {1}\r\n", oldsep, newsep);
+                    csvdef.Separator = editSeparator[0];
+                };
+
+                // display process message
+                msg += "Reformatting of data is ready.\r\n";
+                txtOutput.Text = msg;
+
+                // refresh datadefinition
+                txtSchemaIni.Text = csvdef.getIniLines();
             }
-            frmedit.Dispose();
-
-            MessageBox.Show(msg);
         }
     }
 }

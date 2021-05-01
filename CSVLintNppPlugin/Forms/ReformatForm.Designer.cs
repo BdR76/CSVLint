@@ -134,9 +134,10 @@
             this.cmbSeparator.FormattingEnabled = true;
             this.cmbSeparator.Items.AddRange(new object[] {
             ",",
-            "{tab}",
+            "{Tab}",
             ";",
-            "|"});
+            "|",
+            "{Fixed width}"});
             this.cmbSeparator.Location = new System.Drawing.Point(257, 105);
             this.cmbSeparator.Name = "cmbSeparator";
             this.cmbSeparator.Size = new System.Drawing.Size(83, 21);
@@ -168,6 +169,7 @@
             this.Controls.Add(this.btnOk);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "ReformatForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Reformat data";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ReformatForm_FormClosing);
             this.ResumeLayout(false);
