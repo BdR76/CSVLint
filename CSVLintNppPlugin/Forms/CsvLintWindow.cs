@@ -231,8 +231,16 @@ namespace Kbg.NppPluginNET
                     string oldsep = (csvdef.Separator == '\0' ? "{Fixed width}" : (csvdef.Separator == '\t' ? "{Tab}" : csvdef.Separator.ToString()));
                     string newsep = (editSeparator == "\0" ? "{Fixed width}" : (editSeparator == "\t" ? "{Tab}" : editSeparator));
 
+                    // fixed width doesn't contain header line (for example, columns can be width=1, no room in header line for column name longer than 1 character)
+                    if (editSeparator == "\0")
+                    {
+                        csvdef.ColNameHeader = false;
+                    }
+
                     msg += String.Format("Reformat column separator from {0} to {1}\r\n", oldsep, newsep);
                     csvdef.Separator = editSeparator[0];
+
+
                 };
 
                 // display process message

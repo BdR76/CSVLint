@@ -59,7 +59,7 @@ namespace CSVLint
                 this.Name = data;
 
                 // TODO: determine if first row is actually header names
-                if (this.Name == "") {
+                if ((this.Name == "") || (fixedwidth) ) {
                     this.Name = "F" + (this.Index + 1);
                 }
             }
@@ -182,7 +182,7 @@ namespace CSVLint
                         // numeric integer, examples "123", "-99", "+10" etc.
                         this.CountInteger++;
                     }
-                    else if ((digits > 0) && ((point == 1) || (comma == 1)) && (sign <= 1) && (length <= 12) && (datesep == 0) && (other == 0))
+                    else if ((digits > 0) && ((point == 1) || (comma == 1)) && (sign <= 1) && (length <= 12) && (datesep <= 2) && (other == 0)) // datesep <= 2 for example "-12.34" a dot and a minus
                     {
                         // numeric integer, examples "12.3", "-99,9" etc.
                         this.CountDecimal++;

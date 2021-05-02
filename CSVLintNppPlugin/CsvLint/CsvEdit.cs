@@ -38,10 +38,28 @@ namespace CSVLint
             String datanew = "";
             char newSep = (updateSeparator ? reformatSeparator[0] : csvdef.Separator);
 
+            // convert to fixed width, skip header line from source data because there is no room for column names in Fixed Width due to columns width can be 1 or 2 characters
+            bool skipheader = ((updateSeparator) && (newSep == '\0') && (csvdef.ColNameHeader));
+
+            // convert from fixed width to separated values, add header line
+            if ((updateSeparator) && (newSep != '\0') && (!csvdef.ColNameHeader))
+            {
+                // add header column names
+                for (int c = 0; c < csvdef.Fields.Count; c++)
+                {
+                    datanew += csvdef.Fields[c].Name + (c < csvdef.Fields.Count - 1 ? newSep.ToString() : "");
+                }
+                datanew += '\n';
+            }
+
             // process each line
             while ((line = s.ReadLine()) != null)
             {
                 linenr++;
+
+                // skip header line in source data, no header line in Fixed Width output data
+                if ((linenr == 1) && (skipheader)) continue;
+
                 // splite line into columns
                 String[] data = csvdef.ParseData(line);
 
@@ -88,7 +106,7 @@ namespace CSVLint
                     else
                     {
                         // character separated
-                        datanew += val + (c < csvdef.Fields.Count-1 ? newSep.ToString() : "");
+                        datanew += val + (c < csvdef.Fields.Count - 1 ? newSep.ToString() : "");
                     }
                 };
 
