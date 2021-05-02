@@ -1,12 +1,14 @@
 CSV Lint - Notepad++ plugin
 ===========================
 
-CSVLint is a plug-in for Notepad++ to validate and reformat tabular data files.
-You can take a dataset and:
+CSVLint is a plug-in for Notepad++ for metadata discovery, technical data
+validation and reformatting on tabular data files. You can take a dataset and:
 
-* Automatically detect columns and datatypes
-* Create schema.ini based on data
+* Scan for metadata, i.e. detect columns and datatypes
+* Create schema.ini based on metadata
 * Validate data against schema.ini
+* Convert datetime/decimal values to different formats
+* Convert between comma, semicolon, tab separated, fixed width formats
 
 ![preview screenshot](/csvlint_preview.png?raw=true "CSVLint plug-in preview")
 
@@ -72,13 +74,15 @@ It will check the input data for the following errors:
 * Too many decimals, example value "12.345" when NumberDigits=2.
 * Incorrect date format, example value "12/31/2018" when DateTimeFormat=dd/mm/yyyy
 
-Missing features
-----------------
-The CSVLint plugin is work-in-progress, here is list of still missing features
+Roadmap/goals
+-------------
+The CSVLint plugin is work-in-progress, here is list of features I want to add (~~strikethrough~~ is done)
 
+* ~~Convert datetime values to different formats~~
+* ~~Convert decimal symbol to point/comma~~
+* ~~Toggle between comma, semicolon, tab separated formats~~
 * Improve GUI instead of plain text
-* Convert datetime values to different formats
-* Convert decimal symbol to point/comma
+* Improve file reading, to process/edit large files (>1MB)
 * Count unique values based on column(s)
 * Allow format masks per individual column
 * Support quoted strings
@@ -97,13 +101,23 @@ The CSVLint plugin is work-in-progress, here is list of still missing features
 
 Acknowledgements
 ----------------
-Thanks to kbilsted for providing the excellent
+With thanks to:
+
+* kbilsted for providing the excellent
 [NotepadPlusPlusPluginPack.Net](https://github.com/kbilsted/NotepadPlusPlusPluginPack.Net)
-and [jokedst](https://github.com/jokedst/CsvQuery) and others for sharing their
-plugins on github. This plugin couldn't have been created without their examples.
+* jokedst, [CsvQuery](https://github.com/jokedst/CsvQuery) was the inspiration for converting [datasetmultitool](https://github.com/BdR76/datasetmultitool) as a Notepad++ plug-in
+* Anyone who shared their [plug-in on GitHub](https://github.com/search?l=C%23&q=notepad%2B%2B&type=Repositories)
+
+The CSV Lint plug-in couldn't have been created without their source examples and suggestions.
+
+Disclaimer
+----------
+This software is free-to-use and it is provided as-is without warranty of any kind,
+always back-up your data files to prevent data loss.
 
 History
 -------
-15-dec-2019 - first release v0.1
+15-dec-2019 - first release v0.1  
+02-may-2021 - reformat data, double-click jumps to line, various bugfixes v0.2
 
 BdR©2019 Free to use - send questions or comments: Bas de Reuver - bdr1976@gmail.com
