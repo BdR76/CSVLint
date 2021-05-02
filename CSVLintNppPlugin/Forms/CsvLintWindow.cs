@@ -23,12 +23,18 @@ namespace Kbg.NppPluginNET
 
         private void OnBtnRefresh_Click(object sender, EventArgs e)
         {
+            var dtStart = DateTime.Now;
+
             // analyze and determine csv definition
             CsvDefinition csvdef = CsvAnalyze.InferFromData();
 
+            var dtElapsed = (DateTime.Now - dtStart).ToString(@"hh\:mm\:ss\.fff");
+
             // display csv definition
             txtSchemaIni.Text = csvdef.GetIniLines();
+
             txtOutput.Clear();
+            txtOutput.Text = String.Format("Refresh from data is ready, time elapsed {0}", dtElapsed);
         }
 
         private CsvDefinition GetCurrentCsvDef()
@@ -69,17 +75,6 @@ namespace Kbg.NppPluginNET
 
         private void OnBtnValidate_Click(object sender, EventArgs e)
         {
-            string test = Main.Settings.NullValue;
-
-            if (test == "NULL")
-            {
-                Debug.WriteLine("wel NULL");
-            }
-            else
-            {
-                Debug.WriteLine("niet NULL");
-            }
-
             // get dictionary
             CsvDefinition csvdef = GetCurrentCsvDef();
 
@@ -188,8 +183,12 @@ namespace Kbg.NppPluginNET
                 // get dictionary
                 CsvDefinition csvdef = GetCurrentCsvDef();
 
+                var dtStart = DateTime.Now;
+
                 // analyze and determine csv definition
                 CsvEdit.ReformatDataFile(csvdef, editDataTime, editDecimal, editSeparator, updateSeparator);
+
+                var dtElapsed = (DateTime.Now - dtStart).ToString(@"hh\:mm\:ss\.fff");
 
                 String msg = "";
 
@@ -224,7 +223,7 @@ namespace Kbg.NppPluginNET
                 };
 
                 // display process message
-                msg += "Reformatting of data is ready.\r\n";
+                msg += String.Format("Reformat data is ready, time elapsed {0}\r\n", dtElapsed);
                 txtOutput.Text = msg;
 
                 // refresh datadefinition

@@ -62,6 +62,7 @@ namespace CSVLint
             string line = "";
             int lineCount = 0;
             int counterr = 0;
+            var dtStart = DateTime.Now;
 
             // if fixed length what is max line length
             int fixedlength = 0;
@@ -189,8 +190,10 @@ namespace CSVLint
                 }
             }
 
+            var dtElapsed = (DateTime.Now - dtStart).ToString(@"hh\:mm\:ss\.fff");
+
             // final ready message
-            line = string.Format("Inspected {0} lines, {1} data errors found.", lineCount, (this.log.Count == 0 ? "no" : "" + counterr));
+            line = string.Format("Inspected {0} lines, {1} data errors found, time elapsed {2}", lineCount, (this.log.Count == 0 ? "no" : counterr.ToString()), dtElapsed);
             this.log.Add(new LogLine(line, -1, -1));
         }
 
