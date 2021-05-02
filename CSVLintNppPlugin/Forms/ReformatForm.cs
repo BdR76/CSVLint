@@ -16,10 +16,10 @@ namespace CSVLintNppPlugin.Forms
             InitializeComponent();
         }
 
-        public string newDataTime { get; set; }
-        public string newDecimal { get; set; }
-        public string newSeparator { get; set; }
-        public bool updateSeparator { get; set; }
+        public string NewDataTime { get; set; }
+        public string NewDecimal { get; set; }
+        public string NewSeparator { get; set; }
+        public bool UpdateSeparator { get; set; }
 
         public void InitialiseSetting(string dtFormat, string decSep, string colSep)
         {
@@ -29,12 +29,12 @@ namespace CSVLintNppPlugin.Forms
             cmbSeparator.Text = colSep;
 
             // disable all
-            chkbx_CheckedChanged(chkDateTime, null);
-            chkbx_CheckedChanged(chkDecimal, null);
-            chkbx_CheckedChanged(chkSeparator, null);
+            OnChkbx_CheckedChanged(chkDateTime, null);
+            OnChkbx_CheckedChanged(chkDecimal, null);
+            OnChkbx_CheckedChanged(chkSeparator, null);
         }
 
-        private void chkbx_CheckedChanged(object sender, EventArgs e)
+        private void OnChkbx_CheckedChanged(object sender, EventArgs e)
         {
             // which checkbox, see index in Tag property
             int idx = Int32.Parse((sender as CheckBox).Tag.ToString());
@@ -52,14 +52,14 @@ namespace CSVLintNppPlugin.Forms
         private void ReformatForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             // pass new values to previous form
-            newDataTime  = (chkDateTime.Checked  ? cmbDateTime.Text : "");
-            newDecimal   = (chkDecimal.Checked   ? cmbDecimal.Text : "");
-            newSeparator = (chkSeparator.Checked ? cmbSeparator.Text : "");
-            updateSeparator = (chkSeparator.Checked);
+            NewDataTime  = (chkDateTime.Checked  ? cmbDateTime.Text : "");
+            NewDecimal   = (chkDecimal.Checked   ? cmbDecimal.Text : "");
+            NewSeparator = (chkSeparator.Checked ? cmbSeparator.Text : "");
+            UpdateSeparator = (chkSeparator.Checked);
 
             // exception
-            if (newSeparator == "{Tab}") newSeparator = "\t";
-            if (newSeparator == "{Fixed width}") newSeparator = "\0";
+            if (NewSeparator == "{Tab}") NewSeparator = "\t";
+            if (NewSeparator == "{Fixed width}") NewSeparator = "\0";
         }
     }
 }

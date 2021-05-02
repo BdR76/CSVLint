@@ -74,7 +74,7 @@
             this.btnReformat.TabIndex = 7;
             this.btnReformat.Text = "Reformat";
             this.btnReformat.UseVisualStyleBackColor = true;
-            this.btnReformat.Click += new System.EventHandler(this.btnReformat_Click);
+            this.btnReformat.Click += new System.EventHandler(this.OnBtnReformat_Click);
             // 
             // btnRefresh
             // 
@@ -87,7 +87,7 @@
             this.tooltipCsvLint.SetToolTip(this.btnRefresh, "Automatically detect metadata and column datatypes\r\nfrom the currently selected f" +
         "ile.");
             this.btnRefresh.UseVisualStyleBackColor = true;
-            this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
+            this.btnRefresh.Click += new System.EventHandler(this.OnBtnRefresh_Click);
             // 
             // txtSchemaIni
             // 
@@ -112,7 +112,7 @@
             this.btnValidate.Text = "Validate data";
             this.tooltipCsvLint.SetToolTip(this.btnValidate, "Validate currently selected file\r\nbased on metadata on the left.");
             this.btnValidate.UseVisualStyleBackColor = true;
-            this.btnValidate.Click += new System.EventHandler(this.btnValidate_Click);
+            this.btnValidate.Click += new System.EventHandler(this.OnBtnValidate_Click);
             // 
             // txtOutput
             // 
@@ -128,7 +128,7 @@
             this.txtOutput.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.txtOutput.Size = new System.Drawing.Size(761, 300);
             this.txtOutput.TabIndex = 4;
-            this.txtOutput.DoubleClick += new System.EventHandler(this.txtOutput_DoubleClick);
+            this.txtOutput.DoubleClick += new System.EventHandler(this.OnTxtOutput_DoubleClick);
             // 
             // CsvLintWindow
             // 

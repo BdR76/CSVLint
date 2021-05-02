@@ -69,7 +69,7 @@
             this.chkDateTime.Tag = "0";
             this.chkDateTime.Text = "Datetime format";
             this.chkDateTime.UseVisualStyleBackColor = true;
-            this.chkDateTime.CheckedChanged += new System.EventHandler(this.chkbx_CheckedChanged);
+            this.chkDateTime.CheckedChanged += new System.EventHandler(this.OnChkbx_CheckedChanged);
             // 
             // chkDecimal
             // 
@@ -81,7 +81,7 @@
             this.chkDecimal.Tag = "1";
             this.chkDecimal.Text = "Decimal separator";
             this.chkDecimal.UseVisualStyleBackColor = true;
-            this.chkDecimal.CheckedChanged += new System.EventHandler(this.chkbx_CheckedChanged);
+            this.chkDecimal.CheckedChanged += new System.EventHandler(this.OnChkbx_CheckedChanged);
             // 
             // cmbDecimal
             // 
@@ -127,7 +127,7 @@
             this.chkSeparator.Tag = "2";
             this.chkSeparator.Text = "Column separator";
             this.chkSeparator.UseVisualStyleBackColor = true;
-            this.chkSeparator.CheckedChanged += new System.EventHandler(this.chkbx_CheckedChanged);
+            this.chkSeparator.CheckedChanged += new System.EventHandler(this.OnChkbx_CheckedChanged);
             // 
             // cmbSeparator
             // 

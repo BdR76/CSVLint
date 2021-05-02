@@ -272,8 +272,7 @@ namespace CSVLint
                     string k = line.Key.ToLower();
                     string Val = line.Value.Trim();
                     string vallow = Val.ToLower();
-                    int vint;
-                    bool bint = int.TryParse(Val, out vint);
+                    bool bint = int.TryParse(Val, out int vint);
 
                     // most important, what is the separator
                     if (k == "format")
@@ -394,8 +393,7 @@ namespace CSVLint
                             vallow = Val.ToLower();
 
                             width = width.Replace("width ", "");
-                            int n;
-                            if (int.TryParse(width, out n))
+                            if (int.TryParse(width, out int n))
                             {
                                 maxwidth = n;
                             };
@@ -510,7 +508,7 @@ namespace CSVLint
                 }
             }
         }
-        public string getIniLines()
+        public string GetIniLines()
         {
             string res = "";
 

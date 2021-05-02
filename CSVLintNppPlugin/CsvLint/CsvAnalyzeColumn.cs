@@ -91,7 +91,6 @@ namespace CSVLint
                     int other = 0;
                     char sep1 = '\0';
                     char sep2 = '\0';
-                    string datedig1 = "";
                     int ddmax1 = 0;
                     int ddmax2 = 0;
                     char dec = '\0';
@@ -118,7 +117,7 @@ namespace CSVLint
                             {
                                 // check if numeric up to the first separator
                                 sep1 = ch;
-                                datedig1 = data.Substring(0, data.IndexOf(ch));
+                                string datedig1 = data.Substring(0, data.IndexOf(ch));
                                 // keep max number example 31-12-2020 -> keep 31
                                 bool isNumeric = int.TryParse(datedig1, out int n);
                                 if (isNumeric)
@@ -131,7 +130,7 @@ namespace CSVLint
                                 // check if numeric up to the first separator
                                 sep2 = ch;
                                 int pos1 = data.IndexOf(sep1) + 1;
-                                datedig1 = data.Substring(pos1, data.IndexOf(ch, pos1) - pos1);
+                                string datedig1 = data.Substring(pos1, data.IndexOf(ch, pos1) - pos1);
                                 // keep max number example 31-12-2020 -> keep 31
                                 bool isNumeric = int.TryParse(datedig1, out int n);
                                 if (isNumeric)
@@ -208,15 +207,15 @@ namespace CSVLint
         {
             // determine most likely datatype based on data
             string mask = "";
-            CsvColumn result = new CsvColumn(this.Index);
-
-            result.Name = this.Name;
-
-            result.DataType = ColumnType.String;
-            result.MaxWidth = 0;
-            result.Mask = "";
-            result.DecimalSymbol = '.';
-            result.Decimals = 0;
+            CsvColumn result = new CsvColumn(Index)
+            {
+                Name = Name,
+                DataType = ColumnType.String,
+                MaxWidth = 0,
+                Mask = "",
+                DecimalSymbol = '.',
+                Decimals = 0
+            };
 
             // check if whole number integers (no decimals)
             if ((this.CountInteger > this.CountString) && (this.CountInteger > this.CountDecimal) && (this.CountInteger > this.CountDateTime))
@@ -289,9 +288,9 @@ namespace CSVLint
                 }
 
                 // also includes time
-                if (this.MaxWidth >= 13) mask = mask + " HH:mm"; // example "01-01-2019 12:00"
-                if (this.MaxWidth > 16) mask = mask + ":ss";    // example "1-1-2019 2:00:00"
-                if (this.MaxWidth > 19) mask = mask + ".fff";   // example "01-01-2019 12:00:00.000"
+                if (this.MaxWidth >= 13) mask += " HH:mm"; // example "01-01-2019 12:00"
+                if (this.MaxWidth > 16) mask += ":ss";    // example "1-1-2019 2:00:00"
+                if (this.MaxWidth > 19) mask += ".fff";   // example "01-01-2019 12:00:00.000"
 
                 // build mask, fixed length date "dd-mm-yyyy" or not fixed length "d-m-yyyy" without prefix zeroes
                 if (this.MinWidth < this.MaxWidth)
@@ -313,12 +312,11 @@ namespace CSVLint
 
             String str = "";
 
-            
-            if (col.DataType == CSVLint.ColumnType.String)   str = str + "String";
-            if (col.DataType == CSVLint.ColumnType.Integer)  str = str + "Integer";
-            if (col.DataType == CSVLint.ColumnType.DateTime) str = str + "DateTime";
-            if (col.DataType == CSVLint.ColumnType.Decimal)  str = str + "Decimal";
-            if (col.DataType == CSVLint.ColumnType.Unknown)  str = str + "Unknown";
+            if (col.DataType == CSVLint.ColumnType.String)   str += "String";
+            if (col.DataType == CSVLint.ColumnType.Integer)  str += "Integer";
+            if (col.DataType == CSVLint.ColumnType.DateTime) str += "DateTime";
+            if (col.DataType == CSVLint.ColumnType.Decimal)  str += "Decimal";
+            if (col.DataType == CSVLint.ColumnType.Unknown)  str += "Unknown";
 
             str = str + "\r\nwidth=" + col.MaxWidth + "\r\n";
             str = str + "DecimalSymbol=" + col.DecimalSymbol + "\r\n";

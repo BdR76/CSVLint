@@ -43,7 +43,7 @@ namespace CSVLint
         public static CsvDefinition InferFromData(string data)
         {
             // First do a letter frequency analysis on each row
-            var s = new StringReader(data);
+            var strfreq = new StringReader(data);
             string line;
             int lineCount = 0, linesQuoted = 0;
 
@@ -63,7 +63,7 @@ namespace CSVLint
             var lineLengths = new Dictionary<int, int>();
 
             // analyse individual character frequencies
-            while ((line = s.ReadLine()) != null)
+            while ((line = strfreq.ReadLine()) != null)
             {
                 // letter freq per line
                 var letterFrequency = new Dictionary<char, int>();
@@ -141,6 +141,8 @@ namespace CSVLint
                 // stop after 20 lines
                 if (lineCount++ > 20) break;
             }
+
+            strfreq.Dispose();
 
             // check the variance on the frequency of each char
             var variances = new Dictionary<char, float>();
@@ -251,7 +253,7 @@ namespace CSVLint
 
             // reset string reader to first line is not possible, create a new one
             bool fixedwidth = (result.Separator == '\0');
-            s = new StringReader(data);
+            var strdata = new StringReader(data);
 
             // examine data and keep statistics for each column
             List<CsvAnalyzeColumn> colstats = new List<CsvAnalyzeColumn>();
@@ -259,7 +261,7 @@ namespace CSVLint
             lineCount = 0;
 
             // examine data
-            while ((line = s.ReadLine()) != null)
+            while ((line = strdata.ReadLine()) != null)
             {
                 // keep track of how many lines
                 lineCount++;
@@ -301,6 +303,8 @@ namespace CSVLint
                     colstats[i].InputData(values[i], fixedwidth);
                 }
             }
+
+            strdata.Dispose();
 
             // add columns as actual fields
             int idx = 0;

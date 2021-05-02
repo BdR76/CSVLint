@@ -83,7 +83,7 @@
             this.lnkGithub.Tag = "0";
             this.lnkGithub.Text = "CSVLint on GitHub";
             this.lnkGithub.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.lnkGithub.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.onLinkClicked);
+            this.lnkGithub.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnLinkClicked);
             // 
             // lnkContact
             // 
@@ -97,7 +97,7 @@
             this.lnkContact.Tag = "1";
             this.lnkContact.Text = "bdr1976@gmail.com";
             this.lnkContact.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.lnkContact.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.onLinkClicked);
+            this.lnkContact.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnLinkClicked);
             // 
             // picEasterEgg
             // 
@@ -138,6 +138,7 @@
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "About";
+            this.Load += new System.EventHandler(this.AboutForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.picEasterEgg)).EndInit();
             this.ResumeLayout(false);
 

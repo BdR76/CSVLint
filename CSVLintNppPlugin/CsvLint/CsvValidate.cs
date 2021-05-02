@@ -15,18 +15,18 @@ using System.Threading.Tasks;
 
 namespace CSVLint
 {
-    class logline
+    class LogLine
     {
         public string Message;
         public int LineNumber;
         public int Severity; // -1 is info message, 0=warning, 1=error
-        public logline(string msg)
+        public LogLine(string msg)
         {
             this.Message = msg;
             this.LineNumber = -1;
             this.Severity = -1;
         }
-        public logline(string msg, int linenr, int sev)
+        public LogLine(string msg, int linenr, int sev)
         {
             this.Message = msg;
             this.LineNumber = linenr;
@@ -36,11 +36,11 @@ namespace CSVLint
 
     class CsvValidate
     {
-        private List<logline> log;
+        private readonly List<LogLine> log;
 
         public CsvValidate()
         {
-            this.log = new List<logline>();
+            this.log = new List<LogLine>();
         }
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace CSVLint
             {
                 // warning message
                 string msg = string.Format("Nothing to inspect, not tabular data ({0}).", csvdef.Fields[0].Name);
-                this.log.Add(new logline(msg, -1, -1));
+                this.log.Add(new LogLine(msg, -1, -1));
                 return;
             }
 
@@ -107,7 +107,7 @@ namespace CSVLint
                             // get column value
                             string val = line.Substring(pos1, pos2);
                             values.Add(val);
-                            pos1 = pos1 + pos2;
+                            pos1 += pos2;
                         }
 
                         // too many or too few characters in line
@@ -128,7 +128,7 @@ namespace CSVLint
                     // too many or too few columns
                     if (values.Count != csvdef.Fields.Count)
                     {
-                        err = err + string.Format("Too {0} columns, ", (values.Count > csvdef.Fields.Count ? "many" : "few"));
+                        err += string.Format("Too {0} columns, ", (values.Count > csvdef.Fields.Count ? "many" : "few"));
                         counterr++;
                     }
 
@@ -162,7 +162,7 @@ namespace CSVLint
                                     // column header
                                     if (val != csvdef.Fields[i].Name)
                                     {
-                                        err = err + string.Format("unexpected column name \"{0}\", ", val);
+                                        err += string.Format("unexpected column name \"{0}\", ", val);
                                         counterr++;
                                     }
                                 }
@@ -172,7 +172,7 @@ namespace CSVLint
                                     string evalerr = this.EvaluateDataValue(val, csvdef.Fields[i], i);
                                     if (evalerr != "")
                                     {
-                                        err = err + evalerr;
+                                        err += evalerr;
                                         counterr++;
                                     }
                                 }
@@ -184,14 +184,14 @@ namespace CSVLint
                     if (err != "")
                     {
                         err = err.Remove(err.Length - 2); // remove last comma ", "
-                        this.log.Add(new logline(err, lineCount, 1));
+                        this.log.Add(new LogLine(err, lineCount, 1));
                     }
                 }
             }
 
             // final ready message
             line = string.Format("Inspected {0} lines, {1} data errors found.", lineCount, (this.log.Count == 0 ? "no" : "" + counterr));
-            this.log.Add(new logline(line, -1, -1));
+            this.log.Add(new LogLine(line, -1, -1));
         }
 
         /// <summary>
@@ -211,7 +211,7 @@ namespace CSVLint
             // check if value is too long
             if (val.Length > coldef.MaxWidth)
             {
-                err = err + string.Format("Column {0} value \"{1}\" is too long, ", colnr, val);
+                err += string.Format("Column {0} value \"{1}\" is too long, ", colnr, val);
             }
             else {
                 // validation based on datetype
@@ -222,7 +222,7 @@ namespace CSVLint
                 {
                     case ColumnType.Integer:
                         typ = "integer";
-                        valid = EvaluateInteger(val, coldef);
+                        valid = EvaluateInteger(val);
                         break;
                     case ColumnType.Decimal:
                         typ = "decimal";
@@ -239,11 +239,11 @@ namespace CSVLint
                 {
                     if (msg == "")
                     {
-                        err = err + string.Format("Column {0} value \"{1}\" not a valid {2} value, ", colnr, val, typ);
+                        err += string.Format("Column {0} value \"{1}\" not a valid {2} value, ", colnr, val, typ);
                     }
                     else
                     {
-                        err = err + string.Format("Column {0} value \"{1}\" {2}, ", colnr, val, msg);
+                        err += string.Format("Column {0} value \"{1}\" {2}, ", colnr, val, msg);
                     };
                 }
             }
@@ -256,9 +256,9 @@ namespace CSVLint
         ///     validate integer value
         /// </summary>
         /// <param name="val"> integer value, examples "1", "23", "-456" etc.</param>
-        private bool EvaluateInteger(string val, CsvColumn coldef)
+        private bool EvaluateInteger(string val)
         {
-            bool isNumeric = int.TryParse(val, out int n);
+            bool isNumeric = int.TryParse(val, out _);
             return isNumeric;
         }
 
@@ -269,7 +269,7 @@ namespace CSVLint
         private bool EvaluateDecimal(string val, CsvColumn coldef, out string err)
         {
             // cannot be converted to decimal
-            bool isFloat = float.TryParse(val, out float n);
+            bool isFloat = float.TryParse(val, out _);
 
             err = "";
 
@@ -286,8 +286,8 @@ namespace CSVLint
             if ( (decpos != -1) && (val.Length - decpos - 1 > coldef.iTag) )
             {
                 isFloat = false;
-                if (err != "") err = err + " and ";
-                err = err + "has too many decimals";
+                if (err != "") err += " and ";
+                err += "has too many decimals";
             }
 
             return isFloat;
@@ -300,7 +300,6 @@ namespace CSVLint
         private bool EvaluateDateTime(string val, CsvColumn coldef, out string err)
         {
             bool isDate = false;
-            DateTime dateValue;
 
             err = "";
 
@@ -308,7 +307,7 @@ namespace CSVLint
             if (DateTime.TryParseExact(val, coldef.Mask,
                                        new CultureInfo("en-US"),
                                        DateTimeStyles.None,
-                                       out dateValue))
+                                       out DateTime dateValue))
             {
                 // valid date
                 isDate = true;
@@ -325,7 +324,7 @@ namespace CSVLint
             return isDate;
         }
 
-        public string report()
+        public string Report()
         {
             string str = "";
 
@@ -337,8 +336,8 @@ namespace CSVLint
                 msg = (line.Severity >= 0 ? (line.Severity == 0 ? "** warning " : "** error ") + msg + ": " : "");
 
                 // add the message
-                msg = msg + line.Message;
-                str = str + msg + "\r\n";
+                msg += line.Message;
+                str += msg + "\r\n";
             }
 
             return str;

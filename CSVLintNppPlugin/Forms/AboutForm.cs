@@ -13,22 +13,26 @@ namespace Kbg.NppPluginNET
 {
     public partial class AboutForm : Form
     {
-        private ToolTip helperTip = new ToolTip();
+        private readonly ToolTip helperTip = new ToolTip();
         public AboutForm()
         {
             InitializeComponent();
 
-            String ver = this.getVersion();
-            lblTitle.Text = lblTitle.Text + ver;
+            String ver = GetVersion();
+            lblTitle.Text += ver;
 
             // tooltip initialization
             helperTip.SetToolTip(lnkGithub, "Open the CSVLint GitHub page (right-click to copy url)");
             helperTip.SetToolTip(lnkContact, "Send comments or suggestions (right-click to copy address)");
 
-            displayEasterEgg();
+            DisplayEasterEgg();
+        }
+        private void AboutForm_Load(object sender, EventArgs e)
+        {
+
         }
 
-        private string getVersion()
+        private string GetVersion()
         {
             // version for example "1.3.0.0"
             String ver = Assembly.GetExecutingAssembly().GetName().Version.ToString();
@@ -40,7 +44,7 @@ namespace Kbg.NppPluginNET
             }
             return ver;
         }
-        private int isEaster(DateTime dt)
+        private int IsEaster(DateTime dt)
         {
             int month = dt.Month;
             if ((month == 3) || (month == 4)) // always march or april anyway
@@ -70,7 +74,7 @@ namespace Kbg.NppPluginNET
 
             return 0; // not Easter day
         }
-        private void displayEasterEgg() {
+        private void DisplayEasterEgg() {
             // display easter egg icon on certain dates
             DateTime today = DateTime.Now.AddHours(-3); // day 'starts' in the morning and lasts after midnight (especially for new years eve etc.)
 
@@ -78,7 +82,7 @@ namespace Kbg.NppPluginNET
             String obj = "";
             Image img = CSVLintNppPlugin.Properties.Resources.easteregg;
 
-            int easter = isEaster(today);
+            int easter = IsEaster(today);
             if (easter > 0)
             {
                 // March/April ?th, varies
@@ -130,7 +134,7 @@ namespace Kbg.NppPluginNET
         //    // display easter egg icon on certain dates
         //    DateTime today = DateTime.Now.AddHours(-3); // day 'starts' in the morning and lasts after midnight (especially for new years eve etc.)
         //
-        //    if (this.isEaster(today))
+        //    if (IsEaster(today))
         //    {
         //        picEasterEgg.Visible = true;
         //    }
@@ -144,12 +148,12 @@ namespace Kbg.NppPluginNET
         //        if (daymonth == 101) picOliebol.Visible = true;  // January 1st
         //    };
         //}
-        private void onLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        private void OnLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             LinkLabel lbl = (sender as LinkLabel);
             string url = lbl.Text;
             string urlcopy = url;
-            if (lbl.Tag == "0")
+            if ((int)lbl.Tag == 0)
             {
                 url = "https://github.com/BdR76/CSVLint/";
                 urlcopy = url;

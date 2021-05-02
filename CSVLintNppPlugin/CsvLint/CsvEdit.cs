@@ -30,11 +30,11 @@ namespace CSVLint
             ScintillaGateway scintillaGateway = PluginBase.CurrentScintillaGateway;
 
             // use stringreader to go line by line
-            var s = ScintillaStreams.StreamAllText();
+            var strdata = ScintillaStreams.StreamAllText();
 
             //var s = new StringReader(data);
             int linenr = 0;
-            String line = "";
+            String line;
             String datanew = "";
             char newSep = (updateSeparator ? reformatSeparator[0] : csvdef.Separator);
 
@@ -53,7 +53,7 @@ namespace CSVLint
             }
 
             // process each line
-            while ((line = s.ReadLine()) != null)
+            while ((line = strdata.ReadLine()) != null)
             {
                 linenr++;
 
@@ -114,6 +114,8 @@ namespace CSVLint
                 datanew += '\n';
             };
 
+            strdata.Dispose();
+
             // update text in editor
             scintillaGateway.SetText(datanew);
         }
@@ -121,19 +123,17 @@ namespace CSVLint
         /// <summary>
         ///     update all date columns to new date format
         /// </summary>
-        /// <param name="data"> csv data </param>
-        public void UpdateAllDateFormat(string data)
+        public void UpdateAllDateFormat()
         {
             // read all text and replace
-            var sr = ScintillaStreams.StreamAllText();
-            ScintillaGateway scintillaGateway = PluginBase.CurrentScintillaGateway;
+            //var sr = ScintillaStreams.StreamAllText();
+            //ScintillaGateway scintillaGateway = PluginBase.CurrentScintillaGateway;
         }
 
         /// <summary>
         ///     update all decimal columns to new decimal format
         /// </summary>
-        /// <param name="data"> csv data </param>
-        public void UpdateAllDecimal(string data)
+        public void UpdateAllDecimal()
         {
             // TODO implement
         }
@@ -141,8 +141,7 @@ namespace CSVLint
         /// <summary>
         ///     update a single column to new data type
         /// </summary>
-        /// <param name="data"> csv data </param>
-        public void UpdateColumn(string data)
+        public void UpdateColumn()
         {
             // TODO implement
         }
@@ -150,8 +149,7 @@ namespace CSVLint
         /// <summary>
         ///     split invalid values of column into a new column
         /// </summary>
-        /// <param name="data"> csv data </param>
-        public void SplitColumn(string data)
+        public void SplitColumn()
         {
             // TODO implement
         }

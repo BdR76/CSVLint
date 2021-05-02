@@ -21,7 +21,7 @@ namespace Kbg.NppPluginNET
             InitializeComponent();
         }
 
-        private void btnRefresh_Click(object sender, EventArgs e)
+        private void OnBtnRefresh_Click(object sender, EventArgs e)
         {
             // interface to Notepad++
             ScintillaGateway scintillaGateway = PluginBase.CurrentScintillaGateway;
@@ -35,11 +35,11 @@ namespace Kbg.NppPluginNET
             CsvDefinition csvdef = CsvAnalyze.InferFromData(lines);
 
             // display csv definition
-            txtSchemaIni.Text = csvdef.getIniLines();
+            txtSchemaIni.Text = csvdef.GetIniLines();
             txtOutput.Clear();
         }
 
-        private CsvDefinition getCurrentCsvDef()
+        private CsvDefinition GetCurrentCsvDef()
         {
             CsvDefinition csvdef;
 
@@ -75,7 +75,7 @@ namespace Kbg.NppPluginNET
             return csvdef;
         }
 
-        private void btnValidate_Click(object sender, EventArgs e)
+        private void OnBtnValidate_Click(object sender, EventArgs e)
         {
             string test = Main.Settings.NullValue;
 
@@ -88,16 +88,8 @@ namespace Kbg.NppPluginNET
                 Debug.WriteLine("niet NULL");
             }
 
-            // interface to Notepad++
-            ScintillaGateway scintillaGateway = PluginBase.CurrentScintillaGateway;
-
-            // get sample of text
-            var textLength = scintillaGateway.GetTextLength();
-            //string lines = scintillaGateway.GetTextRange(Math.Min(100000, textLength));
-            string sample = scintillaGateway.GetText(Math.Min(100000, textLength));
-
             // get dictionary
-            CsvDefinition csvdef = getCurrentCsvDef();
+            CsvDefinition csvdef = GetCurrentCsvDef();
 
             // check if valid dictionary
             if (csvdef.Fields.Count > 0)
@@ -107,16 +99,17 @@ namespace Kbg.NppPluginNET
 
                 var sr = ScintillaStreams.StreamAllText();
 
-                //csvval.ValidateData(sample, csvdef);
                 csvval.ValidateData(sr, csvdef);
 
+                sr.Dispose();
+
                 // display output message or errors
-                string msg = csvval.report();
+                string msg = csvval.Report();
                 txtOutput.Text = msg;
             }
         }
 
-        private void txtOutput_DoubleClick(object sender, EventArgs e)
+        private void OnTxtOutput_DoubleClick(object sender, EventArgs e)
         {
             // double click on text box to jump to line in editor, 
             // Note: should fix this q&d solution, log and ui should be properly decoupled
@@ -175,7 +168,7 @@ namespace Kbg.NppPluginNET
                 }
             }
         }
-        private bool getReformatParameters(out string dt, out string dec, out string sep, out bool updsep)
+        private bool GetReformatParameters(out string dt, out string dec, out string sep, out bool updsep)
         {
             // show reformat form
             var frmedit = new ReformatForm();
@@ -183,10 +176,10 @@ namespace Kbg.NppPluginNET
             DialogResult r = frmedit.ShowDialog();
 
             // user clicked OK or Cancel
-            dt = frmedit.newDataTime;
-            dec = frmedit.newDecimal;
-            sep = frmedit.newSeparator;
-            updsep = frmedit.updateSeparator;
+            dt = frmedit.NewDataTime;
+            dec = frmedit.NewDecimal;
+            sep = frmedit.NewSeparator;
+            updsep = frmedit.UpdateSeparator;
 
             // clear up
             frmedit.Dispose();
@@ -195,18 +188,13 @@ namespace Kbg.NppPluginNET
             return (r == DialogResult.OK);
         }
 
-        private void btnReformat_Click(object sender, EventArgs e)
+        private void OnBtnReformat_Click(object sender, EventArgs e)
         {
-            string editDataTime;
-            string editDecimal;
-            string editSeparator;
-            bool updateSeparator;
-
-            bool ok = getReformatParameters(out editDataTime, out editDecimal, out editSeparator, out updateSeparator);
+            bool ok = GetReformatParameters(out string editDataTime, out string editDecimal, out string editSeparator, out bool updateSeparator);
             if (ok)
             {
                 // get dictionary
-                CsvDefinition csvdef = getCurrentCsvDef();
+                CsvDefinition csvdef = GetCurrentCsvDef();
 
                 // analyze and determine csv definition
                 CsvEdit.ReformatDataFile(csvdef, editDataTime, editDecimal, editSeparator, updateSeparator);
@@ -248,7 +236,7 @@ namespace Kbg.NppPluginNET
                 txtOutput.Text = msg;
 
                 // refresh datadefinition
-                txtSchemaIni.Text = csvdef.getIniLines();
+                txtSchemaIni.Text = csvdef.GetIniLines();
             }
         }
     }
