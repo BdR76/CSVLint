@@ -23,16 +23,8 @@ namespace Kbg.NppPluginNET
 
         private void OnBtnRefresh_Click(object sender, EventArgs e)
         {
-            // interface to Notepad++
-            ScintillaGateway scintillaGateway = PluginBase.CurrentScintillaGateway;
-
-            // get text
-            var textLength = scintillaGateway.GetTextLength();
-            //string lines = scintillaGateway.GetText(Math.Min(1000000, textLength)); // TODO sample size as settings
-            string lines = scintillaGateway.GetText(textLength);
-
             // analyze and determine csv definition
-            CsvDefinition csvdef = CsvAnalyze.InferFromData(lines);
+            CsvDefinition csvdef = CsvAnalyze.InferFromData();
 
             // display csv definition
             txtSchemaIni.Text = csvdef.GetIniLines();

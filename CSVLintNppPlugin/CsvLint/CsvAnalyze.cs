@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CSVLint.Tools;
+using CsvQuery.PluginInfrastructure;
 
 namespace CSVLint
 {
@@ -40,10 +41,10 @@ namespace CSVLint
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        public static CsvDefinition InferFromData(string data)
+        public static CsvDefinition InferFromData()
         {
             // First do a letter frequency analysis on each row
-            var strfreq = new StringReader(data);
+            var strfreq = ScintillaStreams.StreamAllText();
             string line;
             int lineCount = 0, linesQuoted = 0;
 
@@ -253,7 +254,8 @@ namespace CSVLint
 
             // reset string reader to first line is not possible, create a new one
             bool fixedwidth = (result.Separator == '\0');
-            var strdata = new StringReader(data);
+
+            var strdata = ScintillaStreams.StreamAllText();
 
             // examine data and keep statistics for each column
             List<CsvAnalyzeColumn> colstats = new List<CsvAnalyzeColumn>();
