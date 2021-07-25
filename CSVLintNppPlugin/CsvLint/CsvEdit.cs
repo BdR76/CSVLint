@@ -22,7 +22,7 @@ namespace CSVLint
         ///     reformat file for date, decimal and separator
         /// </summary>
         /// <param name="data"> csv data </param>
-        public static void ReformatDataFile(CsvDefinition csvdef, string reformatDatTime, string reformatDecimal, string reformatSeparator, bool updateSeparator)
+        public static void ReformatDataFile(CsvDefinition csvdef, string reformatDatTime, string reformatDecimal, string reformatSeparator, bool updateSeparator, bool trimAll)
         {
             // TODO: nullable parameters
 
@@ -68,6 +68,9 @@ namespace CSVLint
                 {
                     // next value
                     String val = data[c];
+
+                    // trim all values
+                    if (trimAll) val = val.Trim();
 
                     // datetime reformat
                     if ( (csvdef.Fields[c].DataType == ColumnType.DateTime) && (reformatDatTime != "") )

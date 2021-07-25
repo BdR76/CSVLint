@@ -37,25 +37,26 @@
             this.chkSeparator = new System.Windows.Forms.CheckBox();
             this.cmbSeparator = new System.Windows.Forms.ComboBox();
             this.lblReformat = new System.Windows.Forms.Label();
+            this.chkTrimAll = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // btnOk
             // 
             this.btnOk.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.btnOk.Location = new System.Drawing.Point(13, 161);
+            this.btnOk.Location = new System.Drawing.Point(13, 173);
             this.btnOk.Name = "btnOk";
             this.btnOk.Size = new System.Drawing.Size(100, 30);
-            this.btnOk.TabIndex = 7;
+            this.btnOk.TabIndex = 8;
             this.btnOk.Text = "Ok";
             this.btnOk.UseVisualStyleBackColor = true;
             // 
             // btnCancel
             // 
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(240, 161);
+            this.btnCancel.Location = new System.Drawing.Point(240, 173);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(100, 30);
-            this.btnCancel.TabIndex = 6;
+            this.btnCancel.TabIndex = 7;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
             // 
@@ -153,11 +154,23 @@
             this.lblReformat.TabIndex = 8;
             this.lblReformat.Text = "Reformat (note: always back-up your data files to prevent data loss)";
             // 
+            // chkTrimAll
+            // 
+            this.chkTrimAll.AutoSize = true;
+            this.chkTrimAll.Location = new System.Drawing.Point(13, 137);
+            this.chkTrimAll.Name = "chkTrimAll";
+            this.chkTrimAll.Size = new System.Drawing.Size(93, 17);
+            this.chkTrimAll.TabIndex = 6;
+            this.chkTrimAll.Tag = "3";
+            this.chkTrimAll.Text = "Trim all values";
+            this.chkTrimAll.UseVisualStyleBackColor = true;
+            this.chkTrimAll.CheckedChanged += new System.EventHandler(this.OnChkbx_CheckedChanged);
+            // 
             // ReformatForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(356, 208);
+            this.ClientSize = new System.Drawing.Size(356, 216);
             this.Controls.Add(this.lblReformat);
             this.Controls.Add(this.cmbSeparator);
             this.Controls.Add(this.chkSeparator);
@@ -165,6 +178,7 @@
             this.Controls.Add(this.chkDecimal);
             this.Controls.Add(this.cmbDateTime);
             this.Controls.Add(this.chkDateTime);
+            this.Controls.Add(this.chkTrimAll);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnOk);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
@@ -188,5 +202,6 @@
         private System.Windows.Forms.CheckBox chkSeparator;
         private System.Windows.Forms.ComboBox cmbSeparator;
         private System.Windows.Forms.Label lblReformat;
+        private System.Windows.Forms.CheckBox chkTrimAll;
     }
 }

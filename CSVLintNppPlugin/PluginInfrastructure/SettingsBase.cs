@@ -158,43 +158,45 @@ namespace CsvQuery.PluginInfrastructure
 
             var dialog = new Form
             {
-                Text = "Settings",
+                Text = String.Format("Settings - {0} plug-in", Main.PluginName),
                 ClientSize = new Size(DEFAULT_WIDTH, DEFAULT_HEIGHT),
                 MinimumSize = new Size(250, 250),
                 ShowIcon = false,
                 AutoScaleMode = AutoScaleMode.Font,
                 AutoScaleDimensions = new SizeF(6F, 13F),
+                ShowInTaskbar = false,
+                StartPosition = FormStartPosition.CenterParent,
                 Controls =
-            {
-                new Button
                 {
-                    Name = "Cancel",
-                    Text = "&Cancel",
-                    Anchor = AnchorStyles.Bottom | AnchorStyles.Right,
-                    Size = new Size(75, 23),
-                    Location = new Point(DEFAULT_WIDTH - 75 - 13, DEFAULT_HEIGHT - 23 - 13),
-                    UseVisualStyleBackColor = true
-                },
-                new Button
-                {
-                    Name = "Ok",
-                    Text = "&Ok",
-                    Anchor = AnchorStyles.Bottom | AnchorStyles.Right,
-                    Size = new Size(75, 23),
-                    Location = new Point(DEFAULT_WIDTH - 75 - 13 - 81, DEFAULT_HEIGHT - 23 - 13),
-                    UseVisualStyleBackColor = true
-                },
-                new PropertyGrid
-                {
-                    Name = "Grid",
-                    Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right,
-                    Location = new Point(13, 13),
-                    Size = new Size(DEFAULT_WIDTH - 13 - 13, DEFAULT_HEIGHT - 55),
-                    AutoScaleMode = AutoScaleMode.Font,
-                    AutoScaleDimensions = new SizeF(6F,13F),
-                    SelectedObject = copy
+                    new Button
+                    {
+                        Name = "Cancel",
+                        Text = "&Cancel",
+                        Anchor = AnchorStyles.Bottom | AnchorStyles.Right,
+                        Size = new Size(75, 23),
+                        Location = new Point(DEFAULT_WIDTH - 75 - 13, DEFAULT_HEIGHT - 23 - 13),
+                        UseVisualStyleBackColor = true
+                    },
+                    new Button
+                    {
+                        Name = "Ok",
+                        Text = "&Ok",
+                        Anchor = AnchorStyles.Bottom | AnchorStyles.Right,
+                        Size = new Size(75, 23),
+                        Location = new Point(DEFAULT_WIDTH - 75 - 13 - 81, DEFAULT_HEIGHT - 23 - 13),
+                        UseVisualStyleBackColor = true
+                    },
+                    new PropertyGrid
+                    {
+                        Name = "Grid",
+                        Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right,
+                        Location = new Point(13, 13),
+                        Size = new Size(DEFAULT_WIDTH - 13 - 13, DEFAULT_HEIGHT - 55),
+                        AutoScaleMode = AutoScaleMode.Font,
+                        AutoScaleDimensions = new SizeF(6F,13F),
+                        SelectedObject = copy
+                    }
                 }
-            }
             };
 
             dialog.Controls["Cancel"].Click += (a, b) => dialog.Close();

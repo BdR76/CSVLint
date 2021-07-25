@@ -155,7 +155,7 @@ namespace Kbg.NppPluginNET
                 }
             }
         }
-        private bool GetReformatParameters(out string dt, out string dec, out string sep, out bool updsep)
+        private bool GetReformatParameters(out string dt, out string dec, out string sep, out bool updsep, out bool trimall)
         {
             // show reformat form
             var frmedit = new ReformatForm();
@@ -167,6 +167,7 @@ namespace Kbg.NppPluginNET
             dec = frmedit.NewDecimal;
             sep = frmedit.NewSeparator;
             updsep = frmedit.UpdateSeparator;
+            trimall = frmedit.TrimAllValues;
 
             // clear up
             frmedit.Dispose();
@@ -177,7 +178,7 @@ namespace Kbg.NppPluginNET
 
         private void OnBtnReformat_Click(object sender, EventArgs e)
         {
-            bool ok = GetReformatParameters(out string editDataTime, out string editDecimal, out string editSeparator, out bool updateSeparator);
+            bool ok = GetReformatParameters(out string editDataTime, out string editDecimal, out string editSeparator, out bool updateSeparator, out bool trimAllValues);
             if (ok)
             {
                 // get dictionary
@@ -186,7 +187,7 @@ namespace Kbg.NppPluginNET
                 var dtStart = DateTime.Now;
 
                 // analyze and determine csv definition
-                CsvEdit.ReformatDataFile(csvdef, editDataTime, editDecimal, editSeparator, updateSeparator);
+                CsvEdit.ReformatDataFile(csvdef, editDataTime, editDecimal, editSeparator, updateSeparator, trimAllValues);
 
                 var dtElapsed = (DateTime.Now - dtStart).ToString(@"hh\:mm\:ss\.fff");
 

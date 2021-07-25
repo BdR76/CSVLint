@@ -20,6 +20,7 @@ namespace CSVLintNppPlugin.Forms
         public string NewDecimal { get; set; }
         public string NewSeparator { get; set; }
         public bool UpdateSeparator { get; set; }
+        public bool TrimAllValues { get; set; }
 
         public void InitialiseSetting(string dtFormat, string decSep, string colSep)
         {
@@ -32,12 +33,13 @@ namespace CSVLintNppPlugin.Forms
             OnChkbx_CheckedChanged(chkDateTime, null);
             OnChkbx_CheckedChanged(chkDecimal, null);
             OnChkbx_CheckedChanged(chkSeparator, null);
+            OnChkbx_CheckedChanged(chkTrimAll, null);
         }
 
         private void OnChkbx_CheckedChanged(object sender, EventArgs e)
         {
             // which checkbox, see index in Tag property
-            int idx = Int32.Parse((sender as CheckBox).Tag.ToString());
+            Int32.TryParse((sender as CheckBox).Tag.ToString(), out int idx);
             bool chk = (sender as CheckBox).Checked;
 
             // enable/disable corresponding dropdownlist
@@ -46,7 +48,7 @@ namespace CSVLintNppPlugin.Forms
             if (idx == 2) cmbSeparator.Enabled = chk;
 
             // can not press OK when nothing selected
-            btnOk.Enabled = (chkDateTime.Checked | chkDecimal.Checked | chkSeparator.Checked);
+            btnOk.Enabled = (chkDateTime.Checked | chkDecimal.Checked | chkSeparator.Checked | chkTrimAll.Checked);
         }
 
         private void ReformatForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -56,6 +58,7 @@ namespace CSVLintNppPlugin.Forms
             NewDecimal   = (chkDecimal.Checked   ? cmbDecimal.Text : "");
             NewSeparator = (chkSeparator.Checked ? cmbSeparator.Text : "");
             UpdateSeparator = (chkSeparator.Checked);
+            TrimAllValues = (chkTrimAll.Checked);
 
             // exception
             if (NewSeparator == "{Tab}") NewSeparator = "\t";

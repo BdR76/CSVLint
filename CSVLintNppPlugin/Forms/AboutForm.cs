@@ -74,7 +74,8 @@ namespace Kbg.NppPluginNET
 
             return 0; // not Easter day
         }
-        private void DisplayEasterEgg() {
+        private void DisplayEasterEgg()
+		{
             // display easter egg icon on certain dates
             DateTime today = DateTime.Now.AddHours(-3); // day 'starts' in the morning and lasts after midnight (especially for new years eve etc.)
 
@@ -119,8 +120,9 @@ namespace Kbg.NppPluginNET
             if (msg != "")
             {
                 String tip = String.Format("Happy {0}! You've found {1} ;)", msg, obj);
-                picEasterEgg.Image = img;
                 helperTip.SetToolTip(picEasterEgg, tip);
+                picEasterEgg.Image = img;
+                picEasterEgg.Visible = true;
             }
         }
         //private void displayEasterEgg_old()
@@ -153,7 +155,7 @@ namespace Kbg.NppPluginNET
             LinkLabel lbl = (sender as LinkLabel);
             string url = lbl.Text;
             string urlcopy = url;
-            if ((int)lbl.Tag == 0)
+            if ((string)lbl.Tag == "0")
             {
                 url = "https://github.com/BdR76/CSVLint/";
                 urlcopy = url;
