@@ -219,9 +219,12 @@ namespace Kbg.NppPluginNET
 
                     msg += String.Format("Reformat column separator from {0} to {1}\r\n", oldsep, newsep);
                     csvdef.Separator = editSeparator[0];
-
-
                 };
+
+                if (trimAllValues)
+                {
+                    msg += "Trim all values\r\n";
+                }
 
                 // display process message
                 msg += String.Format("Reformat data is ready, time elapsed {0}\r\n", dtElapsed);

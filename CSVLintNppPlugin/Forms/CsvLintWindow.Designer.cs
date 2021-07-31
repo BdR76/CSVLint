@@ -67,7 +67,6 @@
             // btnReformat
             // 
             this.btnReformat.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnReformat.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnReformat.Location = new System.Drawing.Point(305, 3);
             this.btnReformat.Name = "btnReformat";
             this.btnReformat.Size = new System.Drawing.Size(72, 32);
@@ -78,7 +77,6 @@
             // 
             // btnRefresh
             // 
-            this.btnRefresh.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnRefresh.Location = new System.Drawing.Point(3, 3);
             this.btnRefresh.Name = "btnRefresh";
             this.btnRefresh.Size = new System.Drawing.Size(120, 32);
@@ -104,7 +102,6 @@
             // 
             // btnValidate
             // 
-            this.btnValidate.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnValidate.Location = new System.Drawing.Point(3, 3);
             this.btnValidate.Name = "btnValidate";
             this.btnValidate.Size = new System.Drawing.Size(120, 32);

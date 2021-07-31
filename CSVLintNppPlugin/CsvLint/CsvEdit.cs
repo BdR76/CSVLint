@@ -35,7 +35,9 @@ namespace CSVLint
             //var s = new StringReader(data);
             int linenr = 0;
             String line;
-            String datanew = "";
+
+            StringBuilder datanew = new StringBuilder();
+
             char newSep = (updateSeparator ? reformatSeparator[0] : csvdef.Separator);
 
             // convert to fixed width, skip header line from source data because there is no room for column names in Fixed Width due to columns width can be 1 or 2 characters
@@ -47,9 +49,9 @@ namespace CSVLint
                 // add header column names
                 for (int c = 0; c < csvdef.Fields.Count; c++)
                 {
-                    datanew += csvdef.Fields[c].Name + (c < csvdef.Fields.Count - 1 ? newSep.ToString() : "");
+                    datanew.Append(csvdef.Fields[c].Name + (c < csvdef.Fields.Count - 1 ? newSep.ToString() : ""));
                 }
-                datanew += '\n';
+                datanew.Append("\n");
             }
 
             // process each line
@@ -98,29 +100,29 @@ namespace CSVLint
                         int wid = csvdef.Fields[c].MaxWidth;
                         if ((csvdef.Fields[c].DataType == ColumnType.Integer) || (csvdef.Fields[c].DataType == ColumnType.Decimal))
                         {
-                            datanew += val.PadLeft(wid, ' ');
+                            datanew.Append(val.PadLeft(wid, ' '));
                         }
                         else
                         {
-                            datanew += val.PadRight(wid, ' ');
+                            datanew.Append(val.PadRight(wid, ' '));
                         };
                         
                     }
                     else
                     {
                         // character separated
-                        datanew += val + (c < csvdef.Fields.Count - 1 ? newSep.ToString() : "");
+                        datanew.Append(val + (c < csvdef.Fields.Count - 1 ? newSep.ToString() : ""));
                     }
                 };
 
                 // add line break
-                datanew += '\n';
+                datanew.Append("\n");
             };
 
             strdata.Dispose();
 
             // update text in editor
-            scintillaGateway.SetText(datanew);
+            scintillaGateway.SetText(datanew.ToString());
         }
 
         /// <summary>

@@ -329,21 +329,23 @@ namespace CSVLint
 
         public string Report()
         {
-            string str = "";
+            StringBuilder sb = new StringBuilder();
 
             // output as one string
             foreach (var line in this.log)
             {
                 // add line number and error/warning
-                string msg = (line.LineNumber > 0 ? "line " + line.LineNumber : "");
-                msg = (line.Severity >= 0 ? (line.Severity == 0 ? "** warning " : "** error ") + msg + ": " : "");
+                if (line.Severity == 0) sb.Append("** warning ");
+                if (line.Severity > 0)  sb.Append("** error ");
+
+                if (line.LineNumber > 0) sb.Append("line " + line.LineNumber);
+                if (line.Severity >= 0) sb.Append(": ");
 
                 // add the message
-                msg += line.Message;
-                str += msg + "\r\n";
+                sb.Append(line.Message + "\r\n");
             }
 
-            return str;
+            return sb.ToString();
         }
     }
 }
