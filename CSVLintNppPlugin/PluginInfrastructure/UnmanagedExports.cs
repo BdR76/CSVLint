@@ -1,14 +1,16 @@
 ﻿// NPP plugin platform for .Net v0.94.00 by Kasper B. Graversen etc.
 using System;
 using System.Runtime.InteropServices;
+using System.Text;
 using Kbg.NppPluginNET.PluginInfrastructure;
 using NppPlugin.DllExport;
+using NppPluginNET.PluginInfrastructure;
 
 namespace Kbg.NppPluginNET
 {
     class UnmanagedExports
     {
-        [DllExport(CallingConvention=CallingConvention.Cdecl)]
+        [DllExport(CallingConvention = CallingConvention.Cdecl)]
         static bool isUnicode()
         {
             return true;
@@ -59,8 +61,57 @@ namespace Kbg.NppPluginNET
             }
             else
             {
-	            Main.OnNotification(notification);
+                Main.OnNotification(notification);
             }
         }
+
+        #region LEXER specific
+
+        [DllExport(CallingConvention = CallingConvention.StdCall)]
+        static int GetLexerCount()
+        {
+            // function will be called twice, once by npp and once by scintilla
+            return 1;  // this dll contains only one lexer
+        }
+
+        [DllExport(CallingConvention = CallingConvention.StdCall)]
+        static void GetLexerName(uint index, IntPtr name, int buffer_length)
+        {
+            // function will be called twice, once by npp and once by scintilla
+            // index is always 0 if this dll has only one lexer
+            // name is a pointer to memory provided by npp and scintilla InsertMenuA is used, hence byte array
+            // buffer_length is the size of the provided memory
+            // use zero-terminated string to interface with C++
+            byte[] lexer_name = Encoding.ASCII.GetBytes(ILexer.Name);
+            Marshal.Copy(lexer_name, 0, name, lexer_name.Length);
+        }
+
+        [DllExport(CallingConvention = CallingConvention.StdCall)]
+        static void GetLexerStatusText(uint index, IntPtr name, int buffer_length)
+        {
+            // function will be called by npp only, fills the first field of the statusbar
+            // index is always 0 if this dll has only one lexer
+            // name is a pointer to memory provided by npp and scintilla
+            // buffer_length is the size of the provided memory
+            // use zero-terminated string to interface with C++
+
+            char[] lexer_status_text = ILexer.StatusText.ToCharArray(); // SendMessageW is used, hence ToCharArray as this returns utf16 strings
+            Marshal.Copy(lexer_status_text, 0, name, lexer_status_text.Length);
+        }
+
+        [UnmanagedFunctionPointer(CallingConvention.StdCall)]
+        public delegate IntPtr ILexerImpDelegate();
+
+        static ILexerImpDelegate ILexerImplementation;
+
+        [DllExport(CallingConvention = CallingConvention.StdCall)]
+        static Delegate GetLexerFactory(int index)
+        {
+            // function will be called by scintilla only
+            // index is always 0 if this dll has only one lexer
+            ILexerImplementation = new ILexerImpDelegate(ILexer.ILexerImplementation);
+            return ILexerImplementation;
+        }
+        #endregion
     }
 }

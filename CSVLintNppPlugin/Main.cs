@@ -1,17 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
+using CSVLint;
 using Kbg.NppPluginNET.PluginInfrastructure;
+using NppPluginNET.PluginInfrastructure;
 
 namespace Kbg.NppPluginNET
 {
     class Main
     {
-        internal const string PluginName = "CsvLint";
+        internal const string PluginName = "CSV Lint";
         public static Settings Settings = new Settings();
 
         static string iniFilePath = null;
@@ -22,8 +25,12 @@ namespace Kbg.NppPluginNET
         static Bitmap tbBmp_tbTab = CSVLintNppPlugin.Properties.Resources.csvlint;
         static Icon tbIcon = null;
 
+        // list of files and csv definition for each
+        static Dictionary<string, CsvDefinition> FileCsvDef = new Dictionary<string, CsvDefinition>();
+        static CsvDefinition _CurrnetCsvDef;
+
         public static void OnNotification(ScNotification notification)
-        {  
+        {
             // This method is invoked whenever something is happening in notepad++
             // use eg. as
             // if (notification.Header.Code == (uint)NppMsg.NPPN_xxx)
@@ -32,6 +39,12 @@ namespace Kbg.NppPluginNET
             //
             // if (notification.Header.Code == (uint)SciMsg.SCNxxx)
             // { ... }
+
+            // changing tabs
+            if (notification.Header.Code == (uint)NppMsg.NPPN_BUFFERACTIVATED)
+            {
+                Main.CSVChangeFileTab();
+            }
         }
 
         internal static void CommandMenuInit()
@@ -59,6 +72,74 @@ namespace Kbg.NppPluginNET
             Marshal.StructureToPtr(tbIcons, pTbIcons, false);
             Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_ADDTOOLBARICON, PluginBase._funcItems.Items[idMyDlg]._cmdID, pTbIcons);
             Marshal.FreeHGlobal(pTbIcons);
+        }
+
+        public static void CSVChangeFileTab()
+        {
+            // Notepad++ switc to a different file tab
+            INotepadPPGateway notepad = new NotepadPPGateway();
+
+            CsvDefinition csvdef;
+
+            string filename = notepad.GetCurrentFilePath();
+
+            // check if already in list
+            if (!FileCsvDef.ContainsKey(filename))
+            {
+                // analyze and determine csv definition
+                csvdef = CsvAnalyze.InferFromData();
+                FileCsvDef.Add(filename, csvdef);
+
+                // testing
+                //FileCsvDef.Add(filename, new CsvDefinition());
+
+                //MessageBox.Show("changed file" + filename);
+            }
+            else
+            {
+                csvdef = FileCsvDef[filename];
+            }
+
+            ILexer.separatorChar = csvdef.Separator;
+
+            // keep current csvdef
+            _CurrnetCsvDef = FileCsvDef[filename];
+
+            if (frmCsvLintDlg != null)
+            {
+                frmCsvLintDlg.SetCsvDefinition(csvdef);
+            }
+        }
+
+        public static void GetCurrentFileLexerParameters(out char sep)
+        {
+
+            sep = ';';
+
+            // Notepad++ switc to a different file tab
+            INotepadPPGateway notepad = new NotepadPPGateway();
+
+            CsvDefinition csvdef;
+
+            string filename = notepad.GetCurrentFilePath();
+
+            // check if already in list
+            if (!FileCsvDef.ContainsKey(filename))
+            {
+                // analyze and determine csv definition
+                csvdef = CsvAnalyze.InferFromData();
+                FileCsvDef.Add(filename, csvdef);
+
+                // testing
+                //FileCsvDef.Add(filename, new CsvDefinition());
+
+                //MessageBox.Show("lexer call, changed file" + filename);
+            }
+            else
+            {
+                csvdef = FileCsvDef[filename];
+            }
+            sep = csvdef.Separator;
         }
 
         internal static void PluginCleanUp()

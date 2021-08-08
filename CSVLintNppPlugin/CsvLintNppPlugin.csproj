@@ -76,6 +76,7 @@
     <Compile Include="Forms\ReformatForm.Designer.cs">
       <DependentUpon>ReformatForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="PluginInfrastructure\Lexer.cs" />
     <Compile Include="Tools\Settings.cs" />
     <Compile Include="Tools\Helper.cs" />
     <Compile Include="Forms\AboutForm.cs">

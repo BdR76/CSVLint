@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Bas de Reuver")]
 [assembly: AssemblyProduct("CSVLintNppPlugin")]
-[assembly: AssemblyCopyright("Copyright © BdR 2019")]
+[assembly: AssemblyCopyright("Copyright © BdR 2019-2021")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

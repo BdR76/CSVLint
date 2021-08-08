@@ -1,11 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Windows;
 using System.Windows.Forms;
 using CSVLint;
 using CSVLintNppPlugin.Forms;
@@ -19,6 +14,12 @@ namespace Kbg.NppPluginNET
         public CsvLintWindow()
         {
             InitializeComponent();
+        }
+
+        public void SetCsvDefinition(CsvDefinition csvdef)
+        {
+            // display csv definition
+            txtSchemaIni.Text = csvdef.GetIniLines();
         }
 
         private void OnBtnRefresh_Click(object sender, EventArgs e)

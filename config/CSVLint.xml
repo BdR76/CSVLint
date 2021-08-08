@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<NotepadPlus>
+    <Languages>
+        <!-- name must be the same as the one in the language menu and is case-sensitive. -->
+        <!-- ext here is the default one. -->
+        <!-- Comments are the comment that is used from the context menu when you tell np++ to comment a line. -->
+        <Language name="CSVLint" ext="csv" commentLine="#" commentStart="#[" commentEnd="]#">
+            <Keywords name="instre1" />
+            <Keywords name="instre2" />
+            <Keywords name="type1" />
+            <Keywords name="type2" />
+            <Keywords name="type3" />
+            <Keywords name="type4" />
+            <Keywords name="type5" />
+            <Keywords name="type6" />
+        </Language>
+    </Languages>
+    <LexerStyles>
+        <!-- name must be the same as the Language name above and is case-sensitive. -->
+        <!-- desc is what shows up in the styler configuator. -->
+        <!-- ext is the "user defined" one. -->
+        <!-- excluded is whether is shows up in the language menu. (Can be changed in the settings by the user the normal way.) -->
+        <LexerType name="CSVLint" desc="CSV Linter and validator" excluded="no">
+            <!-- name is what shows up in the styler config for that style. -->
+            <!-- styleID can be 0 through 31. -->
+            <!-- keywordClass can be a number between 0 and 8 or the words that are normally used. -->
+            <WordsStyle styleID="0" name="Default" fgColor="000000" bgColor="FFFFFF" fontName="" fontStyle="0" />
+            <WordsStyle styleID="1" name="ColumnColor1" fgColor="000000" bgColor="E0E0FF" fontName="" fontStyle="0" />
+            <WordsStyle styleID="2" name="ColumnColor2" fgColor="000000" bgColor="FFFF80" fontName="" fontStyle="0" />
+            <WordsStyle styleID="3" name="ColumnColor3" fgColor="000000" bgColor="FFE0FF" fontName="" fontStyle="0" />
+            <WordsStyle styleID="4" name="ColumnColor4" fgColor="000000" bgColor="80FF80" fontName="" fontStyle="0" />
+            <WordsStyle styleID="5" name="ColumnColor5" fgColor="000000" bgColor="FFB0FF" fontName="" fontStyle="0" />
+            <WordsStyle styleID="6" name="ColumnColor6" fgColor="000000" bgColor="FFC0C0" fontName="" fontStyle="0" />
+            <WordsStyle styleID="7" name="ColumnColor7" fgColor="000000" bgColor="32FFBE" fontName="" fontStyle="0" />
+            <WordsStyle styleID="8" name="ColumnColor8" fgColor="000000" bgColor="FFD040" fontName="" fontStyle="0" />
+        </LexerType>
+    </LexerStyles>
+</NotepadPlus>

@@ -2031,7 +2031,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// line is a header and whether it is effectively white space.
         /// (Scintilla feature 2222)
         /// </summary>
-        public void SetFoldLevel(int line, FoldLevel level)
+        public void SetFoldLevel(int line, int level)
         {
             Win32.SendMessage(scintilla, SciMsg.SCI_SETFOLDLEVEL, (IntPtr) line, (IntPtr) level);
         }
