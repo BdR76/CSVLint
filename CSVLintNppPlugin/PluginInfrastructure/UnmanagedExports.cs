@@ -1,5 +1,7 @@
 ﻿// NPP plugin platform for .Net v0.94.00 by Kasper B. Graversen etc.
 using System;
+using System.IO;
+//using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using Kbg.NppPluginNET.PluginInfrastructure;
@@ -102,15 +104,19 @@ namespace Kbg.NppPluginNET
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         public delegate IntPtr ILexerImpDelegate();
 
-        static ILexerImpDelegate ILexerImplementation;
+        //static ILexerImpDelegate ILexerImplementation;
+
+        private static Delegate ilexer_implementation = new ILexerImpDelegate(ILexer.ILexerImplementation);
+
 
         [DllExport(CallingConvention = CallingConvention.StdCall)]
         static Delegate GetLexerFactory(int index)
         {
             // function will be called by scintilla only
             // index is always 0 if this dll has only one lexer
-            ILexerImplementation = new ILexerImpDelegate(ILexer.ILexerImplementation);
-            return ILexerImplementation;
+            //ILexerImplementation = new ILexerImpDelegate(ILexer.ILexerImplementation);
+            //return ILexerImplementation;
+            return ilexer_implementation;
         }
         #endregion
     }

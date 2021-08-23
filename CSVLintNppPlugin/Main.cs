@@ -23,6 +23,7 @@ namespace Kbg.NppPluginNET
         static int idMyDlg = -1;
         static Bitmap tbBmp = CSVLintNppPlugin.Properties.Resources.csvlint;
         static Bitmap tbBmp_tbTab = CSVLintNppPlugin.Properties.Resources.csvlint;
+        static IScintillaGateway editor = new ScintillaGateway(PluginBase.GetCurrentScintilla());
         static Icon tbIcon = null;
 
         // list of files and csv definition for each
@@ -100,7 +101,9 @@ namespace Kbg.NppPluginNET
                 csvdef = FileCsvDef[filename];
             }
 
-            ILexer.separatorChar = csvdef.Separator;
+            // pass separator to lexer
+            string sepchar = csvdef.Separator.ToString();
+            editor.SetProperty("separator", sepchar);
 
             // keep current csvdef
             _CurrnetCsvDef = FileCsvDef[filename];
@@ -108,6 +111,22 @@ namespace Kbg.NppPluginNET
             if (frmCsvLintDlg != null)
             {
                 frmCsvLintDlg.SetCsvDefinition(csvdef);
+            }
+        }
+        public static void CSVmetadataUpdate(CsvDefinition csvdef)
+        {
+            // Notepad++ switc to a different file tab
+            INotepadPPGateway notepad = new NotepadPPGateway();
+            string filename = notepad.GetCurrentFilePath();
+
+            // check if already in list
+            if (!FileCsvDef.ContainsKey(filename))
+            {
+                FileCsvDef.Add(filename, csvdef);
+            }
+            else
+            {
+                FileCsvDef[filename] = csvdef;
             }
         }
 

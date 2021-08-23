@@ -15,23 +15,24 @@ namespace NppPluginNET.PluginInfrastructure
         public static char separatorChar = ';';
         public static int[] fixedWidths;
 
-        static IScintillaGateway editor = new ScintillaGateway(PluginBase.GetCurrentScintilla());
-
         // Properties
         static readonly Dictionary<string, bool> SupportedProperties = new Dictionary<string, bool>
         {
             { "fold", true},
-            { "fold.compact", false}
-        };
+            { "fold.compact", false},
+            { "separator", false}
+    };
         static readonly Dictionary<string, string> PropertyDescription = new Dictionary<string, string>
         {
             { "fold", "Enable or disable the folding functionality."},
-            { "fold.compact", "If set to 0 closing tag is visible when collapsed else hidden." }
+            { "fold.compact", "If set to 0 closing tag is visible when collapsed else hidden." },
+            { "separator", "Separator character for syntax highlighting csv data"}
         };
         static readonly Dictionary<string, int> PropertyTypes = new Dictionary<string, int>
         {
             { "fold", (int)SciMsg.SC_TYPE_BOOLEAN},
-            { "fold.compact", (int)SciMsg.SC_TYPE_BOOLEAN }
+            { "fold.compact", (int)SciMsg.SC_TYPE_BOOLEAN },
+            { "separator", (int)SciMsg.SC_TYPE_STRING }
         };
 
         // Styles
@@ -357,7 +358,16 @@ namespace NppPluginNET.PluginInfrastructure
              */
             string name = Marshal.PtrToStringAnsi(key);
             string value = Marshal.PtrToStringAnsi(val);
-            SupportedProperties[name] = value == "0" ? false : true;
+
+            if ((name == "separator") && (value.Length > 0))
+            {
+                separatorChar = value[0];
+            }
+            else
+            {
+                SupportedProperties[name] = value == "0" ? false : true;
+            }
+
             return IntPtr.Zero;
         }
 
@@ -375,6 +385,7 @@ namespace NppPluginNET.PluginInfrastructure
             return IntPtr.Zero;
         }
 
+
         // virtual void SCI_METHOD Lex(Sci_PositionU startPos, i64 lengthDoc, int initStyle, IDocument *pAccess) = 0;
         public static void Lex(IntPtr instance, UIntPtr start_pos, IntPtr length_doc, int init_style, IntPtr p_access)
         {
@@ -385,13 +396,8 @@ namespace NppPluginNET.PluginInfrastructure
              * p_access is the pointer of the IDocument cpp class
              */
 
-            //var sep = ';';
-            //Main.GetCurrentFileLexerParameters(out sep);
-            //separatorChar = sep;
-
-
-            int start = (int)start_pos;
             int length = (int)length_doc;
+            int start = (int)start_pos;
 
             // allocate a buffer
             IntPtr buffer_ptr = Marshal.AllocHGlobal(length);
@@ -411,41 +417,61 @@ namespace NppPluginNET.PluginInfrastructure
 
             // column color index
             int idx = 1;
-            bool isEOL;
+            bool isEOL = false;
 
-            //editor.StyleClearAll();
+            // JAVASCRIPT
+            bool quote = false;
+            bool bNextCol = false;
 
-            for (int i = 0; i < length; i++)
+            int start_col = 0;
+            int end_col = 0;
+
+            for (int i = 0; i < length-1; i++)
             {
-                int start_position = i;
-                isEOL = false;
+                char cur = content[i];
+                char next = content[i + 1];
 
-                while (i < length)
+                if (!quote)
                 {
-                    if (content[i] == separatorChar)
-                    {
-                        break;
-                    }
-                    // read rest of the line
-                    if (content[i] == '\n')
-                    {
-                        isEOL = true;
-                        break;
-                    }
-                    i++;
+                    //const cellIsEmpty = line[line.length - 1].length === 0;
+                    bool cellIsEmpty = (i - start_col == 0);
+
+                    if ((cur == '"') && cellIsEmpty) { quote = true; }
+                    else if (cur == separatorChar) { bNextCol = true; end_col = i; }
+                    else if ((cur == '\r') && (next == '\n')) { isEOL = true; end_col = i; i++; }
+                    else if ((cur == '\n') || (cur == '\r')) { isEOL = true; end_col = i; }
+                    //else line[line.length - 1] += cur;
                 }
-                // style this column
-                vtable.StartStyling(p_access, (IntPtr)(start + start_position));
-                vtable.SetStyleFor(p_access, (IntPtr)(i - start_position), (char)idx);
+                else
+                {
+                    if ((cur == '"') && (next == '"')) { i++; }
+                    else if (cur == '"') quote = false;
+                    //else line[line.length - 1] += cur;
+                }
 
-                // next color
-                idx++;
+                // if next col or next line
+                if (bNextCol || isEOL)
+                {
+                    // style this column
+                    vtable.StartStyling(p_access, (IntPtr)(start + start_col));
+                    vtable.SetStyleFor(p_access, (IntPtr)(end_col - start_col), (char)idx);
 
-                if ((idx > 8) || (isEOL)) idx = 1; // reset end of line
+                    // next color
+                    idx++;
+
+                    if ((idx > 8) || (isEOL)) idx = 1; // reset end of line
+
+                    bNextCol = false;
+                    isEOL = false;
+                    start_col = i + 1;
+                }
             }
+
 
             // free allocated buffer
             Marshal.FreeHGlobal(buffer_ptr);
+
+            //Debug.WriteLine("{0} -- Lex finished!", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
         }
 
         // virtual void SCI_METHOD Fold(Sci_PositionU startPos, i64 lengthDoc, int initStyle, IDocument *pAccess) = 0;
