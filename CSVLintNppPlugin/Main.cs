@@ -131,6 +131,42 @@ namespace Kbg.NppPluginNET
             }
         }
 
+        public static void updateCSVChanges(CsvDefinition csvdef)
+        {
+            // Notepad++ switc to a different file tab
+            INotepadPPGateway notepad = new NotepadPPGateway();
+            string filename = notepad.GetCurrentFilePath();
+
+            // check if already in list
+            if (!FileCsvDef.ContainsKey(filename))
+            {
+                // add csv definition
+                FileCsvDef.Add(filename, csvdef);
+            }
+            else
+            {
+                // overwrite old csv definition with new
+                FileCsvDef[filename] = csvdef;
+            }
+
+            // pass separator to lexer
+            string sepchar = csvdef.Separator.ToString();
+            editor.SetProperty("separator", sepchar);
+
+            // if fixed width
+            if ((csvdef.Separator == '\0') && (csvdef.FieldWidths != null))
+            {
+                var strwidths = "";
+                for (var i = 0; i < csvdef.FieldWidths.Count; i++)
+                {
+                    var w1 = csvdef.FieldWidths[i];
+                    strwidths += (i > 0 ? "," : "") + csvdef.FieldWidths[i].ToString();
+                }
+
+                editor.SetProperty("fixedwidths", strwidths);
+            }
+        }
+
         public static CsvDefinition GetCurrentCsvDef()
         {
             // Notepad++ switc to a different file tab

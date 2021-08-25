@@ -22,6 +22,7 @@ namespace Kbg.NppPluginNET
         {
             // display csv definition
             txtSchemaIni.Text = csvdef.GetIniLines();
+            btnApply.Enabled = false;
         }
 
         private void OnBtnRefresh_Click(object sender, EventArgs e)
@@ -42,7 +43,7 @@ namespace Kbg.NppPluginNET
             txtOutput.Text = String.Format("Refresh from data is ready, time elapsed {0}", dtElapsed);
         }
 
-        private CsvDefinition GetCurrentCsvDef()
+        private CsvDefinition getCsvDefFromTextbox()
         {
             CsvDefinition csvdef;
 
@@ -81,7 +82,7 @@ namespace Kbg.NppPluginNET
         private void OnBtnValidate_Click(object sender, EventArgs e)
         {
             // get dictionary
-            CsvDefinition csvdef = GetCurrentCsvDef();
+            CsvDefinition csvdef = getCsvDefFromTextbox();
 
             // check if valid dictionary
             if (csvdef.Fields.Count > 0)
@@ -187,7 +188,7 @@ namespace Kbg.NppPluginNET
             if (ok)
             {
                 // get dictionary
-                CsvDefinition csvdef = GetCurrentCsvDef();
+                CsvDefinition csvdef = getCsvDefFromTextbox();
 
                 var dtStart = DateTime.Now;
 
@@ -238,6 +239,23 @@ namespace Kbg.NppPluginNET
                 // refresh datadefinition
                 txtSchemaIni.Text = csvdef.GetIniLines();
             }
+        }
+
+        private void txtSchemaIni_KeyDown(object sender, KeyEventArgs e)
+        {
+            btnApply.Enabled = true;
+        }
+
+        private void btnApply_Click(object sender, EventArgs e)
+        {
+            // get dictionary
+            CsvDefinition csvdef = getCsvDefFromTextbox();
+
+            // update the master list of csv definitions
+            Main.updateCSVChanges(csvdef);
+
+            // update screen, to smooth out any user input errors
+            SetCsvDefinition(csvdef);
         }
     }
 }

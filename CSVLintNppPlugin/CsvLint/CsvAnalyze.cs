@@ -242,9 +242,20 @@ namespace CSVLint
                         foundfieldWidths.Add(br);
 
                 foundfieldWidths.Sort();
-
                 if (foundfieldWidths.Count < 3) return result; // unlikely fixed width
-                foundfieldWidths.Add(-1); // Last column gets "the rest"
+
+                // widths contain line positions, convert to actual individual widths, example pos [8, 14, 15, 22, 25] -> widths [8, 6, 1, 7, 3]
+                var pos1 = 0;
+                for (var i = 0; i < foundfieldWidths.Count; i++)
+                {
+                    // next column end pos, last column gets the rest
+                    int pos2 = foundfieldWidths[i];
+
+                    // positions to column widths
+                    foundfieldWidths[i] = pos2 - pos1;
+                    pos1 = pos2;
+                }
+
                 result.FieldWidths = foundfieldWidths;
             }
 
@@ -275,8 +286,11 @@ namespace CSVLint
                     // add columnstats if needed
                     if (i > colstats.Count() - 1) colstats.Add(new CsvAnalyzeColumn(i));
 
+                    int fixedLength = -1;
+                    if (fixedwidth) fixedLength = (i < result.FieldWidths.Count ? result.FieldWidths[i] : values[i].Length);
+
                     // next value to evaluate
-                    colstats[i].InputData(values[i], fixedwidth);
+                    colstats[i].InputData(values[i], fixedLength);
                 }
             }
 

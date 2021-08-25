@@ -38,13 +38,12 @@ namespace CSVLint
             this.Index = idx;
         }
 
-        public void InputData(String data, bool fixedwidth)
+        public void InputData(String data, int fixedLength)
         {
             // count how many values
             this.CountAll++;
 
             // next value to evaluate
-            int length = data.Length;
             data = data.Trim();
 
             // adjust for quoted values
@@ -59,14 +58,14 @@ namespace CSVLint
                 this.Name = data;
 
                 // TODO: determine if first row is actually header names
-                if ((this.Name == "") || (fixedwidth) ) {
+                if ((this.Name == "") || (fixedLength > 0) ) {
                     this.Name = "F" + (this.Index + 1);
                 }
             }
             else
             {
                 // for fixed length files, the MaxWidth should be length of not-trimmed data
-                if (!fixedwidth) length = data.Length;
+                int length = (fixedLength > 0 ? fixedLength : data.Length);
 
                 // check for empty values, count empty strings
                 if (data.Length == 0)

@@ -36,6 +36,7 @@
             this.btnValidate = new System.Windows.Forms.Button();
             this.txtOutput = new System.Windows.Forms.TextBox();
             this.tooltipCsvLint = new System.Windows.Forms.ToolTip(this.components);
+            this.btnApply = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -52,6 +53,7 @@
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.btnApply);
             this.splitContainer1.Panel1.Controls.Add(this.btnReformat);
             this.splitContainer1.Panel1.Controls.Add(this.btnRefresh);
             this.splitContainer1.Panel1.Controls.Add(this.txtSchemaIni);
@@ -99,6 +101,7 @@
             this.txtSchemaIni.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.txtSchemaIni.Size = new System.Drawing.Size(374, 302);
             this.txtSchemaIni.TabIndex = 5;
+            this.txtSchemaIni.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtSchemaIni_KeyDown);
             // 
             // btnValidate
             // 
@@ -127,12 +130,23 @@
             this.txtOutput.TabIndex = 4;
             this.txtOutput.DoubleClick += new System.EventHandler(this.OnTxtOutput_DoubleClick);
             // 
+            // btnApply
+            // 
+            this.btnApply.Location = new System.Drawing.Point(129, 3);
+            this.btnApply.Name = "btnApply";
+            this.btnApply.Size = new System.Drawing.Size(89, 32);
+            this.btnApply.TabIndex = 8;
+            this.btnApply.Text = "Apply changes";
+            this.btnApply.UseVisualStyleBackColor = true;
+            this.btnApply.Click += new System.EventHandler(this.btnApply_Click);
+            // 
             // CsvLintWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1170, 353);
             this.Controls.Add(this.splitContainer1);
+            this.IsMdiContainer = true;
             this.Name = "CsvLintWindow";
             this.Text = "CSV Lint";
             this.splitContainer1.Panel1.ResumeLayout(false);
@@ -154,5 +168,6 @@
         private System.Windows.Forms.TextBox txtOutput;
         private System.Windows.Forms.ToolTip tooltipCsvLint;
         private System.Windows.Forms.Button btnReformat;
+        private System.Windows.Forms.Button btnApply;
     }
 }

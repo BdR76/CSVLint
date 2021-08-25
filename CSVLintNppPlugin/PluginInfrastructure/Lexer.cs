@@ -444,6 +444,7 @@ namespace NppPluginNET.PluginInfrastructure
                 {
                     // next character
                     char cur = content[i];
+                    i++;
 
                     // new line
                     if ((cur == '\n') || (cur == '\r')) { isEOL = true; end_col = i; }
@@ -464,22 +465,28 @@ namespace NppPluginNET.PluginInfrastructure
 
                         // next column width
                         colidx++;
-                        widthcount = (colidx < fixedWidths.Count ? fixedWidths[colidx] : 9999);
+                        if (isEOL) colidx = 0; // reset to first column at end of line
 
-                        // next color
+                        // next color, cycle colors or reset at end of line
                         idx++;
-
-                        // end of line
-                        if (isEOL) colidx = 0;
-
-                        // cycle colors or reset at end of line
                         if ((idx > 8) || (isEOL)) idx = 1;
 
+                        // next width, or take the rest after last column width 
+                        if (colidx < fixedWidths.Count)
+                        {
+                            widthcount = fixedWidths[colidx];
+                        }
+                        else
+                        {
+                            widthcount = 9999; // rest of line
+                            idx = 0; // white, no color to indicate incorrect column
+                        }
+
+                        // reset variables
                         bNextCol = false;
                         isEOL = false;
-                        start_col = i + 1;
+                        start_col = i;
                     }
-                    i++;
                 }
             }
             else

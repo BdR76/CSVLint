@@ -179,6 +179,12 @@ namespace CSVLint
             this.ColNameHeader = colNameHeader;
             this.UseQuotes = this.TextQualifier != default(char);
 
+            // if no given, then create now
+            if (this.FieldWidths == null)
+            {
+                this.FieldWidths = new List<int>();
+            }
+
             Fields = new List<CsvColumn>();
         }
 
@@ -258,6 +264,8 @@ namespace CSVLint
         {
             Fields = new List<CsvColumn>();
 
+            FieldWidths = new List<int>(); // TODO: really needed to also keep widths separate from Fields? because each Fields also contains a MaxWidth
+
             // evaluate key values
             foreach (KeyValuePair<string, string> line in inikeys)
             {
@@ -311,7 +319,7 @@ namespace CSVLint
 
                     // schema.ini NumberLeadingZeros, 
                     // Specifies whether a decimal value less than 1 and more than -1 should contain leading zeros; this value can be either False (no leading zeros) or True.
-                    if (k == "numberleadingzeros") this.NumberLeadingZeros = (vallow[1] == 't' ? true : false);
+                    if (k == "numberleadingzeros") this.NumberLeadingZeros = (vallow[1] == 't');
 
                     // schema.ini CurrencySymbol
                     // Indicates the currency symbol that can be used for currency values in the text file. Examples include the dollar sign ($) and Dm.
@@ -446,7 +454,7 @@ namespace CSVLint
                         };
 
                         // any left is the name of the column
-                        name = Val;
+                        if (Val.Trim() != "") name = Val;
 
                         // if quotes around name because of spaces
                         int quote1 = Val.IndexOf('"');
@@ -507,6 +515,14 @@ namespace CSVLint
                         }
                     }
                 }
+            }
+
+            // rebuild widths for fixed width data
+            this.FieldWidths.Clear();
+            for (var f = 0; f < this.Fields.Count; f++)
+            {
+                var w = this.Fields[f].MaxWidth;
+                this.FieldWidths.Add(w);
             }
         }
         public string GetIniLines()
@@ -683,31 +699,37 @@ namespace CSVLint
             // return list
             var res = new List<String>();
 
-            //var s = new StringReader(data);
-            int linenr = 0;
-
             StringBuilder value = new StringBuilder();
-
 
             if (Separator == '\0')
             {
                 var line = strdata.ReadLine();
 
                 // fixed width columns
-                int pos1 = 0;
-                for (int i = 0; i < FieldWidths.Count(); i++)
+                int pos = 0;
+                int fieldcount = FieldWidths.Count()-1;
+                for (int i = 0; i <= fieldcount; i++)
                 {
-                    // if line is too short, columns missing?
-                    if (pos1 > line.Length) break;
+                    // next column width
+                    int w = FieldWidths[i];
 
-                    // next column end pos, last column gets the rest
-                    int pos2 = FieldWidths[i];
-                    if (pos2 < 0) pos2 = line.Length;
+                    // if line is too short, columns missing?
+                    if (pos + w > line.Length) w = line.Length - pos;
 
                     // get column value
-                    string val = line.Substring(pos1, pos2 - pos1);
+                    string val = line.Substring(pos, w).Trim(); // fixed length columns, so always trim to remove extra spaces
                     res.Add(val);
-                    pos1 = pos2;
+
+                    // start position of next column
+                    pos += w;
+
+                    // if line too long add extra column 
+                    if ((i == fieldcount) && (line.Length > pos))
+                    {
+                        // add rest of line as one extra column
+                        val = line.Substring(pos, line.Length - pos).Trim(); // fixed length columns, so always trim to remove extra spaces
+                        res.Add(val);
+                    }
                 }
             }
             else

@@ -30,6 +30,8 @@ create a new folder `CSVLint` and place the .dll file there, so:
 
 * copy the file [.\CSVLintNppPlugin\bin\Release\CSVLint.dll](/CSVLintNppPlugin/bin/Release/)
 * to new folder .\Program Files (x86)\Notepad++\plugins\CSVLint\CSVLint.dll
+* copy the file [.\config\CSVLint.xml](/config/CSVLint.xml)
+to folder %USERPROFILE%\AppData\Roaming\Notepad++\plugins\config\CSVLint.xml
 
 For the 64-bit version it is the same, except the output file is in the
 [Release-x64](/CSVLintNppPlugin/bin/Release-x64/) folder and Notepad++ is
@@ -85,14 +87,14 @@ The CSVLint plugin is work-in-progress, here is list of features I want to add (
 * Improve file reading, to process/edit large files (>1MB)
 * Count unique values based on column(s)
 * Allow format masks per individual column
-* Support quoted strings
+* ~~Support quoted strings~~
 * Support two-digit year date values
 * Support FrictionlessData schema.json format
 * Load/save schema.ini/json
 * Improve automatic datatype detection
 * Add feature GUI click to jump to error line
-* Add feature generate import scripts (SQL, SPSS, Python(?), XML+column=xpath?)
-* Add feature display columns as [colors](https://community.notepad-plus-plus.org/topic/13921/setting-text-color-via-a-net-plugin) (custom Lexer?)
+* Add feature generate ~~scripts (SQL,~~ SPSS, Python(?), XML+column=xpath?)
+* ~~Syntax highlighting, display columns as [colors](https://community.notepad-plus-plus.org/topic/21124/c-adding-a-custom-styler-or-lexer-in-c-for-scintilla-notepad/)~~
 * Search for value in column, search next empty/non-empty in column
 * Search/replace in single column, multiple columns (option only replace n-th occurance? example "datetime(2008, 1, 1, 12, 59, 00)" replace ', ' with '-' or ':')
 * Search/replace only n-th occurance? Or only empty occurance?
@@ -117,7 +119,8 @@ always back-up your data files to prevent data loss.
 
 History
 -------
-15-dec-2019 - first release v0.1  
-02-may-2021 - reformat data, double-click jumps to line, various bugfixes v0.2
+15-dec-2019 - v0.1 first release  
+02-may-2021 - v0.2 reformat data, double-click jumps to line, various bugfixes  
+25-aug-2021 - v0.3 quoted string values, syntax highlighting, SQL export
 
-BdR©2019 Free to use - send questions or comments: Bas de Reuver - bdr1976@gmail.com
+BdR©2021 Free to use - send questions or comments: Bas de Reuver - bdr1976@gmail.com
