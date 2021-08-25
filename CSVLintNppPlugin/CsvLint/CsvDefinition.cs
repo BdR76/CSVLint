@@ -5,6 +5,7 @@
 // load definition from schema.ini file
 // save definition to schema.ini file
 // -------------------------------------
+using Kbg.NppPluginNET;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -665,6 +666,117 @@ namespace CSVLint
             {
                 // character separated
                 res = line.Split(Separator);
+            }
+
+            return res;
+        }
+
+        /// <summary>
+        ///     reformat file for date, decimal and separator
+        /// </summary>
+        /// <param name="data"> csv data </param>
+        public List<String> ParseNextLine(StreamReader strdata)
+        {
+            // algorithm in part based on "How can I parse a CSV string with JavaScript, which contains comma in data?"
+            // answer by user Bachor https://stackoverflow.com/a/58181757/1745616
+
+            // return list
+            var res = new List<String>();
+
+            //var s = new StringReader(data);
+            int linenr = 0;
+
+            StringBuilder value = new StringBuilder();
+
+
+            if (Separator == '\0')
+            {
+                var line = strdata.ReadLine();
+
+                // fixed width columns
+                int pos1 = 0;
+                for (int i = 0; i < FieldWidths.Count(); i++)
+                {
+                    // if line is too short, columns missing?
+                    if (pos1 > line.Length) break;
+
+                    // next column end pos, last column gets the rest
+                    int pos2 = FieldWidths[i];
+                    if (pos2 < 0) pos2 = line.Length;
+
+                    // get column value
+                    string val = line.Substring(pos1, pos2 - pos1);
+                    res.Add(val);
+                    pos1 = pos2;
+                }
+            }
+            else
+            {
+                // variables
+                bool quote = false;
+                bool wasquoted = false;
+                bool bNextCol = false;
+                bool isEOL = false;
+                char cur = (char)strdata.Read();
+
+                while (!strdata.EndOfStream)
+                {
+                    var next = (char)strdata.Read();
+
+                    if (!quote)
+                    {
+                        //const cellIsEmpty = line[line.length - 1].length === 0;
+                        bool cellIsEmpty = (value.Length == 0);
+
+                        if ((cur == '"') && cellIsEmpty) { quote = true; wasquoted = true; }
+                        else if (cur == Separator) { bNextCol = true; }
+                        else if ((cur == '\r') && (next == '\n')) { bNextCol = true; isEOL = true; }
+                        else if ((cur == '\n') || (cur == '\r')) { bNextCol = true; isEOL = true; }
+                        else if (cur != '\0') value.Append(cur);
+                    }
+                    else
+                    {
+                        if ((cur == '"') && (next == '"')) { value.Append(cur); next = (char)strdata.Read(); }
+                        else if (cur == '"') quote = false;
+                        else value.Append(cur);
+                    }
+
+                    cur = next;
+
+                    // if next col or next line
+                    if (bNextCol)
+                    {
+                        // check if column value is NULL value
+                        var val = value.ToString();
+                        if ((wasquoted == false) && (val == Main.Settings.NullValue)) val = "";
+
+                        // add column value
+                        res.Add(val);
+                        value.Clear();
+
+                        bNextCol = false;
+                        wasquoted = false;
+                    }
+
+                    if (isEOL) break;
+                    isEOL = false;
+                }
+
+                // also consume very last character in file
+                if ( (quote == false || (cur != '"')) && (cur != '\r') && (cur != '\n'))
+                {
+                    value.Append(cur);
+                }
+
+                // add last value
+                if (value.Length > 0)
+                {
+                    // check if column value is NULL value
+                    var val = value.ToString();
+                    if ((wasquoted == false) && (val == Main.Settings.NullValue)) val = "";
+
+                    res.Add(val);
+                }
             }
 
             return res;

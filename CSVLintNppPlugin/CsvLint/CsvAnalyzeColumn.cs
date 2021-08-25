@@ -178,8 +178,15 @@ namespace CSVLint
                     }
                     else if ((digits > 0) && (point != 1) && (comma != 1) && (sign <= 1) && (signpos == 0) && (length <= 8) && (other == 0))
                     {
-                        // numeric integer, examples "123", "-99", "+10" etc.
-                        this.CountInteger++;
+                        // numeric integer, examples "123", "-99", "+10" etc. bu tnote "000123"
+                        if (data[0] == '0')
+                        {
+                            this.CountString++;
+                        }
+                        else
+                        {
+                            this.CountInteger++;
+                        }
                     }
                     else if ((digits > 0) && ((point == 1) || (comma == 1)) && (sign <= 1) && (length <= 12) && (datesep <= 2) && (other == 0)) // datesep <= 2 for example "-12.34" a dot and a minus
                     {

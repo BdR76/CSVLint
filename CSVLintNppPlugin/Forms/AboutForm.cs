@@ -18,7 +18,7 @@ namespace Kbg.NppPluginNET
         {
             InitializeComponent();
 
-            String ver = GetVersion();
+            String ver = Main.GetVersion();
             lblTitle.Text += ver;
 
             // tooltip initialization
@@ -32,18 +32,6 @@ namespace Kbg.NppPluginNET
 
         }
 
-        private string GetVersion()
-        {
-            // version for example "1.3.0.0"
-            String ver = Assembly.GetExecutingAssembly().GetName().Version.ToString();
-
-            // if 4 version digits, remove last two ".0" if any, example  "1.3.0.0" ->  "1.3" or  "2.0.0.0" ->  "2.0"
-            while ((ver.Length > 4) && (ver.Substring(ver.Length - 2, 2) == ".0"))
-            {
-                ver = ver.Substring(0, ver.Length - 2);
-            }
-            return ver;
-        }
         private int IsEaster(DateTime dt)
         {
             int month = dt.Month;

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using Kbg.NppPluginNET;
@@ -13,7 +14,7 @@ namespace NppPluginNET.PluginInfrastructure
         public static readonly string StatusText = "CSV Linter and validator\0";
 
         public static char separatorChar = ';';
-        public static int[] fixedWidths;
+        public static List<int> fixedWidths;
 
         // Properties
         static readonly Dictionary<string, bool> SupportedProperties = new Dictionary<string, bool>
@@ -363,6 +364,11 @@ namespace NppPluginNET.PluginInfrastructure
             {
                 separatorChar = value[0];
             }
+            else if (name == "fixedwidths")
+            {
+                fixedWidths = value.Split(',').Select(Int32.Parse).ToList();
+                separatorChar = '\0';
+            }
             else
             {
                 SupportedProperties[name] = value == "0" ? false : true;
@@ -396,6 +402,9 @@ namespace NppPluginNET.PluginInfrastructure
              * p_access is the pointer of the IDocument cpp class
              */
 
+            // algorithm in part based on "How can I parse a CSV string with JavaScript, which contains comma in data?"
+            // answer by user Bachor https://stackoverflow.com/a/58181757/1745616
+
             int length = (int)length_doc;
             int start = (int)start_pos;
 
@@ -419,54 +428,113 @@ namespace NppPluginNET.PluginInfrastructure
             int idx = 1;
             bool isEOL = false;
 
-            // JAVASCRIPT
-            bool quote = false;
-            bool bNextCol = false;
-
             int start_col = 0;
             int end_col = 0;
+            int i = 0;
+            bool bNextCol = false;
 
-            for (int i = 0; i < length-1; i++)
+            // fixed width or separator
+            if (separatorChar == '\0')
             {
-                char cur = content[i];
-                char next = content[i + 1];
+                int colidx = 0;
+                int widthcount = fixedWidths[colidx];
 
-                if (!quote)
+                // fixed widths
+                while (i < length)
                 {
-                    //const cellIsEmpty = line[line.length - 1].length === 0;
-                    bool cellIsEmpty = (i - start_col == 0);
+                    // next character
+                    char cur = content[i];
 
-                    if ((cur == '"') && cellIsEmpty) { quote = true; }
-                    else if (cur == separatorChar) { bNextCol = true; end_col = i; }
-                    else if ((cur == '\r') && (next == '\n')) { isEOL = true; end_col = i; i++; }
-                    else if ((cur == '\n') || (cur == '\r')) { isEOL = true; end_col = i; }
-                    //else line[line.length - 1] += cur;
+                    // new line
+                    if ((cur == '\n') || (cur == '\r')) { isEOL = true; end_col = i; }
+
+                    // end of column
+                    widthcount--;
+                    if (widthcount == 0) { bNextCol = true; end_col = i; }
+
+                    // if next col or next line
+                    if (bNextCol || isEOL)
+                    {
+                        // style this column
+                        if (end_col != start_col)
+                        {
+                            vtable.StartStyling(p_access, (IntPtr)(start + start_col));
+                            vtable.SetStyleFor(p_access, (IntPtr)(end_col - start_col), (char)idx);
+                        }
+
+                        // next column width
+                        colidx++;
+                        widthcount = (colidx < fixedWidths.Count ? fixedWidths[colidx] : 9999);
+
+                        // next color
+                        idx++;
+
+                        // end of line
+                        if (isEOL) colidx = 0;
+
+                        // cycle colors or reset at end of line
+                        if ((idx > 8) || (isEOL)) idx = 1;
+
+                        bNextCol = false;
+                        isEOL = false;
+                        start_col = i + 1;
+                    }
+                    i++;
                 }
-                else
+            }
+            else
+            {
+                // JAVASCRIPT
+                bool quote = false;
+
+                for (i = 0; i < length - 1; i++)
                 {
-                    if ((cur == '"') && (next == '"')) { i++; }
-                    else if (cur == '"') quote = false;
-                    //else line[line.length - 1] += cur;
-                }
+                    char cur = content[i];
+                    char next = content[i + 1];
 
-                // if next col or next line
-                if (bNextCol || isEOL)
-                {
-                    // style this column
-                    vtable.StartStyling(p_access, (IntPtr)(start + start_col));
-                    vtable.SetStyleFor(p_access, (IntPtr)(end_col - start_col), (char)idx);
+                    if (!quote)
+                    {
+                        //const cellIsEmpty = line[line.length - 1].length === 0;
+                        bool cellIsEmpty = (i - start_col == 0);
 
-                    // next color
-                    idx++;
+                        if ((cur == '"') && cellIsEmpty) { quote = true; }
+                        else if (cur == separatorChar) { bNextCol = true; end_col = i; }
+                        else if ((cur == '\r') && (next == '\n')) { isEOL = true; end_col = i; i++; }
+                        else if ((cur == '\n') || (cur == '\r')) { isEOL = true; end_col = i; }
+                        //else line[line.length - 1] += cur;
+                    }
+                    else
+                    {
+                        if ((cur == '"') && (next == '"')) { i++; }
+                        else if (cur == '"') quote = false;
+                        //else line[line.length - 1] += cur;
+                    }
 
-                    if ((idx > 8) || (isEOL)) idx = 1; // reset end of line
+                    // if next col or next line
+                    if (bNextCol || isEOL)
+                    {
+                        // style this column
+                        vtable.StartStyling(p_access, (IntPtr)(start + start_col));
+                        vtable.SetStyleFor(p_access, (IntPtr)(end_col - start_col), (char)idx);
 
-                    bNextCol = false;
-                    isEOL = false;
-                    start_col = i + 1;
+                        // next color
+                        idx++;
+
+                        if ((idx > 8) || (isEOL)) idx = 1; // reset end of line
+
+                        bNextCol = false;
+                        isEOL = false;
+                        start_col = i + 1;
+                    }
                 }
             }
 
+            // style the last column
+            if (length - start_col > 0)
+            {
+                vtable.StartStyling(p_access, (IntPtr)(start + start_col));
+                vtable.SetStyleFor(p_access, (IntPtr)(length - start_col), (char)idx);
+            }
 
             // free allocated buffer
             Marshal.FreeHGlobal(buffer_ptr);

@@ -82,6 +82,9 @@ namespace Kbg.NppPluginNET
         [Description("Default quote escape character when quotes exists inside text"), Category("General"), DefaultValue('\"')]
         public char DefaultQuoteChar { get; set; }
 
+        [Description("Include separator from syntax highlighting colors."), Category("General"), DefaultValue(false)]
+        public bool SeparatorColor { get; set; }
+
         [Description("Maximum rows to analyze to automatically detect data types. Set to 0 to analyze all rows, set to 1000 for better performance with large files."), Category("Analyze"), DefaultValue(0)]
         public int ScanRows { get; set; }
 
@@ -122,6 +125,9 @@ namespace Kbg.NppPluginNET
 
         [Description("Month abbreviations for detecting or generating date format 'mmmm', comma separated list of 12 names."), Category("Validate"), DefaultValue("jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec")]
         public String MonthAbbrev { get; set; }
+
+        [Description("Maximum records per SQL insert batch."), Category("Edit"), DefaultValue(1000)]
+        public int SQLBatchRows { get; set; }
 
         [Description("Create new file when making edits."), Category("Edit"), DefaultValue(true)]
         public bool CreateNewFile { get; set; }

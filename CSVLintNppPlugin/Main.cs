@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
@@ -60,9 +61,10 @@ namespace Kbg.NppPluginNET
             // menu items
             //PluginBase.SetCommand(0, "MyMenuCommand", myMenuFunction, new ShortcutKey(false, false, false, Keys.None));
             PluginBase.SetCommand(0, "CSV Lint window", myDockableDialog); idMyDlg = 0;
-            PluginBase.SetCommand(1, "&Settings", Settings.ShowDialog);
-            PluginBase.SetCommand(2, "---", null);
-            PluginBase.SetCommand(3, "About", doAboutForm);
+            PluginBase.SetCommand(1, "Convert to SQL", convertToSQL);
+            PluginBase.SetCommand(2, "&Settings", Settings.ShowDialog);
+            PluginBase.SetCommand(3, "---", null);
+            PluginBase.SetCommand(4, "About", doAboutForm);
         }
 
         internal static void SetToolBarIcon()
@@ -105,6 +107,21 @@ namespace Kbg.NppPluginNET
             string sepchar = csvdef.Separator.ToString();
             editor.SetProperty("separator", sepchar);
 
+            // if fixed width
+            if ((csvdef.Separator == '\0') && (csvdef.FieldWidths != null))
+            {
+                var strwidths = "";
+                for (var i = 0; i < csvdef.FieldWidths.Count; i++)
+                {
+                    var w1 = csvdef.FieldWidths[i];
+                    strwidths += (i > 0 ? "," : "") + csvdef.FieldWidths[i].ToString();
+                }
+
+                editor.SetProperty("fixedwidths", strwidths);
+            }
+            
+
+
             // keep current csvdef
             _CurrnetCsvDef = FileCsvDef[filename];
 
@@ -113,6 +130,22 @@ namespace Kbg.NppPluginNET
                 frmCsvLintDlg.SetCsvDefinition(csvdef);
             }
         }
+
+        public static CsvDefinition GetCurrentCsvDef()
+        {
+            // Notepad++ switc to a different file tab
+            INotepadPPGateway notepad = new NotepadPPGateway();
+            string filename = notepad.GetCurrentFilePath();
+
+            // check if already in list
+            if (FileCsvDef.ContainsKey(filename))
+            {
+                return FileCsvDef[filename];
+            }
+
+            return null;
+        }
+
         public static void CSVmetadataUpdate(CsvDefinition csvdef)
         {
             // Notepad++ switc to a different file tab
@@ -173,6 +206,14 @@ namespace Kbg.NppPluginNET
             about.Dispose();
         }
 
+        internal static void convertToSQL()
+        {
+            // get dictionary
+            CsvDefinition csvdef = GetCurrentCsvDef();
+
+            CsvEdit.ConvertToSQL(csvdef);
+        }
+
         internal static void myDockableDialog()
         {
             if (frmCsvLintDlg == null)
@@ -208,6 +249,21 @@ namespace Kbg.NppPluginNET
             {
                 Win32.SendMessage(PluginBase.nppData._nppHandle, (uint) NppMsg.NPPM_DMMSHOW, 0, frmCsvLintDlg.Handle);
             }
+
+            // immediately show currnet csv metadata when activated
+            CSVChangeFileTab();
+        }
+        public static string GetVersion()
+        {
+            // version for example "1.3.0.0"
+            String ver = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+
+            // if 4 version digits, remove last two ".0" if any, example  "1.3.0.0" ->  "1.3" or  "2.0.0.0" ->  "2.0"
+            while ((ver.Length > 4) && (ver.Substring(ver.Length - 2, 2) == ".0"))
+            {
+                ver = ver.Substring(0, ver.Length - 2);
+            }
+            return ver;
         }
     }
 }

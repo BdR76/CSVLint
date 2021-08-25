@@ -262,38 +262,12 @@ namespace CSVLint
             //List<CsvColumStats> colstats = new List<CsvColumStats>();
             lineCount = 0;
 
-            // examine data
-            while ((line = strdata.ReadLine()) != null)
+            while (!strdata.EndOfStream)
             {
                 // keep track of how many lines
                 lineCount++;
 
-                // get values from line
-                List<string> values = new List<string>();
-                if (fixedwidth)
-                {
-                    // fixed width columns
-                    int pos1 = 0;
-                    for (int i = 0; i < result.FieldWidths.Count(); i++)
-                    {
-                        // if line is too short, columns missing?
-                        if (pos1 > line.Length) break;
-
-                        // next column end pos, last column gets the rest
-                        int pos2 = result.FieldWidths[i];
-                        if (pos2 < 0) pos2 = line.Length;
-
-                        // get column value
-                        string val = line.Substring(pos1, pos2 - pos1);
-                        values.Add(val);
-                        pos1 = pos2;
-                    }
-                }
-                else
-                {
-                    // delimited columns
-                    values = line.Split(result.Separator).ToList();
-                }
+                List<string> values = result.ParseNextLine(strdata);
 
                 // inspect all values
                 for (int i = 0; i < values.Count(); i++)
