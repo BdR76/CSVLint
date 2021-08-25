@@ -40,7 +40,6 @@ namespace Kbg.NppPluginNET
                     if (ItemMatch.Length > 1)
                     {
                         String ltr = ItemMatch.ToString().Substring(1, 1);
-                        c = '\0';
 
                         // check for default characters
                         if (ltr == "t") c = '\t'; // tab
@@ -139,8 +138,7 @@ namespace Kbg.NppPluginNET
         private int getYearFromString(String yr)
         {
             // test if it's a valid int
-            int ret;
-            int.TryParse(yr, out ret);
+            int.TryParse(yr, out int ret);
 
             // replace SysYear with current year, for example 2020
             if ((ret == 0) || (yr.ToLower() == "sysyear"))
@@ -155,8 +153,7 @@ namespace Kbg.NppPluginNET
             String ret = yr.Trim();
 
             // test if it's a valid int
-            int test;
-            int.TryParse(ret, out test);
+            int.TryParse(ret, out int test);
 
             // replace SysYear with current year, for example 2020
             if ((test == 0) || (yr.ToLower() == "sysyear"))

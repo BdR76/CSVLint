@@ -59,7 +59,6 @@ namespace CSVLint
             }
 
             // start line reader
-            string line = "";
             int counterr = 0;
             var dtStart = DateTime.Now;
 
@@ -148,7 +147,7 @@ namespace CSVLint
             var dtElapsed = (DateTime.Now - dtStart).ToString(@"hh\:mm\:ss\.fff");
 
             // final ready message
-            line = string.Format("Inspected {0} lines, {1} data errors found, time elapsed {2}", lineCount, (this.log.Count == 0 ? "no" : counterr.ToString()), dtElapsed);
+            var line = string.Format("Inspected {0} lines, {1} data errors found, time elapsed {2}", lineCount, (this.log.Count == 0 ? "no" : counterr.ToString()), dtElapsed);
             this.log.Add(new LogLine(line, -1, -1));
         }
 

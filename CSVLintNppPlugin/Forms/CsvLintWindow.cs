@@ -43,7 +43,7 @@ namespace Kbg.NppPluginNET
             txtOutput.Text = String.Format("Refresh from data is ready, time elapsed {0}", dtElapsed);
         }
 
-        private CsvDefinition getCsvDefFromTextbox()
+        private CsvDefinition GetCsvDefFromTextbox()
         {
             CsvDefinition csvdef;
 
@@ -82,7 +82,7 @@ namespace Kbg.NppPluginNET
         private void OnBtnValidate_Click(object sender, EventArgs e)
         {
             // get dictionary
-            CsvDefinition csvdef = getCsvDefFromTextbox();
+            CsvDefinition csvdef = GetCsvDefFromTextbox();
 
             // check if valid dictionary
             if (csvdef.Fields.Count > 0)
@@ -188,7 +188,7 @@ namespace Kbg.NppPluginNET
             if (ok)
             {
                 // get dictionary
-                CsvDefinition csvdef = getCsvDefFromTextbox();
+                CsvDefinition csvdef = GetCsvDefFromTextbox();
 
                 var dtStart = DateTime.Now;
 
@@ -249,7 +249,7 @@ namespace Kbg.NppPluginNET
         private void btnApply_Click(object sender, EventArgs e)
         {
             // get dictionary
-            CsvDefinition csvdef = getCsvDefFromTextbox();
+            CsvDefinition csvdef = GetCsvDefFromTextbox();
 
             // update the master list of csv definitions
             Main.updateCSVChanges(csvdef);

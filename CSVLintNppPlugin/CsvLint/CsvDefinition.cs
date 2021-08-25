@@ -281,7 +281,7 @@ namespace CSVLint
                     string k = line.Key.ToLower();
                     string Val = line.Value.Trim();
                     string vallow = Val.ToLower();
-                    bool bint = int.TryParse(Val, out int vint);
+                    int.TryParse(Val, out int vint);
 
                     // most important, what is the separator
                     if (k == "format")
@@ -374,7 +374,6 @@ namespace CSVLint
                         // assume default values
                         string name = string.Format("Column{0}", idx);
                         string notnull = "";
-                        string width = "";
                         string datatypestr = "";
                         int maxwidth = 50;
                         ColumnType datatype = ColumnType.String;
@@ -397,7 +396,7 @@ namespace CSVLint
                         pos = vallow.LastIndexOf("width");
                         if (pos == spc - 5)
                         {
-                            width = vallow.Substring(pos, Val.Length - pos);
+                            string width = vallow.Substring(pos, Val.Length - pos);
                             Val = Val.Substring(0, pos).Trim();
                             vallow = Val.ToLower();
 

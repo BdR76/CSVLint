@@ -205,10 +205,9 @@ namespace CSVLint
             // use stringreader to go line by line
             var strdata = ScintillaStreams.StreamAllText();
 
-            var lineCount = (csvdef.ColNameHeader ? -1 : 0);
-            var maxrec = MAX_SQL_ROWS;
-            var batchcomm = -1;  // batch comment line
-            var batchstart = -1; // batch starting line
+            int lineCount = (csvdef.ColNameHeader ? -1 : 0);
+            int batchcomm = -1;  // batch comment line
+            int batchstart = -1; // batch starting line
 
             while (!strdata.EndOfStream)
             {
@@ -221,9 +220,6 @@ namespace CSVLint
 
                     // remember next batch
                     batchstart = lineCount + 1;
-
-                    maxrec = lineCount + MAX_SQL_ROWS;
-                    //maxrec = (maxrec > amount ? amount : maxrec);
 
                     sb.Append("\r\ngo\r\n");
                     sb.Append("-- -------------------------------------\r\n");
