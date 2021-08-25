@@ -81,7 +81,7 @@ namespace Kbg.NppPluginNET
         [Description("Default quote escape character when quotes exists inside text"), Category("General"), DefaultValue('\"')]
         public char DefaultQuoteChar { get; set; }
 
-        [Description("Include separator from syntax highlighting colors."), Category("General"), DefaultValue(false)]
+        [Description("Include separator in syntax highlighting colors. Set to false and the separator characters are always white."), Category("General"), DefaultValue(false)]
         public bool SeparatorColor { get; set; }
 
         [Description("Maximum rows to analyze to automatically detect data types. Set to 0 to analyze all rows, set to 1000 for better performance with large files."), Category("Analyze"), DefaultValue(0)]

@@ -21,18 +21,21 @@ namespace NppPluginNET.PluginInfrastructure
         {
             { "fold", true},
             { "fold.compact", false},
+            { "separatorcolor", false},
             { "separator", false}
     };
         static readonly Dictionary<string, string> PropertyDescription = new Dictionary<string, string>
         {
             { "fold", "Enable or disable the folding functionality."},
             { "fold.compact", "If set to 0 closing tag is visible when collapsed else hidden." },
+            { "separatorcolor", "Include separator in syntax highlighting colors." },
             { "separator", "Separator character for syntax highlighting csv data"}
         };
         static readonly Dictionary<string, int> PropertyTypes = new Dictionary<string, int>
         {
             { "fold", (int)SciMsg.SC_TYPE_BOOLEAN},
             { "fold.compact", (int)SciMsg.SC_TYPE_BOOLEAN },
+            { "separatorcolor", (int)SciMsg.SC_TYPE_BOOLEAN },
             { "separator", (int)SciMsg.SC_TYPE_STRING }
         };
 
@@ -479,7 +482,7 @@ namespace NppPluginNET.PluginInfrastructure
                         else
                         {
                             widthcount = 9999; // rest of line
-                            idx = 0; // white, no color to indicate incorrect column
+                            //idx = 0; // white, no color to indicate incorrect column
                         }
 
                         // reset variables
@@ -493,6 +496,7 @@ namespace NppPluginNET.PluginInfrastructure
             {
                 // JAVASCRIPT
                 bool quote = false;
+                bool sepcol = SupportedProperties["separatorcolor"];
 
                 for (i = 0; i < length - 1; i++)
                 {
@@ -520,9 +524,20 @@ namespace NppPluginNET.PluginInfrastructure
                     // if next col or next line
                     if (bNextCol || isEOL)
                     {
+                        // include separator character in syntax highlighting color
+                        if (sepcol && !isEOL) end_col++;
+
                         // style this column
                         vtable.StartStyling(p_access, (IntPtr)(start + start_col));
                         vtable.SetStyleFor(p_access, (IntPtr)(end_col - start_col), (char)idx);
+
+                        // separator character is white/unstyled
+                        if (!sepcol)
+                        {
+                            // style empty value between columns
+                            vtable.StartStyling(p_access, (IntPtr)(start + i));
+                            vtable.SetStyleFor(p_access, (IntPtr)1, (char)0); // 0 = white
+                        }
 
                         // next color
                         idx++;

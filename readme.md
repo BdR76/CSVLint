@@ -28,10 +28,10 @@ How to install
 The distributed output file is `CSVLint.dll`. In your \Notepad++\plugins\ folder,
 create a new folder `CSVLint` and place the .dll file there, so:
 
-* copy the file [.\CSVLintNppPlugin\bin\Release\CSVLint.dll](/CSVLintNppPlugin/bin/Release/)
-* to new folder .\Program Files (x86)\Notepad++\plugins\CSVLint\CSVLint.dll
-* copy the file [.\config\CSVLint.xml](/config/CSVLint.xml)
-to folder %USERPROFILE%\AppData\Roaming\Notepad++\plugins\config\CSVLint.xml
+* copy the file [.\CSVLintNppPlugin\bin\Release\CSVLint.dll](/CSVLintNppPlugin/bin/Release/)  
+ to new folder `.\Program Files (x86)\Notepad++\plugins\CSVLint\CSVLint.dll`
+* copy the file [.\config\CSVLint.xml](/config/CSVLint.xml)  
+to folder `%USERPROFILE%\AppData\Roaming\Notepad++\plugins\config\CSVLint.xml`
 
 For the 64-bit version it is the same, except the output file is in the
 [Release-x64](/CSVLintNppPlugin/bin/Release-x64/) folder and Notepad++ is

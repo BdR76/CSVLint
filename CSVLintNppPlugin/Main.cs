@@ -105,7 +105,9 @@ namespace Kbg.NppPluginNET
 
             // pass separator to lexer
             string sepchar = csvdef.Separator.ToString();
+            string sepcol = (Settings.SeparatorColor ? "1" : "0");
             editor.SetProperty("separator", sepchar);
+            editor.SetProperty("separatorcolor", sepcol);
 
             // if fixed width
             if ((csvdef.Separator == '\0') && (csvdef.FieldWidths != null))
@@ -151,7 +153,9 @@ namespace Kbg.NppPluginNET
 
             // pass separator to lexer
             string sepchar = csvdef.Separator.ToString();
+            string sepcol = (Settings.SeparatorColor ? "1" : "0");
             editor.SetProperty("separator", sepchar);
+            editor.SetProperty("separatorcolor", sepcol);
 
             // if fixed width
             if ((csvdef.Separator == '\0') && (csvdef.FieldWidths != null))
