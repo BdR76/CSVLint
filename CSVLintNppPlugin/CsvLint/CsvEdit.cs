@@ -44,7 +44,6 @@ namespace CSVLint
 
             //var s = new StringReader(data);
             int linenr = 0;
-            String line;
 
             StringBuilder datanew = new StringBuilder();
 

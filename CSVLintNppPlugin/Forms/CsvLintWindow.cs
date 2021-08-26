@@ -32,7 +32,7 @@ namespace Kbg.NppPluginNET
             // analyze and determine csv definition
             CsvDefinition csvdef = CsvAnalyze.InferFromData();
 
-            Main.CSVmetadataUpdate(csvdef);
+            Main.updateCSVChanges(csvdef);
 
             var dtElapsed = (DateTime.Now - dtStart).ToString(@"hh\:mm\:ss\.fff");
 

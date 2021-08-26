@@ -186,23 +186,6 @@ namespace Kbg.NppPluginNET
             return null;
         }
 
-        public static void CSVmetadataUpdate(CsvDefinition csvdef)
-        {
-            // Notepad++ switc to a different file tab
-            INotepadPPGateway notepad = new NotepadPPGateway();
-            string filename = notepad.GetCurrentFilePath();
-
-            // check if already in list
-            if (!FileCsvDef.ContainsKey(filename))
-            {
-                FileCsvDef.Add(filename, csvdef);
-            }
-            else
-            {
-                FileCsvDef[filename] = csvdef;
-            }
-        }
-
         public static void GetCurrentFileLexerParameters(out char sep)
         {
 
