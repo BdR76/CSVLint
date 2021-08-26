@@ -19,7 +19,7 @@ With CSV Lint you can take a dataset and:
 ![preview screenshot](/csvlint_preview.png?raw=true "CSVLint plug-in preview")
 
 CSV Lint is stable and usable for most general use-cases, but it is a work-in-progress.
-If you encounter any bugs or unexpected output I encourage you to [report issues here](/issues/).
+If you encounter any bugs or unexpected output I encourage you to [report issues here](https://github.com/BdR76/CSVLint/issues).
 
 CSVLint is based on a prototype project [Dataset MultiTool](https://github.com/BdR76/datasetmultitool)
 
