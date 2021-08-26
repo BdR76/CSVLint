@@ -133,7 +133,6 @@ History
 -------
 15-dec-2019 - v0.1 first release  
 02-may-2021 - v0.2 reformat data, double-click jumps to line, various bugfixes  
-25-aug-2021 - v0.3 quoted string values, syntax highlighting, SQL export  
-26-aug-2021 - v0.3.1 bugfix update
+25-aug-2021 - v0.3 quoted string values, syntax highlighting, SQL export
 
 BdR©2021 Free to use - send questions or comments: Bas de Reuver - bdr1976@gmail.com
