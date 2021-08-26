@@ -738,11 +738,11 @@ namespace CSVLint
                 bool wasquoted = false;
                 bool bNextCol = false;
                 bool isEOL = false;
-                char cur = (char)strdata.Read();
 
                 while (!strdata.EndOfStream)
                 {
-                    var next = (char)strdata.Read();
+                    char cur = (char)strdata.Read();
+                    char next = (char)strdata.Peek();
 
                     if (!quote)
                     {
@@ -751,18 +751,16 @@ namespace CSVLint
 
                         if ((cur == '"') && cellIsEmpty) { quote = true; wasquoted = true; }
                         else if (cur == Separator) { bNextCol = true; }
-                        else if ((cur == '\r') && (next == '\n')) { bNextCol = true; isEOL = true; }
+                        else if ((cur == '\r') && (next == '\n')) { next = (char)strdata.Read();  bNextCol = true; isEOL = true; } // double carriage return/linefeed so also consume next character (i.e. skip it)
                         else if ((cur == '\n') || (cur == '\r')) { bNextCol = true; isEOL = true; }
                         else if (cur != '\0') value.Append(cur);
                     }
                     else
                     {
-                        if ((cur == '"') && (next == '"')) { value.Append(cur); next = (char)strdata.Read(); }
+                        if ((cur == '"') && (next == '"')) { value.Append(cur); next = (char)strdata.Read(); } // double " within quotes so also consume next character (i.e. skip it)
                         else if (cur == '"') quote = false;
                         else value.Append(cur);
                     }
-
-                    cur = next;
 
                     // if next col or next line
                     if (bNextCol)
@@ -783,13 +781,7 @@ namespace CSVLint
                     isEOL = false;
                 }
 
-                // also consume very last character in file
-                if ( (quote == false || (cur != '"')) && (cur != '\r') && (cur != '\n'))
-                {
-                    value.Append(cur);
-                }
-
-                // add last value
+                // also ad last column value in file
                 if (value.Length > 0)
                 {
                     // check if column value is NULL value

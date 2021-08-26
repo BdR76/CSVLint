@@ -73,30 +73,30 @@ namespace CSVLint
                 lineLengths.Increase(line.Length);
 
                 // process characters in this line
-                int spaces = 0, i = 0, num = -1;
-                foreach (var c in line)
+                int spaces = 0, c = 0, num = -1;
+                foreach (var chr in line)
                 {
-                    letterFrequency.Increase(c);
-                    occurrences.Increase(c);
+                    letterFrequency.Increase(chr);
+                    occurrences.Increase(chr);
 
-                    if (c == '"') inQuotes = !inQuotes;
+                    if (chr == '"') inQuotes = !inQuotes;
                     else if (!inQuotes)
                     {
-                        letterFrequencyQuoted.Increase(c);
-                        occurrencesQuoted.Increase(c);
+                        letterFrequencyQuoted.Increase(chr);
+                        occurrencesQuoted.Increase(chr);
                     }
 
                     // check fixed columns
                     int newcol = 0;
-                    if (c == ' ')
+                    if (chr == ' ')
                     {
                         // more than 2 spaces could indicate new column
-                        if (++spaces > 1) bigSpaces.Increase((i + 1));
+                        if (++spaces > 1) bigSpaces.Increase((c + 1));
 
                         // one single space after a digit might be a new column
                         if (num == 1)
                         {
-                            wordStarts.Increase(i);
+                            wordStarts.Increase(c);
                             num = 0;
                         }
                     }
@@ -107,9 +107,9 @@ namespace CSVLint
                         spaces = 0;
 
                         // switch between alpha and numeric characters could indicate new column
-                        int checknum = ("0123456789".IndexOf(c));
+                        int checknum = ("0123456789".IndexOf(chr));
                         // ignore characters that can be both numeric or alpha values example "A.B." or "Smith-Johnson"
-                        int ignore = (".-+".IndexOf(c));
+                        int ignore = (".-+".IndexOf(chr));
                         if (ignore < 0)
                         {
                             if (checknum < 0)
@@ -124,11 +124,11 @@ namespace CSVLint
                             };
                         };
                         // new column found
-                        if (newcol == 1) wordStarts.Increase(i);
+                        if (newcol == 1) wordStarts.Increase(c);
                     }
 
                     // next character
-                    i++;
+                    c++;
                 }
 
                 frequencies.Add(letterFrequency);
@@ -147,34 +147,34 @@ namespace CSVLint
 
             // check the variance on the frequency of each char
             var variances = new Dictionary<char, float>();
-            foreach (var c in occurrences.Keys)
+            foreach (var key in occurrences.Keys)
             {
-                var mean = (float)occurrences[c] / lineCount;
+                var mean = (float)occurrences[key] / lineCount;
                 float variance = 0;
                 foreach (var frequency in frequencies)
                 {
                     var f = 0;
-                    if (frequency.ContainsKey(c)) f = frequency[c];
+                    if (frequency.ContainsKey(key)) f = frequency[key];
                     variance += (f - mean) * (f - mean);
                 }
                 variance /= lineCount;
-                variances.Add(c, variance);
+                variances.Add(key, variance);
             }
 
             // check variance on frequency of quoted chars(?)
             var variancesQuoted = new Dictionary<char, float>();
-            foreach (var c in occurrencesQuoted.Keys)
+            foreach (var key in occurrencesQuoted.Keys)
             {
-                var mean = (float)occurrencesQuoted[c] / linesQuoted;
+                var mean = (float)occurrencesQuoted[key] / linesQuoted;
                 float variance = 0;
                 foreach (var frequency in frequenciesQuoted)
                 {
                     var f = 0;
-                    if (frequency.ContainsKey(c)) f = frequency[c];
+                    if (frequency.ContainsKey(key)) f = frequency[key];
                     variance += (f - mean) * (f - mean);
                 }
                 variance /= lineCount;
-                variancesQuoted.Add(c, variance);
+                variancesQuoted.Add(key, variance);
             }
 
             // get separator
@@ -284,7 +284,10 @@ namespace CSVLint
                 for (int i = 0; i < values.Count(); i++)
                 {
                     // add columnstats if needed
-                    if (i > colstats.Count() - 1) colstats.Add(new CsvAnalyzeColumn(i));
+                    if (i > colstats.Count() - 1)
+                    {
+                        colstats.Add(new CsvAnalyzeColumn(i));
+                    }
 
                     int fixedLength = -1;
                     if (fixedwidth) fixedLength = (i < result.FieldWidths.Count ? result.FieldWidths[i] : values[i].Length);

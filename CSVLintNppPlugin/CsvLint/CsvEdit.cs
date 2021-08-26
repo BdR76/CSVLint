@@ -64,64 +64,79 @@ namespace CSVLint
                 datanew.Append("\n");
             }
 
-            // process each line
-            while ((line = strdata.ReadLine()) != null)
+
+            // read all lines
+            while (!strdata.EndOfStream)
             {
+                // get values from line
+                List<string> values = csvdef.ParseNextLine(strdata);
+
                 linenr++;
 
                 // skip header line in source data, no header line in Fixed Width output data
                 if ((linenr == 1) && (skipheader)) continue;
 
-                // splite line into columns
-                String[] data = csvdef.ParseData(line);
-
                 // reformat data line to new line
-                for (int c = 0; c < csvdef.Fields.Count; c++)
+                for (int c = 0; c < values.Count; c++)
                 {
                     // next value
-                    String val = data[c];
+                    String val = values[c];
+
+                    // fixed width align
+                    int wid = val.Length;
+                    bool alignleft = true;
 
                     // trim all values
                     if (trimAll) val = val.Trim();
 
-                    // datetime reformat
-                    if ((csvdef.Fields[c].DataType == ColumnType.DateTime) && (reformatDatTime != ""))
+                    // check if data contains more columns than expected in csvdef
+                    if (c < csvdef.Fields.Count)
                     {
-                        // convert
-                        try
+                        // datetime reformat
+                        if ((csvdef.Fields[c].DataType == ColumnType.DateTime) && (reformatDatTime != ""))
                         {
-                            val = DateTime.ParseExact(val, csvdef.Fields[c].Mask, CultureInfo.InvariantCulture).ToString(reformatDatTime, CultureInfo.InvariantCulture);
-                        }
-                        catch
-                        {
-                        }
-                    };
+                            // convert
+                            try
+                            {
+                                val = DateTime.ParseExact(val, csvdef.Fields[c].Mask, CultureInfo.InvariantCulture).ToString(reformatDatTime, CultureInfo.InvariantCulture);
+                            }
+                            catch
+                            {
+                            }
+                        };
 
-                    // decimals reformat
-                    if ((csvdef.Fields[c].DataType == ColumnType.Decimal) && (reformatDecimal != ""))
-                    {
-                        val = val.Replace(csvdef.DecimalSymbol, reformatDecimal[0]);
-                    };
+                        // decimals reformat
+                        if ((csvdef.Fields[c].DataType == ColumnType.Decimal) && (reformatDecimal != ""))
+                        {
+                            val = val.Replace(csvdef.DecimalSymbol, reformatDecimal[0]);
+                        };
+
+                        // fixed width, text align left - numeric align right
+                        wid = csvdef.Fields[c].MaxWidth;
+                        alignleft = !((csvdef.Fields[c].DataType == ColumnType.Integer) || (csvdef.Fields[c].DataType == ColumnType.Decimal));
+                    }
 
                     // construct new output data line
                     if (newSep == '\0')
                     {
                         // fixed width
-                        int wid = csvdef.Fields[c].MaxWidth;
-                        if ((csvdef.Fields[c].DataType == ColumnType.Integer) || (csvdef.Fields[c].DataType == ColumnType.Decimal))
+                        if (alignleft)
                         {
-                            datanew.Append(val.PadLeft(wid, ' '));
+                            datanew.Append(val.PadRight(wid, ' '));
                         }
                         else
                         {
-                            datanew.Append(val.PadRight(wid, ' '));
+                            datanew.Append(val.PadLeft(wid, ' ')); 
                         };
 
                     }
                     else
                     {
+                        // if value contains separator character then put value in quotes
+                        if (val.IndexOf(newSep) >= 0) val = string.Format("\"{0}\"", val);
+
                         // character separated
-                        datanew.Append(val + (c < csvdef.Fields.Count - 1 ? newSep.ToString() : ""));
+                        datanew.Append((c > 0 ? newSep.ToString() : "") + val);
                     }
                 };
 
