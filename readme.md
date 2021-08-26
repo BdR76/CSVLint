@@ -1,27 +1,39 @@
 CSV Lint - Notepad++ plugin
 ===========================
 
-CSVLint is a plug-in for Notepad++ for metadata discovery, technical data
-validation and reformatting on tabular data files. You can take a dataset and:
+CSV Lint is a plug-in for Notepad++ for metadata discovery, technical data
+validation and reformatting on tabular data files.
+
+Use CSV Lint to quickly detect any technical errors in csv data or fix datetime and decimal formatting.
+It is _not_ meant as a replacement for spreadsheet programs like Excel or SPSS.
+
+With CSV Lint you can take a dataset and:
 
 * Scan for metadata, i.e. detect columns and datatypes
 * Create schema.ini based on metadata
 * Validate data against schema.ini
 * Convert datetime/decimal values to different formats
 * Convert between comma, semicolon, tab separated, fixed width formats
+* Convert csv data to SQL insert script
 
 ![preview screenshot](/csvlint_preview.png?raw=true "CSVLint plug-in preview")
 
-CSVLint is still in alpha phase so for now it is still quite buggy.
-It is based on a prototype project [Dataset MultiTool](https://github.com/BdR76/datasetmultitool)
+CSV Lint is stable and usable for most general use-cases, but it is a work-in-progress.
+If you encounter any bugs or unexpected output I encourage you to [report issues here](/issues/).
+
+CSVLint is based on a prototype project [Dataset MultiTool](https://github.com/BdR76/datasetmultitool)
 
 How to use it
 -------------
 
 1. Open your dataset in Notepad++
-2. Press "Refresh from data" to automatically detect format
-3. Optionally, manually enter or adjust metadata
-4. Press "Validate data" to detect any data errors
+2. Open the "CSV Lint window" from the plug-in menu or toolbar
+3. Press "Refresh from data" to automatically detect format
+4. Optionally, manually enter or adjust metadata
+5. Press "Validate data" to detect any data errors
+
+If there are no errors in the data, you can click "Reformat data" for data reformatting options,
+or select "Convert to SQL" menu item to generate an SQL insert script.
 
 How to install
 --------------
@@ -30,7 +42,7 @@ create a new folder `CSVLint` and place the .dll file there, so:
 
 * copy the file [.\CSVLintNppPlugin\bin\Release\CSVLint.dll](/CSVLintNppPlugin/bin/Release/)  
  to new folder `.\Program Files (x86)\Notepad++\plugins\CSVLint\CSVLint.dll`
-* copy the file [.\config\CSVLint.xml](/config/CSVLint.xml)  
+* copy the file [.\config\CSVLint.xml](/config/)  
 to folder `%USERPROFILE%\AppData\Roaming\Notepad++\plugins\config\CSVLint.xml`
 
 For the 64-bit version it is the same, except the output file is in the
@@ -60,7 +72,7 @@ width text files and set the `Width` for each column.
 
 DateTimeFormat is not case sensitive and uses `dd/mm/yyyy` or `yyyy-mm-dd hh:nn:ss` etc.
 
-DecimalSymbol can be either `.` or `,` and CsvLint will assume the thousand
+DecimalSymbol can be either `.` or `,` and CSV Lint will assume the thousand
 separators symbol is the opposite of the DecimalSymbol. Define the maximum
 decimals digits for example `NumberDigits=2` for values like "1.23" or "-45.67" etc.
 
@@ -78,7 +90,7 @@ It will check the input data for the following errors:
 
 Roadmap/goals
 -------------
-The CSVLint plugin is work-in-progress, here is list of features I want to add (~~strikethrough~~ is done)
+The CSV Lint plugin is work-in-progress, here is list of features I want to add (~~strikethrough~~ is done)
 
 * ~~Convert datetime values to different formats~~
 * ~~Convert decimal symbol to point/comma~~
