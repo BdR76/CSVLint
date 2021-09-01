@@ -21,7 +21,7 @@ namespace CSVLintNppPlugin.CsvLint
             var inilines = new Dictionary<String, String>();
 
             // not a new file that hasn't been saved yet
-            if (path != "")
+            if ( (path != "") && (File.Exists(inifile)) )
             {
                 var reader = new StreamReader(inifile);
                 string line;
