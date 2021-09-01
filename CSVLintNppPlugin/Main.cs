@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 using CSVLint;
+using CSVLintNppPlugin.CsvLint;
 using Kbg.NppPluginNET.PluginInfrastructure;
 using NppPluginNET.PluginInfrastructure;
 
@@ -89,8 +90,18 @@ namespace Kbg.NppPluginNET
             // check if already in list
             if (!FileCsvDef.ContainsKey(filename))
             {
-                // analyze and determine csv definition
-                csvdef = CsvAnalyze.InferFromData();
+                // read schema.ini file
+                var lines = CsvSchemaIni.ReadIniSection(filename);
+                if (lines.Count > 0)
+                {
+                    // metadata from previously saved schema.ini
+                    csvdef = new CsvDefinition(lines);
+                }
+                else
+                {
+                    // analyze and determine csv definition
+                    csvdef = CsvAnalyze.InferFromData();
+                }
                 FileCsvDef.Add(filename, csvdef);
 
                 // testing
@@ -122,8 +133,6 @@ namespace Kbg.NppPluginNET
                 editor.SetProperty("fixedwidths", strwidths);
             }
             
-
-
             // keep current csvdef
             _CurrnetCsvDef = FileCsvDef[filename];
 
@@ -133,7 +142,7 @@ namespace Kbg.NppPluginNET
             }
         }
 
-        public static void updateCSVChanges(CsvDefinition csvdef)
+        public static void updateCSVChanges(CsvDefinition csvdef, bool saveini)
         {
             // Notepad++ switc to a different file tab
             INotepadPPGateway notepad = new NotepadPPGateway();
@@ -169,6 +178,15 @@ namespace Kbg.NppPluginNET
 
                 editor.SetProperty("fixedwidths", strwidths);
             }
+
+            // also write to schema.ini file
+            if (saveini)
+            {
+                if (!CsvSchemaIni.WriteIniSection(filename, csvdef.GetIniLines(), out string errmsg))
+                {
+                    MessageBox.Show(errmsg, "Error saving schema.ini", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+            }
         }
 
         public static CsvDefinition GetCurrentCsvDef()
@@ -201,8 +219,19 @@ namespace Kbg.NppPluginNET
             // check if already in list
             if (!FileCsvDef.ContainsKey(filename))
             {
-                // analyze and determine csv definition
-                csvdef = CsvAnalyze.InferFromData();
+                // read schema.ini file
+                var lines = CsvSchemaIni.ReadIniSection(filename);
+                if (lines.Count > 0)
+                {
+                    // metadata from previously saved schema.ini
+                    csvdef = new CsvDefinition(lines);
+                }
+                else
+                {
+                    // analyze and determine csv definition
+                    csvdef = CsvAnalyze.InferFromData();
+                }
+
                 FileCsvDef.Add(filename, csvdef);
 
                 // testing

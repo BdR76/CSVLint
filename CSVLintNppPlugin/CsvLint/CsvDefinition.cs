@@ -84,6 +84,7 @@ namespace CSVLint
 
                 // iTag, max decimal places
                 this.iTag = this.Mask.Length - p - 1;
+                this.Decimals = this.Mask.Length - p - 1;
             }
         }
     }
@@ -260,7 +261,42 @@ namespace CSVLint
             this.Fields.RemoveAt(index);
         }
 
+        // get csv definition from ini lines
+        public CsvDefinition(string inilines)
+        {
+            // inilines contains inifile sections example "NumberDigits=1\nCol1=participant_id etc."
+
+            // get key values from  ini lines
+            var enstr = inilines.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)
+               .Select(part => part.Split('='));
+
+            // check for duplicate keys before turning into dictionary
+            var dup = enstr.GroupBy(x => x[0])
+                          .Where(g => g.Count() > 1)
+                          .Select(y => y.Key)
+                          .ToList();
+            if (dup.Count > 0)
+            {
+                string errmsg = string.Format("Duplicate key(s) found ({0})", string.Join(",", dup));
+                throw new System.ArgumentException(errmsg);
+                //MessageBox.Show(errmsg, "Exception", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            else
+            {
+                // create dictionary
+                Dictionary<String, String> keys = enstr.ToDictionary(split => split[0], split => split[1]);
+
+                // create dictionary
+                this.CsvDefInitFromKeys(keys);
+            }
+        }
         public CsvDefinition(Dictionary<String, String> inikeys)
+        {
+            // inikeys contains key values pairs
+            this.CsvDefInitFromKeys(inikeys);
+        }
+
+        private void CsvDefInitFromKeys(Dictionary<String, String> inikeys)
         {
             Fields = new List<CsvColumn>();
 

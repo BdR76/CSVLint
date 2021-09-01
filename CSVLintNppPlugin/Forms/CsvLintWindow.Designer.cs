@@ -30,13 +30,13 @@
         {
             this.components = new System.ComponentModel.Container();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.btnApply = new System.Windows.Forms.Button();
             this.btnReformat = new System.Windows.Forms.Button();
             this.btnRefresh = new System.Windows.Forms.Button();
             this.txtSchemaIni = new System.Windows.Forms.TextBox();
             this.btnValidate = new System.Windows.Forms.Button();
             this.txtOutput = new System.Windows.Forms.TextBox();
             this.tooltipCsvLint = new System.Windows.Forms.ToolTip(this.components);
-            this.btnApply = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -65,6 +65,16 @@
             this.splitContainer1.Size = new System.Drawing.Size(1170, 354);
             this.splitContainer1.SplitterDistance = 390;
             this.splitContainer1.TabIndex = 7;
+            // 
+            // btnApply
+            // 
+            this.btnApply.Image = global::CSVLintNppPlugin.Properties.Resources.disksave;
+            this.btnApply.Location = new System.Drawing.Point(129, 3);
+            this.btnApply.Name = "btnApply";
+            this.btnApply.Size = new System.Drawing.Size(32, 32);
+            this.btnApply.TabIndex = 8;
+            this.btnApply.UseVisualStyleBackColor = true;
+            this.btnApply.Click += new System.EventHandler(this.btnApply_Click);
             // 
             // btnReformat
             // 
@@ -129,16 +139,6 @@
             this.txtOutput.Size = new System.Drawing.Size(761, 300);
             this.txtOutput.TabIndex = 4;
             this.txtOutput.DoubleClick += new System.EventHandler(this.OnTxtOutput_DoubleClick);
-            // 
-            // btnApply
-            // 
-            this.btnApply.Location = new System.Drawing.Point(129, 3);
-            this.btnApply.Name = "btnApply";
-            this.btnApply.Size = new System.Drawing.Size(89, 32);
-            this.btnApply.TabIndex = 8;
-            this.btnApply.Text = "Apply changes";
-            this.btnApply.UseVisualStyleBackColor = true;
-            this.btnApply.Click += new System.EventHandler(this.btnApply_Click);
             // 
             // CsvLintWindow
             // 

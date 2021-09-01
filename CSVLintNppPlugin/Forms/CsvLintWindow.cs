@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using CSVLint;
+using CSVLintNppPlugin.CsvLint;
 using CSVLintNppPlugin.Forms;
 using CsvQuery.PluginInfrastructure;
 using Kbg.NppPluginNET.PluginInfrastructure;
@@ -32,7 +33,7 @@ namespace Kbg.NppPluginNET
             // analyze and determine csv definition
             CsvDefinition csvdef = CsvAnalyze.InferFromData();
 
-            Main.updateCSVChanges(csvdef);
+            Main.updateCSVChanges(csvdef, false);
 
             var dtElapsed = (DateTime.Now - dtStart).ToString(@"hh\:mm\:ss\.fff");
 
@@ -43,46 +44,10 @@ namespace Kbg.NppPluginNET
             txtOutput.Text = String.Format("Refresh from data is ready, time elapsed {0}", dtElapsed);
         }
 
-        private CsvDefinition GetCsvDefFromTextbox()
-        {
-            CsvDefinition csvdef;
-
-            // get csv definition from ini lines
-            string inilines = txtSchemaIni.Text;
-
-            // get key values from  ini lines
-            var enstr = inilines.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)
-               .Select(part => part.Split('='));
-
-            // check for duplicate keys before turning into dictionary
-            var dup = enstr.GroupBy(x => x[0])
-                          .Where(g => g.Count() > 1)
-                          .Select(y => y.Key)
-                          .ToList();
-            if (dup.Count > 0)
-            {
-                string errmsg = string.Format("Duplicate key(s) found ({0})", string.Join(",", dup));
-                //throw new System.ArgumentException(err, "Error");
-                //throw new ArgumentOutOfRangeException("error 123", err);
-                MessageBox.Show(errmsg, "Exception", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-                csvdef = new CsvDefinition();
-            }
-            else
-            {
-                // create dictionary
-                Dictionary<String, String> keys = enstr.ToDictionary(split => split[0], split => split[1]);
-
-                // create dictionary
-                csvdef = new CsvDefinition(keys);
-            }
-            return csvdef;
-        }
-
         private void OnBtnValidate_Click(object sender, EventArgs e)
         {
             // get dictionary
-            CsvDefinition csvdef = GetCsvDefFromTextbox();
+            CsvDefinition csvdef = new CsvDefinition(txtSchemaIni.Text);
 
             // check if valid dictionary
             if (csvdef.Fields.Count > 0)
@@ -188,7 +153,7 @@ namespace Kbg.NppPluginNET
             if (ok)
             {
                 // get dictionary
-                CsvDefinition csvdef = GetCsvDefFromTextbox();
+                CsvDefinition csvdef = new CsvDefinition(txtSchemaIni.Text);
 
                 var dtStart = DateTime.Now;
 
@@ -243,16 +208,18 @@ namespace Kbg.NppPluginNET
 
         private void txtSchemaIni_KeyDown(object sender, KeyEventArgs e)
         {
-            btnApply.Enabled = true;
+            var test = ((TextBox)sender).Modified;
+            btnApply.Enabled = test;
         }
 
         private void btnApply_Click(object sender, EventArgs e)
         {
             // get dictionary
-            CsvDefinition csvdef = GetCsvDefFromTextbox();
+            txtSchemaIni.Modified = false;
+            CsvDefinition csvdef = new CsvDefinition(txtSchemaIni.Text);
 
             // update the master list of csv definitions
-            Main.updateCSVChanges(csvdef);
+            Main.updateCSVChanges(csvdef, true);
 
             // update screen, to smooth out any user input errors
             SetCsvDefinition(csvdef);
