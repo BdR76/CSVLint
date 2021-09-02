@@ -44,7 +44,7 @@ namespace Kbg.NppPluginNET
             // { ... }
 
             // changing tabs
-            if (notification.Header.Code == (uint)NppMsg.NPPN_BUFFERACTIVATED)
+            if ((notification.Header.Code == (uint)NppMsg.NPPN_BUFFERACTIVATED) || (notification.Header.Code == (uint)NppMsg.NPPN_LANGCHANGED))
             {
                 Main.CSVChangeFileTab();
             }
