@@ -71,6 +71,18 @@
     <Compile Include="CsvLint\CsvGenerateCode.cs" />
     <Compile Include="CsvLint\CsvSchemaIni.cs" />
     <Compile Include="CsvLint\CsvValidate.cs" />
+    <Compile Include="Forms\ColumnSplitForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ColumnSplitForm.Designer.cs">
+      <DependentUpon>ColumnSplitForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\CsvEditFormBase.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\CsvEditFormBase.Designer.cs">
+      <DependentUpon>CsvEditFormBase.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\ReformatForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -123,6 +135,12 @@
   <ItemGroup>
     <EmbeddedResource Include="Forms\AboutForm.resx">
       <DependentUpon>AboutForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ColumnSplitForm.resx">
+      <DependentUpon>ColumnSplitForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\CsvEditFormBase.resx">
+      <DependentUpon>CsvEditFormBase.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\CsvLintWindow.resx">
       <DependentUpon>CsvLintWindow.cs</DependentUpon>

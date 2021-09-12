@@ -160,7 +160,7 @@ namespace CSVLint
                     // determine most likely datatype based on characters in string
 
                     // date, examples "31-12-2019", "1/1/2019", "2019-12-31" etc.
-                    if ((length >= 8) && (length <= 10) && (datesep == 2) && (other == 0))
+                    if ((length >= 8) && (length <= 10) && (datesep == 2) && (other == 0) && ((ddmax1 <= 31) || (ddmax1 >= 1900)))
                     {
                         this.CountDateTime++;
                         if (this.DateSep == '\0') this.DateSep = sep1;
@@ -168,7 +168,7 @@ namespace CSVLint
                         if (this.DateMax2 < ddmax2) this.DateMax2 = ddmax2;
                     }
                     // or datetime, examples "31-12-2019 23:59:00", "1/1/2019 12:00", "2019-12-31 23:59:59.000" etc.
-                    else if ((length >= 13) && (length <= 23) && (datesep >= 2) && (datesep <= 6) && (other == 0))
+                    else if ((length >= 13) && (length <= 23) && (datesep >= 2) && (datesep <= 6) && (other == 0) && ((ddmax1 <= 31) || (ddmax1 >= 1900)))
                     {
                         this.CountDateTime++;
                         if (this.DateSep == '\0') this.DateSep = sep1;

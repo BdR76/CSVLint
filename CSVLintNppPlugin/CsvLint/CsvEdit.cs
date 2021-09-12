@@ -317,6 +317,138 @@ namespace CSVLint
         }
 
         /// <summary>
+        ///     reformat file for date, decimal and separator
+        /// </summary>
+        /// <param name="data"> csv data </param>
+        public static void ColumnSplit(CsvDefinition csvdef, int ColumnIndex, int SplitCode, string Parameter1)
+        {
+            // handle to editor
+            ScintillaGateway scintillaGateway = PluginBase.CurrentScintillaGateway;
+
+            // use stringreader to go line by line
+            var strdata = ScintillaStreams.StreamAllText();
+
+            //var s = new StringReader(data);
+            int linenr = 0;
+            int.TryParse(Parameter1, out int IntPar);
+            var IntPar2 = -1 * IntPar;
+
+            StringBuilder datanew = new StringBuilder();
+
+            var sep = csvdef.Separator.ToString();
+
+            // convert from fixed width to separated values, add header line
+            if (csvdef.ColNameHeader)
+            {
+                // consume header column names, and ignore it
+                csvdef.ParseNextLine(strdata);
+
+                // add header column names
+                for (int c = 0; c < csvdef.Fields.Count; c++)
+                {
+                    // header
+                    datanew.Append((c > 0 ? sep : "") + csvdef.Fields[c].Name);
+
+                    // add new columns headers
+                    if (c == ColumnIndex)
+                    {
+                        datanew.Append(sep + csvdef.Fields[c].Name + " (2)");
+                        datanew.Append(sep + csvdef.Fields[c].Name + " (3)");
+                    }
+                }
+                datanew.Append("\n");
+            }
+
+            // read all lines
+            while (!strdata.EndOfStream)
+            {
+                // get values from line
+                List<string> values = csvdef.ParseNextLine(strdata);
+
+                linenr++;
+
+                // reformat data line to new line
+                for (int c = 0; c < values.Count; c++)
+                {
+                    // next value
+                    String val = values[c];
+
+                    // if value contains separator character then put value in quotes
+                    if (val.IndexOf(sep) >= 0) val = string.Format("\"{0}\"", val);
+
+                    // character separated
+                    datanew.Append((c > 0 ? sep : "") + val);
+
+                    // add new columns headers
+                    if (c == ColumnIndex)
+                    {
+                        String val0 = values[c]; // original value without quotes
+                        String val1 = val0;
+                        String val2 = "";
+
+                        // 
+                        if (SplitCode == 1)
+                        {
+                            // valid/invalid
+                            // TODO
+                        }
+                        else if (SplitCode == 2)
+                        {
+                            // split on char
+                            int pos = val0.IndexOf(Parameter1);
+                            if (pos >= 0)
+                            {
+                                val1 = val0.Substring(0, pos);
+                                val2 = val0.Substring(pos + Parameter1.Length, val0.Length - pos - Parameter1.Length);
+                            }
+                        }
+                        else if (SplitCode == 3)
+                        {
+                            // split on position
+                            int pos = val0.IndexOf(Parameter1);
+                            if ((IntPar > 0) && (IntPar < val0.Length))
+                            {
+                                // positive, left string
+                                val1 = val0.Substring(0, IntPar);
+                                val2 = val0.Substring(IntPar, val0.Length - IntPar);
+                            }
+                            else if (IntPar < 0)
+                            {
+                                // negative, right string
+                                if (IntPar2 < val0.Length)
+                                {
+                                    val1 = val0.Substring(0, val0.Length - IntPar2);
+                                    val2 = val0.Substring(val0.Length - IntPar2);
+                                }
+                                else
+                                {
+                                    // take all as right string
+                                    val1 = "";
+                                    val2 = val;
+                                }
+                            }
+                        }
+
+                        // add split column values
+                        datanew.Append(sep + val1);
+                        datanew.Append(sep + val2);
+                    }
+                };
+
+                // add line break
+                datanew.Append("\n");
+            };
+
+            strdata.Dispose();
+
+            // update text in editor
+            scintillaGateway.SetText(datanew.ToString());
+
+            // add columns to csv definition
+            //csvdef.AddColumn() ??
+        }
+
+        /// <summary>
         ///     update all date columns to new date format
         /// </summary>
         public void UpdateAllDateFormat()

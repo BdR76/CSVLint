@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 namespace CSVLintNppPlugin.Forms
 {
-    public partial class ReformatForm : Form
+    public partial class ReformatForm : CSVLintNppPlugin.Forms.CsvEditFormBase
     {
         public ReformatForm()
         {
@@ -39,13 +39,8 @@ namespace CSVLintNppPlugin.Forms
         private void OnChkbx_CheckedChanged(object sender, EventArgs e)
         {
             // which checkbox, see index in Tag property
-            Int32.TryParse((sender as CheckBox).Tag.ToString(), out int idx);
             bool chk = (sender as CheckBox).Checked;
-
-            // enable/disable corresponding dropdownlist
-            if (idx == 0) cmbDateTime.Enabled = chk;
-            if (idx == 1) cmbDecimal.Enabled = chk;
-            if (idx == 2) cmbSeparator.Enabled = chk;
+            ToggleControlBasedOnControl((sender as CheckBox), chk);
 
             // can not press OK when nothing selected
             btnOk.Enabled = (chkDateTime.Checked | chkDecimal.Checked | chkSeparator.Checked | chkTrimAll.Checked);

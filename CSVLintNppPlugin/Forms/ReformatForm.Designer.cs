@@ -28,8 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.btnOk = new System.Windows.Forms.Button();
-            this.btnCancel = new System.Windows.Forms.Button();
             this.chkDateTime = new System.Windows.Forms.CheckBox();
             this.chkDecimal = new System.Windows.Forms.CheckBox();
             this.cmbDecimal = new System.Windows.Forms.ComboBox();
@@ -40,25 +38,20 @@
             this.chkTrimAll = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
+            // lblTitle
+            // 
+            this.lblTitle.Size = new System.Drawing.Size(112, 20);
+            this.lblTitle.Text = "Reformat data";
+            // 
             // btnOk
             // 
-            this.btnOk.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.btnOk.Location = new System.Drawing.Point(13, 173);
-            this.btnOk.Name = "btnOk";
-            this.btnOk.Size = new System.Drawing.Size(100, 30);
-            this.btnOk.TabIndex = 8;
-            this.btnOk.Text = "Ok";
-            this.btnOk.UseVisualStyleBackColor = true;
+            this.btnOk.Location = new System.Drawing.Point(128, 198);
+            this.btnOk.TabIndex = 7;
             // 
             // btnCancel
             // 
-            this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(240, 173);
-            this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(100, 30);
-            this.btnCancel.TabIndex = 7;
-            this.btnCancel.Text = "Cancel";
-            this.btnCancel.UseVisualStyleBackColor = true;
+            this.btnCancel.Location = new System.Drawing.Point(247, 198);
+            this.btnCancel.TabIndex = 8;
             // 
             // chkDateTime
             // 
@@ -67,7 +60,7 @@
             this.chkDateTime.Name = "chkDateTime";
             this.chkDateTime.Size = new System.Drawing.Size(100, 17);
             this.chkDateTime.TabIndex = 0;
-            this.chkDateTime.Tag = "0";
+            this.chkDateTime.Tag = "1";
             this.chkDateTime.Text = "Datetime format";
             this.chkDateTime.UseVisualStyleBackColor = true;
             this.chkDateTime.CheckedChanged += new System.EventHandler(this.OnChkbx_CheckedChanged);
@@ -79,7 +72,7 @@
             this.chkDecimal.Name = "chkDecimal";
             this.chkDecimal.Size = new System.Drawing.Size(111, 17);
             this.chkDecimal.TabIndex = 2;
-            this.chkDecimal.Tag = "1";
+            this.chkDecimal.Tag = "2";
             this.chkDecimal.Text = "Decimal separator";
             this.chkDecimal.UseVisualStyleBackColor = true;
             this.chkDecimal.CheckedChanged += new System.EventHandler(this.OnChkbx_CheckedChanged);
@@ -94,7 +87,7 @@
             this.cmbDecimal.Name = "cmbDecimal";
             this.cmbDecimal.Size = new System.Drawing.Size(83, 21);
             this.cmbDecimal.TabIndex = 3;
-            this.cmbDecimal.Tag = "1";
+            this.cmbDecimal.Tag = "2";
             // 
             // cmbDateTime
             // 
@@ -116,7 +109,7 @@
             this.cmbDateTime.Name = "cmbDateTime";
             this.cmbDateTime.Size = new System.Drawing.Size(180, 21);
             this.cmbDateTime.TabIndex = 1;
-            this.cmbDateTime.Tag = "0";
+            this.cmbDateTime.Tag = "1";
             // 
             // chkSeparator
             // 
@@ -125,7 +118,7 @@
             this.chkSeparator.Name = "chkSeparator";
             this.chkSeparator.Size = new System.Drawing.Size(108, 17);
             this.chkSeparator.TabIndex = 4;
-            this.chkSeparator.Tag = "2";
+            this.chkSeparator.Tag = "3";
             this.chkSeparator.Text = "Column separator";
             this.chkSeparator.UseVisualStyleBackColor = true;
             this.chkSeparator.CheckedChanged += new System.EventHandler(this.OnChkbx_CheckedChanged);
@@ -143,16 +136,16 @@
             this.cmbSeparator.Name = "cmbSeparator";
             this.cmbSeparator.Size = new System.Drawing.Size(83, 21);
             this.cmbSeparator.TabIndex = 5;
-            this.cmbSeparator.Tag = "2";
+            this.cmbSeparator.Tag = "3";
             // 
             // lblReformat
             // 
             this.lblReformat.AutoSize = true;
-            this.lblReformat.Location = new System.Drawing.Point(12, 12);
+            this.lblReformat.Location = new System.Drawing.Point(13, 169);
             this.lblReformat.Name = "lblReformat";
-            this.lblReformat.Size = new System.Drawing.Size(324, 13);
+            this.lblReformat.Size = new System.Drawing.Size(278, 13);
             this.lblReformat.TabIndex = 8;
-            this.lblReformat.Text = "Reformat (note: always back-up your data files to prevent data loss)";
+            this.lblReformat.Text = "(note: always back-up your data files to prevent data loss)";
             // 
             // chkTrimAll
             // 
@@ -161,7 +154,7 @@
             this.chkTrimAll.Name = "chkTrimAll";
             this.chkTrimAll.Size = new System.Drawing.Size(93, 17);
             this.chkTrimAll.TabIndex = 6;
-            this.chkTrimAll.Tag = "3";
+            this.chkTrimAll.Tag = "4";
             this.chkTrimAll.Text = "Trim all values";
             this.chkTrimAll.UseVisualStyleBackColor = true;
             this.chkTrimAll.CheckedChanged += new System.EventHandler(this.OnChkbx_CheckedChanged);
@@ -170,7 +163,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(356, 216);
+            this.ClientSize = new System.Drawing.Size(359, 240);
             this.Controls.Add(this.lblReformat);
             this.Controls.Add(this.cmbSeparator);
             this.Controls.Add(this.chkSeparator);
@@ -179,22 +172,26 @@
             this.Controls.Add(this.cmbDateTime);
             this.Controls.Add(this.chkDateTime);
             this.Controls.Add(this.chkTrimAll);
-            this.Controls.Add(this.btnCancel);
-            this.Controls.Add(this.btnOk);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "ReformatForm";
-            this.ShowInTaskbar = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Reformat data";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ReformatForm_FormClosing);
+            this.Controls.SetChildIndex(this.chkTrimAll, 0);
+            this.Controls.SetChildIndex(this.chkDateTime, 0);
+            this.Controls.SetChildIndex(this.cmbDateTime, 0);
+            this.Controls.SetChildIndex(this.chkDecimal, 0);
+            this.Controls.SetChildIndex(this.cmbDecimal, 0);
+            this.Controls.SetChildIndex(this.chkSeparator, 0);
+            this.Controls.SetChildIndex(this.cmbSeparator, 0);
+            this.Controls.SetChildIndex(this.lblReformat, 0);
+            this.Controls.SetChildIndex(this.lblTitle, 0);
+            this.Controls.SetChildIndex(this.btnOk, 0);
+            this.Controls.SetChildIndex(this.btnCancel, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
 
         #endregion
-        private System.Windows.Forms.Button btnOk;
-        private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.CheckBox chkDateTime;
         private System.Windows.Forms.CheckBox chkDecimal;
         private System.Windows.Forms.ComboBox cmbDecimal;

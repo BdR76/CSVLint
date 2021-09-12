@@ -224,5 +224,50 @@ namespace Kbg.NppPluginNET
             // update screen, to smooth out any user input errors
             SetCsvDefinition(csvdef);
         }
+
+        private void btnSplit_Click(object sender, EventArgs e)
+        {
+            // get csv definition
+            CsvDefinition csvdef = new CsvDefinition(txtSchemaIni.Text);
+
+            // show split column dialog
+            var frmsplit = new ColumnSplitForm();
+            frmsplit.InitialiseSetting(csvdef);
+            DialogResult r = frmsplit.ShowDialog();
+
+            // user clicked OK or Cancel
+            int cod = frmsplit.SplitCode;
+            int idx = frmsplit.SplitColumn;
+            String par = frmsplit.SplitParam;
+            bool rem = frmsplit.SplitRemove;
+
+            // clear up
+            frmsplit.Dispose();
+
+            // return true (OK) or false (Cancel)
+            if (r == DialogResult.OK)
+            {
+                var dtStart = DateTime.Now;
+
+                // split column
+                CsvEdit.ColumnSplit(csvdef, idx, cod, par);
+
+                var dtElapsed = (DateTime.Now - dtStart).ToString(@"hh\:mm\:ss\.fff");
+
+                // ready message
+                String msg = "";
+                if (cod == 1) msg = "invalid values";
+                if (cod == 2) msg = "character " + par;
+                if (cod == 3) msg = "position " + par;
+                msg = String.Format("Column \"{0}\" was split on \"{1}\"\r\n", csvdef.Fields[idx].Name, msg);
+
+                // display process message
+                msg += String.Format("Split column is ready, time elapsed {0}\r\n", dtElapsed);
+                txtOutput.Text = msg;
+
+                // refresh datadefinition
+                OnBtnRefresh_Click(sender, e);
+            }
+        }
     }
 }
