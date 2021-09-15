@@ -64,7 +64,7 @@ namespace CSVLint
             this.Initialize();
         }
 
-        private void Initialize()
+        public void Initialize()
         {
             this.sTag = "";
             this.iTag = -1;
@@ -531,9 +531,17 @@ namespace CSVLint
                         {
                             int spcalt = Val.IndexOf(" ", posalt);
                             datatypestr = Val.Substring(posalt, spcalt - posalt);
-                            Val = Val.Substring(spcalt, Val.Length-spcalt).Trim();
+                            Val = Val.Substring(spcalt, Val.Length - spcalt).Trim();
+                        }
+                        posalt = Val.LastIndexOf("Float");
+                        if (posalt >= 0)
+                        {
+                            int spcalt = Val.IndexOf(" ", posalt);
+                            datatypestr = Val.Substring(posalt, spcalt - posalt);
+                            Val = Val.Substring(spcalt, Val.Length - spcalt).Trim();
                         }
                         if (datatypestr == "DateTime") datatypealt = ColumnType.DateTime;
+                        if (datatypestr == "Float") datatypealt = ColumnType.Decimal;
 
                         // if alternative datatype found
                         if (datatypealt != ColumnType.String)
@@ -545,6 +553,7 @@ namespace CSVLint
                                 {
                                     this.Fields[x].DataType = datatypealt;
                                     this.Fields[x].Mask = Val;
+                                    this.Fields[x].Initialize();
                                 }
                             };
                         }
@@ -652,7 +661,17 @@ namespace CSVLint
                 if (col.DataType == ColumnType.String) def += " Text";
                 if (col.DataType == ColumnType.Unknown) def += " Text";
                 if (col.DataType == ColumnType.Integer) def += " Integer";
-                if (col.DataType == ColumnType.Decimal) def += " Float";
+                if (col.DataType == ColumnType.Decimal)
+                {
+                    def += " Float";
+                    // exception when float decimals different
+                    if (col.Decimals != this.NumberDigits)
+                    {
+                        // schma.ini doesn't support multiple floating point formats, i.e. with different amounts of decimals
+                        com = string.Format(";Col{0}={1} {2}\r\n", (i + 1), def, col.Mask);
+                    }
+                }
+
                 if (col.DataType == ColumnType.DateTime)
                 {
                     // exception when datetime format different

@@ -69,7 +69,7 @@ namespace CSVLintNppPlugin.CsvLint
 
             // read entire ini file and look for section
             var inilines = new List<String>();
-            int idx = 0;
+            int idx = -1;
 
             // check if schema.ini exists
             if (File.Exists(inifile))
@@ -95,6 +95,13 @@ namespace CSVLintNppPlugin.CsvLint
                         if (!bSec) inilines.Add(line);
                     }
                 }
+            }
+
+            // append any new sections at end
+            if (idx == -1)
+            {
+                if (inilines[inilines.Count - 1] != "") inilines.Add("");
+                idx = inilines.Count;
             }
 
             // section header

@@ -109,8 +109,9 @@ namespace CSVLint
                             comma++;
                             dec = ch;
                         }
-                        else if ("\\/-:. ".IndexOf(ch) > 0)
+                        else if ("\\/-:. ".IndexOf(ch) > 0) // check date separators
                         {
+                            other++;
                             datesep++;
                             if (sep1 == '\0')
                             {
@@ -148,12 +149,20 @@ namespace CSVLint
                         {
                             point++;
                             dec = ch;
+                            other--; // in hindsight was incorrectly counted as 'other' because ''. -> correction
                         }
                         // plus and minus are signs for digits, check separately because minus ('-') is also counted as date separator, example "31-12-1999"
-                        if (ch == '+' || ch == '-')
+                        if (ch == '+')
                         {
                             sign++;
                             signpos = charidx;
+                        }
+                        // plus and minus are signs for digits, check separately because minus ('-') is also counted as date separator, example "31-12-1999"
+                        if (ch == '-')
+                        {
+                            sign++;
+                            signpos = charidx;
+                            other--; // in hindsight was incorrectly counted as 'other' because ''. -> correction
                         }
                     }
 
