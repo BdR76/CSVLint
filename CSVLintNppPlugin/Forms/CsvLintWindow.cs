@@ -250,7 +250,7 @@ namespace Kbg.NppPluginNET
                 var dtStart = DateTime.Now;
 
                 // split column
-                CsvEdit.ColumnSplit(csvdef, idx, cod, par);
+                CsvEdit.ColumnSplit(csvdef, idx, cod, par, rem);
 
                 var dtElapsed = (DateTime.Now - dtStart).ToString(@"hh\:mm\:ss\.fff");
 

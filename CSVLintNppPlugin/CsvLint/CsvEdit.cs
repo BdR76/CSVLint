@@ -320,7 +320,7 @@ namespace CSVLint
         ///     reformat file for date, decimal and separator
         /// </summary>
         /// <param name="data"> csv data </param>
-        public static void ColumnSplit(CsvDefinition csvdef, int ColumnIndex, int SplitCode, string Parameter1)
+        public static void ColumnSplit(CsvDefinition csvdef, int ColumnIndex, int SplitCode, string Parameter1, bool bRemove)
         {
             // handle to editor
             ScintillaGateway scintillaGateway = PluginBase.CurrentScintillaGateway;
@@ -337,6 +337,8 @@ namespace CSVLint
 
             var sep = csvdef.Separator.ToString();
 
+            var csvvalid = new CsvValidate();
+
             // convert from fixed width to separated values, add header line
             if (csvdef.ColNameHeader)
             {
@@ -346,10 +348,14 @@ namespace CSVLint
                 // add header column names
                 for (int c = 0; c < csvdef.Fields.Count; c++)
                 {
-                    // header
-                    datanew.Append((c > 0 ? sep : "") + csvdef.Fields[c].Name);
 
-                    // add new columns headers
+                    // add column header to output, except when remove original column
+                    if ((c != ColumnIndex) || (bRemove == false))
+                    {
+                        datanew.Append((c > 0 ? sep : "") + csvdef.Fields[c].Name);
+                    }
+
+                    // add new split columns headers
                     if (c == ColumnIndex)
                     {
                         datanew.Append(sep + csvdef.Fields[c].Name + " (2)");
@@ -376,21 +382,29 @@ namespace CSVLint
                     // if value contains separator character then put value in quotes
                     if (val.IndexOf(sep) >= 0) val = string.Format("\"{0}\"", val);
 
-                    // character separated
-                    datanew.Append((c > 0 ? sep : "") + val);
+                    // add column to output, except when remove original column
+                    if ((c != ColumnIndex) || (bRemove == false))
+                    {
+                        datanew.Append((c > 0 ? sep : "") + val);
+                    }
 
-                    // add new columns headers
+                    // add new split columns values
                     if (c == ColumnIndex)
                     {
                         String val0 = values[c]; // original value without quotes
                         String val1 = val0;
                         String val2 = "";
 
-                        // 
+                        // how to split value
                         if (SplitCode == 1)
                         {
                             // valid/invalid
-                            // TODO
+                            var str = csvvalid.EvaluateDataValue(val, csvdef.Fields[ColumnIndex], ColumnIndex);
+                            if (str != "")
+                            {
+                                val1 = "";
+                                val2 = val0; // invalid value
+                            }
                         }
                         else if (SplitCode == 2)
                         {

@@ -79,24 +79,23 @@ namespace CSVLintNppPlugin.Forms
             // rdbtnSplitValid
             // 
             this.rdbtnSplitValid.AutoSize = true;
+            this.rdbtnSplitValid.Checked = true;
             this.rdbtnSplitValid.Location = new System.Drawing.Point(16, 84);
             this.rdbtnSplitValid.Name = "rdbtnSplitValid";
             this.rdbtnSplitValid.Size = new System.Drawing.Size(158, 17);
             this.rdbtnSplitValid.TabIndex = 2;
+            this.rdbtnSplitValid.TabStop = true;
             this.rdbtnSplitValid.Tag = "1";
             this.rdbtnSplitValid.Text = "Split valid and invalid values";
             this.rdbtnSplitValid.UseVisualStyleBackColor = true;
-            this.rdbtnSplitValid.Visible = false;
             // 
             // rdbtnSplitCharacter
             // 
             this.rdbtnSplitCharacter.AutoSize = true;
-            this.rdbtnSplitCharacter.Checked = true;
             this.rdbtnSplitCharacter.Location = new System.Drawing.Point(16, 116);
             this.rdbtnSplitCharacter.Name = "rdbtnSplitCharacter";
             this.rdbtnSplitCharacter.Size = new System.Drawing.Size(108, 17);
             this.rdbtnSplitCharacter.TabIndex = 3;
-            this.rdbtnSplitCharacter.TabStop = true;
             this.rdbtnSplitCharacter.Tag = "2";
             this.rdbtnSplitCharacter.Text = "Split on character";
             this.rdbtnSplitCharacter.UseVisualStyleBackColor = true;
@@ -124,10 +123,10 @@ namespace CSVLintNppPlugin.Forms
             this.chkDeleteOriginal.Tag = "4";
             this.chkDeleteOriginal.Text = "Remove original column";
             this.chkDeleteOriginal.UseVisualStyleBackColor = true;
-            this.chkDeleteOriginal.Visible = false;
             // 
             // txtSplitCharacter
             // 
+            this.txtSplitCharacter.Enabled = false;
             this.txtSplitCharacter.Location = new System.Drawing.Point(191, 112);
             this.txtSplitCharacter.Name = "txtSplitCharacter";
             this.txtSplitCharacter.Size = new System.Drawing.Size(48, 20);

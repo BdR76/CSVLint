@@ -599,6 +599,29 @@ namespace CSVLint
             if (this.DecimalSymbol != '\0') res += "DecimalSymbol=" + this.DecimalSymbol + "\r\n";
 
             // schema.ini NumberDigits, Indicates the number of decimal digits in the fractional portion of a number.
+            Dictionary<int, int> DecimalOccurance = new Dictionary<int, int>();
+            foreach (var fld in this.Fields)
+            {
+                if (fld.DataType == ColumnType.Decimal)
+                {
+                    int dec = fld.Decimals;
+                    if (DecimalOccurance.ContainsKey(dec))
+                        DecimalOccurance[dec]++;
+                    else
+                        DecimalOccurance.Add(dec, 1);
+
+                }
+            }
+            // get most commen
+            this.NumberDigits = 0;
+            int deccommon = 0;
+            foreach (var deckey in DecimalOccurance)
+                if (deccommon < deckey.Value)
+                {
+                    this.NumberDigits = deckey.Key;
+                    deccommon = deckey.Value;
+                }
+
             if (this.NumberDigits > 0) res += "NumberDigits=" + this.NumberDigits + "\r\n";
 
             // schema.ini NumberLeadingZeros, 

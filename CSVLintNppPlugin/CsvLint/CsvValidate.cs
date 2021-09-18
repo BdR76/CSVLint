@@ -155,7 +155,7 @@ namespace CSVLint
         ///     validate csv data against the definition of a CsvDefinition 
         /// </summary>
         /// <param name="data"> csv data </param>
-        private string EvaluateDataValue(string val, CsvColumn coldef, int idx)
+        public string EvaluateDataValue(string val, CsvColumn coldef, int idx)
         {
 
             // error result
