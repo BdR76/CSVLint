@@ -63,9 +63,10 @@ namespace Kbg.NppPluginNET
             //PluginBase.SetCommand(0, "MyMenuCommand", myMenuFunction, new ShortcutKey(false, false, false, Keys.None));
             PluginBase.SetCommand(0, "CSV Lint window", myDockableDialog); idMyDlg = 0;
             PluginBase.SetCommand(1, "Convert to SQL", convertToSQL);
-            PluginBase.SetCommand(2, "&Settings", Settings.ShowDialog);
-            PluginBase.SetCommand(3, "---", null);
-            PluginBase.SetCommand(4, "About", doAboutForm);
+            PluginBase.SetCommand(2, "Analyse data report", analyseDataReport);
+            PluginBase.SetCommand(3, "&Settings", Settings.ShowDialog);
+            PluginBase.SetCommand(4, "---", null);
+            PluginBase.SetCommand(5, "About", doAboutForm);
         }
 
         internal static void SetToolBarIcon()
@@ -266,6 +267,18 @@ namespace Kbg.NppPluginNET
             CsvEdit.ConvertToSQL(csvdef);
         }
 
+        internal static void analyseDataReport()
+        {
+            // get dictionary
+            CsvDefinition csvdef = GetCurrentCsvDef();
+            
+            // check if valid dictionary
+            if (csvdef.Fields.Count > 0)
+            {
+                // validate data
+                CsvAnalyze.StatisticalReportData(csvdef);
+            }
+        }
         internal static void myDockableDialog()
         {
             if (frmCsvLintDlg == null)

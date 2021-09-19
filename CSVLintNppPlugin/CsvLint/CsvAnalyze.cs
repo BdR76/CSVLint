@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CSVLint.Tools;
 using CsvQuery.PluginInfrastructure;
+using Kbg.NppPluginNET.PluginInfrastructure;
 
 namespace CSVLint
 {
@@ -370,6 +371,89 @@ namespace CSVLint
 
             // Ok, I have no idea
             return '\0';
+        }
+
+        /// <summary>
+        /// Data statistical analysis report
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public static void StatisticalReportData(CsvDefinition csvdef)
+        {
+            // examine data and keep statistics for each column
+            List<CsvAnalyzeColumn> colstats = new List<CsvAnalyzeColumn>();
+
+            //List<CsvColumStats> colstats = new List<CsvColumStats>();
+            int lineCount = 0;
+            bool fixedwidth = (csvdef.Separator == '\0');
+
+            var strdata = ScintillaStreams.StreamAllText();
+
+            while (!strdata.EndOfStream)
+            {
+                // keep track of how many lines
+                lineCount++;
+
+                List<string> values = csvdef.ParseNextLine(strdata);
+
+                // inspect all values
+                for (int i = 0; i < values.Count(); i++)
+                {
+                    // add columnstats if needed
+                    if (i > colstats.Count() - 1)
+                    {
+                        colstats.Add(new CsvAnalyzeColumn(i));
+                    }
+
+                    int fixedLength = -1;
+                    //if (fixedwidth) fixedLength = (i < result.FieldWidths.Count ? result.FieldWidths[i] : values[i].Length);
+
+                    // next value to evaluate
+                    colstats[i].InputData(values[i], fixedLength);
+                }
+            }
+
+            strdata.Dispose();
+
+            StringBuilder sb = new StringBuilder();
+
+            // get access to Notepad++
+            INotepadPPGateway notepad = new NotepadPPGateway();
+            IScintillaGateway editor = new ScintillaGateway(PluginBase.GetCurrentScintilla());
+
+            string FILE_NAME = Path.GetFileName(notepad.GetCurrentFilePath());
+
+            sb.Append("-------------------------------------\r\n");
+            sb.Append(String.Format("Analyze dataset: {0}\r\n", FILE_NAME));
+            sb.Append("\r\n");
+
+            // add columns as actual fields
+            int idx = 0;
+            foreach (CsvAnalyzeColumn stats in colstats)
+            {
+                // next column
+                idx++;
+                sb.Append("-------------------------------------\r\n");
+                sb.Append(String.Format("{0}: {1}\r\n", idx, stats.Name));
+
+                // count date types that were found
+                sb.Append("DataTypes: ");
+                if (stats.CountDecimal > 0) sb.Append(String.Format("decimal {0}, ", stats.CountDecimal));
+                if (stats.CountEmpty > 0) sb.Append(String.Format("empty {0}, ", stats.CountEmpty));
+                if (stats.CountInteger > 0) sb.Append(String.Format("integer {0}, ", stats.CountInteger));
+                if (stats.CountString > 0) sb.Append(String.Format("string {0}, ", stats.CountString));
+                if (stats.CountDateTime > 0) sb.Append(String.Format("datetime {0}, ", stats.CountDateTime));
+                sb.Length -= 2; // remove last ", "
+                sb.Append("\r\n");
+
+                // width
+                var strwid = (stats.MinWidth == stats.MaxWidth ? stats.MaxWidth.ToString() : String.Format("{0} ~ {1}", stats.MinWidth, stats.MaxWidth));
+                sb.Append(String.Format("Width: {0} characters\r\n", strwid));
+                sb.Append("\r\n");
+            }
+
+            // create new file
+            notepad.FileNew();
+            editor.SetText(sb.ToString());
         }
     }
 }
