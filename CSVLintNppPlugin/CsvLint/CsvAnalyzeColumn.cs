@@ -56,11 +56,6 @@ namespace CSVLint
             if (this.CountAll == 1)
             {
                 this.Name = data;
-
-                // TODO: determine if first row is actually header names
-                if ((this.Name == "") || (fixedLength > 0) ) {
-                    this.Name = "F" + (this.Index + 1);
-                }
             }
             else
             {
@@ -119,10 +114,10 @@ namespace CSVLint
                                 sep1 = ch;
                                 string datedig1 = data.Substring(0, data.IndexOf(ch));
                                 // keep max number example 31-12-2020 -> keep 31
-                                bool isNumeric = int.TryParse(datedig1, out int n);
+                                bool isNumeric = int.TryParse(datedig1, out int n1);
                                 if (isNumeric)
                                 {
-                                    if (ddmax1 < n) ddmax1 = n;
+                                    if (ddmax1 < n1) ddmax1 = n1;
                                 }
                             }
                             else if (sep2 == '\0')
@@ -130,12 +125,12 @@ namespace CSVLint
                                 // check if numeric up to the first separator
                                 sep2 = ch;
                                 int pos1 = data.IndexOf(sep1) + 1;
-                                string datedig1 = data.Substring(pos1, data.IndexOf(ch, pos1) - pos1);
+                                string datedig2 = data.Substring(pos1, data.IndexOf(ch, pos1) - pos1);
                                 // keep max number example 31-12-2020 -> keep 31
-                                bool isNumeric = int.TryParse(datedig1, out int n);
+                                bool isNumeric = int.TryParse(datedig2, out int n2);
                                 if (isNumeric)
                                 {
-                                    if (ddmax2 < n) ddmax2 = n;
+                                    if (ddmax2 < n2) ddmax2 = n2;
                                 }
                             }
                         }
@@ -162,22 +157,44 @@ namespace CSVLint
                         {
                             sign++;
                             signpos = charidx;
-                            other--; // in hindsight was incorrectly counted as 'other' because ''. -> correction
+                            other--; // in hindsight was incorrectly counted as 'other' because '-' could also be integer -> correction
+                        }
+                    }
+
+                    // exception for time values like "12:23" -> also fill ddmax2 "23"
+                    if ( (datesep == 1) && (vallength >= 4) && (vallength <= 5) )
+                    {
+                        // check if numeric up to the first separator
+                        int pos3 = data.IndexOf(sep1) + 1;
+                        string datedig3 = data.Substring(pos3, data.Length - pos3);
+                        // keep max number example 31-12-2020 -> keep 31
+                        bool checkNumeric = int.TryParse(datedig3, out int n3);
+                        if (checkNumeric)
+                        {
+                            if (ddmax2 < n3) ddmax2 = n3;
                         }
                     }
 
                     // determine most likely datatype based on characters in string
 
-                    // date, examples "31-12-2019", "1/1/2019", "2019-12-31" etc.
-                    if ((length >= 8) && (length <= 10) && (datesep == 2) && (other == 0) && ((ddmax1 <= 31) || (ddmax1 >= 1900)))
+                    // date, examples "31-12-2019", "1/1/2019", "2019-12-31", "1-1-99" etc.
+                    if ((length >= 8) && (length <= 10) && (datesep == 2) && (digits >= 4) && (digits <= 8) && ((ddmax1 <= 31) || (ddmax1 >= 1900)))
                     {
                         this.CountDateTime++;
                         if (this.DateSep == '\0') this.DateSep = sep1;
                         if (this.DateMax1 < ddmax1) this.DateMax1 = ddmax1;
                         if (this.DateMax2 < ddmax2) this.DateMax2 = ddmax2;
                     }
-                    // or datetime, examples "31-12-2019 23:59:00", "1/1/2019 12:00", "2019-12-31 23:59:59.000" etc.
-                    else if ((length >= 13) && (length <= 23) && (datesep >= 2) && (datesep <= 6) && (other == 0) && ((ddmax1 <= 31) || (ddmax1 >= 1900)))
+                    // or datetime, examples "31-12-2019 23:59:00", "1/1/2019 12:00", "2019-12-31 23:59:59.000", "1-1-99 9:00" etc.
+                    else if ((length >= 13) && (length <= 23) && (datesep >= 2) && (datesep <= 6) && (digits >= 7) && (digits <= 17) && ((ddmax1 <= 31) || (ddmax1 >= 1900)))
+                    {
+                        this.CountDateTime++;
+                        if (this.DateSep == '\0') this.DateSep = sep1;
+                        if (this.DateMax1 < ddmax1) this.DateMax1 = ddmax1;
+                        if (this.DateMax2 < ddmax2) this.DateMax2 = ddmax2;
+                    }
+                    // or time, examples "9:00", "23:59:59", "23:59:59.000" etc.
+                    else if ((length >= 4) && (length <= 12) && (sep1 == ':') && (datesep >= 1) && (datesep <= 3) && (digits >= 3) && (digits <= 9) && ((ddmax1 <= 23) && (ddmax2 <= 59)))
                     {
                         this.CountDateTime++;
                         if (this.DateSep == '\0') this.DateSep = sep1;
@@ -295,6 +312,12 @@ namespace CSVLint
 
                 // build mask
                 mask = string.Format("{0}{1}{2}{3}{4}", part1, this.DateSep, part2, this.DateSep, part3);
+
+                // if just hour minutes not seconds, example "12:59"
+                if ((this.DateSep == ':') && (this.MaxWidth <= 5))
+                {
+                    mask = mask.Replace(":ss", "");
+                }
 
                 // single digit year, example "31-12-99"
                 if ((this.MinWidth == this.MaxWidth) && (this.MinWidth == 8))

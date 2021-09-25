@@ -313,6 +313,25 @@ namespace CSVLint
                 idx++;
             }
 
+            // determine if the first row was actually header names
+            int count = 0;
+            var csvvalid = new CsvValidate();
+            foreach (CSVLint.CsvColumn col in result.Fields)
+            {
+                // if fist row values (=Names) are all valid datatypes, then probably not actually column names
+                var str = csvvalid.EvaluateDataValue(col.Name, col, col.Index);
+                if (str != "") count++;
+            }
+
+            // if all header Names (=frst row) comply with the column datatype, then there is no column names
+            result.ColNameHeader = (count > 0);
+
+            // if no header column names rename all columns to "FIELD1", "FIELD2", "FIELD3" etc.
+            if (!result.ColNameHeader)
+            {
+                foreach (CSVLint.CsvColumn col in result.Fields) col.Name = string.Format("FIELD{0}", (col.Index + 1));
+            }
+
             // result
             return result;
         }
@@ -388,12 +407,17 @@ namespace CSVLint
 
             var strdata = ScintillaStreams.StreamAllText();
 
+            List<string> values;
+
+            // if first line header names, consume first line and ignore the values
+            if (csvdef.ColNameHeader) values = csvdef.ParseNextLine(strdata);
+
             while (!strdata.EndOfStream)
             {
                 // keep track of how many lines
                 lineCount++;
 
-                List<string> values = csvdef.ParseNextLine(strdata);
+                values = csvdef.ParseNextLine(strdata);
 
                 // inspect all values
                 for (int i = 0; i < values.Count(); i++)
@@ -421,9 +445,11 @@ namespace CSVLint
             IScintillaGateway editor = new ScintillaGateway(PluginBase.GetCurrentScintilla());
 
             string FILE_NAME = Path.GetFileName(notepad.GetCurrentFilePath());
+            string strhead = (csvdef.ColNameHeader ? " (+1 header line)" : "");
 
             sb.Append("-------------------------------------\r\n");
             sb.Append(String.Format("Analyze dataset: {0}\r\n", FILE_NAME));
+            sb.Append(String.Format("Data records: {0}{1}\r\n", lineCount, strhead));
             sb.Append("\r\n");
 
             // add columns as actual fields
@@ -437,11 +463,11 @@ namespace CSVLint
 
                 // count date types that were found
                 sb.Append("DataTypes: ");
-                if (stats.CountDecimal > 0) sb.Append(String.Format("decimal {0}, ", stats.CountDecimal));
-                if (stats.CountEmpty > 0) sb.Append(String.Format("empty {0}, ", stats.CountEmpty));
-                if (stats.CountInteger > 0) sb.Append(String.Format("integer {0}, ", stats.CountInteger));
-                if (stats.CountString > 0) sb.Append(String.Format("string {0}, ", stats.CountString));
-                if (stats.CountDateTime > 0) sb.Append(String.Format("datetime {0}, ", stats.CountDateTime));
+                if (stats.CountDecimal > 0) sb.Append(String.Format("decimal ({0} - {1} - {2}%), ", stats.CountDecimal, stats.CountAll, ReportPercentage(stats.CountDecimal, stats.CountAll)));
+                if (stats.CountEmpty > 0) sb.Append(String.Format("empty {0}, ", ReportPercentage(stats.CountEmpty, stats.CountAll)));
+                if (stats.CountInteger > 0) sb.Append(String.Format("integer {0}, ", ReportPercentage(stats.CountInteger, stats.CountAll)));
+                if (stats.CountString > 0) sb.Append(String.Format("string {0}, ", ReportPercentage(stats.CountString, stats.CountAll)));
+                if (stats.CountDateTime > 0) sb.Append(String.Format("datetime {0}, ", ReportPercentage(stats.CountDateTime, stats.CountAll)));
                 sb.Length -= 2; // remove last ", "
                 sb.Append("\r\n");
 
@@ -454,6 +480,16 @@ namespace CSVLint
             // create new file
             notepad.FileNew();
             editor.SetText(sb.ToString());
+        }
+        /// <summary>
+        /// Data statistical analysis report
+        /// <param name="data"></param>
+        /// <returns></returns>
+        private static String ReportPercentage(int iPart, int iTotal)
+        {
+            Double dPerc = (iPart * 100.0 / iTotal);
+
+            return dPerc.ToString("0.0");
         }
     }
 }

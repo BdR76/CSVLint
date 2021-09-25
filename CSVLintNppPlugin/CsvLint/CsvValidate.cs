@@ -38,6 +38,9 @@ namespace CSVLint
     {
         private readonly List<LogLine> log;
 
+        // the DateTime.TryParseExact requires a culture object, for much better performance DO NOT create on the fly for every call to EvaluateDateTime!
+        private CultureInfo dummyculture = new CultureInfo("en-US");
+
         public CsvValidate()
         {
             this.log = new List<LogLine>();
@@ -106,7 +109,7 @@ namespace CSVLint
                     // next value and column number
                     String val = values[i];
                     //val = val.Trim();
-
+                
                     if (val != "")
                     {
                         // within bounds of column definition and non-empty value
@@ -135,7 +138,7 @@ namespace CSVLint
                         }
                     }
                 }
-
+                
                 // log any errors
                 if (err != "")
                 {
@@ -262,7 +265,7 @@ namespace CSVLint
 
             // check if valid date using DateTime
             if (DateTime.TryParseExact(val, coldef.Mask,
-                                       new CultureInfo("en-US"),
+                                       dummyculture,
                                        DateTimeStyles.None,
                                        out DateTime dateValue))
             {
