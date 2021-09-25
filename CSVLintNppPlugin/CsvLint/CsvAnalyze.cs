@@ -409,9 +409,6 @@ namespace CSVLint
 
             List<string> values;
 
-            // if first line header names, consume first line and ignore the values
-            if (csvdef.ColNameHeader) values = csvdef.ParseNextLine(strdata);
-
             while (!strdata.EndOfStream)
             {
                 // keep track of how many lines
@@ -438,6 +435,9 @@ namespace CSVLint
 
             strdata.Dispose();
 
+            // if first row is header column names, count one less line for totals
+            if (csvdef.ColNameHeader) lineCount--;
+
             StringBuilder sb = new StringBuilder();
 
             // get access to Notepad++
@@ -462,21 +462,30 @@ namespace CSVLint
                 sb.Append(String.Format("{0}: {1}\r\n", idx, stats.Name));
 
                 // count date types that were found
-                sb.Append("DataTypes: ");
-                if (stats.CountDecimal > 0) sb.Append(String.Format("decimal ({0} - {1} - {2}%), ", stats.CountDecimal, stats.CountAll, ReportPercentage(stats.CountDecimal, stats.CountAll)));
-                if (stats.CountEmpty > 0) sb.Append(String.Format("empty {0}, ", ReportPercentage(stats.CountEmpty, stats.CountAll)));
-                if (stats.CountInteger > 0) sb.Append(String.Format("integer {0}, ", ReportPercentage(stats.CountInteger, stats.CountAll)));
-                if (stats.CountString > 0) sb.Append(String.Format("string {0}, ", ReportPercentage(stats.CountString, stats.CountAll)));
-                if (stats.CountDateTime > 0) sb.Append(String.Format("datetime {0}, ", ReportPercentage(stats.CountDateTime, stats.CountAll)));
+                sb.Append("DataTypes     : ");
+                if (stats.CountDecimal  > 0) sb.Append(String.Format( "decimal ({0}, {1}%), ", stats.CountDecimal,  ReportPercentage(stats.CountDecimal,  lineCount)));
+                if (stats.CountEmpty    > 0) sb.Append(String.Format(   "empty ({0}, {1}%), ", stats.CountEmpty,    ReportPercentage(stats.CountEmpty,    lineCount)));
+                if (stats.CountInteger  > 0) sb.Append(String.Format( "integer ({0}, {1}%), ", stats.CountInteger,  ReportPercentage(stats.CountInteger,  lineCount)));
+                if (stats.CountString   > 0) sb.Append(String.Format(  "string ({0}, {1}%), ", stats.CountString,   ReportPercentage(stats.CountString,   lineCount)));
+                if (stats.CountDateTime > 0) sb.Append(String.Format("datetime ({0}, {1}%), ", stats.CountDateTime, ReportPercentage(stats.CountDateTime, lineCount)));
                 sb.Length -= 2; // remove last ", "
                 sb.Append("\r\n");
 
                 // width
                 var strwid = (stats.MinWidth == stats.MaxWidth ? stats.MaxWidth.ToString() : String.Format("{0} ~ {1}", stats.MinWidth, stats.MaxWidth));
-                sb.Append(String.Format("Width: {0} characters\r\n", strwid));
+                sb.Append(String.Format("Width range   : {0} characters\r\n", strwid));
+
+                // minimum maximum values
+                //if (stats.CountInteger  > 0) sb.Append(String.Format("Integer range  : {0} ~ {1}", stats.Min_int,     stats.Max_int));
+                //if (stats.CountDecimal  > 0) sb.Append(String.Format("Decimal range  : {0} ~ {1}", stats.Min_dec,     stats.Max_dec));
+                //if (stats.CountDateTime > 0) sb.Append(String.Format("DateTime range : {0} ~ {1}", stats.Min_dat_str, stats.Max_dat_str));
+
+                // unique values
+                //var strwid = (stats.MinWidth == stats.MaxWidth ? stats.MaxWidth.ToString() : String.Format("{0} ~ {1}", stats.MinWidth, stats.MaxWidth));
+                //sb.Append(String.Format("Width range   : {0} characters\r\n", strwid));
+
                 sb.Append("\r\n");
             }
-
             // create new file
             notepad.FileNew();
             editor.SetText(sb.ToString());

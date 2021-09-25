@@ -28,6 +28,10 @@ namespace Kbg.NppPluginNET
 
         private void OnBtnRefresh_Click(object sender, EventArgs e)
         {
+            // clear any previous output
+            txtOutput.Clear();
+            txtOutput.Update();
+
             var dtStart = DateTime.Now;
 
             // analyze and determine csv definition
@@ -46,6 +50,10 @@ namespace Kbg.NppPluginNET
 
         private void OnBtnValidate_Click(object sender, EventArgs e)
         {
+            // clear any previous output
+            txtOutput.Clear();
+            txtOutput.Update();
+
             // get dictionary
             CsvDefinition csvdef = new CsvDefinition(txtSchemaIni.Text);
 
@@ -152,6 +160,10 @@ namespace Kbg.NppPluginNET
             bool ok = GetReformatParameters(out string editDataTime, out string editDecimal, out string editSeparator, out bool updateSeparator, out bool trimAllValues);
             if (ok)
             {
+                // clear any previous output
+                txtOutput.Clear();
+                txtOutput.Update();
+
                 // get dictionary
                 CsvDefinition csvdef = new CsvDefinition(txtSchemaIni.Text);
 
@@ -247,6 +259,10 @@ namespace Kbg.NppPluginNET
             // return true (OK) or false (Cancel)
             if (r == DialogResult.OK)
             {
+                // clear any previous output
+                txtOutput.Clear();
+                txtOutput.Update();
+
                 var dtStart = DateTime.Now;
 
                 // split column

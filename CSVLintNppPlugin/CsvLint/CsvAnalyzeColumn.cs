@@ -85,12 +85,13 @@ namespace CSVLint
                     int other = 0;
                     char sep1 = '\0';
                     char sep2 = '\0';
-                    int ddmax1 = 0;
-                    int ddmax2 = 0;
+                    int ddmax1 = -1;
+                    int ddmax2 = -1;
                     char dec = '\0';
 
                     // inspect all characters of string
                     int vallength = data.Length;
+
                     for (int charidx = 0; charidx < vallength; charidx++)
                     {
                         char ch = data[charidx];
@@ -104,11 +105,11 @@ namespace CSVLint
                             comma++;
                             dec = ch;
                         }
-                        else if ("\\/-:. ".IndexOf(ch) > 0) // check date separators
+                        else if ("\\/-:. ".IndexOf(ch) >= 0) // check date separators
                         {
                             other++;
                             datesep++;
-                            if (sep1 == '\0')
+                            if ((sep1 == '\0') && (datesep == 1))
                             {
                                 // check if numeric up to the first separator
                                 sep1 = ch;
@@ -119,9 +120,15 @@ namespace CSVLint
                                 {
                                     if (ddmax1 < n1) ddmax1 = n1;
                                 }
+
+                                // check if cannot be a datetime
+                                if ( (!isNumeric) || (datedig1.Length == 3) || (datedig1.Length > 4))
+                                {
+                                    ddmax1 = -1; // force the most likely datatype to not be non-datetime
+                                }
                             }
-                            else if (sep2 == '\0')
-                            {
+                            else if ((sep2 == '\0') && (datesep == 2))
+                                {
                                 // check if numeric up to the first separator
                                 sep2 = ch;
                                 int pos1 = data.IndexOf(sep1) + 1;
@@ -131,6 +138,11 @@ namespace CSVLint
                                 if (isNumeric)
                                 {
                                     if (ddmax2 < n2) ddmax2 = n2;
+                                }
+                                // check if cannot be a datetime
+                                if ((!isNumeric) || (datedig2.Length == 3) || (datedig2.Length > 4))
+                                {
+                                    ddmax2 = -1; // force the most likely datatype to not be non-datetime
                                 }
                             }
                         }
@@ -178,7 +190,7 @@ namespace CSVLint
                     // determine most likely datatype based on characters in string
 
                     // date, examples "31-12-2019", "1/1/2019", "2019-12-31", "1-1-99" etc.
-                    if ((length >= 8) && (length <= 10) && (datesep == 2) && (digits >= 4) && (digits <= 8) && ((ddmax1 <= 31) || (ddmax1 >= 1900)))
+                    if ((length >= 8) && (length <= 10) && (datesep == 2) && (digits >= 4) && (digits <= 8) && (ddmax1 > 0) && ((ddmax1 <= 31) || (ddmax1 >= 1900)))
                     {
                         this.CountDateTime++;
                         if (this.DateSep == '\0') this.DateSep = sep1;
@@ -186,7 +198,7 @@ namespace CSVLint
                         if (this.DateMax2 < ddmax2) this.DateMax2 = ddmax2;
                     }
                     // or datetime, examples "31-12-2019 23:59:00", "1/1/2019 12:00", "2019-12-31 23:59:59.000", "1-1-99 9:00" etc.
-                    else if ((length >= 13) && (length <= 23) && (datesep >= 2) && (datesep <= 6) && (digits >= 7) && (digits <= 17) && ((ddmax1 <= 31) || (ddmax1 >= 1900)))
+                    else if ((length >= 13) && (length <= 23) && (datesep >= 2) && (datesep <= 6) && (digits >= 7) && (digits <= 17) && (ddmax1 > 0) && ((ddmax1 <= 31) || (ddmax1 >= 1900)))
                     {
                         this.CountDateTime++;
                         if (this.DateSep == '\0') this.DateSep = sep1;
@@ -194,7 +206,7 @@ namespace CSVLint
                         if (this.DateMax2 < ddmax2) this.DateMax2 = ddmax2;
                     }
                     // or time, examples "9:00", "23:59:59", "23:59:59.000" etc.
-                    else if ((length >= 4) && (length <= 12) && (sep1 == ':') && (datesep >= 1) && (datesep <= 3) && (digits >= 3) && (digits <= 9) && ((ddmax1 <= 23) && (ddmax2 <= 59)))
+                    else if ((length >= 4) && (length <= 12) && (sep1 == ':') && (datesep >= 1) && (datesep <= 3) && (digits >= 3) && (digits <= 9) && (ddmax1 > 0) && ((ddmax1 <= 23) && (ddmax2 <= 59)))
                     {
                         this.CountDateTime++;
                         if (this.DateSep == '\0') this.DateSep = sep1;

@@ -14,6 +14,8 @@ namespace Kbg.NppPluginNET
     public partial class AboutForm : Form
     {
         private readonly ToolTip helperTip = new ToolTip();
+        private int ForceEasterEgg = 0;
+
         public AboutForm()
         {
             InitializeComponent();
@@ -163,6 +165,16 @@ namespace Kbg.NppPluginNET
 
                 // Call the Process.Start method to open the default browser with a URL:
                 System.Diagnostics.Process.Start(url);
+            }
+        }
+
+        private void picEasterEgg_Click(object sender, EventArgs e)
+        {
+            ForceEasterEgg++;
+            if ((ForceEasterEgg == 5) && (picEasterEgg.Image == null))
+            {
+                helperTip.SetToolTip(picEasterEgg, "On certain days in the year you'll find an easter egg here ;)");
+                picEasterEgg.Image = CSVLintNppPlugin.Properties.Resources.easteregg;
             }
         }
     }
