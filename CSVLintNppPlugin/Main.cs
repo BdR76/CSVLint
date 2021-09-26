@@ -9,6 +9,7 @@ using System.Text;
 using System.Windows.Forms;
 using CSVLint;
 using CSVLintNppPlugin.CsvLint;
+using CSVLintNppPlugin.Forms;
 using Kbg.NppPluginNET.PluginInfrastructure;
 using NppPluginNET.PluginInfrastructure;
 
@@ -62,11 +63,13 @@ namespace Kbg.NppPluginNET
             // menu items
             //PluginBase.SetCommand(0, "MyMenuCommand", myMenuFunction, new ShortcutKey(false, false, false, Keys.None));
             PluginBase.SetCommand(0, "CSV Lint window", myDockableDialog); idMyDlg = 0;
-            PluginBase.SetCommand(1, "Convert to SQL", convertToSQL);
+            PluginBase.SetCommand(1, "---", null);
             PluginBase.SetCommand(2, "Analyse data report", analyseDataReport);
-            PluginBase.SetCommand(3, "&Settings", Settings.ShowDialog);
-            PluginBase.SetCommand(4, "---", null);
-            PluginBase.SetCommand(5, "About", doAboutForm);
+            PluginBase.SetCommand(3, "Count unique values", CountUniqueValues);
+            PluginBase.SetCommand(4, "Convert to SQL", convertToSQL);
+            PluginBase.SetCommand(5, "---", null);
+            PluginBase.SetCommand(6, "&Settings", Settings.ShowDialog);
+            PluginBase.SetCommand(7, "About", doAboutForm);
         }
 
         internal static void SetToolBarIcon()
@@ -279,6 +282,37 @@ namespace Kbg.NppPluginNET
                 CsvAnalyze.StatisticalReportData(csvdef);
             }
         }
+
+        internal static void CountUniqueValues()
+        {
+            // get dictionary
+            CsvDefinition csvdef = GetCurrentCsvDef();
+
+            // check if valid dictionary
+            if (csvdef.Fields.Count > 0)
+            {
+                // show unique values parameters form
+                var frmunq = new UniqueValuesForm();
+                frmunq.InitialiseSetting(csvdef);
+                DialogResult r = frmunq.ShowDialog();
+
+                // user clicked OK or Cancel
+                List<int> colidx = new List<int>(frmunq.columnIndexes);
+                bool sortValue = frmunq.sortValue;
+                bool sortDesc = frmunq.sortDesc;
+
+                // clear up
+                frmunq.Dispose();
+
+                // return true (OK) or false (Cancel)
+                if (r == DialogResult.OK)
+                {
+                    // count unique values
+                    CsvAnalyze.CountUniqueValues(csvdef, colidx, sortValue, sortDesc);
+                }
+            }
+        }
+
         internal static void myDockableDialog()
         {
             if (frmCsvLintDlg == null)

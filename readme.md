@@ -1,11 +1,12 @@
 CSV Lint - Notepad++ plugin
 ===========================
 
-CSV Lint is a plug-in for Notepad++ for metadata discovery, technical data
+CSV Lint is a plug-in for [Notepad++](http://notepad-plus-plus.org/) for metadata discovery, technical data
 validation and reformatting on tabular data files.
 
 Use CSV Lint to quickly detect any technical errors in csv data or fix datetime and decimal formatting.  
-It is _not_ meant to be a replacement for spreadsheet programs like Excel or SPSS.
+It is _not_ meant to be a replacement for spreadsheet programs like Excel or SPSS,  
+but rather it's a quality control tool to examine, verify or polish up a dataset before further processing.
 
 With CSV Lint you can take a dataset and:
 
@@ -18,15 +19,15 @@ With CSV Lint you can take a dataset and:
 
 ![preview screenshot](/csvlint_preview.png?raw=true "CSVLint plug-in preview")
 
-CSV Lint is stable and usable for most general use-cases, but it is a work-in-progress.
-If you encounter any bugs or unexpected output I encourage you to [report issues here](https://github.com/BdR76/CSVLint/issues).
+CSV Lint is stable and usable for most general use-cases, but it is a work-in-progress, 
+so if you encounter any bugs or unexpected output I encourage you to [report issues here](https://github.com/BdR76/CSVLint/issues).
 
 CSVLint is based on a prototype project [Dataset MultiTool](https://github.com/BdR76/datasetmultitool)
 
 How to use it
 -------------
 
-1. Open your dataset in Notepad++
+1. Open your dataset in [Notepad++](http://notepad-plus-plus.org/)
 2. Open the "CSV Lint window" from the plug-in menu or toolbar
 3. Press "Refresh from data" to automatically detect format
 4. Optionally, manually enter or adjust metadata
@@ -53,6 +54,11 @@ Schema.ini
 ----------
 The metadata uses the standard schema.ini format, see documentation
 [here](https://docs.microsoft.com/en-us/sql/odbc/microsoft/schema-ini-file-text-file-driver?view=sql-server-ver15)
+
+When you open a csv file the plug-in try to determine the column meta data.
+It will first look for a `schema.ini` file in the same folder as the data file, and check to see if it contains a section with the filename.
+If the file or section doesn't exist, it will scan the data and try to infer the columns and datatypes.
+You can manually change the meta data and press the blue disk icon to save it to a `schema.ini` file in the same folder as the data file for later use.
 
 See schema.ini example below:
 
@@ -98,20 +104,34 @@ The CSV Lint plugin is work-in-progress, here is list of features I want to add 
 * Improve GUI instead of plain text
 * Improve file reading, to process/edit large files (>1MB)
 * Count unique values based on column(s)
-* Allow format masks per individual column
+* ~~Allow format masks per individual column~~
 * ~~Support quoted strings~~
 * Support two-digit year date values
+* ~~Load/save schema.ini~~
 * Support FrictionlessData schema.json format
-* Load/save schema.ini/json
-* Improve automatic datatype detection
+* ~~Improve automatic datatype detection~~
 * Add feature GUI click to jump to error line
 * Add feature generate ~~scripts (SQL,~~ SPSS, Python(?), XML+column=xpath?)
 * ~~Syntax highlighting, display columns as [colors](https://community.notepad-plus-plus.org/topic/21124/c-adding-a-custom-styler-or-lexer-in-c-for-scintilla-notepad/)~~
 * Search for value in column, search next empty/non-empty in column
 * Search/replace in single column, multiple columns (option only replace n-th occurance? example "datetime(2008, 1, 1, 12, 59, 00)" replace ', ' with '-' or ':')
 * Search/replace only n-th occurance? Or only empty occurance?
-* Split column into new column ("123/456" -> "123", "456")
+* ~~Split column into new column ("123/456" -> "123", "456")~~
 * Support code=label values (in schema.json?) + error check + replace-code-with-label
+
+Trouble shooting / Known issues
+-------------------------------
+When you press the "Validate Data" button after editing the data file, the text and metadata are not
+always synchronised immediately. if you get unexpected validation results, try saving the datafile
+or refreshing the meta data before clicking "Refresh from data".
+
+When you press "Refresh from data" the datatime format of the data isn't always detected correctly.
+Especially when the data contains values like `05/06/2021` the order of day and month can be incorrect.
+You can adjust it manually to match your data bfore pressing the "Validate data" button.
+
+When you select Language > CSVLint to enable the syntax highlighing colors, or change the metadata manually,
+the column colors aren't always displayed correctly immediately.
+Click inside the textfile or switch tabs to a different file and then back and it should display correctly.
 
 Acknowledgements
 ----------------
@@ -133,6 +153,7 @@ History
 -------
 15-dec-2019 - v0.1 first release  
 02-may-2021 - v0.2 reformat data, double-click jumps to line, various bugfixes  
-25-aug-2021 - v0.3 quoted string values, syntax highlighting, SQL export
+25-aug-2021 - v0.3 quoted string values, syntax highlighting, SQL export  
+26-sep-2021 - v0.4 performance improvement, save/load metadata, split column option, count unique values
 
 BdR©2021 Free to use - send questions or comments: Bas de Reuver - bdr1976@gmail.com

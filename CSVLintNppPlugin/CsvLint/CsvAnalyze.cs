@@ -500,5 +500,74 @@ namespace CSVLint
 
             return dPerc.ToString("0.0");
         }
+
+        /// <summary>
+        /// Data statistical analysis report
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public static void CountUniqueValues(CsvDefinition csvdef, List<int> colidx, bool sortValue, bool sortDesc)
+        {
+            // examine data and keep list of counters per unique values
+            Dictionary<String, int> uniquecount = new Dictionary<String, int>();
+            var strdata = ScintillaStreams.StreamAllText();
+            List<string> values;
+
+            // if first line is header column names, then consume line and ignore
+            if (csvdef.ColNameHeader) csvdef.ParseNextLine(strdata);
+
+            // read all data lines
+            while (!strdata.EndOfStream)
+            {
+                // get next line of values
+                values = csvdef.ParseNextLine(strdata);
+                String uniq = "";
+
+                // get unique value(s) from column indexes
+                for (int i = 0; i < colidx.Count(); i++)
+                {
+                    // add columnstats if needed
+                    int col = colidx[i];
+                    uniq += (i > 0 ? csvdef.Separator.ToString() : "") + (col < values.Count ? values[col] : "");
+                }
+
+                // count unique value(s)
+                if (!uniquecount.ContainsKey(uniq))
+                    uniquecount.Add(uniq, 1);
+                else
+                    uniquecount[uniq]++;
+            }
+            strdata.Dispose();
+
+            // output unique values and count to new file
+            StringBuilder sb = new StringBuilder();
+
+            // get access to Notepad++
+            INotepadPPGateway notepad = new NotepadPPGateway();
+            IScintillaGateway editor = new ScintillaGateway(PluginBase.GetCurrentScintilla());
+
+            // get column names
+            for (int i = 0; i < colidx.Count(); i++)
+            {
+                var colname = (colidx[i] < csvdef.Fields.Count ? csvdef.Fields[colidx[i]].Name : "");
+                sb.Append(String.Format("{0}{1}", colname, csvdef.Separator));
+            }
+            sb.Append("count_unique\r\n");
+
+            // apply sorting, note that obj.Key actually contains the column value(s) and obj.Value contains the unique counter
+            if ((sortValue == true ) && (sortDesc == false)) uniquecount = uniquecount.OrderBy          (obj => obj.Key  ).ToDictionary(obj => obj.Key, obj => obj.Value);
+            if ((sortValue == true ) && (sortDesc == true )) uniquecount = uniquecount.OrderByDescending(obj => obj.Key  ).ToDictionary(obj => obj.Key, obj => obj.Value);
+            if ((sortValue == false) && (sortDesc == false)) uniquecount = uniquecount.OrderBy          (obj => obj.Value).ToDictionary(obj => obj.Key, obj => obj.Value);
+            if ((sortValue == false) && (sortDesc == true )) uniquecount = uniquecount.OrderByDescending(obj => obj.Value).ToDictionary(obj => obj.Key, obj => obj.Value);
+
+            // add all unique values, sort by count
+            foreach (KeyValuePair<String, int> unqcnt in uniquecount)
+            {
+                sb.Append(String.Format("{0}{1}{2}\r\n", unqcnt.Key, csvdef.Separator, unqcnt.Value));
+            }
+
+            // create new file
+            notepad.FileNew();
+            editor.SetText(sb.ToString());
+        }
     }
 }

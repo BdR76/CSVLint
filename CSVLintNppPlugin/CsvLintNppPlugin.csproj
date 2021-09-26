@@ -89,6 +89,12 @@
     <Compile Include="Forms\ReformatForm.Designer.cs">
       <DependentUpon>ReformatForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\UniqueValuesForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\UniqueValuesForm.Designer.cs">
+      <DependentUpon>UniqueValuesForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="PluginInfrastructure\Lexer.cs" />
     <Compile Include="Tools\Settings.cs" />
     <Compile Include="Tools\Helper.cs" />
@@ -147,6 +153,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ReformatForm.resx">
       <DependentUpon>ReformatForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\UniqueValuesForm.resx">
+      <DependentUpon>UniqueValuesForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

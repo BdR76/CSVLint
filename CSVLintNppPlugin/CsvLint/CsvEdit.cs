@@ -342,7 +342,7 @@ namespace CSVLint
             // convert from fixed width to separated values, add header line
             if (csvdef.ColNameHeader)
             {
-                // consume header column names, and ignore it
+                // if first line is header column names, then consume line and ignore
                 csvdef.ParseNextLine(strdata);
 
                 // add header column names
