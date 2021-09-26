@@ -15,6 +15,8 @@ With CSV Lint you can take a dataset and:
 * Validate data against schema.ini
 * Convert datetime/decimal values to different formats
 * Convert between comma, semicolon, tab separated, fixed width formats
+* Split valid/invalid values into two separate columns
+* Count unique values of one or more columns
 * Convert csv data to SQL insert script
 
 ![preview screenshot](/csvlint_preview.png?raw=true "CSVLint plug-in preview")
@@ -102,8 +104,8 @@ The CSV Lint plugin is work-in-progress, here is list of features I want to add 
 * ~~Convert decimal symbol to point/comma~~
 * ~~Toggle between comma, semicolon, tab separated formats~~
 * Improve GUI instead of plain text
-* Improve file reading, to process/edit large files (>1MB)
-* Count unique values based on column(s)
+* ~~Improve file reading, to process/edit large files (>1MB)~~
+* ~~Count unique values based on column(s)~~
 * ~~Allow format masks per individual column~~
 * ~~Support quoted strings~~
 * Support two-digit year date values
@@ -121,15 +123,15 @@ The CSV Lint plugin is work-in-progress, here is list of features I want to add 
 
 Trouble shooting / Known issues
 -------------------------------
-When you press the "Validate Data" button after editing the data file, the text and metadata are not
+* When you press the "Validate Data" button after editing the data file, the text and metadata are not
 always synchronised immediately. if you get unexpected validation results, try saving the datafile
 or refreshing the meta data before clicking "Refresh from data".
 
-When you press "Refresh from data" the datatime format of the data isn't always detected correctly.
+* When you press "Refresh from data" the datetime format of the data isn't always detected correctly.
 Especially when the data contains values like `05/06/2021` the order of day and month can be incorrect.
-You can adjust it manually to match your data bfore pressing the "Validate data" button.
+You can adjust it manually to match your data before pressing the "Validate data" button.
 
-When you select Language > CSVLint to enable the syntax highlighing colors, or change the metadata manually,
+* When you select Language > CSVLint to enable the syntax highlighing colors, or change the metadata manually,
 the column colors aren't always displayed correctly immediately.
 Click inside the textfile or switch tabs to a different file and then back and it should display correctly.
 
