@@ -250,7 +250,8 @@ namespace Kbg.NppPluginNET
             // user clicked OK or Cancel
             int cod = frmsplit.SplitCode;
             int idx = frmsplit.SplitColumn;
-            String par = frmsplit.SplitParam;
+            String par1 = frmsplit.SplitParam1;
+            String par2 = frmsplit.SplitParam2;
             bool rem = frmsplit.SplitRemove;
 
             // clear up
@@ -266,15 +267,17 @@ namespace Kbg.NppPluginNET
                 var dtStart = DateTime.Now;
 
                 // split column
-                CsvEdit.ColumnSplit(csvdef, idx, cod, par, rem);
+                CsvEdit.ColumnSplit(csvdef, idx, cod, par1, par2, rem);
 
                 var dtElapsed = (DateTime.Now - dtStart).ToString(@"hh\:mm\:ss\.fff");
 
                 // ready message
                 String msg = "";
                 if (cod == 1) msg = "invalid values";
-                if (cod == 2) msg = "character " + par;
-                if (cod == 3) msg = "position " + par;
+                if (cod == 2) msg = "character " + par1;
+                if (cod == 3) msg = "position " + par1;
+                if (cod == 4) msg = "when contains " + par1;
+                if (cod == 5) msg = "decode multiple value " + par1;
                 msg = String.Format("Column \"{0}\" was split on \"{1}\"\r\n", csvdef.Fields[idx].Name, msg);
 
                 // display process message

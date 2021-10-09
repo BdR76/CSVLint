@@ -320,7 +320,7 @@ namespace CSVLint
         ///     reformat file for date, decimal and separator
         /// </summary>
         /// <param name="data"> csv data </param>
-        public static void ColumnSplit(CsvDefinition csvdef, int ColumnIndex, int SplitCode, string Parameter1, bool bRemove)
+        public static void ColumnSplit(CsvDefinition csvdef, int ColumnIndex, int SplitCode, string Parameter1, string Parameter2, bool bRemove)
         {
             // handle to editor
             ScintillaGateway scintillaGateway = PluginBase.CurrentScintillaGateway;
@@ -332,6 +332,16 @@ namespace CSVLint
             int linenr = 0;
             int.TryParse(Parameter1, out int IntPar);
             var IntPar2 = -1 * IntPar;
+
+            // decode
+            List<String> decode1 = new List<String>();
+            List<String> decode2 = new List<String>();
+
+            // decode
+            if (SplitCode == 5)
+            {
+                decode1 = Parameter1.Split(Parameter2[0]).Select(item => item.Trim()).ToList();
+            }
 
             StringBuilder datanew = new StringBuilder();
 
@@ -358,8 +368,15 @@ namespace CSVLint
                     // add new split columns headers
                     if (c == ColumnIndex)
                     {
-                        datanew.Append(sep + csvdef.Fields[c].Name + " (2)");
-                        datanew.Append(sep + csvdef.Fields[c].Name + " (3)");
+                        // determine new column header names, check for existing postfix
+                        var newname = csvdef.GetUniqueColumnName(csvdef.Fields[c].Name, out int postfix);
+
+                        // when decoding csv values (SplitCode == 5) add more new columns, when normal split then just 2
+                        var addmax = (SplitCode == 5 ? decode1.Count+1 : 2); // +1 = one extra column of any left-over values
+                        for (var cnew = 0; cnew < addmax; cnew++)
+                        {
+                            datanew.Append(String.Format("{0}{1} ({2})", sep, newname, postfix + cnew));
+                        }
                     }
                 }
                 datanew.Append("\n");
@@ -385,7 +402,8 @@ namespace CSVLint
                     // add column to output, except when remove original column
                     if ((c != ColumnIndex) || (bRemove == false))
                     {
-                        datanew.Append((c > 0 ? sep : "") + val);
+                        datanew.Append(val);
+                        datanew.Append(sep);
                     }
 
                     // add new split columns values
@@ -442,12 +460,54 @@ namespace CSVLint
                                 }
                             }
                         }
+                        else if (SplitCode == 4)
+                        {
+                            // split when contains
+                            int pos = val0.IndexOf(Parameter1);
+                            if (pos >= 0)
+                            {
+                                val1 = "";
+                                val2 = val0;
+                            }
+                        }
+                        else if (SplitCode == 5)
+                        {
+                            // decode multiple values, example val0 = "1;2;3"
+                            decode2.Clear();
+                            decode2 = val0.Split(Parameter2[0]).Select(item => item.Trim()).ToList();
+
+                            // split value into into columns
+                            val1 = "";
+                            foreach (var dec in decode1)
+                            {
+                                // check if separated value in list of decode values
+                                var decidx = decode2.IndexOf(dec);
+
+                                // separate column
+                                val1 += (decidx >= 0 ? dec : "") + sep;
+
+                                // remove from original value
+                                if (decidx >= 0) decode2.RemoveAt(decidx);
+                            }
+                            val1 = val1.Remove(val1.Length - 1); // remove last separator
+
+                            // put any left-over values in the extra column
+                            val2 = "";
+                            foreach (var dec in decode2)
+                            {
+                                val2 += dec + Parameter2[0];
+                            }
+                            if (val2.Length > 0) val2 = val2.Remove(val2.Length - 1); // remove last separator"; "
+                        }
 
                         // add split column values
-                        datanew.Append(sep + val1);
-                        datanew.Append(sep + val2);
+                        datanew.Append(val1 + sep);
+                        datanew.Append(val2 + sep);
                     }
                 };
+
+                // remove last separator
+                datanew.Length -= 1;
 
                 // add line break
                 datanew.Append("\n");

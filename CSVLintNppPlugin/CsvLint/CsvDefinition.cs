@@ -261,6 +261,68 @@ namespace CSVLint
             this.Fields.RemoveAt(index);
         }
 
+        /// <summary>
+        /// Check if fieldname contains a number in parentheses
+        /// For example namein = "test123"            will return = "test123"       postfix = -1
+        /// For example namein = "SBP (mmHg)"         will return = "SBP (mmHg)"    postfix = -1
+        /// For example namein = "labvalue (2)"       will return = "labvalue"      postfix = 2
+        /// For example namein = "Copy of field (99)" will return = "Copy of field" postfix = 99
+        /// </summary>
+        /// <param name="namein">fieldname with or without a number in parentheses</param>
+        /// <param name="postfix">outputs the number in parentheses, or -1 if none</param>
+        /// <returns></returns>
+        public string SplitColumnNamePostfix(string namein, out int postfix)
+        {
+            string res = namein;
+            postfix = -1;
+
+            // check if contains number in parentheses, for example "labvalue (2)"
+            var pos1 = namein.LastIndexOf('(');
+            var pos2 = namein.LastIndexOf(')');
+            if ((pos1 < pos2) && (pos2 == namein.Length - 1))
+            {
+                var strnr = namein.Substring(pos1 + 1, pos2 - pos1 - 1);
+                if (Int32.TryParse(strnr, out int inr))
+                {
+                    res = namein.Substring(0, pos1).Trim();
+                    postfix = inr;
+                }
+            }
+
+            return res;
+        }
+
+        /// <summary>
+        /// Check if fieldname is unique in Fields
+        /// returns 0 if already unique
+        /// returns 1 or higher as the highest suggested postfix to make the fieldname unique
+        /// For example Fields = {"abc", "def"}                              fieldname="xyz"       will return return 0
+        /// For example Fields = {"FirstName", "LastName"}                   fieldname="FirstName" will return return 1
+        /// For example Fields = {"labvalue (1)", "labvalue(3)", "labvalue"} fieldname="labvalue"  will return return 4
+        /// </summary>
+        /// <param name="fieldname"></param>
+        /// <returns></returns>
+        public string GetUniqueColumnName(string fieldname, out int postfix)
+        {
+            // check if fieldname already has a postfix
+            // example when fieldname="labvalue (3)" then should return "labvalue (4)" if it already exists,
+            // so instead of "labvalue (3) (1)"
+            var namepart = SplitColumnNamePostfix(fieldname, out postfix);
+
+            // check if name already exists in current fieldnames
+            foreach (var col in Fields)
+            {
+                // check if exact name already exist
+                if ((namepart == col.Name) && (postfix == -1)) postfix = 2;
+
+                // check if name with postfix parentheses already exist
+                var colname2 = SplitColumnNamePostfix(col.Name, out int inr);
+                if ((namepart == colname2) && (inr >= postfix)) postfix = inr + 1;
+            }
+
+            return namepart;
+        }
+
         // get csv definition from ini lines
         public CsvDefinition(string inilines)
         {

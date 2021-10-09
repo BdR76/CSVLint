@@ -21,7 +21,6 @@ namespace Kbg.NppPluginNET
         public static Settings Settings = new Settings();
 
         static string iniFilePath = null;
-        static bool someSetting = false;
         static CsvLintWindow frmCsvLintDlg = null;
         static int idMyDlg = -1;
         static Bitmap tbBmp = CSVLintNppPlugin.Properties.Resources.csvlint;
@@ -58,7 +57,6 @@ namespace Kbg.NppPluginNET
             iniFilePath = sbIniFilePath.ToString();
             if (!Directory.Exists(iniFilePath)) Directory.CreateDirectory(iniFilePath);
             iniFilePath = Path.Combine(iniFilePath, PluginName + ".ini");
-            someSetting = (Win32.GetPrivateProfileInt("SomeSection", "SomeKey", 0, iniFilePath) != 0);
 
             // menu items
             //PluginBase.SetCommand(0, "MyMenuCommand", myMenuFunction, new ShortcutKey(false, false, false, Keys.None));
@@ -252,7 +250,7 @@ namespace Kbg.NppPluginNET
 
         internal static void PluginCleanUp()
         {
-            Win32.WritePrivateProfileString("SomeSection", "SomeKey", someSetting ? "1" : "0", iniFilePath);
+            // any clean up code here
         }
 
         internal static void doAboutForm()

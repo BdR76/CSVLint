@@ -34,9 +34,14 @@ namespace CSVLintNppPlugin.Forms
             this.rdbtnSplitValid = new System.Windows.Forms.RadioButton();
             this.rdbtnSplitCharacter = new System.Windows.Forms.RadioButton();
             this.rdbtnSplitSubstring = new System.Windows.Forms.RadioButton();
-            this.chkDeleteOriginal = new System.Windows.Forms.CheckBox();
+            this.rdbtnSplitContains = new System.Windows.Forms.RadioButton();
+            this.rdbtnSplitDecode = new System.Windows.Forms.RadioButton();
             this.txtSplitCharacter = new System.Windows.Forms.TextBox();
             this.txtSplitSubstring = new System.Windows.Forms.TextBox();
+            this.txtSplitContains = new System.Windows.Forms.TextBox();
+            this.txtSplitDecode = new System.Windows.Forms.TextBox();
+            this.txtSplitDecodeChar = new System.Windows.Forms.TextBox();
+            this.chkDeleteOriginal = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // lblTitle
@@ -46,13 +51,13 @@ namespace CSVLintNppPlugin.Forms
             // 
             // btnOk
             // 
-            this.btnOk.Location = new System.Drawing.Point(152, 231);
-            this.btnOk.TabIndex = 8;
+            this.btnOk.Location = new System.Drawing.Point(152, 278);
+            this.btnOk.TabIndex = 13;
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(271, 231);
-            this.btnCancel.TabIndex = 9;
+            this.btnCancel.Location = new System.Drawing.Point(271, 278);
+            this.btnCancel.TabIndex = 14;
             // 
             // lblSelectColumn
             // 
@@ -107,22 +112,35 @@ namespace CSVLintNppPlugin.Forms
             this.rdbtnSplitSubstring.Location = new System.Drawing.Point(16, 148);
             this.rdbtnSplitSubstring.Name = "rdbtnSplitSubstring";
             this.rdbtnSplitSubstring.Size = new System.Drawing.Size(99, 17);
-            this.rdbtnSplitSubstring.TabIndex = 5;
+            this.rdbtnSplitSubstring.TabIndex = 4;
             this.rdbtnSplitSubstring.Tag = "3";
             this.rdbtnSplitSubstring.Text = "Split on position";
             this.rdbtnSplitSubstring.UseVisualStyleBackColor = true;
             this.rdbtnSplitSubstring.CheckedChanged += new System.EventHandler(this.OnRadioBtn_CheckedChanged);
             // 
-            // chkDeleteOriginal
+            // rdbtnSplitContains
             // 
-            this.chkDeleteOriginal.AutoSize = true;
-            this.chkDeleteOriginal.Location = new System.Drawing.Point(16, 196);
-            this.chkDeleteOriginal.Name = "chkDeleteOriginal";
-            this.chkDeleteOriginal.Size = new System.Drawing.Size(139, 17);
-            this.chkDeleteOriginal.TabIndex = 7;
-            this.chkDeleteOriginal.Tag = "4";
-            this.chkDeleteOriginal.Text = "Remove original column";
-            this.chkDeleteOriginal.UseVisualStyleBackColor = true;
+            this.rdbtnSplitContains.AutoSize = true;
+            this.rdbtnSplitContains.Location = new System.Drawing.Point(16, 180);
+            this.rdbtnSplitContains.Name = "rdbtnSplitContains";
+            this.rdbtnSplitContains.Size = new System.Drawing.Size(140, 17);
+            this.rdbtnSplitContains.TabIndex = 5;
+            this.rdbtnSplitContains.Tag = "4";
+            this.rdbtnSplitContains.Text = "Move value if it contains";
+            this.rdbtnSplitContains.UseVisualStyleBackColor = true;
+            this.rdbtnSplitContains.CheckedChanged += new System.EventHandler(this.OnRadioBtn_CheckedChanged);
+            // 
+            // rdbtnSplitDecode
+            // 
+            this.rdbtnSplitDecode.AutoSize = true;
+            this.rdbtnSplitDecode.Location = new System.Drawing.Point(16, 212);
+            this.rdbtnSplitDecode.Name = "rdbtnSplitDecode";
+            this.rdbtnSplitDecode.Size = new System.Drawing.Size(130, 17);
+            this.rdbtnSplitDecode.TabIndex = 6;
+            this.rdbtnSplitDecode.Tag = "5";
+            this.rdbtnSplitDecode.Text = "Decode multiple value";
+            this.rdbtnSplitDecode.UseVisualStyleBackColor = true;
+            this.rdbtnSplitDecode.CheckedChanged += new System.EventHandler(this.OnRadioBtn_CheckedChanged);
             // 
             // txtSplitCharacter
             // 
@@ -130,7 +148,7 @@ namespace CSVLintNppPlugin.Forms
             this.txtSplitCharacter.Location = new System.Drawing.Point(191, 112);
             this.txtSplitCharacter.Name = "txtSplitCharacter";
             this.txtSplitCharacter.Size = new System.Drawing.Size(48, 20);
-            this.txtSplitCharacter.TabIndex = 4;
+            this.txtSplitCharacter.TabIndex = 7;
             this.txtSplitCharacter.Tag = "2";
             this.txtSplitCharacter.Text = "/";
             // 
@@ -140,17 +158,63 @@ namespace CSVLintNppPlugin.Forms
             this.txtSplitSubstring.Location = new System.Drawing.Point(191, 144);
             this.txtSplitSubstring.Name = "txtSplitSubstring";
             this.txtSplitSubstring.Size = new System.Drawing.Size(48, 20);
-            this.txtSplitSubstring.TabIndex = 6;
+            this.txtSplitSubstring.TabIndex = 8;
             this.txtSplitSubstring.Tag = "3";
             this.txtSplitSubstring.Text = "4";
+            // 
+            // txtSplitContains
+            // 
+            this.txtSplitContains.Enabled = false;
+            this.txtSplitContains.Location = new System.Drawing.Point(191, 176);
+            this.txtSplitContains.Name = "txtSplitContains";
+            this.txtSplitContains.Size = new System.Drawing.Size(48, 20);
+            this.txtSplitContains.TabIndex = 9;
+            this.txtSplitContains.Tag = "4";
+            this.txtSplitContains.Text = ".00";
+            // 
+            // txtSplitDecode
+            // 
+            this.txtSplitDecode.Enabled = false;
+            this.txtSplitDecode.Location = new System.Drawing.Point(191, 208);
+            this.txtSplitDecode.Name = "txtSplitDecode";
+            this.txtSplitDecode.Size = new System.Drawing.Size(159, 20);
+            this.txtSplitDecode.TabIndex = 10;
+            this.txtSplitDecode.Tag = "5";
+            this.txtSplitDecode.Text = "1;2;3;4;5";
+            // 
+            // txtSplitDecodeChar
+            // 
+            this.txtSplitDecodeChar.Enabled = false;
+            this.txtSplitDecodeChar.Location = new System.Drawing.Point(356, 208);
+            this.txtSplitDecodeChar.Name = "txtSplitDecodeChar";
+            this.txtSplitDecodeChar.Size = new System.Drawing.Size(16, 20);
+            this.txtSplitDecodeChar.TabIndex = 11;
+            this.txtSplitDecodeChar.Tag = "5";
+            this.txtSplitDecodeChar.Text = ";";
+            // 
+            // chkDeleteOriginal
+            // 
+            this.chkDeleteOriginal.AutoSize = true;
+            this.chkDeleteOriginal.Location = new System.Drawing.Point(16, 244);
+            this.chkDeleteOriginal.Name = "chkDeleteOriginal";
+            this.chkDeleteOriginal.Size = new System.Drawing.Size(139, 17);
+            this.chkDeleteOriginal.TabIndex = 12;
+            this.chkDeleteOriginal.Tag = "6";
+            this.chkDeleteOriginal.Text = "Remove original column";
+            this.chkDeleteOriginal.UseVisualStyleBackColor = true;
             // 
             // ColumnSplitForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.ClientSize = new System.Drawing.Size(383, 273);
+            this.ClientSize = new System.Drawing.Size(383, 320);
+            this.Controls.Add(this.chkDeleteOriginal);
+            this.Controls.Add(this.txtSplitDecodeChar);
+            this.Controls.Add(this.txtSplitDecode);
+            this.Controls.Add(this.txtSplitContains);
             this.Controls.Add(this.txtSplitSubstring);
             this.Controls.Add(this.txtSplitCharacter);
-            this.Controls.Add(this.chkDeleteOriginal);
+            this.Controls.Add(this.rdbtnSplitDecode);
+            this.Controls.Add(this.rdbtnSplitContains);
             this.Controls.Add(this.rdbtnSplitSubstring);
             this.Controls.Add(this.rdbtnSplitCharacter);
             this.Controls.Add(this.rdbtnSplitValid);
@@ -167,9 +231,14 @@ namespace CSVLintNppPlugin.Forms
             this.Controls.SetChildIndex(this.rdbtnSplitValid, 0);
             this.Controls.SetChildIndex(this.rdbtnSplitCharacter, 0);
             this.Controls.SetChildIndex(this.rdbtnSplitSubstring, 0);
-            this.Controls.SetChildIndex(this.chkDeleteOriginal, 0);
+            this.Controls.SetChildIndex(this.rdbtnSplitContains, 0);
+            this.Controls.SetChildIndex(this.rdbtnSplitDecode, 0);
             this.Controls.SetChildIndex(this.txtSplitCharacter, 0);
             this.Controls.SetChildIndex(this.txtSplitSubstring, 0);
+            this.Controls.SetChildIndex(this.txtSplitContains, 0);
+            this.Controls.SetChildIndex(this.txtSplitDecode, 0);
+            this.Controls.SetChildIndex(this.txtSplitDecodeChar, 0);
+            this.Controls.SetChildIndex(this.chkDeleteOriginal, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -182,8 +251,13 @@ namespace CSVLintNppPlugin.Forms
         private System.Windows.Forms.RadioButton rdbtnSplitValid;
         private System.Windows.Forms.RadioButton rdbtnSplitCharacter;
         private System.Windows.Forms.RadioButton rdbtnSplitSubstring;
-        private System.Windows.Forms.CheckBox chkDeleteOriginal;
+        private System.Windows.Forms.RadioButton rdbtnSplitContains;
+        private System.Windows.Forms.RadioButton rdbtnSplitDecode;
         private System.Windows.Forms.TextBox txtSplitCharacter;
         private System.Windows.Forms.TextBox txtSplitSubstring;
+        private System.Windows.Forms.TextBox txtSplitContains;
+        private System.Windows.Forms.TextBox txtSplitDecode;
+        private System.Windows.Forms.TextBox txtSplitDecodeChar;
+        private System.Windows.Forms.CheckBox chkDeleteOriginal;
     }
 }
