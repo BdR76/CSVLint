@@ -73,6 +73,9 @@ namespace CSVLint
                 // line length
                 lineLengths.Increase(line.Length);
 
+                // end-of-line also technically counts as a column start/end, else the last columns witdh not determined incorrectly
+                wordStarts.Increase(line.Length);
+
                 // process characters in this line
                 int spaces = 0, c = 0, num = -1;
                 foreach (var chr in line)
@@ -245,7 +248,7 @@ namespace CSVLint
                 foundfieldWidths.Sort();
                 if (foundfieldWidths.Count < 3) return result; // unlikely fixed width
 
-                // widths contain line positions, convert to actual individual widths, example pos [8, 14, 15, 22, 25] -> widths [8, 6, 1, 7, 3]
+                // widths contain line positions, convert to individual column widths, example pos [8, 14, 15, 22, 25] -> widths [8, 6, 1, 7, 3]
                 var pos1 = 0;
                 for (var i = 0; i < foundfieldWidths.Count; i++)
                 {
@@ -463,11 +466,11 @@ namespace CSVLint
 
                 // count date types that were found
                 sb.Append("DataTypes     : ");
-                if (stats.CountDecimal  > 0) sb.Append(String.Format( "decimal ({0}, {1}%), ", stats.CountDecimal,  ReportPercentage(stats.CountDecimal,  lineCount)));
-                if (stats.CountEmpty    > 0) sb.Append(String.Format(   "empty ({0}, {1}%), ", stats.CountEmpty,    ReportPercentage(stats.CountEmpty,    lineCount)));
-                if (stats.CountInteger  > 0) sb.Append(String.Format( "integer ({0}, {1}%), ", stats.CountInteger,  ReportPercentage(stats.CountInteger,  lineCount)));
-                if (stats.CountString   > 0) sb.Append(String.Format(  "string ({0}, {1}%), ", stats.CountString,   ReportPercentage(stats.CountString,   lineCount)));
-                if (stats.CountDateTime > 0) sb.Append(String.Format("datetime ({0}, {1}%), ", stats.CountDateTime, ReportPercentage(stats.CountDateTime, lineCount)));
+                if (stats.CountDecimal  > 0) sb.Append(String.Format( "decimal ({0} = {1}%), ", stats.CountDecimal,  ReportPercentage(stats.CountDecimal,  lineCount)));
+                if (stats.CountEmpty    > 0) sb.Append(String.Format(   "empty ({0} = {1}%), ", stats.CountEmpty,    ReportPercentage(stats.CountEmpty,    lineCount)));
+                if (stats.CountInteger  > 0) sb.Append(String.Format( "integer ({0} = {1}%), ", stats.CountInteger,  ReportPercentage(stats.CountInteger,  lineCount)));
+                if (stats.CountString   > 0) sb.Append(String.Format(  "string ({0} = {1}%), ", stats.CountString,   ReportPercentage(stats.CountString,   lineCount)));
+                if (stats.CountDateTime > 0) sb.Append(String.Format("datetime ({0} = {1}%), ", stats.CountDateTime, ReportPercentage(stats.CountDateTime, lineCount)));
                 sb.Length -= 2; // remove last ", "
                 sb.Append("\r\n");
 

@@ -295,9 +295,9 @@ namespace CSVLint
         /// <summary>
         /// Check if fieldname is unique in Fields
         /// returns 0 if already unique
-        /// returns 1 or higher as the highest suggested postfix to make the fieldname unique
+        /// returns 2 or higher as the highest suggested postfix to make the fieldname unique
         /// For example Fields = {"abc", "def"}                              fieldname="xyz"       will return return 0
-        /// For example Fields = {"FirstName", "LastName"}                   fieldname="FirstName" will return return 1
+        /// For example Fields = {"FirstName", "LastName"}                   fieldname="FirstName" will return return 2
         /// For example Fields = {"labvalue (1)", "labvalue(3)", "labvalue"} fieldname="labvalue"  will return return 4
         /// </summary>
         /// <param name="fieldname"></param>
@@ -402,11 +402,11 @@ namespace CSVLint
                         // internally the datetime mask is c# format,         example "dd/MM/yyyy HH:mm"
                         // externally the datetime mask is schema.ini format, example "dd/mm/yyyy hh:nn"
                         // for full date format documentation see https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings?redirectedfrom=MSDN
-                        string mask = Val;
-                        mask = mask.Replace("m", "M");
-                        mask = mask.Replace("n", "m");
-                        mask = mask.Replace("h", "H"); // hh=12h, HH=24h
-                        this.DateTimeFormat = mask;
+                        string tmp = Val;
+                        tmp = tmp.Replace("m", "M");
+                        tmp = tmp.Replace("n", "m");
+                        tmp = tmp.Replace("h", "H"); // hh=12h, HH=24h
+                        this.DateTimeFormat = tmp;
                     }
 
                     // schema.ini DecimalSymbol, typically ',' or '.' but can be set to any single character that is used to separate the integer from the fractional part of a number.
@@ -547,7 +547,7 @@ namespace CSVLint
                             // data definition error; width shorter than nr of decimals
                             if (dig < 0) dig = 1;
 
-                            mask = string.Format("{0}{1}{2}", mask.PadLeft(dig, '9'), this.DecimalSymbol, mask.PadLeft(dec, '9'));
+                            mask = string.Format("{0}{1}{2}", (new string('9', dig)), this.DecimalSymbol, (new string('9', dec)));
                         };
 
                         // any left is the name of the column
@@ -650,11 +650,11 @@ namespace CSVLint
             {
                 // internally the datetime mask is c# format,         example "dd/MM/yyyy HH:mm"
                 // externally the datetime mask is schema.ini format, example "dd/mm/yyyy hh:nn"
-                string mask = this.DateTimeFormat;
-                mask = mask.Replace("m", "n");
-                mask = mask.Replace("M", "m");
-                mask = mask.Replace("H", "h");
-                res += "DateTimeFormat=" + mask + "\r\n";
+                string tmp = this.DateTimeFormat;
+                tmp = tmp.Replace("m", "n");
+                tmp = tmp.Replace("M", "m");
+                tmp = tmp.Replace("H", "h");
+                res += "DateTimeFormat=" + tmp + "\r\n";
             }
 
             // schema.ini DecimalSymbol, typically ',' or '.' but can be set to any single character that is used to separate the integer from the fractional part of a number.

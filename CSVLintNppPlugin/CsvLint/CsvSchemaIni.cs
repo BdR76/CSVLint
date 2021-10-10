@@ -100,7 +100,7 @@ namespace CSVLintNppPlugin.CsvLint
             // append any new sections at end
             if (idx == -1)
             {
-                if (inilines[inilines.Count - 1] != "") inilines.Add("");
+                if ((inilines.Count > 0) && (inilines[inilines.Count - 1] != "")) inilines.Add("");
                 idx = inilines.Count;
             }
 
