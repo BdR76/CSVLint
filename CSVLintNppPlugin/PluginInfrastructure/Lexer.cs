@@ -482,7 +482,7 @@ namespace NppPluginNET.PluginInfrastructure
                         else
                         {
                             widthcount = 9999; // rest of line
-                            //idx = 0; // white, no color to indicate incorrect column
+                            idx = 0; // white, no color to indicate incorrect column
                         }
 
                         // reset variables

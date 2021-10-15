@@ -18,6 +18,8 @@ namespace CSVLint
 {
     class CsvAnalyze
     {
+        private const int MAX_UNIQUE_VALUES = 15;
+
         private class CsvColumStats
         {
             public string Name = "";
@@ -73,7 +75,7 @@ namespace CSVLint
                 // line length
                 lineLengths.Increase(line.Length);
 
-                // end-of-line also technically counts as a column start/end, else the last columns witdh not determined incorrectly
+                // end-of-line also technically counts as a column start/end, else the last columns width determined incorrectly
                 wordStarts.Increase(line.Length);
 
                 // process characters in this line
@@ -297,7 +299,7 @@ namespace CSVLint
                     if (fixedwidth) fixedLength = (i < result.FieldWidths.Count ? result.FieldWidths[i] : values[i].Length);
 
                     // next value to evaluate
-                    colstats[i].InputData(values[i], fixedLength);
+                    colstats[i].InputData(values[i], fixedLength, false);
                 }
             }
 
@@ -432,7 +434,7 @@ namespace CSVLint
                     //if (fixedwidth) fixedLength = (i < result.FieldWidths.Count ? result.FieldWidths[i] : values[i].Length);
 
                     // next value to evaluate
-                    colstats[i].InputData(values[i], fixedLength);
+                    colstats[i].InputData(values[i], fixedLength, true);
                 }
             }
 
@@ -450,10 +452,26 @@ namespace CSVLint
             string FILE_NAME = Path.GetFileName(notepad.GetCurrentFilePath());
             string strhead = (csvdef.ColNameHeader ? " (+1 header line)" : "");
 
-            sb.Append("-------------------------------------\r\n");
-            sb.Append(String.Format("Analyze dataset: {0}\r\n", FILE_NAME));
+            sb.Append(string.Format("CSV Lint plug-in v{0}\r\n", Main.GetVersion()));
+            sb.Append("Analyze dataset\r\n");
+            sb.Append(string.Format("File: {0}\r\n", FILE_NAME));
+            sb.Append(string.Format("Date: {0}\r\n", DateTime.Now.ToString("dd-MMM-yyyy HH:mm")));
             sb.Append(String.Format("Data records: {0}{1}\r\n", lineCount, strhead));
+            sb.Append(String.Format("Max.unique values: {0}\r\n", MAX_UNIQUE_VALUES));
             sb.Append("\r\n");
+
+			// goal output, depending on data found:
+			// -------------------------------------
+			// 2: Fieldname
+			// DataTypes     : string (174 = 87,0%), empty (26 = 13,0%)
+			// Width range   : 2 ~ 6 characters
+			// Integer range : 123 ~ 999
+			// Decimal range : 1,2 ~ 34,56
+			// Date range    : 01/01/2021 ~ 12/31/2021
+			// -- Unique values --
+			// n=123         : YES
+			// n=45          : NO
+			// n=6           : UNKOWN
 
             // add columns as actual fields
             int idx = 0;
@@ -461,31 +479,48 @@ namespace CSVLint
             {
                 // next column
                 idx++;
-                sb.Append("-------------------------------------\r\n");
+                sb.Append("----------------------------------------\r\n");
                 sb.Append(String.Format("{0}: {1}\r\n", idx, stats.Name));
 
                 // count date types that were found
-                sb.Append("DataTypes     : ");
+                sb.Append("DataTypes      : ");
                 if (stats.CountDecimal  > 0) sb.Append(String.Format( "decimal ({0} = {1}%), ", stats.CountDecimal,  ReportPercentage(stats.CountDecimal,  lineCount)));
-                if (stats.CountEmpty    > 0) sb.Append(String.Format(   "empty ({0} = {1}%), ", stats.CountEmpty,    ReportPercentage(stats.CountEmpty,    lineCount)));
                 if (stats.CountInteger  > 0) sb.Append(String.Format( "integer ({0} = {1}%), ", stats.CountInteger,  ReportPercentage(stats.CountInteger,  lineCount)));
                 if (stats.CountString   > 0) sb.Append(String.Format(  "string ({0} = {1}%), ", stats.CountString,   ReportPercentage(stats.CountString,   lineCount)));
                 if (stats.CountDateTime > 0) sb.Append(String.Format("datetime ({0} = {1}%), ", stats.CountDateTime, ReportPercentage(stats.CountDateTime, lineCount)));
+                if (stats.CountEmpty    > 0) sb.Append(String.Format(   "empty ({0} = {1}%), ", stats.CountEmpty,    ReportPercentage(stats.CountEmpty,    lineCount)));
                 sb.Length -= 2; // remove last ", "
                 sb.Append("\r\n");
 
-                // width
-                var strwid = (stats.MinWidth == stats.MaxWidth ? stats.MaxWidth.ToString() : String.Format("{0} ~ {1}", stats.MinWidth, stats.MaxWidth));
-                sb.Append(String.Format("Width range   : {0} characters\r\n", strwid));
+                // width range
+                if (stats.MaxWidth > 0)
+                {
+                    var strwid = (stats.MinWidth == stats.MaxWidth ? stats.MaxWidth.ToString() : String.Format("{0} ~ {1}", stats.MinWidth, stats.MaxWidth));
+                    sb.Append(String.Format("Width range    : {0} characters\r\n", strwid));
+                }
 
                 // minimum maximum values
-                //if (stats.CountInteger  > 0) sb.Append(String.Format("Integer range  : {0} ~ {1}", stats.Min_int,     stats.Max_int));
-                //if (stats.CountDecimal  > 0) sb.Append(String.Format("Decimal range  : {0} ~ {1}", stats.Min_dec,     stats.Max_dec));
-                //if (stats.CountDateTime > 0) sb.Append(String.Format("DateTime range : {0} ~ {1}", stats.Min_dat_str, stats.Max_dat_str));
+                if (stats.CountInteger  > 0) sb.Append(String.Format("Integer range  : {0} ~ {1}\r\n", stats.stat_minint_org,  stats.stat_maxint_org));
+                if (stats.CountDecimal  > 0) sb.Append(String.Format("Decimal range  : {0} ~ {1}\r\n", stats.stat_mindbl_org,  stats.stat_maxdbl_org));
+                if (stats.CountDateTime > 0) sb.Append(String.Format("DateTime range : {0} ~ {1}\r\n", stats.stat_mindat_org,  stats.stat_maxdat_org));
 
-                // unique values
-                //var strwid = (stats.MinWidth == stats.MaxWidth ? stats.MaxWidth.ToString() : String.Format("{0} ~ {1}", stats.MinWidth, stats.MaxWidth));
-                //sb.Append(String.Format("Width range   : {0} characters\r\n", strwid));
+                // if coded variable, unique values 
+                if ((stats.stat_uniquecount.Count > 0) && (stats.stat_uniquecount.Count <= MAX_UNIQUE_VALUES))
+                {
+                    // apply sorting, note that obj.Key actually contains the column value(s) and obj.Value contains the unique counter
+                    stats.stat_uniquecount = stats.stat_uniquecount.OrderBy(obj => obj.Key).ToDictionary(obj => obj.Key, obj => obj.Value);
+                    //stats.stat_uniquecount = stats.stat_uniquecount.OrderByDescending(obj => obj.Key).ToDictionary(obj => obj.Key, obj => obj.Value);
+                    //stats.stat_uniquecount = stats.stat_uniquecount.OrderBy(obj => obj.Value).ToDictionary(obj => obj.Key, obj => obj.Value);
+                    //stats.stat_uniquecount = stats.stat_uniquecount.OrderByDescending(obj => obj.Value).ToDictionary(obj => obj.Key, obj => obj.Value);
+
+                    // list all unique values
+                    sb.Append(String.Format("-- Unique values ({0}) --\r\n", stats.stat_uniquecount.Count));
+                    foreach (var uqval in stats.stat_uniquecount)
+                    {
+                        String strcount = uqval.Value.ToString();
+                        sb.Append(String.Format("n={0}: {1}\r\n", strcount.PadRight(13, ' '), uqval.Key));
+                    }
+                }
 
                 sb.Append("\r\n");
             }

@@ -11,6 +11,8 @@ namespace CSVLint
         /// <summary>
         /// Csv Analyze Column, keep stats from data, determine datatype width etc.
         /// </summary>
+        /// 
+        private const int MAX_UNIQUE_VALUES = 15;
 
         // column statistics
         public String Name = "";
@@ -33,12 +35,27 @@ namespace CSVLint
         public int DateMax2 = 0;
         public int DateMax3 = 0;
 
+        // full stats
+        public int stat_minint = 0;
+        public int stat_maxint = 0;
+        public double stat_mindbl = 0.0;
+        public double stat_maxdbl = 0.0;
+        public DateTime stat_mindat;
+        public DateTime stat_maxdat;
+        public string stat_minint_org = "";
+        public string stat_maxint_org = "";
+        public string stat_mindbl_org = "";
+        public string stat_maxdbl_org = "";
+        public string stat_mindat_org = "";
+        public string stat_maxdat_org = "";
+        public Dictionary<String, int> stat_uniquecount = new Dictionary<String, int>();
+
         public CsvAnalyzeColumn(int idx)
         {
             this.Index = idx;
         }
 
-        public void InputData(String data, int fixedLength)
+        public void InputData(String data, int fixedLength, bool fullstats)
         {
             // count how many values
             this.CountAll++;
@@ -74,6 +91,9 @@ namespace CSVLint
 
                     // keep maximum width
                     if (length > this.MaxWidth) this.MaxWidth = length;
+
+                    // keep full statistics
+                    if (fullstats) KeepUniqueValues(data);
 
                     // check each character in string
                     int digits = 0;
@@ -196,6 +216,9 @@ namespace CSVLint
                         if (this.DateSep == '\0') this.DateSep = sep1;
                         if (this.DateMax1 < ddmax1) this.DateMax1 = ddmax1;
                         if (this.DateMax2 < ddmax2) this.DateMax2 = ddmax2;
+
+                        // keep full statistics
+                        if (fullstats) KeepMinMaxDateTime(data, ddmax1, ddmax2, 0);
                     }
                     // or datetime, examples "31-12-2019 23:59:00", "1/1/2019 12:00", "2019-12-31 23:59:59.000", "1-1-99 9:00" etc.
                     else if ((length >= 13) && (length <= 23) && (datesep >= 2) && (datesep <= 6) && (digits >= 7) && (digits <= 17) && (ddmax1 > 0) && ((ddmax1 <= 31) || (ddmax1 >= 1900)))
@@ -204,6 +227,9 @@ namespace CSVLint
                         if (this.DateSep == '\0') this.DateSep = sep1;
                         if (this.DateMax1 < ddmax1) this.DateMax1 = ddmax1;
                         if (this.DateMax2 < ddmax2) this.DateMax2 = ddmax2;
+
+                        // keep full statistics
+                        if (fullstats) KeepMinMaxDateTime(data, ddmax1, ddmax2, 1);
                     }
                     // or time, examples "9:00", "23:59:59", "23:59:59.000" etc.
                     else if ((length >= 4) && (length <= 12) && (sep1 == ':') && (datesep >= 1) && (datesep <= 3) && (digits >= 3) && (digits <= 9) && (ddmax1 > 0) && ((ddmax1 <= 23) && (ddmax2 <= 59)))
@@ -212,17 +238,22 @@ namespace CSVLint
                         if (this.DateSep == '\0') this.DateSep = sep1;
                         if (this.DateMax1 < ddmax1) this.DateMax1 = ddmax1;
                         if (this.DateMax2 < ddmax2) this.DateMax2 = ddmax2;
+
+                        // keep full statistics
+                        if (fullstats) KeepMinMaxDateTime(data, ddmax1, ddmax2, 2);
                     }
                     else if ((digits > 0) && (point != 1) && (comma != 1) && (sign <= 1) && (signpos == 0) && (length <= 8) && (other == 0))
                     {
                         // numeric integer, examples "123", "-99", "+10" etc. bu tnote "000123"
-                        if (data[0] == '0')
+                        if ((data.Length > 1) && (data[0] == '0'))
                         {
                             this.CountString++;
                         }
                         else
                         {
                             this.CountInteger++;
+                            // keep full statistics
+                            if (fullstats) KeepMinMaxInteger(data);
                         }
                     }
                     else if ((digits > 0) && ((point == 1) || (comma == 1)) && (sign <= 1) && (length <= 12) && (datesep <= 2) && (other == 0)) // datesep <= 2 for example "-12.34" a dot and a minus
@@ -237,6 +268,9 @@ namespace CSVLint
                         int countdig = data.Length - countdec - 1;
                         if (countdec > this.DecimalDecMax) this.DecimalDecMax = countdec;
                         if (countdig > this.DecimalDigMax) this.DecimalDigMax = countdig;
+
+                        // keep full statistics
+                        if (fullstats) KeepMinMaxDecimal(data, dec);
                     }
                     else
                     {
@@ -244,6 +278,84 @@ namespace CSVLint
                         this.CountString++;
                     };
                 }
+            }
+        }
+
+        /// <summary>
+        /// Keep more stats only when running full analyze data report, not when scanning meta data
+        /// </summary>
+        public void KeepMinMaxInteger(String value)
+        {
+            // try parse as integer
+            if (int.TryParse(value, out int valint))
+            {
+                // keep the minimum values
+                if ((valint < stat_minint) || (stat_minint_org == ""))
+                {
+                    stat_minint = valint;
+                    stat_minint_org = value;
+                }
+
+                // keep the maximum values
+                if ((valint > stat_maxint) || (stat_maxint_org == ""))
+                {
+                    stat_maxint = valint;
+                    stat_maxint_org = value;
+                }
+            }
+        }
+
+        public void KeepMinMaxDecimal(String value, char dec)
+        {
+            // try parse as integer
+            if (float.TryParse(value, out float valdbl))
+            {
+                // keep the minimum values
+                if ((valdbl < stat_mindbl) || (stat_mindbl_org == ""))
+                {
+                    stat_mindbl = valdbl;
+                    stat_mindbl_org = value;
+                }
+
+                // keep the maximum values
+                if ((valdbl > stat_maxdbl) || (stat_maxdbl_org == ""))
+                {
+                    stat_maxdbl = valdbl;
+                    stat_maxdbl_org = value;
+                }
+            }
+        }
+
+        public void KeepMinMaxDateTime(String value, int ddmax1, int ddmax2, int datatype)
+        {
+            // try parse as integer
+            var valdat = new DateTime();
+
+            // keep the minimum values
+            if ((valdat < stat_mindat) || (stat_mindat_org == ""))
+            {
+                stat_mindat = valdat;
+                stat_mindat_org = value;
+            }
+
+            // keep the maximum values
+            if ((valdat > stat_maxdat) || (stat_maxdat_org == ""))
+            {
+                stat_maxdat = valdat;
+                stat_maxdat_org = value;
+            }
+        }
+
+        public void KeepUniqueValues(String value)
+        {
+            // when already found X unique values, no use in keep counting; probably not coded anyway
+            if (stat_uniquecount.Count <= MAX_UNIQUE_VALUES)
+            {
+                // count unique value(s)
+                if (!stat_uniquecount.ContainsKey(value))
+                    stat_uniquecount.Add(value, 1);
+                else
+                    stat_uniquecount[value]++;
             }
         }
 
@@ -260,6 +372,22 @@ namespace CSVLint
                 DecimalSymbol = '.',
                 Decimals = 0
             };
+
+            // if mixed integers and decimals, check percentage of decimals
+            if ((this.CountInteger > 0) && (this.CountDecimal > 0))
+            {
+                // decimal values ratio to integer values
+                var decratio = (1.0 * this.CountDecimal) / (this.CountInteger + this.CountDecimal);
+
+                // if larger than 1 percent, example 10 decimal values and 990 integers
+                if (decratio > 0.01)
+                {
+                    // consider it to be a decimal column
+                    this.CountDecimal += this.CountInteger;
+                    this.CountInteger = 0;
+                }
+				// if less than 1% then interpret column as integers and decimals are errors in data
+            }
 
             // check if whole number integers (no decimals)
             if ((this.CountInteger > this.CountString) && (this.CountInteger > this.CountDecimal) && (this.CountInteger > this.CountDateTime))
