@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,6 +14,7 @@ namespace CSVLint
         /// </summary>
         /// 
         private const int MAX_UNIQUE_VALUES = 15;
+        private CultureInfo dummyculture = new CultureInfo("en-US");
 
         // column statistics
         public String Name = "";
@@ -46,8 +48,17 @@ namespace CSVLint
         public string stat_maxint_org = "";
         public string stat_mindbl_org = "";
         public string stat_maxdbl_org = "";
+
         public string stat_mindat_org = "";
         public string stat_maxdat_org = "";
+
+        // date format is unknown when no data read yet
+        public int stat_dat_dmy = 0; // 0=unknown, 1=YMD, 2=DMY, 3=MDY, when beginning assume day-month order in dateformat is unknown until a value confirms either YMD or DMY or MDY
+        public string stat_dat_fromat = ""; // most likely format
+        public DateTime stat_mindat_mdy;
+        public DateTime stat_maxdat_mdy;
+        public string stat_mindat_mdy_org = "";
+        public string stat_maxdat_mdy_org = "";
         public Dictionary<String, int> stat_uniquecount = new Dictionary<String, int>();
 
         public CsvAnalyzeColumn(int idx)
@@ -210,7 +221,7 @@ namespace CSVLint
                     // determine most likely datatype based on characters in string
 
                     // date, examples "31-12-2019", "1/1/2019", "2019-12-31", "1-1-99" etc.
-                    if ((length >= 8) && (length <= 10) && (datesep == 2) && (digits >= 4) && (digits <= 8) && (ddmax1 > 0) && ((ddmax1 <= 31) || (ddmax1 >= 1900)))
+                    if ((length >= 8) && (length <= 10) && (datesep == 2) && (sep1 != ':') && (digits >= 4) && (digits <= 8) && (ddmax1 > 0) && ((ddmax1 <= 31) || (ddmax1 >= 1900)))
                     {
                         this.CountDateTime++;
                         if (this.DateSep == '\0') this.DateSep = sep1;
@@ -218,7 +229,7 @@ namespace CSVLint
                         if (this.DateMax2 < ddmax2) this.DateMax2 = ddmax2;
 
                         // keep full statistics
-                        if (fullstats) KeepMinMaxDateTime(data, ddmax1, ddmax2, 0);
+                        if (fullstats) KeepMinMaxDateTime(data, ddmax1, ddmax2, 1);
                     }
                     // or datetime, examples "31-12-2019 23:59:00", "1/1/2019 12:00", "2019-12-31 23:59:59.000", "1-1-99 9:00" etc.
                     else if ((length >= 13) && (length <= 23) && (datesep >= 2) && (datesep <= 6) && (digits >= 7) && (digits <= 17) && (ddmax1 > 0) && ((ddmax1 <= 31) || (ddmax1 >= 1900)))
@@ -229,7 +240,7 @@ namespace CSVLint
                         if (this.DateMax2 < ddmax2) this.DateMax2 = ddmax2;
 
                         // keep full statistics
-                        if (fullstats) KeepMinMaxDateTime(data, ddmax1, ddmax2, 1);
+                        if (fullstats) KeepMinMaxDateTime(data, ddmax1, ddmax2, 3);
                     }
                     // or time, examples "9:00", "23:59:59", "23:59:59.000" etc.
                     else if ((length >= 4) && (length <= 12) && (sep1 == ':') && (datesep >= 1) && (datesep <= 3) && (digits >= 3) && (digits <= 9) && (ddmax1 > 0) && ((ddmax1 <= 23) && (ddmax2 <= 59)))
@@ -244,7 +255,7 @@ namespace CSVLint
                     }
                     else if ((digits > 0) && (point != 1) && (comma != 1) && (sign <= 1) && (signpos == 0) && (length <= 8) && (other == 0))
                     {
-                        // numeric integer, examples "123", "-99", "+10" etc. bu tnote "000123"
+                        // numeric integer, examples "123", "-99", "+10" etc. but not "000123"
                         if ((data.Length > 1) && (data[0] == '0'))
                         {
                             this.CountString++;
@@ -328,21 +339,92 @@ namespace CSVLint
 
         public void KeepMinMaxDateTime(String value, int ddmax1, int ddmax2, int datatype)
         {
-            // try parse as integer
-            var valdat = new DateTime();
+            // TODO: this is not optimal, could still miss some minimum/maximum dates when initially assuming incorrect format
 
-            // keep the minimum values
-            if ((valdat < stat_mindat) || (stat_mindat_org == ""))
+            // try to determine datetime format
+            if (stat_dat_dmy == 0)
             {
-                stat_mindat = valdat;
-                stat_mindat_org = value;
+                bool newformat = (stat_dat_fromat == "");
+
+                // date or datetime
+                if ((datatype == 1) || (datatype == 3))
+                {
+                    // YMD = 1
+                    if (ddmax1 > 1000)
+                    {
+                        stat_dat_dmy = 1;
+                        stat_dat_fromat = string.Format("yyyy{0}M{0}d", this.DateSep == '\0' ? "" : this.DateSep.ToString());
+                        newformat = true;
+                    }
+
+                    // DMY = 2
+                    if ((ddmax1 > 12) && (ddmax1 <= 31))
+                    {
+                        stat_dat_dmy = 2;
+                        stat_dat_fromat = string.Format("d{0}M{0}yyyy", this.DateSep == '\0' ? "" : this.DateSep.ToString());
+                        newformat = true;
+                    }
+
+                    // MDY = 3
+                    if ((ddmax2 > 12) && (ddmax2 <= 31))
+                    {
+                        stat_dat_dmy = 3;
+                        stat_dat_fromat = string.Format("M{0}d{0}yyyy", this.DateSep == '\0' ? "" : this.DateSep.ToString());
+                        newformat = true;
+                    }
+
+                    // if not yet clear
+                    if (stat_dat_fromat == "")
+                    {
+                        if (ddmax1 > 31)
+                        {
+                            stat_dat_fromat = string.Format("yyyy{0}M{0}d", this.DateSep == '\0' ? "" : this.DateSep.ToString());
+                        }
+                        else
+                        {
+                            stat_dat_fromat = string.Format("d{0}M{0}yyyy", this.DateSep == '\0' ? "" : this.DateSep.ToString());
+                        }
+                    }
+                }
+
+                // add time part
+                // date or datetime
+                if ((datatype == 2) || (datatype == 3))
+                {
+                    if (newformat)
+                    {
+                        // space between
+                        if (stat_dat_fromat != "") stat_dat_fromat += " ";
+
+                        // count how many ':'
+                        int count = 0;
+                        foreach (var c in value) if (c == ':') count++;
+                        if (count == 1) stat_dat_fromat += "H:mm";
+                        if (count == 2) stat_dat_fromat += "H:mm:ss";
+                    }
+                }
             }
 
-            // keep the maximum values
-            if ((valdat > stat_maxdat) || (stat_maxdat_org == ""))
+            // try parse as datetime
+            if (DateTime.TryParseExact(value, stat_dat_fromat,
+                                        dummyculture,
+                                        DateTimeStyles.None,
+                                        out DateTime valdat))
             {
-                stat_maxdat = valdat;
-                stat_maxdat_org = value;
+
+                // keep the minimum values
+                if ((valdat < stat_mindat) || (stat_mindat_org == ""))
+                {
+                    stat_mindat = valdat;
+                    stat_mindat_org = value;
+                }
+
+                // keep the maximum values
+                if ((valdat > stat_maxdat) || (stat_maxdat_org == ""))
+                {
+                    stat_maxdat = valdat;
+                    stat_maxdat_org = value;
+                }
             }
         }
 
