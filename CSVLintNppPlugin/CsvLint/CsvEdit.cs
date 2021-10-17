@@ -268,7 +268,8 @@ namespace CSVLint
                         }
                         else if (csvdef.Fields[r].DataType == ColumnType.Decimal)
                         {
-                            str = str.Replace(",", ".");
+                            str = str.Replace((csvdef.Fields[r].DecimalSymbol == '.' ? "," : "."), ""); // remove thousand separator
+                            str = str.Replace(csvdef.Fields[r].DecimalSymbol, '.');
                         }
                         else if ((csvdef.Fields[r].DataType == ColumnType.String)
                                 || (csvdef.Fields[r].DataType == ColumnType.DateTime))

@@ -109,10 +109,11 @@ The CSV Lint plugin is work-in-progress, here is list of features I want to add 
 * ~~Allow format masks per individual column~~
 * ~~Support quoted strings~~
 * Support two-digit year date values
+* Support for currency/thousand separator "12.345,00" or "1,250,000.00" etc.
 * ~~Load/save schema.ini~~
 * Support FrictionlessData schema.json format
 * ~~Improve automatic datatype detection~~
-* Add feature GUI click to jump to error line
+* ~~Add feature GUI click to jump to error line~~
 * Add feature generate ~~scripts (SQL,~~ SPSS, Python(?), XML+column=xpath?)
 * ~~Syntax highlighting, display columns as [colors](https://community.notepad-plus-plus.org/topic/21124/c-adding-a-custom-styler-or-lexer-in-c-for-scintilla-notepad/)~~
 * Search for value in column, search next empty/non-empty in column
@@ -156,6 +157,7 @@ History
 15-dec-2019 - v0.1 first release  
 02-may-2021 - v0.2 reformat data, double-click jumps to line, various bugfixes  
 25-aug-2021 - v0.3 quoted string values, syntax highlighting, SQL export  
-26-sep-2021 - v0.4 performance improvement, save/load metadata, split column option, count unique values
+26-sep-2021 - v0.4 performance improvement, save/load metadata, split column option, count unique values  
+17-oct-2021 - v0.4.1 various bugfixes
 
 BdR©2021 Free to use - send questions or comments: Bas de Reuver - bdr1976@gmail.com
