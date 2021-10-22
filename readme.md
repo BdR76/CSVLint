@@ -26,6 +26,22 @@ so if you encounter any bugs or unexpected output I encourage you to [report iss
 
 CSVLint is based on a prototype project [Dataset MultiTool](https://github.com/BdR76/datasetmultitool)
 
+How to install
+--------------
+
+The CSV Lint plugin is available in the Plugins Admin in Notepad++ v8.1.8 or newer.
+
+* In Notepad++ go to menu item `Plugins > Plugins Admin...`
+* On tab `Available` search for `csv lint`
+* Check the checkbox and press `Intall` button
+* Click `Yes` to quit Notepad++ and "continue the operations"
+* Click `Yes` on the Windows notification "Allow app to make changes"
+
+If you have a Notepad++ version older than v8.1.8 or want to install it manually,
+copy [CSVLint.dll (32bit)](/CSVLintNppPlugin/bin/Release/) to new folder `.\Program Files (x86)\Notepad++\plugins\CSVLint\CSVLint.dll`.
+and copy the file [CSVLint.xml](/config/) to your user folder `%USERPROFILE%\AppData\Roaming\Notepad++\plugins\config\CSVLint.xml`
+For the 64-bit version, it's the same except copy the [CSVLint.dll (64bit)](/CSVLintNppPlugin/bin/Release-x64/) to `.\Program Files\Notepad++\plugins\CSVLint\CSVLint.dll`.
+
 How to use it
 -------------
 
@@ -37,20 +53,6 @@ How to use it
 
 If there are no errors in the data, you can click "Reformat data" for data reformatting options,
 or select "Convert to SQL" menu item to generate an SQL insert script.
-
-How to install
---------------
-The distributed output file is `CSVLint.dll`. In your \Notepad++\plugins\ folder,
-create a new folder `CSVLint` and place the .dll file there, so:
-
-* copy the file [.\CSVLintNppPlugin\bin\Release\CSVLint.dll](/CSVLintNppPlugin/bin/Release/)  
- to new folder `.\Program Files (x86)\Notepad++\plugins\CSVLint\CSVLint.dll`
-* copy the file [.\config\CSVLint.xml](/config/)  
-to folder `%USERPROFILE%\AppData\Roaming\Notepad++\plugins\config\CSVLint.xml`
-
-For the 64-bit version it is the same, except the output file is in the
-[Release-x64](/CSVLintNppPlugin/bin/Release-x64/) folder and Notepad++ is
-in the `.\Program Files\Notepad++\` folder.
 
 Schema.ini
 ----------
