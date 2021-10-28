@@ -76,6 +76,7 @@ namespace CSVLintNppPlugin.Forms
             this.Controls.Add(this.btnOk);
             this.Controls.Add(this.lblTitle);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.MaximizeBox = false;
             this.Name = "CsvEditFormBase";
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;

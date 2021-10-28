@@ -452,12 +452,12 @@ namespace CSVLint
             string FILE_NAME = Path.GetFileName(notepad.GetCurrentFilePath());
             string strhead = (csvdef.ColNameHeader ? " (+1 header line)" : "");
 
-            sb.Append(string.Format("CSV Lint plug-in v{0}\r\n", Main.GetVersion()));
             sb.Append("Analyze dataset\r\n");
             sb.Append(string.Format("File: {0}\r\n", FILE_NAME));
             sb.Append(string.Format("Date: {0}\r\n", DateTime.Now.ToString("dd-MMM-yyyy HH:mm")));
             sb.Append(String.Format("Data records: {0}{1}\r\n", lineCount, strhead));
             sb.Append(String.Format("Max.unique values: {0}\r\n", MAX_UNIQUE_VALUES));
+            sb.Append(string.Format("CSV Lint: v{0}\r\n", Main.GetVersion()));
             sb.Append("\r\n");
 
 			// goal output, depending on data found:
@@ -565,7 +565,12 @@ namespace CSVLint
                 {
                     // add columnstats if needed
                     int col = colidx[i];
-                    uniq += (i > 0 ? csvdef.Separator.ToString() : "") + (col < values.Count ? values[col] : "");
+
+                    // if value contains separator character then put value in quotes
+                    var val = (col < values.Count ? values[col] : "");
+                    if (val.IndexOf(csvdef.Separator) >= 0) val = string.Format("\"{0}\"", val);
+
+                    uniq += (i > 0 ? csvdef.Separator.ToString() : "") + val;
                 }
 
                 // count unique value(s)
@@ -586,7 +591,10 @@ namespace CSVLint
             // get column names
             for (int i = 0; i < colidx.Count(); i++)
             {
+                // if column name contains separator character then put column name in quotes
                 var colname = (colidx[i] < csvdef.Fields.Count ? csvdef.Fields[colidx[i]].Name : "");
+                if (colname.IndexOf(csvdef.Separator) >= 0) colname = string.Format("\"{0}\"", colname);
+
                 sb.Append(String.Format("{0}{1}", colname, csvdef.Separator));
             }
             sb.Append("count_unique\r\n");

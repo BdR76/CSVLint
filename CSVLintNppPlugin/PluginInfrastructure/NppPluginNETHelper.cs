@@ -185,7 +185,8 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
     [StructLayout(LayoutKind.Sequential)]
     public struct toolbarIcons
     {
-        public IntPtr hToolbarBmp;
-        public IntPtr hToolbarIcon;
+        public IntPtr hToolbarBmp;          // HBITMAP
+        public IntPtr hToolbarIcon;         // HICON
+        public IntPtr hToolbarIconDarkMode; // HICON
     }
 }
