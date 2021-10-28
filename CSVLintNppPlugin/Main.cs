@@ -52,10 +52,16 @@ namespace Kbg.NppPluginNET
 
         internal static void CommandMenuInit()
         {
+            // config folder
             StringBuilder sbIniFilePath = new StringBuilder(Win32.MAX_PATH);
             Win32.SendMessage(PluginBase.nppData._nppHandle, (uint) NppMsg.NPPM_GETPLUGINSCONFIGDIR, Win32.MAX_PATH, sbIniFilePath);
             iniFilePath = sbIniFilePath.ToString();
             if (!Directory.Exists(iniFilePath)) Directory.CreateDirectory(iniFilePath);
+
+            // lexer xml file must exist
+            CheckLexerXml(iniFilePath);
+
+            // remember ini filename for later
             iniFilePath = Path.Combine(iniFilePath, PluginName + ".ini");
 
             // menu items
@@ -68,6 +74,94 @@ namespace Kbg.NppPluginNET
             PluginBase.SetCommand(5, "---", null);
             PluginBase.SetCommand(6, "&Settings", Settings.ShowDialog);
             PluginBase.SetCommand(7, "About", doAboutForm);
+        }
+
+        internal static void CheckLexerXml(string iniFilePath)
+        {
+            var filename = Path.Combine(iniFilePath, "CSVLint.xml");
+            // create language xml in plugin config directory if needed
+            if (!File.Exists(filename))
+            {
+                if (!CreateLexerXML(filename)) {
+                    var errmsg = string.Format("Unable to create {0}.xml in folder {1}", PluginName, iniFilePath);
+                    MessageBox.Show(errmsg, "Error saving CSVLint.xml", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        internal static bool CreateLexerXML(string filename)
+        {
+            string[] tags = new string[] { "instre1", "instre2", "type1", "type2", "type3", "type4", "type5", "type6" };
+            string[] colors = new string[] { "FFFFFF", "E0E0FF", "FFFF80", "FFE0FF", "80FF80", "FFB0FF", "FFC0C0", "32FFBE", "FFD040" };
+
+            // Create an XmlWriterSettings object with the correct options.
+            System.Xml.XmlWriterSettings settings = new System.Xml.XmlWriterSettings();
+            settings.Indent = true;
+            settings.IndentChars = "\t"; //  "\t";
+            settings.OmitXmlDeclaration = false;
+            //settings.Encoding = System.Text.Encoding.UTF8; // NOTE: this results in UTF-8-BOM, Notepad++ can only read UTF-8 xml
+            settings.Encoding = new UTF8Encoding(false); // The false means, do not emit the BOM.
+
+            try
+            {
+                using (System.Xml.XmlWriter writer = System.Xml.XmlWriter.Create(filename, settings))
+                {
+
+                    writer.WriteStartDocument();
+                    writer.WriteStartElement("NotepadPlus");
+
+                    // keywords
+                    writer.WriteStartElement("Languages");
+                    writer.WriteStartElement("Language");
+                    writer.WriteAttributeString("name", "CSVLint");
+                    writer.WriteAttributeString("ext", "csv");
+                    writer.WriteAttributeString("commentLine", "#");
+                    writer.WriteAttributeString("commentStart", "#[");
+                    writer.WriteAttributeString("commentEnd", "]#");
+
+                    for (int i = 0; i < tags.Length; i++)
+                    {
+                        writer.WriteStartElement("Keywords");
+                        writer.WriteAttributeString("name", tags[i]);
+                        writer.WriteEndElement();
+                    }
+
+                    writer.WriteEndElement();
+                    writer.WriteEndElement();
+
+                    // colors
+                    writer.WriteStartElement("LexerStyles");
+
+                    writer.WriteStartElement("LexerType");
+                    writer.WriteAttributeString("name", "CSVLint");
+                    writer.WriteAttributeString("desc", "CSV Linter and validator");
+                    writer.WriteAttributeString("excluded", "no");
+                    writer.WriteAttributeString("ext", "");
+
+                    for (int i = 0; i < colors.Length; i++)
+                    {
+                        writer.WriteStartElement("WordsStyle");
+                        writer.WriteAttributeString("styleID", i.ToString());
+                        writer.WriteAttributeString("name", (i == 0 ? "Default" : "ColumnColor" + i.ToString()));
+                        writer.WriteAttributeString("fgColor", "000000");
+                        writer.WriteAttributeString("bgColor", colors[i]);
+                        writer.WriteAttributeString("fontName", "");
+                        writer.WriteAttributeString("fontStyle", "0");
+                        writer.WriteEndElement();
+                    }
+
+                    writer.WriteEndElement();
+
+                    writer.Flush();
+                    writer.Close();
+                } // End Using writer 
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         internal static void SetToolBarIcon()
@@ -315,8 +409,10 @@ namespace Kbg.NppPluginNET
         {
             if (frmCsvLintDlg == null)
             {
+                // show dialog for first time
                 frmCsvLintDlg = new CsvLintWindow();
 
+                // icon
                 using (Bitmap newBmp = new Bitmap(16, 16))
                 {
                     Graphics g = Graphics.FromImage(newBmp);
@@ -330,6 +426,7 @@ namespace Kbg.NppPluginNET
                     tbIcon = Icon.FromHandle(newBmp.GetHicon());
                 }
 
+                // dockable window struct data
                 NppTbData _nppTbData = new NppTbData();
                 _nppTbData.hClient = frmCsvLintDlg.Handle;
                 _nppTbData.pszName = "CSV Lint";
@@ -340,11 +437,16 @@ namespace Kbg.NppPluginNET
                 IntPtr _ptrNppTbData = Marshal.AllocHGlobal(Marshal.SizeOf(_nppTbData));
                 Marshal.StructureToPtr(_nppTbData, _ptrNppTbData, false);
 
+                // register as dockable window
                 Win32.SendMessage(PluginBase.nppData._nppHandle, (uint) NppMsg.NPPM_DMMREGASDCKDLG, 0, _ptrNppTbData);
             }
             else
             {
-                Win32.SendMessage(PluginBase.nppData._nppHandle, (uint) NppMsg.NPPM_DMMSHOW, 0, frmCsvLintDlg.Handle);
+                // toggle on/off
+                if (!frmCsvLintDlg.Visible)
+                    Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_DMMSHOW, 0, frmCsvLintDlg.Handle); // show
+                else
+                    Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_DMMHIDE, 0, frmCsvLintDlg.Handle); // hide
             }
 
             // immediately show currnet csv metadata when activated
