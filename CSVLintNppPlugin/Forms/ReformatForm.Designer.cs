@@ -36,6 +36,7 @@
             this.cmbSeparator = new System.Windows.Forms.ComboBox();
             this.lblReformat = new System.Windows.Forms.Label();
             this.chkTrimAll = new System.Windows.Forms.CheckBox();
+            this.chkAlignVert = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // lblTitle
@@ -45,13 +46,13 @@
             // 
             // btnOk
             // 
-            this.btnOk.Location = new System.Drawing.Point(128, 198);
-            this.btnOk.TabIndex = 7;
+            this.btnOk.Location = new System.Drawing.Point(128, 230);
+            this.btnOk.TabIndex = 8;
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(247, 198);
-            this.btnCancel.TabIndex = 8;
+            this.btnCancel.Location = new System.Drawing.Point(247, 230);
+            this.btnCancel.TabIndex = 9;
             // 
             // chkDateTime
             // 
@@ -141,7 +142,7 @@
             // lblReformat
             // 
             this.lblReformat.AutoSize = true;
-            this.lblReformat.Location = new System.Drawing.Point(13, 169);
+            this.lblReformat.Location = new System.Drawing.Point(13, 201);
             this.lblReformat.Name = "lblReformat";
             this.lblReformat.Size = new System.Drawing.Size(278, 13);
             this.lblReformat.TabIndex = 8;
@@ -159,29 +160,43 @@
             this.chkTrimAll.UseVisualStyleBackColor = true;
             this.chkTrimAll.CheckedChanged += new System.EventHandler(this.OnChkbx_CheckedChanged);
             // 
+            // chkAlignVert
+            // 
+            this.chkAlignVert.AutoSize = true;
+            this.chkAlignVert.Location = new System.Drawing.Point(12, 169);
+            this.chkAlignVert.Name = "chkAlignVert";
+            this.chkAlignVert.Size = new System.Drawing.Size(187, 17);
+            this.chkAlignVert.TabIndex = 7;
+            this.chkAlignVert.Tag = "5";
+            this.chkAlignVert.Text = "Align vertically (not recommended)";
+            this.chkAlignVert.UseVisualStyleBackColor = true;
+            this.chkAlignVert.CheckedChanged += new System.EventHandler(this.OnChkbx_CheckedChanged);
+            // 
             // ReformatForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(359, 240);
+            this.ClientSize = new System.Drawing.Size(359, 272);
             this.Controls.Add(this.lblReformat);
+            this.Controls.Add(this.chkAlignVert);
+            this.Controls.Add(this.chkTrimAll);
             this.Controls.Add(this.cmbSeparator);
             this.Controls.Add(this.chkSeparator);
             this.Controls.Add(this.cmbDecimal);
             this.Controls.Add(this.chkDecimal);
             this.Controls.Add(this.cmbDateTime);
             this.Controls.Add(this.chkDateTime);
-            this.Controls.Add(this.chkTrimAll);
             this.Name = "ReformatForm";
             this.Text = "Reformat data";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ReformatForm_FormClosing);
-            this.Controls.SetChildIndex(this.chkTrimAll, 0);
             this.Controls.SetChildIndex(this.chkDateTime, 0);
             this.Controls.SetChildIndex(this.cmbDateTime, 0);
             this.Controls.SetChildIndex(this.chkDecimal, 0);
             this.Controls.SetChildIndex(this.cmbDecimal, 0);
             this.Controls.SetChildIndex(this.chkSeparator, 0);
             this.Controls.SetChildIndex(this.cmbSeparator, 0);
+            this.Controls.SetChildIndex(this.chkTrimAll, 0);
+            this.Controls.SetChildIndex(this.chkAlignVert, 0);
             this.Controls.SetChildIndex(this.lblReformat, 0);
             this.Controls.SetChildIndex(this.lblTitle, 0);
             this.Controls.SetChildIndex(this.btnOk, 0);
@@ -198,7 +213,8 @@
         private System.Windows.Forms.ComboBox cmbDateTime;
         private System.Windows.Forms.CheckBox chkSeparator;
         private System.Windows.Forms.ComboBox cmbSeparator;
-        private System.Windows.Forms.Label lblReformat;
         private System.Windows.Forms.CheckBox chkTrimAll;
+        private System.Windows.Forms.CheckBox chkAlignVert;
+        private System.Windows.Forms.Label lblReformat;
     }
 }

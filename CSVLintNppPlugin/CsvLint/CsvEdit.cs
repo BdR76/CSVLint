@@ -32,7 +32,7 @@ namespace CSVLint
         ///     reformat file for date, decimal and separator
         /// </summary>
         /// <param name="data"> csv data </param>
-        public static void ReformatDataFile(CsvDefinition csvdef, string reformatDatTime, string reformatDecimal, string reformatSeparator, bool updateSeparator, bool trimAll)
+        public static void ReformatDataFile(CsvDefinition csvdef, string reformatDatTime, string reformatDecimal, string reformatSeparator, bool updateSeparator, bool trimAll, bool align)
         {
             // TODO: nullable parameters
 
@@ -120,22 +120,32 @@ namespace CSVLint
                     {
                         // fixed width
                         if (alignleft)
-                        {
                             datanew.Append(val.PadRight(wid, ' '));
-                        }
                         else
-                        {
                             datanew.Append(val.PadLeft(wid, ' ')); 
-                        };
-
                     }
                     else
                     {
                         // if value contains separator character then put value in quotes
                         if (val.IndexOf(newSep) >= 0) val = string.Format("\"{0}\"", val);
 
-                        // character separated
-                        datanew.Append((c > 0 ? newSep.ToString() : "") + val);
+                        // separator
+                        if (c > 0) datanew.Append(newSep.ToString());
+
+                        // vertically align
+                        if (align)
+                        {
+                            // align value to left (so pad right) or vice versa
+                            if (alignleft)
+                                datanew.Append(val.PadRight(wid, ' '));
+                            else
+                                datanew.Append(val.PadLeft(wid, ' '));
+                        }
+                        else
+                        {
+                            // character separated
+                            datanew.Append(val);
+                        }
                     }
                 };
 
