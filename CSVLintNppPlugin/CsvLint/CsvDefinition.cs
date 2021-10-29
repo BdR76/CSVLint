@@ -878,6 +878,7 @@ namespace CSVLint
                 bool wasquoted = false;
                 bool bNextCol = false;
                 bool isEOL = false;
+                char quote_char = Main.Settings.DefaultQuoteChar;
 
                 while (!strdata.EndOfStream)
                 {
@@ -889,7 +890,7 @@ namespace CSVLint
                         //const cellIsEmpty = line[line.length - 1].length === 0;
                         bool cellIsEmpty = (value.Length == 0);
 
-                        if ((cur == '"') && cellIsEmpty) { quote = true; wasquoted = true; }
+                        if ((cur == quote_char) && cellIsEmpty) { quote = true; wasquoted = true; }
                         else if (cur == Separator) { bNextCol = true; }
                         else if ((cur == '\r') && (next == '\n')) { next = (char)strdata.Read();  bNextCol = true; isEOL = true; } // double carriage return/linefeed so also consume next character (i.e. skip it)
                         else if ((cur == '\n') || (cur == '\r')) { bNextCol = true; isEOL = true; }
@@ -897,8 +898,8 @@ namespace CSVLint
                     }
                     else
                     {
-                        if ((cur == '"') && (next == '"')) { value.Append(cur); next = (char)strdata.Read(); } // double " within quotes so also consume next character (i.e. skip it)
-                        else if (cur == '"') quote = false;
+                        if ((cur == quote_char) && (next == quote_char)) { value.Append(cur); next = (char)strdata.Read(); } // double " within quotes so also consume next character (i.e. skip it)
+                        else if (cur == quote_char) quote = false;
                         else value.Append(cur);
                     }
 

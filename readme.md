@@ -160,6 +160,7 @@ History
 02-may-2021 - v0.2 reformat data, double-click jumps to line, various bugfixes  
 25-aug-2021 - v0.3 quoted string values, syntax highlighting, SQL export  
 26-sep-2021 - v0.4 performance improvement, save/load metadata, split column option, count unique values  
-17-oct-2021 - v0.4.1 various bugfixes
+17-oct-2021 - v0.4.1 various bugfixes  
+29-oct-2021 - v0.4.2 startup error "CSVLint.xml is missing" fixed, toggle toolbar icon, clean up settings  
 
 BdR©2021 Free to use - send questions or comments: Bas de Reuver - bdr1976@gmail.com

@@ -14,6 +14,52 @@ namespace Kbg.NppPluginNET
     /// </summary>
     public class Settings : SettingsBase
     {
+        [Description("Maximum unique values when reporting or detecting coded values, if column contains more than it's not reported."), Category("Analyze"), DefaultValue(15)]
+        public int UniqueValuesMax { get; set; }
+
+        //[Description("Maximum rows to analyze to automatically detect data types. Set to 0 to analyze all rows, set to 1000 for better performance with large files."), Category("Analyze"), DefaultValue(0)]
+        //public int ScanRows { get; set; }
+
+        [Description("When detecting date or datetime values, years smaller than this value will be considered as invalid dates."), Category("Analyze"), DefaultValue(1900)]
+        public int YearMinimum { get; set; }
+
+        [Description("When detecting date or datetime values, years larger than this value will be considered as invalid dates."), Category("Analyze"), DefaultValue(2050)]
+        public int YearMaximum { get; set; }
+
+        [Description("Maximum records per SQL insert batch."), Category("Edit"), DefaultValue(1000)]
+        public int SQLBatchRows { get; set; }
+
+        [Description("Maximum year for two digit year date values. For example, when set to 2024 the year values 24 and 25 will be interpreted as 2024 and 1925. Set as SysYear for current year."), Category("Edit"), DefaultValue("SysYear")]
+        public String TwoDigitYearMax
+        {
+            get
+            {
+                return this._strTwoDigitYearMax;
+            }
+            set
+            {
+                // set string representation, may include "SysYear"
+                this._strTwoDigitYearMax = this.checkYearString(value);
+                // set actual integer value
+                this.intTwoDigitYearMax = this.getYearFromString(value);
+            }
+        }
+
+        // actual year value as int
+        public int intTwoDigitYearMax;
+        private String _strTwoDigitYearMax;
+
+        //[Description("Decimal values remove leading zero, for example output 0.5 as .5"), Category("Edit"), DefaultValue(false)]
+        //public bool DecimalLeadingZeroOut { get; set; }
+
+        [Description("Default quote escape character when quotes exists inside text"), Category("General"), DefaultValue('\"')]
+        public char DefaultQuoteChar { get; set; }
+
+        [Description("Keyword for null values, case-sensitive."), Category("General"), DefaultValue("NULL")]
+        public String NullValue { get; set; }
+
+        [Description("Include separator in syntax highlighting colors. Set to false and the separator characters are always white."), Category("General"), DefaultValue(false)]
+        public bool SeparatorColor { get; set; }
 
         [Description("Preferred characters when automatically detecting the separator character. For special characters like tab, use \\t or \\u0009."), Category("General"), DefaultValue(",;\\t|")]
         public String Separators
@@ -72,67 +118,20 @@ namespace Kbg.NppPluginNET
         public String _charSeparators;
         private String _strSeparators;
 
-        [Description("Keyword for null values, case-sensitive."), Category("General"), DefaultValue("NULL")]
-        public String NullValue { get; set; }
-
         [Description("Trim values before analyzing or editing (recommended)."), Category("General"), DefaultValue(true)]
         public bool TrimValues { get; set; }
 
-        [Description("Default quote escape character when quotes exists inside text"), Category("General"), DefaultValue('\"')]
-        public char DefaultQuoteChar { get; set; }
-
-        [Description("Include separator in syntax highlighting colors. Set to false and the separator characters are always white."), Category("General"), DefaultValue(false)]
-        public bool SeparatorColor { get; set; }
-
-        [Description("Maximum rows to analyze to automatically detect data types. Set to 0 to analyze all rows, set to 1000 for better performance with large files."), Category("Analyze"), DefaultValue(0)]
-        public int ScanRows { get; set; }
-
-        [Description("When detecting date or datetime values, years smaller than this value will be considered as invalid dates."), Category("Analyze"), DefaultValue(1900)]
-        public int YearMinimum { get; set; }
-
-        [Description("When detecting date or datetime values, years larger than this value will be considered as invalid dates."), Category("Analyze"), DefaultValue(2050)]
-        public int YearMaximum { get; set; }
-
-        [Description("Maximum length of an integer before it's considered a string instead"), Category("General"), DefaultValue(10)]
-        public int IntegerDigitsMax { get; set; }
+        //[Description("Maximum length of an integer before it's considered a string instead"), Category("General"), DefaultValue(10)]
+        //public int IntegerDigitsMax { get; set; }
 		
-        [Description("Decimal values allow leading zero values, for example accept values like .5"), Category("General"), DefaultValue(false)]
-        public bool DecimalLeadingZeroIn { get; set; }
+        //[Description("Decimal values allow leading zero values, for example accept values like .5"), Category("General"), DefaultValue(false)]
+        //public bool DecimalLeadingZeroIn { get; set; }
 
-        [Description("Maximum errors output, limit errors logging, or 0 for no limit."), Category("Validate"), DefaultValue(0)]
-        public int MaxErrors { get; set; }
+        //[Description("Maximum errors output, limit errors logging, or 0 for no limit."), Category("Validate"), DefaultValue(0)]
+        //public int MaxErrors { get; set; }
 
-        [Description("Maximum year for two digit year date values. For example, when set to 2024 the year values 24 and 25 will be interpreted as 2024 and 1925. Set as SysYear for current year."), Category("Edit"), DefaultValue("SysYear")]
-        public String TwoDigitYearMax
-        {
-            get
-            {
-                return this._strTwoDigitYearMax;
-            }
-            set
-            {
-                // set string representation, may include "SysYear"
-                this._strTwoDigitYearMax = this.checkYearString(value);
-                // set actual integer value
-                this.intTwoDigitYearMax = this.getYearFromString(value);
-            }
-        }
-
-        // actual year value as int
-        public int intTwoDigitYearMax;
-        private String _strTwoDigitYearMax;
-
-        [Description("Month abbreviations for detecting or generating date format 'mmmm', comma separated list of 12 names."), Category("Validate"), DefaultValue("jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec")]
-        public String MonthAbbrev { get; set; }
-
-        [Description("Maximum records per SQL insert batch."), Category("Edit"), DefaultValue(1000)]
-        public int SQLBatchRows { get; set; }
-
-        [Description("Create new file when making edits."), Category("Edit"), DefaultValue(true)]
-        public bool CreateNewFile { get; set; }
-
-        [Description("Decimal values remove leading zero, for example output 0.5 as .5"), Category("Edit"), DefaultValue(false)]
-        public bool DecimalLeadingZeroOut { get; set; }
+        //[Description("Month abbreviations for detecting or generating date format 'mmmm', comma separated list of 12 names."), Category("Validate"), DefaultValue("jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec")]
+        //public String MonthAbbrev { get; set; }
 
         // helper function for "SysYear" as year values
         private int getYearFromString(String yr)

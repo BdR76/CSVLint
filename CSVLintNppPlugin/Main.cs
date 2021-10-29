@@ -48,13 +48,19 @@ namespace Kbg.NppPluginNET
             {
                 Main.CSVChangeFileTab();
             }
+
+            // when closing a file
+            if (notification.Header.Code == (uint)NppMsg.NPPN_FILEBEFORECLOSE)
+            {
+                Main.removeCSVdef();
+            }
         }
 
         internal static void CommandMenuInit()
         {
             // config folder
             StringBuilder sbIniFilePath = new StringBuilder(Win32.MAX_PATH);
-            Win32.SendMessage(PluginBase.nppData._nppHandle, (uint) NppMsg.NPPM_GETPLUGINSCONFIGDIR, Win32.MAX_PATH, sbIniFilePath);
+            Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_GETPLUGINSCONFIGDIR, Win32.MAX_PATH, sbIniFilePath);
             iniFilePath = sbIniFilePath.ToString();
             if (!Directory.Exists(iniFilePath)) Directory.CreateDirectory(iniFilePath);
 
@@ -113,11 +119,11 @@ namespace Kbg.NppPluginNET
                     // keywords
                     writer.WriteStartElement("Languages");
                     writer.WriteStartElement("Language");
-                    writer.WriteAttributeString("name", "CSVLint");
-                    writer.WriteAttributeString("ext", "csv");
-                    writer.WriteAttributeString("commentLine", "#");
-                    writer.WriteAttributeString("commentStart", "#[");
-                    writer.WriteAttributeString("commentEnd", "]#");
+                        writer.WriteAttributeString("name", "CSVLint");
+                        writer.WriteAttributeString("ext", "csv");
+                        writer.WriteAttributeString("commentLine", "#");
+                        writer.WriteAttributeString("commentStart", "#[");
+                        writer.WriteAttributeString("commentEnd", "]#");
 
                     for (int i = 0; i < tags.Length; i++)
                     {
@@ -131,12 +137,11 @@ namespace Kbg.NppPluginNET
 
                     // colors
                     writer.WriteStartElement("LexerStyles");
-
                     writer.WriteStartElement("LexerType");
-                    writer.WriteAttributeString("name", "CSVLint");
-                    writer.WriteAttributeString("desc", "CSV Linter and validator");
-                    writer.WriteAttributeString("excluded", "no");
-                    writer.WriteAttributeString("ext", "");
+                        writer.WriteAttributeString("name", "CSVLint");
+                        writer.WriteAttributeString("desc", "CSV Linter and validator");
+                        writer.WriteAttributeString("excluded", "no");
+                        writer.WriteAttributeString("ext", "");
 
                     for (int i = 0; i < colors.Length; i++)
                     {
@@ -199,11 +204,6 @@ namespace Kbg.NppPluginNET
                     csvdef = CsvAnalyze.InferFromData();
                 }
                 FileCsvDef.Add(filename, csvdef);
-
-                // testing
-                //FileCsvDef.Add(filename, new CsvDefinition());
-
-                //MessageBox.Show("changed file" + filename);
             }
             else
             {
@@ -300,6 +300,20 @@ namespace Kbg.NppPluginNET
             return null;
         }
 
+        public static void removeCSVdef()
+        {
+            // Notepad++ closes a file, also remove the definition from list
+            INotepadPPGateway notepad = new NotepadPPGateway();
+            string filename = notepad.GetCurrentFilePath();
+
+            // check if in list
+            if (FileCsvDef.ContainsKey(filename))
+            {
+                // remove csv definition
+                FileCsvDef.Remove(filename);
+            }
+        }
+
         public static void GetCurrentFileLexerParameters(out char sep)
         {
 
@@ -329,11 +343,6 @@ namespace Kbg.NppPluginNET
                 }
 
                 FileCsvDef.Add(filename, csvdef);
-
-                // testing
-                //FileCsvDef.Add(filename, new CsvDefinition());
-
-                //MessageBox.Show("lexer call, changed file" + filename);
             }
             else
             {

@@ -497,6 +497,7 @@ namespace NppPluginNET.PluginInfrastructure
                 // JAVASCRIPT
                 bool quote = false;
                 bool sepcol = SupportedProperties["separatorcolor"];
+                char quote_char = Main.Settings.DefaultQuoteChar;
 
                 for (i = 0; i < length - 1; i++)
                 {
@@ -508,7 +509,7 @@ namespace NppPluginNET.PluginInfrastructure
                         //const cellIsEmpty = line[line.length - 1].length === 0;
                         bool cellIsEmpty = (i - start_col == 0);
 
-                        if ((cur == '"') && cellIsEmpty) { quote = true; }
+                        if ((cur == quote_char) && cellIsEmpty) { quote = true; }
                         else if (cur == separatorChar) { bNextCol = true; end_col = i; }
                         else if ((cur == '\r') && (next == '\n')) { isEOL = true; end_col = i; i++; }
                         else if ((cur == '\n') || (cur == '\r')) { isEOL = true; end_col = i; }
@@ -516,8 +517,8 @@ namespace NppPluginNET.PluginInfrastructure
                     }
                     else
                     {
-                        if ((cur == '"') && (next == '"')) { i++; }
-                        else if (cur == '"') quote = false;
+                        if ((cur == quote_char) && (next == quote_char)) { i++; }
+                        else if (cur == quote_char) quote = false;
                         //else line[line.length - 1] += cur;
                     }
 

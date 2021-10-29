@@ -18,8 +18,6 @@ namespace CSVLint
 {
     class CsvAnalyze
     {
-        private const int MAX_UNIQUE_VALUES = 15;
-
         private class CsvColumStats
         {
             public string Name = "";
@@ -85,7 +83,7 @@ namespace CSVLint
                     letterFrequency.Increase(chr);
                     occurrences.Increase(chr);
 
-                    if (chr == '"') inQuotes = !inQuotes;
+                    if (chr == Main.Settings.DefaultQuoteChar) inQuotes = !inQuotes;
                     else if (!inQuotes)
                     {
                         letterFrequencyQuoted.Increase(chr);
@@ -216,6 +214,8 @@ namespace CSVLint
 
                 // add single column and bail!
                 result.AddColumn(guess, 9999, ColumnType.String, "");
+                result.FieldWidths = new List<int> { 9999 };
+
                 return result;
             }
 
@@ -456,7 +456,7 @@ namespace CSVLint
             sb.Append(string.Format("File: {0}\r\n", FILE_NAME));
             sb.Append(string.Format("Date: {0}\r\n", DateTime.Now.ToString("dd-MMM-yyyy HH:mm")));
             sb.Append(String.Format("Data records: {0}{1}\r\n", lineCount, strhead));
-            sb.Append(String.Format("Max.unique values: {0}\r\n", MAX_UNIQUE_VALUES));
+            sb.Append(String.Format("Max.unique values: {0}\r\n", Main.Settings.UniqueValuesMax));
             sb.Append(string.Format("CSV Lint: v{0}\r\n", Main.GetVersion()));
             sb.Append("\r\n");
 
@@ -505,7 +505,7 @@ namespace CSVLint
                 if (stats.CountDateTime > 0) sb.Append(String.Format("DateTime range : {0} ~ {1}\r\n", stats.stat_mindat_org,  stats.stat_maxdat_org));
 
                 // if coded variable, unique values 
-                if ((stats.stat_uniquecount.Count > 0) && (stats.stat_uniquecount.Count <= MAX_UNIQUE_VALUES))
+                if ((stats.stat_uniquecount.Count > 0) && (stats.stat_uniquecount.Count <= Main.Settings.UniqueValuesMax))
                 {
                     // apply sorting, note that obj.Key actually contains the column value(s) and obj.Value contains the unique counter
                     stats.stat_uniquecount = stats.stat_uniquecount.OrderBy(obj => obj.Key).ToDictionary(obj => obj.Key, obj => obj.Value);

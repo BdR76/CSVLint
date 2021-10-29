@@ -166,8 +166,8 @@ namespace CSVLint
         {
             StringBuilder sb = new StringBuilder();
             string VERSION_NO = Main.GetVersion();
-            //int MAX_SQL_ROWS = Main.Settings.SQLBatchRows;
-            int MAX_SQL_ROWS = 1000;
+            int MAX_SQL_ROWS = Main.Settings.SQLBatchRows;
+            MAX_SQL_ROWS = (MAX_SQL_ROWS < 1 ? 1 : MAX_SQL_ROWS);
 
             // get access to Notepad++
             INotepadPPGateway notepad = new NotepadPPGateway();

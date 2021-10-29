@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Kbg.NppPluginNET;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -13,7 +14,6 @@ namespace CSVLint
         /// Csv Analyze Column, keep stats from data, determine datatype width etc.
         /// </summary>
         /// 
-        private const int MAX_UNIQUE_VALUES = 15;
         private CultureInfo dummyculture = new CultureInfo("en-US");
 
         // column statistics
@@ -75,9 +75,9 @@ namespace CSVLint
             data = data.Trim();
 
             // adjust for quoted values
-            if ( (data.Length > 0) && (data[0] == '"') )
+            if ( (data.Length > 0) && (data[0] == Main.Settings.DefaultQuoteChar) )
             {
-                data = data.Trim('"');
+                data = data.Trim(Main.Settings.DefaultQuoteChar);
             }
 
             // assume first line only contains column header names
@@ -431,7 +431,7 @@ namespace CSVLint
         public void KeepUniqueValues(String value)
         {
             // when already found X unique values, no use in keep counting; probably not coded anyway
-            if (stat_uniquecount.Count <= MAX_UNIQUE_VALUES)
+            if (stat_uniquecount.Count <= Main.Settings.UniqueValuesMax)
             {
                 // count unique value(s)
                 if (!stat_uniquecount.ContainsKey(value))
