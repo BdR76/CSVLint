@@ -26,8 +26,20 @@ namespace Kbg.NppPluginNET
         [Description("When detecting date or datetime values, years larger than this value will be considered as invalid dates."), Category("Analyze"), DefaultValue(2050)]
         public int YearMaximum { get; set; }
 
-        [Description("Maximum records per SQL insert batch."), Category("Edit"), DefaultValue(1000)]
-        public int SQLBatchRows { get; set; }
+        private int _sqlbatch;
+
+        [Description("Maximum records per SQL insert batch, minimum bach size is 10."), Category("Edit"), DefaultValue(1000)]
+        public int SQLBatchRows
+        {
+            get { return _sqlbatch; }
+            set
+            {
+                _sqlbatch = Math.Max(value, 10);
+            }
+        }
+
+        [Description("Convert to ANSI standard SQL script, set to true for mySQL or false for MS-SQL."), Category("Edit"), DefaultValue(true)]
+        public bool SQLansi { get; set; }
 
         [Description("Maximum year for two digit year date values. For example, when set to 2024 the year values 24 and 25 will be interpreted as 2024 and 1925. Set as SysYear for current year."), Category("Edit"), DefaultValue("SysYear")]
         public String TwoDigitYearMax
@@ -55,7 +67,7 @@ namespace Kbg.NppPluginNET
         [Description("Default quote escape character when quotes exists inside text"), Category("General"), DefaultValue('\"')]
         public char DefaultQuoteChar { get; set; }
 
-        [Description("Keyword for null values, case-sensitive."), Category("General"), DefaultValue("NULL")]
+        [Description("Keyword for empty values or null values in the csv data, case-sensitive."), Category("General"), DefaultValue("NaN")]
         public String NullValue { get; set; }
 
         [Description("Include separator in syntax highlighting colors. Set to false and the separator characters are always white."), Category("General"), DefaultValue(false)]

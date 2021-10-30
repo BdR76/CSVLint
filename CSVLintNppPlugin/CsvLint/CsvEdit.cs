@@ -167,7 +167,6 @@ namespace CSVLint
             StringBuilder sb = new StringBuilder();
             string VERSION_NO = Main.GetVersion();
             int MAX_SQL_ROWS = Main.Settings.SQLBatchRows;
-            MAX_SQL_ROWS = (MAX_SQL_ROWS < 1 ? 1 : MAX_SQL_ROWS);
 
             // get access to Notepad++
             INotepadPPGateway notepad = new NotepadPPGateway();
@@ -180,14 +179,15 @@ namespace CSVLint
             sb.Append(string.Format("-- CSV Lint plug-in v{0}\r\n", VERSION_NO));
             sb.Append(string.Format("-- File: {0}\r\n", FILE_NAME));
             sb.Append(string.Format("-- Date: {0}\r\n", DateTime.Now.ToString("dd-MMM-yyyy HH:mm")));
+            sb.Append(string.Format("-- SQL ANSI: {0}\r\n", (Main.Settings.SQLansi ? "mySQL" : "MS-SQL")));
             sb.Append("-- -------------------------------------\r\n");
             sb.Append(string.Format("CREATE TABLE {0}(\r\n\t", TABLE_NAME));
             var cols = "\t";
 
             for (var r = 0; r < csvdef.Fields.Count; r++)
             {
-                // determine sql column name
-                var sqlname = '[' + csvdef.Fields[r].Name + ']';
+                // determine sql column name -> mySQL = `colname`, MS-SQL = [colname]
+                string sqlname = string.Format((Main.Settings.SQLansi ? "`{0}`" : "[{0}]"), csvdef.Fields[r].Name);
 
                 // determine sql datatype
                 var sqltype = "varchar";
@@ -245,7 +245,7 @@ namespace CSVLint
                     // remember next batch
                     batchstart = lineCount + 1;
 
-                    sb.Append("\r\ngo\r\n");
+                    sb.Append(";\r\n\r\n");
                     sb.Append("-- -------------------------------------\r\n");
                     sb.Append("-- insert records \r\n");
                     batchcomm = sb.Length - 2; // -2 because of the 2 characters \r\n
@@ -320,7 +320,7 @@ namespace CSVLint
             if (batchcomm > -1) sb.Insert(batchcomm, string.Format("{0} - {1}", batchstart, lineCount));
 
             // finalise script
-            sb.Append("\r\ngo\r\n");
+            sb.Append(";\r\n\r\n");
 
             // create new file
             notepad.FileNew();

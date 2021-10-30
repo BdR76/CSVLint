@@ -75,9 +75,13 @@ namespace CSVLint
 
             if (this.DataType == ColumnType.Decimal)
             {
-                int pos1 = this.Mask.IndexOf('.');
-                int pos2 = this.Mask.IndexOf(',');
+                // get decimal position or -1 if not found
+                int pos1 = Mask.LastIndexOf('.');
+                int pos2 = Mask.LastIndexOf(',');
                 int p = (pos1 > pos2 ? pos1 : pos2);
+
+                // decimal character
+                this.DecimalSymbol = (pos1 > pos2 ? '.' : ',');
 
                 // sTag, thousand and decimand characters
                 this.sTag = (pos1 > pos2 ? ",." : ".,");
