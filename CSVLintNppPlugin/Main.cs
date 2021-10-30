@@ -97,8 +97,49 @@ namespace Kbg.NppPluginNET
 
         internal static bool CreateLexerXML(string filename)
         {
+            string[] presets = new string[] { "normal mode (background colors)", "normal mode (foreground colors)", "dark mode (pastel)", "dark mode (neon)" };
             string[] tags = new string[] { "instre1", "instre2", "type1", "type2", "type3", "type4", "type5", "type6" };
-            string[] colors = new string[] { "FFFFFF", "E0E0FF", "FFFF80", "FFE0FF", "80FF80", "FFB0FF", "FFC0C0", "32FFBE", "FFD040" };
+
+            string[] colors = new string[] {
+                "000000", "FFFFFF", // normal colors
+                "000000", "E0E0FF",
+                "000000", "FFFF80",
+                "000000", "FFE0FF",
+                "000000", "80FF80",
+                "000000", "FFB0FF",
+                "000000", "FFC0C0",
+                "000000", "32FFBE",
+                "000000", "FFD040",
+                "000000", "FFFFFF", // normal colors (foreground)
+                "0000FF", "FFFFFF",
+                "A0A000", "FFFFFF",
+                "FF00FF", "FFFFFF",
+                "00A000", "FFFFFF",
+                "C000C0", "FFFFFF",
+                "00C0A0", "FFFFFF",
+                "C00000", "FFFFFF",
+                "F07028", "FFFFFF",
+                "DCDCCC", "3F3F3F", // dark mode (pastel)
+                "9191D8", "3F3F3F",
+                "BEC89E", "3F3F3F",
+                "E0B8E0", "3F3F3F",
+                "91C891", "3F3F3F",
+                "C891C8", "3F3F3F",
+                "D89191", "3F3F3F",
+                "40C090", "3F3F3F",
+                "C09040", "3F3F3F",
+                "FFFFFF", "3F3F3F", // dark mode (neon)
+                "D0D0FF", "000050",
+                "FFFF80", "505000",
+                "FFE0FF", "500050",
+                "80FF80", "005000",
+                "FFB0FF", "500050",
+                "FFC0C0", "500000",
+                "32FFBE", "005028",
+                "FFD040", "502800"
+            };
+
+            int active = 0; // preset 0 will be active, rest is commented out
 
             // Create an XmlWriterSettings object with the correct options.
             System.Xml.XmlWriterSettings settings = new System.Xml.XmlWriterSettings();
@@ -141,19 +182,38 @@ namespace Kbg.NppPluginNET
                         writer.WriteAttributeString("name", "CSVLint");
                         writer.WriteAttributeString("desc", "CSV Linter and validator");
                         writer.WriteAttributeString("excluded", "no");
-                        writer.WriteAttributeString("ext", "");
 
-                    for (int i = 0; i < colors.Length; i++)
+                    var coloridx = 0;
+                    for (int ps = 0; ps < presets.Length; ps++)
                     {
-                        writer.WriteStartElement("WordsStyle");
-                        writer.WriteAttributeString("styleID", i.ToString());
-                        writer.WriteAttributeString("name", (i == 0 ? "Default" : "ColumnColor" + i.ToString()));
-                        writer.WriteAttributeString("fgColor", "000000");
-                        writer.WriteAttributeString("bgColor", colors[i]);
-                        writer.WriteAttributeString("fontName", "");
-                        writer.WriteAttributeString("fontStyle", "0");
-                        writer.WriteEndElement();
-                    }
+                        // comment preset name
+                        writer.WriteComment(presets[ps]);
+
+                        if (active != ps) writer.WriteRaw("\r\n<!--");
+
+                        for (int i = 0; i < 9; i++)
+                        {
+                            //writer.WriteStartElement("WordsStyle");
+                            //writer.WriteAttributeString("styleID", i.ToString());
+                                //writer.WriteAttributeString("name", (i == 0 ? "Default" : "ColumnColor" + i.ToString()));
+                                //writer.WriteAttributeString("fgColor", "000000");
+                                //writer.WriteAttributeString("bgColor", colors[i]);
+                                //writer.WriteAttributeString("fontName", "");
+                                //writer.WriteAttributeString("fontStyle", "0");
+                            //writer.WriteEndElement();
+                            var name = (i == 0 ? "Default" : "ColumnColor" + i.ToString());
+                            var fgcolor = colors[coloridx];
+                            var bgcolor = colors[coloridx + 1];
+                            var bold = (ps == 0 || i == 0 ? "0" : "1");
+                            var str = string.Format("\r\n\t\t\t<WordsStyle styleID=\"{0}\" name=\"{1}\" fgColor=\"{2}\" bgColor=\"{3}\" fontName=\"\" fontStyle=\"{4}\" />", i, name, fgcolor, bgcolor, bold);
+                            writer.WriteRaw(str);
+
+                            coloridx += 2;
+                        }
+
+                        if (active != ps) writer.WriteRaw("\r\n-->");
+                        writer.WriteRaw("\r\n\t\t");
+                    };
 
                     writer.WriteEndElement();
 
