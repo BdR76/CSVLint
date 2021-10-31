@@ -24,7 +24,7 @@ CSV Lint window
 Click the toolbar icon or select the menu item `Plugins > CSVLint > CSV Lint window`
 to toggle the CSV Lint window visible.
 
-![CSV Lint window screenshot](/csvlint_main_window.png?raw=true "CSV Lint plug-in main window")
+![CSV Lint window screenshot](/docs/csvlint_main_window.png?raw=true "CSV Lint plug-in main window")
 
 In the CSV Lint window on the left side, the metadata of the current file is
 displayed. This contains information about the file, which separator is used
@@ -106,7 +106,7 @@ Split column
 
 Split values into new columns.
 
-![CSV Lint split column dialog](/csvlint_split_column.png?raw=true "CSV Lint plug-in split column dialog")
+![CSV Lint split column dialog](/docs/csvlint_split_column.png?raw=true "CSV Lint plug-in split column dialog")
 
 ### Split valid and invalid values ###
 
@@ -215,7 +215,7 @@ Reformat data dialog has several options to reformat the entire data file.
 
     Note; always backup your data files to prevent data loss.
 
-![CSV Lint reformat data dialog](/csvlint_reformat_data.png?raw=true "CSV Lint plug-in reformat data dialog")
+![CSV Lint reformat data dialog](/docs/csvlint_reformat_data.png?raw=true "CSV Lint plug-in reformat data dialog")
 
 ### Datetime reformat ###
 
@@ -345,7 +345,7 @@ Settings
 --------
 The plug-in settings are stored in a settings file `%USERPROFILE%\AppData\Roaming\Notepad++\plugins\config\CSVLint.ini`
 
-![CSV Lint settings window](/csvlint_settings.png?raw=true "CSV Lint plug-in settings window")
+![CSV Lint settings window](/docs/csvlint_settings.png?raw=true "CSV Lint plug-in settings window")
 
 | setting          | description                                                                                                     | Default |
 |------------------|-----------------------------------------------------------------------------------------------------------------|---------|
