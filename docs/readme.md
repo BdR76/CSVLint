@@ -48,8 +48,8 @@ Press the "Refresh from Data" button the from the currently open data file.
 When a file is opened this auto-detection is also run once by default.
 
 When a file is opened the plug-in will:
-1) checks for a `schema.ini` file in same folder as data file
-2) checks if the `schema.ini` contains a section for the filename
+1) check for a `schema.ini` file in same folder as data file
+2) check if the `schema.ini` contains a section for the filename
 2) if no `schema.ini` or section found, then run "Refresh from data"
 
 Note; if "Refresh from data" cannot automatically detected any columns, then
@@ -362,6 +362,33 @@ and they are stored in a settings file `%USERPROFILE%\AppData\Roaming\Notepad++\
 | SeparatorColor   | Include separator in syntax highlighting colors. Set to false and the separator characters are always white.    | false   |
 | Separators       | Preferred characters when automatically detecting the separator character. For special characters like tab, use \\t or \\u0009. | ,;\t| |
 | TrimValues       | Trim values before analyzing or editing (recommended).                                                          | true    |
+
+Syntax highlighting colors
+--------------------------
+Syntax highlighting will make it easier to see columns in the data files.
+By default the plug-in will set a background color scheme.
+
+![CSV Lint color styles for syntax highlighting](/docs/csvlint_color_styles.png?raw=true "CSV Lint plug-in color styles for syntax highlighting")
+
+The color settings are stored in a `CSVLint.xml` file. There is no style
+select dialog, but you can edit the .xml file to select one of the four
+pre-defined styles.
+
+	%USERPROFILE%\AppData\Roaming\Notepad++\plugins\config\CSVLint.xml`
+
+The default xml file will contain 4 color schemes, with the other three
+commented-out, also see the [CSVLint.xml file here](https://github.com/BdR76/CSVLint/blob/master/config/CSVLint.xml).
+You can copy or edit one set of `WordsStyle` tags as active, and remove or
+comment-out the other three. Save the xml file and restart Notepad++ before it
+will take effect.
+
+If you make any errors in the XML you can just delete the `CSVLint.xml` file
+and the default will automatically be created the next time you start Notepad++.
+
+You can also change the colors in the "Style Configurator dialog", see menu item
+`Settings > Style configurator... > Language: CSV Lint`. The "CSV Lint" should
+be near bottom of list. If you have a CSV file open you'll immediately see the
+changes as you edit them.
 
 About
 -----
