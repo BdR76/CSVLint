@@ -3,10 +3,10 @@ CSV Lint plug-in documentation
 
 **CSV Lint** is a plug-in for Notepad++ to work with  csv and fixed width data files.
 
-![preview screenshot](../csvlint_preview.png?raw=true "CSVLint plug-in preview")
-
 * [CSV Lint plug-in](https://github.com/BdR76/CSVLint/)
 * [Notepad++ homepage](http://notepad-plus-plus.org/)
+
+![preview screenshot](../csvlint_preview.png?raw=true "CSVLint plug-in preview")
 
 Use the **CSV Lint** plug-in to quickly and easily inspect csv data files,
 add column syntax highlighting, detect technical errors and fix datetime and
@@ -43,9 +43,9 @@ Press the "Refresh from Data" button the from the currently open data file.
 When a file is opened this auto-detection is also run once by default.
 
 When a file is opened the plug-in will:
-1) checks for a schema.inifile in same folder as data file
-2) checks if the schema.ini contains a section for the filename
-2) if no schema.ini or section found, then run "Refresh from data"
+1) checks for a `schema.ini` file in same folder as data file
+2) checks if the `schema.ini` contains a section for the filename
+2) if no `schema.ini` or section found, then run "Refresh from data"
 
 This is called the metadata of the data file, and the column metadata is very
 important for the other functionality to work. When the content of the file
@@ -62,8 +62,7 @@ width 9999 characters, i.e. no columns found.
 Click this blue-disk to save the metadata after editing the metadat manually
 to apply the changes. This will also save the metadata to a `schema.ini` file
 in the same folder as the data file. The next time you open the datafile with
-the plug-in, it will automatically load the metadata from this `schema.ini`
-file.
+the plug-in, it will automatically load the metadata from this file.
 
 The metadata will be save under a section with the filename, it can contain
 multiple metadata. A `schema.ini` file can contain the meta data for more
@@ -304,6 +303,8 @@ combination of columns, and count how often that unique value or combination
 of values was found. This can be useful to check if the dataset contains the
 expected amount of unique records.
 
+![CSV Lint unique values dialog](/docs/csvlint_unique_values.png?raw=true "CSV Lint plug-in unique values dialog")
+
 As an example, in a blood pressure file each line is one measurement and each
 participant is expected to have exactly 3 measurements. In this case you can
 select just the column participantId and select sort by count, to sort the
@@ -320,18 +321,18 @@ Convert the currently selected CSV file to an SQL script that creates a database
 table and inserts all records from the csv datafile into that table.
 The insert statement will be grouped in batches of X lines of csv data,
 see the `SQLBatchRows` setting. For compatibility with both mySQL or MS-SQL,
-the script will generate the column names as ```columnname``` or `[columnname]`
+the script will generate the column names as ``columnname`` or `[columnname]`
 depending on the `SQLansi` setting.
 
 See below for an example of an SQL insert script the plugin will generate:
 
-    CREATE TABLE csvdata_filename(
+    CREATE TABLE csvdata_cardio(
         [patid] integer,
         [visitdat] datetime,
         [labpth] numeric(5,1)
     );
 
-    insert into cardio(
+    insert into csvdata_cardio(
         [patid],
         [visitdat],
         [labpth]
@@ -343,7 +344,8 @@ See below for an example of an SQL insert script the plugin will generate:
 
 Settings
 --------
-The plug-in settings are stored in a settings file `%USERPROFILE%\AppData\Roaming\Notepad++\plugins\config\CSVLint.ini`
+Some plug-in settings can be changed in the menu item `Plugins > CSVLint > settings`
+and they re stored in a settings file `%USERPROFILE%\AppData\Roaming\Notepad++\plugins\config\CSVLint.ini`
 
 ![CSV Lint settings window](/docs/csvlint_settings.png?raw=true "CSV Lint plug-in settings window")
 
