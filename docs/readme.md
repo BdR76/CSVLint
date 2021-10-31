@@ -58,7 +58,7 @@ width 9999 characters, i.e. no columns found.
 
 ### Save icon ###
 
-Click this blue-disk to save the metadata after editing the metadat manually
+Click this blue-disk to save the metadata after editing the metadata manually
 to apply the changes. This will also save the metadata to a `schema.ini` file
 in the same folder as the data file. The next time you open the datafile with
 the plug-in, it will automatically load the metadata from this file.
@@ -142,7 +142,7 @@ data correctly.
 Validate data
 -------------
 Validate data based on the meta data. When you press "Validate data",
-the input data will be checked for technical errors based on the gives metadata.
+the input data will be checked for technical errors based on the given metadata.
 The line and column numbers of any errors will be logged in the textbox on the
 right. It will check the input data for the following errors:
 
@@ -253,7 +253,7 @@ the 4 possible values plus one for any remaining values.
 | K;Lac           |            | K          |            | Lac        |            |
 | Hb;Nat;Cl       | Hb         |            | Nat        |            | Cl         |
 | LDL;K;Hb;HDL    | Hb         | K          |            |            | LDL;HDL    |
-| IgM;Lac         |            |            |            |            | IgM;Lac    |
+| IgM;Glu         |            |            |            |            | IgM;Glu    |
 
 Note that the order of the values within the original column does not matter,
 the new columns are always created in the order as specified by the decode-string.
