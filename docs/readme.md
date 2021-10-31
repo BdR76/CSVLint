@@ -31,6 +31,11 @@ displayed. This contains information about the file, which separator is used
 and if it has column headers, as well as all the definitions for each column,
 such as datatype and width.
 
+The metadata is very important for the other functionality to work. When the
+content of the file and the metadata get out-of-sync, for example when editing
+the data file, the plug-in will detect the columns correctly. This can lead to
+unexpected results when reformatting or validating the data.
+
 The metadata is based on the `schema.ini` format and it is important for the
 edit options in the plug-in to work correctly. You can press "Refresh from
 Data" to automatically detect the metadata from the datafile, and/or manually
@@ -46,12 +51,6 @@ When a file is opened the plug-in will:
 1) checks for a `schema.ini` file in same folder as data file
 2) checks if the `schema.ini` contains a section for the filename
 2) if no `schema.ini` or section found, then run "Refresh from data"
-
-This is called the metadata of the data file, and the column metadata is very
-important for the other functionality to work. When the content of the file
-and the metadata get out-of-sync, for example when editing the data file, the
-plug-in will detect the columns correctly. This can lead to unexpected
-results when reformatting or validating the data.
 
 Note; if "Refresh from data" cannot automatically detected any columns, then
 the metadata definition will default to a "TextFile" with one column of
@@ -100,6 +99,64 @@ separators symbol is the opposite of the DecimalSymbol. Define the maximum
 decimals digits for example `NumberDigits=2` for values like "1.23" or
 "-45.67" etc.
 
+Reformat
+--------
+Reformat data dialog has several options to reformat the entire data file.
+
+    Note; always backup your data files to prevent data loss.
+
+![CSV Lint reformat data dialog](/docs/csvlint_reformat_data.png?raw=true "CSV Lint plug-in reformat data dialog")
+
+### Datetime reformat ###
+
+Datetime format, reformat all datatime values in the file uniformly. Note that
+both date and datetime values will get the same format. This means that it
+can potentially remove the time-part of datetime values, or add `00:00:00` as
+a time part to all values.
+
+### Decimal separator ###
+
+Set the decimal separator for all decimal/float values, select either the  `.` or `,`.
+
+### Column separator ###
+
+Reformat the column separator,  for example from comma separated `,` to semicolon separated `;`.
+Any values that contain the new separator character will be put in quotes, for example `"error; no read"`.
+
+When converting to fixed width format, it will use the width of each column as set in the metadata.
+Integer or decimal values will be right aligned, any other datatypes are left aligned.
+
+### Trim all values ###
+
+Trim spaces from all values, for example trim the value " Yes " to "Yes".
+
+### Align vertically ###
+
+Align vertically, will add white space to vertically align all columns.
+
+This can be useful for viewing the data, but it's not recommended to store
+the data with this extra white space. The file size will become unnecessary
+large and it will potentially be harder for other applications to process the
+data correctly.
+
+Validate data
+-------------
+Validate data based on the meta data. When you press "Validate data",
+the input data will be checked for technical errors based on the gives metadata.
+The line and column numbers of any errors will be logged in the textbox on the
+right. It will check the input data for the following errors:
+
+* Values that are too long, example value "abcde" when column is "Width 4"
+* Non-numeric values in numeric columns, example value "n/a" when column datatype is Integer
+* Incorrect decimal separator, example value "12.34" when DecimalSymbol is set to comma
+* Too many decimals, example value "12.345" when NumberDigits=2.
+* Incorrect date format, example value "12/31/2020" when DateTimeFormat=dd/mm/yyyy
+
+Important note: If you've edited the data file, for example changed the column
+separator or added columns using the Split function, also update the metadata
+before validating. To make sure the reflects the current data file, either
+press "Refresh from data" of update it manually and save.
+
 Split column
 ------------
 
@@ -109,7 +166,7 @@ Split values into new columns.
 
 ### Split valid and invalid values ###
 
-Split valid and invalid values is usefull when an integer column also
+Split valid and invalid values is useful when an integer column also
 contains string values like `error` or `N/A`. This option will create a new
 column with just the valid values and a new column containing invalid values.
 
@@ -183,11 +240,11 @@ and one column for the values without.
 
 ### Decode multiple values ###
 
-Decode multiple values is usefull when a single variable contains a set of
+Decode multiple values is useful when a single variable contains a set of
 multiple values separated by a character, these are typically checkbox values
 that allow multiple answers.
 
-For example `Hb;K;Nat;Lac` and character `;` will create 5 new columnon,
+For example `Hb;K;Nat;Lac` and character `;` will create 5 new columns,
 the 4 possible values plus one for any remaining values.
 
 | labchk          | labchk (2) | labchk (3) | labchk (4) | labchk (5) | labchk (6) |
@@ -207,64 +264,6 @@ Also, the last new column `labchk (6)` contains any left-over unspecified values
 By checking the "Remove original column" checkbox the original column will be
 removied after splitting it into new columns. Keep it unchecked to add the new
 columns but also keep the original values.
-
-Reformat
---------
-Reformat data dialog has several options to reformat the entire data file.
-
-    Note; always backup your data files to prevent data loss.
-
-![CSV Lint reformat data dialog](/docs/csvlint_reformat_data.png?raw=true "CSV Lint plug-in reformat data dialog")
-
-### Datetime reformat ###
-
-Datetime format, reformat all datatime values in the file uniformly. Note that
-both date and datetime values will get the same format. This means that it
-can potentially remove the time-part of datetime values, or add `00:00:00` as
-a time part to all values.
-
-### Decimal separator ###
-
-Set the decimal separator for all decimal/float values, select either the  `.` or `,`.
-
-### Column separator ###
-
-Reformat the column separator,  for example from comma separated `,` to semicolon separated `;`.
-Any values that contain the new separator character will be put in quotes, for example `"error; no read"`.
-
-When converting to fixed width format, it will use the width of each column as set in the metadata.
-Integer or decimal values will be right aligned, any other datatypes are left aligned.
-
-### Trim all values ###
-
-Trim spaces from all values, for example trim the value " Yes " to "Yes".
-
-### Align vertically ###
-
-Align vertically, will add white space to vertically align all columns.
-
-This can be useful for viewing the data, but it's not recommended to store
-the data with this extra white space. The file size will become unnecessary
-large and it will potentially be harder for other applications to process the
-data correctly.
-
-Validate data
--------------
-Validate data based on the meta data. When you press "Validate data",
-the input data will be checked for technical errors based on the gives metadata.
-The line and column numbers of any errors will be logged in the textbox on the
-right. It will check the input data for the following errors:
-
-* Values that are too long, example value "abcde" when column is "Width 4"
-* Non-numeric values in numeric columns, example value "n/a" when column datatype is Integer
-* Incorrect decimal separator, example value "12.34" when DecimalSymbol is set to comma
-* Too many decimals, example value "12.345" when NumberDigits=2.
-* Incorrect date format, example value "12/31/2020" when DateTimeFormat=dd/mm/yyyy
-
-Important note: If you've edited the data file, for example changed the column
-separator or added columns using the Split function, also update the metadata
-before validating. To make sure the reflects the current data file, either
-press "Refresh from data" of update it manually and save.
 
 Analyse data report
 -------------------
@@ -345,7 +344,7 @@ See below for an example of an SQL insert script the plugin will generate:
 Settings
 --------
 Some plug-in settings can be changed in the menu item `Plugins > CSVLint > settings`
-and they re stored in a settings file `%USERPROFILE%\AppData\Roaming\Notepad++\plugins\config\CSVLint.ini`
+and they are stored in a settings file `%USERPROFILE%\AppData\Roaming\Notepad++\plugins\config\CSVLint.ini`
 
 ![CSV Lint settings window](/docs/csvlint_settings.png?raw=true "CSV Lint plug-in settings window")
 
