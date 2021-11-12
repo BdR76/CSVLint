@@ -17,7 +17,7 @@ namespace Kbg.NppPluginNET
             lblTitle.Text += ver;
 
             // tooltip initialization
-            helperTip.SetToolTip(lnkGithub, "Open the CSVLint GitHub page (right-click to copy url)");
+            helperTip.SetToolTip(lnkGithub, "Open the documentation page (right-click to copy url)");
             helperTip.SetToolTip(lnkContact, "Send comments or suggestions (right-click to copy address)");
 
             DisplayEasterEgg();
@@ -140,7 +140,7 @@ namespace Kbg.NppPluginNET
             string urlcopy = url;
             if ((string)lbl.Tag == "0")
             {
-                url = "https://github.com/BdR76/CSVLint/";
+                url = "https://github.com/BdR76/CSVLint/tree/master/docs#csv-lint-plug-in-documentation";
                 urlcopy = url;
             }
             else

@@ -81,7 +81,7 @@
             this.lnkGithub.TabIndex = 3;
             this.lnkGithub.TabStop = true;
             this.lnkGithub.Tag = "0";
-            this.lnkGithub.Text = "CSVLint on GitHub";
+            this.lnkGithub.Text = "Documentation && Help";
             this.lnkGithub.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             this.lnkGithub.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnLinkClicked);
             // 

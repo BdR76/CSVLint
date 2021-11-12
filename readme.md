@@ -105,7 +105,6 @@ The CSV Lint plugin is work-in-progress, here is list of features I want to add 
 * ~~Convert datetime values to different formats~~
 * ~~Convert decimal symbol to point/comma~~
 * ~~Toggle between comma, semicolon, tab separated formats~~
-* Improve GUI instead of plain text
 * ~~Improve file reading, to process/edit large files (>1MB)~~
 * ~~Count unique values based on column(s)~~
 * ~~Allow format masks per individual column~~
@@ -113,16 +112,17 @@ The CSV Lint plugin is work-in-progress, here is list of features I want to add 
 * Support two-digit year date values
 * Support for currency/thousand separator "12.345,00" or "1,250,000.00" etc.
 * ~~Load/save schema.ini~~
-* Support FrictionlessData schema.json format
 * ~~Improve automatic datatype detection~~
 * ~~Add feature GUI click to jump to error line~~
+* Support code=label values (in schema.json?) + error check + replace-code-with-label
+* Support FrictionlessData schema.json format
+* Improve GUI instead of plain text
 * Add feature generate ~~scripts (SQL,~~ SPSS, Python(?), XML+column=xpath?)
 * ~~Syntax highlighting, display columns as [colors](https://community.notepad-plus-plus.org/topic/21124/c-adding-a-custom-styler-or-lexer-in-c-for-scintilla-notepad/)~~
 * Search for value in column, search next empty/non-empty in column
 * Search/replace in single column, multiple columns (option only replace n-th occurance? example "datetime(2008, 1, 1, 12, 59, 00)" replace ', ' with '-' or ':')
 * Search/replace only n-th occurance? Or only empty occurance?
 * ~~Split column into new column ("123/456" -> "123", "456")~~
-* Support code=label values (in schema.json?) + error check + replace-code-with-label
 
 Trouble shooting / Known issues
 -------------------------------
@@ -162,5 +162,6 @@ History
 26-sep-2021 - v0.4 performance improvement, save/load metadata, split column option, count unique values  
 17-oct-2021 - v0.4.1 various bugfixes  
 29-oct-2021 - v0.4.2 startup error "CSVLint.xml is missing" fixed, toggle toolbar icon, clean up settings  
+12-nov-2021 - v0.4.3 dark mode icons and colors, save form settings, documentation, bugfixes  
 
 BdR©2021 Free to use - send questions or comments: Bas de Reuver - bdr1976@gmail.com

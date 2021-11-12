@@ -33,8 +33,8 @@ such as datatype and width.
 
 The metadata is very important for the other functionality to work. When the
 content of the file and the metadata get out-of-sync, for example when editing
-the data file, the plug-in will detect the columns correctly. This can lead to
-unexpected results when reformatting or validating the data.
+the data file, the plug-in will detect the columns incorrectly. This can lead
+to unexpected results when reformatting or validating the data.
 
 The metadata is based on the `schema.ini` format and it is important for the
 edit options in the plug-in to work correctly. You can press "Refresh from
@@ -46,8 +46,8 @@ press the save icon (blue disk) to apply it before continuing.
 
 Press the "Refresh from Data" button the from the currently open data file.
 When a file is opened this auto-detection is also run once by default.
-
 When a file is opened the plug-in will:
+
 1) check for a `schema.ini` file in same folder as data file
 2) check if the `schema.ini` contains a section for the filename
 2) if no `schema.ini` or section found, then run "Refresh from data"
@@ -153,13 +153,13 @@ right. It will check the input data for the following errors:
 * Incorrect date format, example value "12/31/2020" when DateTimeFormat=dd/mm/yyyy
 
 Important note: If you've edited the data file, for example changed the column
-separator or added columns using the Split function, also update the metadata
-before validating. To make sure the reflects the current data file, either
-press "Refresh from data" of update it manually and save.
+separator or added columns using the Split function, make sure to also update
+the metadata before validating. Make sure the metadata reflects the current
+data file by either pressing "Refresh from data" or updating it manually and
+then saving it.
 
 Split column
 ------------
-
 Split values into new columns.
 
 ![CSV Lint split column dialog](/docs/csvlint_split_column.png?raw=true "CSV Lint plug-in split column dialog")
@@ -176,7 +176,7 @@ as a date value formated as `dd-mm-yyyy`, see some example results below:
 | visitdat   | visitdat (2) | visitdat (3) |
 |------------|--------------|--------------|
 | 15-04-2020 | 15-04-2020   |              |
-| 23-09-2019 | 23-09-2019   |              |
+| 23-05-2019 | 23-05-2019   |              |
 | 07-26-2021 |              | 07-26-2021   |
 | 18-09-2020 | 18-09-2020   |              |
 | noshow     |              | noshow       |
@@ -279,7 +279,7 @@ The output will contain the following information for each column.
 * DateTime range - the minimum and maximum datatime value, if any datetime values found
 * Integer range - the minimum and maximum integer value, if any integer values found
 * Decimal range - the minimum and maximum decimal value, if any decimal values found
-* Unique values - the minimum and maximum decimal value, if any decimal values found
+* Unique values - list of unique values, not shown when there are more than `UniqueValuesMax` unique values found (see settings)
 
 See report example for one single column below:
 
@@ -311,7 +311,7 @@ result by the new `count_unique` column.
 
 If the data is correct, it should list all participantId with a `count_unique`
 value of 3. Because it's sorted by `count_unique` you can check the beginning
-and end of the list to see if there are any participants with more or fewer
+and end of the list to see if there are any participants with fewer or more
 than 3 measurements.
 
 Convert to SQL
@@ -320,21 +320,28 @@ Convert the currently selected CSV file to an SQL script that creates a database
 table and inserts all records from the csv datafile into that table.
 The insert statement will be grouped in batches of X lines of csv data,
 see the `SQLBatchRows` setting. For compatibility with both mySQL or MS-SQL,
-the script will generate the column names as ``columnname`` or `[columnname]`
+the script will generate the column names as \`columnname\` or [columnname]
 depending on the `SQLansi` setting.
 
 See below for an example of an SQL insert script the plugin will generate:
 
-    CREATE TABLE csvdata_cardio(
-        [patid] integer,
-        [visitdat] datetime,
-        [labpth] numeric(5,1)
+    -- -------------------------------------
+    -- CSV Lint plug-in v0.4.2
+    -- File: cardio.txt
+    -- -------------------------------------
+    CREATE TABLE cardio(
+        `patid` integer,
+        `visitdat` datetime,
+        `labpth` numeric(5,1)
     );
 
-    insert into csvdata_cardio(
-        [patid],
-        [visitdat],
-        [labpth]
+    -- -------------------------------------
+    -- insert records 1 - 1000
+    -- -------------------------------------
+    insert into cardio(
+        `patid`,
+        `visitdat`,
+        `labpth`
     ) values
     (1, '2021-08-21', 10.8),
     (2, '2021-09-05', 143.5),
@@ -362,6 +369,7 @@ and they are stored in a settings file `%USERPROFILE%\AppData\Roaming\Notepad++\
 | SeparatorColor   | Include separator in syntax highlighting colors. Set to false and the separator characters are always white.    | false   |
 | Separators       | Preferred characters when automatically detecting the separator character. For special characters like tab, use \\t or \\u0009. | ,;\t| |
 | TrimValues       | Trim values before analyzing or editing (recommended).                                                          | true    |
+| UserPref section | Various settings for CSV Lint form defaults                                                                     |         |
 
 Syntax highlighting colors
 --------------------------
@@ -374,7 +382,7 @@ The color settings are stored in a `CSVLint.xml` file. There is no style
 select dialog, but you can edit the .xml file to select one of the four
 pre-defined styles.
 
-	%USERPROFILE%\AppData\Roaming\Notepad++\plugins\config\CSVLint.xml`
+	%USERPROFILE%\AppData\Roaming\Notepad++\plugins\config\CSVLint.xml
 
 The default xml file will contain 4 color schemes, with the other three
 commented-out, also see the [CSVLint.xml file here](https://github.com/BdR76/CSVLint/blob/master/config/CSVLint.xml).

@@ -148,6 +148,32 @@ namespace CsvQuery.PluginInfrastructure
                 .ToDictionary(x => x[0], x => x[1]);
         }
 
+        private void colorButton_Click(object sender, EventArgs e)
+        {
+            Button btn = (Button)sender;
+            ContextMenu cm = btn.ContextMenu;
+
+            cm.Show(btn, new Point(0, btn.Height)); // offset from the edge of your button
+        }
+
+        private void colorMenuItem_Click(object sender, EventArgs e)
+        {
+            string name = ((MenuItem)sender).Text;
+
+            //var msg = "Change the CSVLint syntax highlighting colors?:\n" + name  + "\n\n(Note: You'll need to close and restart Notepad++ before the new colors take effect)";
+            var msg = "Change the CSV Lint syntax highlighting colors to\n" + name  + " ?\n\n(Note: You'll need to close and restart Notepad++ before the new colors take effect)";
+            if (MessageBox.Show(msg, "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            {
+                //do something if YES
+                int idx = ((MenuItem)sender).Index;
+                Main.TryCreateLexerXml(idx, true);
+
+                // message
+                msg = "CSV Lint colors have been updated. The new colors will take effect when you restart Notepad++.";
+                MessageBox.Show(msg, "CSV Lint colors changed", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
         /// <summary>
         /// Opens a window that edits all settings
         /// </summary>
@@ -155,6 +181,14 @@ namespace CsvQuery.PluginInfrastructure
         {
             // We bind a copy of this object and only apply it after they click "Ok"
             var copy = (Settings)MemberwiseClone();
+
+            // color popup menu
+            MenuItem[] mi = new MenuItem[4];
+            mi[0] = new MenuItem("Normal mode (background colors)", colorMenuItem_Click);
+            mi[1] = new MenuItem("Normal mode (foreground colors)", colorMenuItem_Click);
+            mi[2] = new MenuItem("Dark mode (pastel colors)", colorMenuItem_Click);
+            mi[3] = new MenuItem("Dark mode (neon colors)", colorMenuItem_Click);
+            ContextMenu cm = new ContextMenu(mi);
 
             var dialog = new Form
             {
@@ -195,7 +229,17 @@ namespace CsvQuery.PluginInfrastructure
                         AutoScaleMode = AutoScaleMode.Font,
                         AutoScaleDimensions = new SizeF(6F,13F),
                         SelectedObject = copy
-                    }
+                    },
+                    new Button
+                    {
+                        Name = "Colors",
+                        Text = "Colors",
+                        Anchor = AnchorStyles.Bottom | AnchorStyles.Left,
+                        Size = new Size(75, 23),
+                        Location = new Point(13, DEFAULT_HEIGHT - 23 - 13),
+                        UseVisualStyleBackColor = true,
+                        ContextMenu = cm
+                    },
                 }
             };
 
@@ -227,6 +271,7 @@ namespace CsvQuery.PluginInfrastructure
                 OnSettingsChanged(dialog, changesEventArgs);
                 dialog.Close();
             };
+            dialog.Controls["Colors"].Click += colorButton_Click;
 
             dialog.ShowDialog();
         }
