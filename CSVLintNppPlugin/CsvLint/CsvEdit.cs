@@ -168,6 +168,10 @@ namespace CSVLint
             string VERSION_NO = Main.GetVersion();
             int MAX_SQL_ROWS = Main.Settings.SQLBatchRows;
 
+            // if csv already contains "_record_number"
+            var recidname = csvdef.GetUniqueColumnName("_record_number", out int postfix);
+            if (postfix > 0) recidname = String.Format("{0} ({1})", recidname, postfix);
+
             // get access to Notepad++
             INotepadPPGateway notepad = new NotepadPPGateway();
             IScintillaGateway editor = new ScintillaGateway(PluginBase.GetCurrentScintilla());
@@ -184,9 +188,9 @@ namespace CSVLint
             sb.Append(string.Format("CREATE TABLE {0}(\r\n\t", TABLE_NAME));
 
             if (Main.Settings.SQLansi)
-                sb.Append("`_record_number` int AUTO_INCREMENT NOT NULL,\r\n\t"); // mySQL
+                sb.Append(string.Format("`{0}` int AUTO_INCREMENT NOT NULL,\r\n\t", recidname)); // mySQL
             else
-                sb.Append("[_record_number] int IDENTITY(1,1) PRIMARY KEY,\r\n\t"); // MS-SQL
+                sb.Append(string.Format("[{0}] int IDENTITY(1,1) PRIMARY KEY,\r\n\t", recidname)); // MS-SQL
             var cols = "\t";
 
             for (var r = 0; r < csvdef.Fields.Count; r++)
@@ -230,7 +234,7 @@ namespace CSVLint
             };
 
             // primary key definition for mySQL
-            if (Main.Settings.SQLansi) sb.Append(",\r\n\tprimary key(_record_number)");
+            if (Main.Settings.SQLansi) sb.Append(string.Format(",\r\n\tprimary key(`{0}`)", recidname));
 
             sb.Append("\r\n)");
 
