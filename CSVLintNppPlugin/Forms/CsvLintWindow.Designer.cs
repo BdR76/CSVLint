@@ -30,6 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.btnSplit = new System.Windows.Forms.Button();
             this.btnApply = new System.Windows.Forms.Button();
             this.btnReformat = new System.Windows.Forms.Button();
             this.btnRefresh = new System.Windows.Forms.Button();
@@ -37,7 +38,6 @@
             this.btnValidate = new System.Windows.Forms.Button();
             this.txtOutput = new System.Windows.Forms.TextBox();
             this.tooltipCsvLint = new System.Windows.Forms.ToolTip(this.components);
-            this.btnSplit = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -67,6 +67,17 @@
             this.splitContainer1.Size = new System.Drawing.Size(1170, 354);
             this.splitContainer1.SplitterDistance = 390;
             this.splitContainer1.TabIndex = 7;
+            // 
+            // btnSplit
+            // 
+            this.btnSplit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSplit.Location = new System.Drawing.Point(227, 3);
+            this.btnSplit.Name = "btnSplit";
+            this.btnSplit.Size = new System.Drawing.Size(72, 32);
+            this.btnSplit.TabIndex = 9;
+            this.btnSplit.Text = "Split column";
+            this.btnSplit.UseVisualStyleBackColor = true;
+            this.btnSplit.Click += new System.EventHandler(this.btnSplit_Click);
             // 
             // btnApply
             // 
@@ -141,17 +152,6 @@
             this.txtOutput.Size = new System.Drawing.Size(761, 300);
             this.txtOutput.TabIndex = 4;
             this.txtOutput.DoubleClick += new System.EventHandler(this.OnTxtOutput_DoubleClick);
-            // 
-            // btnSplit
-            // 
-            this.btnSplit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSplit.Location = new System.Drawing.Point(227, 3);
-            this.btnSplit.Name = "btnSplit";
-            this.btnSplit.Size = new System.Drawing.Size(72, 32);
-            this.btnSplit.TabIndex = 9;
-            this.btnSplit.Text = "Split column";
-            this.btnSplit.UseVisualStyleBackColor = true;
-            this.btnSplit.Click += new System.EventHandler(this.btnSplit_Click);
             // 
             // CsvLintWindow
             // 

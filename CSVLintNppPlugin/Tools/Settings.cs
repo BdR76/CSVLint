@@ -28,7 +28,7 @@ namespace Kbg.NppPluginNET
 
         private int _sqlbatch;
 
-        [Description("Maximum records per SQL insert batch, minimum bach size is 10."), Category("Edit"), DefaultValue(1000)]
+        [Description("Maximum records per SQL insert batch, minimum batch size is 10."), Category("Edit"), DefaultValue(1000)]
         public int SQLBatchRows
         {
             get { return _sqlbatch; }
@@ -135,7 +135,7 @@ namespace Kbg.NppPluginNET
 
         //[Description("Maximum length of an integer before it's considered a string instead"), Category("General"), DefaultValue(10)]
         //public int IntegerDigitsMax { get; set; }
-		
+
         //[Description("Decimal values allow leading zero values, for example accept values like .5"), Category("General"), DefaultValue(false)]
         //public bool DecimalLeadingZeroIn { get; set; }
 
@@ -144,6 +144,54 @@ namespace Kbg.NppPluginNET
 
         //[Description("Month abbreviations for detecting or generating date format 'mmmm', comma separated list of 12 names."), Category("Validate"), DefaultValue("jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec")]
         //public String MonthAbbrev { get; set; }
+
+        // SPLIT COLUMN user preferences
+        [Description("Split column, selected column name."), Category("UserPref"), DefaultValue("")]
+        public String SplitColName { get; set; }
+
+        [Description("Split column, selected option."), Category("UserPref"), DefaultValue(0)]
+        public int SplitOption { get; set; }
+
+        [Description("Split column, split on character."), Category("UserPref"), DefaultValue("/")]
+        public string SplitChar { get; set; }
+
+        [Description("Split column, split on position."), Category("UserPref"), DefaultValue(3)]
+        public int SplitPos { get; set; }
+
+        [Description("Split column, move if contains string."), Category("UserPref"), DefaultValue(".00")]
+        public string SplitContain { get; set; }
+
+        [Description("Split column, decode values."), Category("UserPref"), DefaultValue("1;2;3;4;5")]
+        public string SplitDecode { get; set; }
+
+        [Description("Split column, decode character."), Category("UserPref"), DefaultValue(";")]
+        public string SplitDecodeChar { get; set; }
+
+        [Description("Split column, remove original column."), Category("UserPref"), DefaultValue(false)]
+        public bool SplitRemoveOrg { get; set; }
+
+        // REFORMAT user preferences
+        [Description("Reformat dataset, checkbox options."), Category("UserPref"), DefaultValue("")]
+        public string ReformatOptions { get; set; }
+
+        [Description("Reformat dataset, date format."), Category("UserPref"), DefaultValue("yyyy-MM-dd")]
+        public string ReformatDateFormat { get; set; }
+
+        [Description("Reformat dataset, decimal separator."), Category("UserPref"), DefaultValue(".")]
+        public string ReformatDecSep { get; set; }
+
+        [Description("Reformat dataset, column separator."), Category("UserPref"), DefaultValue(";")]
+        public string ReformatColSep { get; set; }
+
+        // COUNT UNIQUE user preferences
+        [Description("Count unique values, list of selected columns."), Category("UserPref"), DefaultValue("")]
+        public string UniqueColumns { get; set; }
+
+        [Description("Count unique values, sort by value or count."), Category("UserPref"), DefaultValue(false)]
+        public bool UniqueSortValue { get; set; }
+
+        [Description("Count unique values, sort ascending or descending."), Category("UserPref"), DefaultValue(false)]
+        public bool UniqueSortAsc { get; set; }
 
         // helper function for "SysYear" as year values
         private int getYearFromString(String yr)

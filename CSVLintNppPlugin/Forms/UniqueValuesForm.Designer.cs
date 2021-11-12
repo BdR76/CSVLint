@@ -45,12 +45,13 @@ namespace CSVLintNppPlugin.Forms
             // 
             // lblTitle
             // 
-            this.lblTitle.Size = new System.Drawing.Size(113, 20);
-            this.lblTitle.Text = "Unique Values";
+            this.lblTitle.Size = new System.Drawing.Size(153, 20);
+            this.lblTitle.Text = "Count unique values";
             // 
             // btnOk
             // 
             this.btnOk.Location = new System.Drawing.Point(61, 354);
+            this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
             // 
             // btnCancel
             // 
@@ -166,7 +167,7 @@ namespace CSVLintNppPlugin.Forms
             this.Controls.Add(this.lblDescription);
             this.Controls.Add(this.listColumns);
             this.Name = "UniqueValuesForm";
-            this.Text = "Unique Values";
+            this.Text = "Count unique values";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.UniqueValuesForm_FormClosing);
             this.Controls.SetChildIndex(this.lblTitle, 0);
             this.Controls.SetChildIndex(this.btnOk, 0);

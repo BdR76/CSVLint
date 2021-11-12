@@ -53,6 +53,7 @@ namespace CSVLintNppPlugin.Forms
             // 
             this.btnOk.Location = new System.Drawing.Point(152, 278);
             this.btnOk.TabIndex = 13;
+            this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
             // 
             // btnCancel
             // 

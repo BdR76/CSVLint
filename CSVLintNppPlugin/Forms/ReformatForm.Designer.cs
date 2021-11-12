@@ -48,6 +48,7 @@
             // 
             this.btnOk.Location = new System.Drawing.Point(128, 230);
             this.btnOk.TabIndex = 8;
+            this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
             // 
             // btnCancel
             // 

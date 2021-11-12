@@ -1,4 +1,5 @@
 ﻿using CSVLint;
+using Kbg.NppPluginNET;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -24,15 +25,34 @@ namespace CSVLintNppPlugin.Forms
         public void InitialiseSetting(CsvDefinition csvdef)
         {
             // add all columns to list
+            var idx = 0;
             for (var i = 0; i < csvdef.Fields.Count; i++)
             {
                 var str = csvdef.Fields[i].Name;
                 cmbSelectColumn.Items.Add(str);
+                if (str == Main.Settings.SplitColName) idx = cmbSelectColumn.Items.Count-1;
             }
 
             // default select "(select column)" item
-            cmbSelectColumn.SelectedIndex = 0;
-        }
+            cmbSelectColumn.SelectedIndex = idx;
+
+            // which option selected
+            rdbtnSplitValid.Checked     = (Main.Settings.SplitOption == 0);
+            rdbtnSplitCharacter.Checked = (Main.Settings.SplitOption == 1);
+            rdbtnSplitSubstring.Checked = (Main.Settings.SplitOption == 2);
+            rdbtnSplitContains.Checked  = (Main.Settings.SplitOption == 3);
+            rdbtnSplitDecode.Checked    = (Main.Settings.SplitOption == 4);
+
+            // load user preferences
+            txtSplitCharacter.Text = Main.Settings.SplitChar;
+
+            txtSplitSubstring.Text = Main.Settings.SplitPos.ToString();
+            txtSplitContains.Text = Main.Settings.SplitContain;
+            txtSplitDecode.Text = Main.Settings.SplitDecode;
+            txtSplitDecodeChar.Text = Main.Settings.SplitDecodeChar;
+
+            chkDeleteOriginal.Checked = Main.Settings.SplitRemoveOrg;
+            }
         private void cmbSelectColumn_SelectedIndexChanged(object sender, EventArgs e)
         {
             EvaluateOkButton();
@@ -75,6 +95,35 @@ namespace CSVLintNppPlugin.Forms
 
             // remove original column
             SplitRemove = (chkDeleteOriginal.Checked);
+        }
+
+        private void btnOk_Click(object sender, EventArgs e)
+        {
+            // save user preferences
+            Main.Settings.SplitColName = cmbSelectColumn.Items[cmbSelectColumn.SelectedIndex].ToString(); ;
+
+            // pass split parameters to previous form
+            var opt = 0;
+            //if (rdbtnSplitValid.Checked)     opt = 0;
+            if (rdbtnSplitCharacter.Checked) opt = 1;
+            if (rdbtnSplitSubstring.Checked) opt = 2;
+            if (rdbtnSplitContains.Checked)  opt = 3;
+            if (rdbtnSplitDecode.Checked)    opt = 4;
+            Main.Settings.SplitOption = opt;
+
+            Main.Settings.SplitChar = txtSplitCharacter.Text;
+
+            int.TryParse(txtSplitSubstring.Text, out int splitpos);
+            Main.Settings.SplitPos = splitpos;
+
+            Main.Settings.SplitContain = txtSplitContains.Text;
+            Main.Settings.SplitDecode = txtSplitDecode.Text;
+            Main.Settings.SplitDecodeChar = txtSplitDecodeChar.Text;
+
+            Main.Settings.SplitRemoveOrg = chkDeleteOriginal.Checked;
+
+            // save to file
+            Main.Settings.SaveToIniFile();
         }
     }
 }

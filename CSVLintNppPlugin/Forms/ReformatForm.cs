@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Kbg.NppPluginNET;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -25,16 +26,23 @@ namespace CSVLintNppPlugin.Forms
 
         public void InitialiseSetting(string dtFormat, string decSep, string colSep)
         {
-            // set default values
-            cmbDateTime.Text = dtFormat;
-            cmbDecimal.Text = decSep;
-            cmbSeparator.Text = colSep;
+            // load user preferences
+            cmbDateTime.Text  = Main.Settings.ReformatDateFormat;
+            cmbDecimal.Text   = Main.Settings.ReformatDecSep;
+            cmbSeparator.Text = Main.Settings.ReformatColSep;
 
-            // disable all
-            OnChkbx_CheckedChanged(chkDateTime,  null);
-            OnChkbx_CheckedChanged(chkDecimal,   null);
+            // load user preferences
+            chkDateTime.Checked  = (Main.Settings.ReformatOptions.IndexOf("1;") >= 0);
+            chkDecimal.Checked   = (Main.Settings.ReformatOptions.IndexOf("2;") >= 0);
+            chkSeparator.Checked = (Main.Settings.ReformatOptions.IndexOf("3;") >= 0);
+            chkTrimAll.Checked   = (Main.Settings.ReformatOptions.IndexOf("4;") >= 0);
+            chkAlignVert.Checked = (Main.Settings.ReformatOptions.IndexOf("5;") >= 0);
+
+            // enable/disable all
+            OnChkbx_CheckedChanged(chkDateTime, null);
+            OnChkbx_CheckedChanged(chkDecimal, null);
             OnChkbx_CheckedChanged(chkSeparator, null);
-            OnChkbx_CheckedChanged(chkTrimAll,   null);
+            OnChkbx_CheckedChanged(chkTrimAll, null);
             OnChkbx_CheckedChanged(chkAlignVert, null);
         }
 
@@ -61,6 +69,26 @@ namespace CSVLintNppPlugin.Forms
             // exception
             if (NewSeparator == "{Tab}") NewSeparator = "\t";
             if (NewSeparator == "{Fixed width}") NewSeparator = "\0";
+        }
+
+        private void btnOk_Click(object sender, EventArgs e)
+        {
+            // save user preferences
+            Main.Settings.ReformatDateFormat = cmbDateTime.Text;
+            Main.Settings.ReformatDecSep     = cmbDecimal.Text;
+            Main.Settings.ReformatColSep     = cmbSeparator.Text;
+
+            // load user preferences
+            var opt = "";
+            opt += (chkDateTime.Checked   ? "1;" : "") +
+                    (chkDecimal.Checked   ? "2;" : "") +
+                    (chkSeparator.Checked ? "3;" : "") +
+                    (chkTrimAll.Checked   ? "4;" : "") +
+                    (chkAlignVert.Checked ? "5;" : "");
+            Main.Settings.ReformatOptions = opt;
+
+            // save to file
+            Main.Settings.SaveToIniFile();
         }
     }
 }
