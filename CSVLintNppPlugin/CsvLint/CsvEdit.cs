@@ -182,6 +182,11 @@ namespace CSVLint
             sb.Append(string.Format("-- SQL ANSI: {0}\r\n", (Main.Settings.SQLansi ? "mySQL" : "MS-SQL")));
             sb.Append("-- -------------------------------------\r\n");
             sb.Append(string.Format("CREATE TABLE {0}(\r\n\t", TABLE_NAME));
+
+            if (Main.Settings.SQLansi)
+                sb.Append("`_record_number` int AUTO_INCREMENT NOT NULL,\r\n\t"); // mySQL
+            else
+                sb.Append("[_record_number] int IDENTITY(1,1) PRIMARY KEY,\r\n\t"); // MS-SQL
             var cols = "\t";
 
             for (var r = 0; r < csvdef.Fields.Count; r++)
@@ -223,6 +228,9 @@ namespace CSVLint
                     cols += ",\r\n\t";
                 };
             };
+
+            // primary key definition for mySQL
+            if (Main.Settings.SQLansi) sb.Append(",\r\n\tprimary key(_record_number)");
 
             sb.Append("\r\n)");
 

@@ -81,7 +81,7 @@ namespace Kbg.NppPluginNET
             PluginBase.SetCommand(1, "---", null);
             PluginBase.SetCommand(2, "Analyse data report", analyseDataReport);
             PluginBase.SetCommand(3, "Count unique values", CountUniqueValues);
-            PluginBase.SetCommand(4, "Convert to SQL" + (checkdarkmode ? "(DM)" : "(normal)"), convertToSQL);
+            PluginBase.SetCommand(4, "Convert to SQL", convertToSQL);
             PluginBase.SetCommand(5, "---", null);
             PluginBase.SetCommand(6, "&Settings", Settings.ShowDialog);
             PluginBase.SetCommand(7, "About / Help", doAboutForm);
@@ -255,7 +255,7 @@ namespace Kbg.NppPluginNET
                     writer.Close();
                 } // End Using writer 
             }
-            catch (Exception ex)
+            catch
             {
                 return false;
             }
