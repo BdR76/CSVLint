@@ -121,9 +121,6 @@
   <data name="easteregg" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\easteregg1_32px.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="csvlint" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>csvlint2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="oliebol" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\oliebol1_32px.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -135,5 +132,14 @@
   </data>
   <data name="disksave" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\disksave.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="csvlint" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\csvfile_color_16.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="csvlint_black_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\csv_file_32.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="csvlint_white_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\csv_file_white_32.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

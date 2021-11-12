@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
+using System.Xml;
 using CSVLint;
 using CSVLintNppPlugin.CsvLint;
 using CSVLintNppPlugin.Forms;
@@ -20,10 +21,17 @@ namespace Kbg.NppPluginNET
         internal const string PluginName = "CSV Lint";
         public static Settings Settings = new Settings();
 
-        static string iniFilePath = null;
+        static string userConfigPath = null;
+        static bool checkdarkmode = false;
         static CsvLintWindow frmCsvLintDlg = null;
         static int idMyDlg = -1;
+
+        // toolbar icons
         static Bitmap tbBmp = CSVLintNppPlugin.Properties.Resources.csvlint;
+        static Icon tbIco = CSVLintNppPlugin.Properties.Resources.csvlint_black_32;
+        static Icon tbIcoDM = CSVLintNppPlugin.Properties.Resources.csvlint_white_32;
+
+
         static Bitmap tbBmp_tbTab = CSVLintNppPlugin.Properties.Resources.csvlint;
         static IScintillaGateway editor = new ScintillaGateway(PluginBase.GetCurrentScintilla());
         static Icon tbIcon = null;
@@ -61,14 +69,11 @@ namespace Kbg.NppPluginNET
             // config folder
             StringBuilder sbIniFilePath = new StringBuilder(Win32.MAX_PATH);
             Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_GETPLUGINSCONFIGDIR, Win32.MAX_PATH, sbIniFilePath);
-            iniFilePath = sbIniFilePath.ToString();
-            if (!Directory.Exists(iniFilePath)) Directory.CreateDirectory(iniFilePath);
+            userConfigPath = sbIniFilePath.ToString();
+            if (!Directory.Exists(userConfigPath)) Directory.CreateDirectory(userConfigPath);
 
             // lexer xml file must exist
-            CheckLexerXml(iniFilePath);
-
-            // remember ini filename for later
-            iniFilePath = Path.Combine(iniFilePath, PluginName + ".ini");
+            TryCreateLexerXml(-1, false); // default: 0 = normal background, 2 = dark pastel
 
             // menu items
             //PluginBase.SetCommand(0, "MyMenuCommand", myMenuFunction, new ShortcutKey(false, false, false, Keys.None));
@@ -76,26 +81,57 @@ namespace Kbg.NppPluginNET
             PluginBase.SetCommand(1, "---", null);
             PluginBase.SetCommand(2, "Analyse data report", analyseDataReport);
             PluginBase.SetCommand(3, "Count unique values", CountUniqueValues);
-            PluginBase.SetCommand(4, "Convert to SQL", convertToSQL);
+            PluginBase.SetCommand(4, "Convert to SQL" + (checkdarkmode ? "(DM)" : "(normal)"), convertToSQL);
             PluginBase.SetCommand(5, "---", null);
             PluginBase.SetCommand(6, "&Settings", Settings.ShowDialog);
-            PluginBase.SetCommand(7, "About", doAboutForm);
+            PluginBase.SetCommand(7, "About / Help", doAboutForm);
         }
 
-        internal static void CheckLexerXml(string iniFilePath)
+
+        internal static bool CheckConfigDarkMode()
         {
-            var filename = Path.Combine(iniFilePath, "CSVLint.xml");
-            // create language xml in plugin config directory if needed
-            if (!File.Exists(filename))
+            string darkmodeenabled = "no";
+
+            var xmlfile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Notepad++\\config.xml");
+            try
             {
-                if (!CreateLexerXML(filename)) {
-                    var errmsg = string.Format("Unable to create {0}.xml in folder {1}", PluginName, iniFilePath);
+                XmlDocument config = new XmlDocument();
+                config.Load(xmlfile);
+
+                XmlNode darkmode = config.DocumentElement.SelectSingleNode("/NotepadPlus/GUIConfigs/GUIConfig[@name='DarkMode']");
+                darkmodeenabled = ((darkmode != null) && (darkmode as XmlElement).HasAttribute("enable") ? darkmode.Attributes["enable"].Value : "no");
+            }
+            catch { };
+
+            // return value
+            return (darkmodeenabled == "yes");
+        }
+
+        internal static void TryCreateLexerXml(int presetidx, bool overwrite)
+        {
+            var filename = Path.Combine(userConfigPath, "CSVLint.xml");
+            // create language xml in plugin config directory if needed
+            if ((!File.Exists(filename)) || overwrite)
+            {
+                // when initially creating CSVLintxml for first time
+                if (presetidx == -1)
+                {
+                    // initially give users random color preset, i.e. distribute random among all users, to see which they like best
+                    var checkdarkmode = CheckConfigDarkMode();
+                    var sec = DateTime.Now.Second % 2; // semi-random 0..1
+                    presetidx = (checkdarkmode ? 2 : 0) + sec; // 0..1 for normal, 2..3 for dark mode
+                }
+
+                // create syntax color xml
+                if (!CreateLexerXML(filename, presetidx))
+                {
+                    var errmsg = string.Format("Unable to create {0}.xml in folder {1}", PluginName, userConfigPath);
                     MessageBox.Show(errmsg, "Error saving CSVLint.xml", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
 
-        internal static bool CreateLexerXML(string filename)
+        internal static bool CreateLexerXML(string filename, int presetidx)
         {
             string[] presets = new string[] { "normal mode (background colors)", "normal mode (foreground colors)", "dark mode (pastel)", "dark mode (neon)" };
             string[] tags = new string[] { "instre1", "instre2", "type1", "type2", "type3", "type4", "type5", "type6" };
@@ -138,8 +174,6 @@ namespace Kbg.NppPluginNET
                 "32FFBE", "005028",
                 "FFD040", "502800"
             };
-
-            int active = 0; // preset 0 will be active, rest is commented out
 
             // Create an XmlWriterSettings object with the correct options.
             System.Xml.XmlWriterSettings settings = new System.Xml.XmlWriterSettings();
@@ -189,7 +223,7 @@ namespace Kbg.NppPluginNET
                         // comment preset name
                         writer.WriteComment(presets[ps]);
 
-                        if (active != ps) writer.WriteRaw("\r\n<!--");
+                        if (presetidx != ps) writer.WriteRaw("\r\n<!--");
 
                         for (int i = 0; i < 9; i++)
                         {
@@ -211,7 +245,7 @@ namespace Kbg.NppPluginNET
                             coloridx += 2;
                         }
 
-                        if (active != ps) writer.WriteRaw("\r\n-->");
+                        if (presetidx != ps) writer.WriteRaw("\r\n-->");
                         writer.WriteRaw("\r\n\t\t");
                     };
 
@@ -231,11 +265,22 @@ namespace Kbg.NppPluginNET
 
         internal static void SetToolBarIcon()
         {
+            // create struct
             toolbarIcons tbIcons = new toolbarIcons();
+
+            // add bmp icon
             tbIcons.hToolbarBmp = tbBmp.GetHbitmap();
+            tbIcons.hToolbarIcon = tbIco.Handle;            // icon with black lines
+            tbIcons.hToolbarIconDarkMode = tbIcoDM.Handle;  // icon with light grey lines
+
+            // convert to c++ pointer
             IntPtr pTbIcons = Marshal.AllocHGlobal(Marshal.SizeOf(tbIcons));
             Marshal.StructureToPtr(tbIcons, pTbIcons, false);
-            Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_ADDTOOLBARICON, PluginBase._funcItems.Items[idMyDlg]._cmdID, pTbIcons);
+
+            // call Notepad++ api
+            Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_ADDTOOLBARICON_FORDARKMODE, PluginBase._funcItems.Items[idMyDlg]._cmdID, pTbIcons);
+
+            // release pointer
             Marshal.FreeHGlobal(pTbIcons);
         }
 

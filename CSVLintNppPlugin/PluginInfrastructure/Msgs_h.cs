@@ -527,6 +527,39 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// </summary>
         NPPM_GETPLUGINHOMEPATH = Constants.NPPMSG + 97,
 
+        /// <summary>
+        /// INT NPPM_GETSETTINGSCLOUDPATH(size_t strLen, TCHAR *settingsOnCloudPath)
+        /// Get settings on cloud path. It's useful if plugins want to store its settings on Cloud, if this path is set.
+        /// Returns the number of TCHAR copied/to copy. If the return value is 0, then this path is not set, or the "strLen" is not enough to copy the path.
+        /// Users should call it with settingsCloudPath be NULL to get the required number of TCHAR (not including the terminating nul character),
+        /// allocate settingsCloudPath buffer with the return value + 1, then call it again to get the path.
+        /// </summary>
+        NPPM_GETSETTINGSONCLOUDPATH = Constants.NPPMSG + 98,
+
+        /// <summary>
+        /// BOOL NPPM_SETLINENUMBERWIDTHMODE(0, INT widthMode)
+        /// Set line number margin width in dynamic width mode (LINENUMWIDTH_DYNAMIC) or constant width mode (LINENUMWIDTH_CONSTANT)
+        /// It may help some plugins to disable non-dynamic line number margins width to have a smoothly visual effect while vertical scrolling the content in Notepad++
+        /// If calling is successful return TRUE, otherwise return FALSE.
+        /// </summary>
+        NPPM_SETLINENUMBERWIDTHMODE = Constants.NPPMSG + 99,
+        LINENUMWIDTH_DYNAMIC = 0,
+        LINENUMWIDTH_CONSTANT = 1,
+
+        /// <summary>
+        /// INT NPPM_GETLINENUMBERWIDTHMODE(0, 0)
+        /// Get line number margin width in dynamic width mode (LINENUMWIDTH_DYNAMIC) or constant width mode (LINENUMWIDTH_CONSTANT)
+        /// </summary>
+        NPPM_GETLINENUMBERWIDTHMODE = Constants.NPPMSG + 100,
+
+        /// <summary>
+        /// VOID NPPM_ADDTOOLBARICON_FORDARKMODE(UINT funcItem[X]._cmdID, toolbarIconsWithDarkMode iconHandles)
+        /// Use NPPM_ADDTOOLBARICON_FORDARKMODE instead obsolete NPPM_ADDTOOLBARICON which doesn't support the dark mode
+        /// 2 formats / 3 icons are needed:  1 * BMP + 2 * ICO 
+        /// All 3 handles below should be set so the icon will be displayed correctly if toolbar icon sets are changed by users, also in dark mode
+        /// </summary>
+        NPPM_ADDTOOLBARICON_FORDARKMODE = Constants.NPPMSG + 101,
+
         RUNCOMMAND_USER = Constants.WM_USER + 3000,
         NPPM_GETFULLCURRENTPATH = RUNCOMMAND_USER + FULL_CURRENT_PATH,
         NPPM_GETCURRENTDIRECTORY = RUNCOMMAND_USER + CURRENT_DIRECTORY,

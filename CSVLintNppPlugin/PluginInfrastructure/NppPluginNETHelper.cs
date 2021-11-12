@@ -185,8 +185,8 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
     [StructLayout(LayoutKind.Sequential)]
     public struct toolbarIcons
     {
-        public IntPtr hToolbarBmp;          // HBITMAP
-        public IntPtr hToolbarIcon;         // HICON
-        public IntPtr hToolbarIconDarkMode; // HICON
+        public IntPtr hToolbarBmp;			// standard icon (color)
+        public IntPtr hToolbarIcon;			// Fluent UI icon (black)
+        public IntPtr hToolbarIconDarkMode;	// Fluent UI icon (white)
     }
 }
