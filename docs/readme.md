@@ -374,29 +374,23 @@ and they are stored in a settings file `%USERPROFILE%\AppData\Roaming\Notepad++\
 Syntax highlighting colors
 --------------------------
 Syntax highlighting will make it easier to see columns in the data files.
-By default the plug-in will set a background color scheme.
+There are four pre-defined color schemes you can select in the `Setttings` dialog.
+At first time startup, the plug-in will select normal or darkmode color scheme,
+depending on the Dark Mode setting in the Notepad++ `config.xml`.
 
 ![CSV Lint color styles for syntax highlighting](/docs/csvlint_color_styles.png?raw=true "CSV Lint plug-in color styles for syntax highlighting")
 
-The color settings are stored in a `CSVLint.xml` file. There is no style
-select dialog, but you can edit the .xml file to select one of the four
-pre-defined styles.
+The color scheme settings are stored in a file `CSVLint.xml` which is
+automatically created at first time startup or when the file is missing,
+also see an example [CSVLint.xml file here](https://github.com/BdR76/CSVLint/blob/master/config/CSVLint.xml).
 
 	%USERPROFILE%\AppData\Roaming\Notepad++\plugins\config\CSVLint.xml
-
-The default xml file will contain 4 color schemes, with the other three
-commented-out, also see the [CSVLint.xml file here](https://github.com/BdR76/CSVLint/blob/master/config/CSVLint.xml).
-You can copy or edit one set of `WordsStyle` tags as active, and remove or
-comment-out the other three. Save the xml file and restart Notepad++ before it
-will take effect.
-
-If you make any errors in the XML you can just delete the `CSVLint.xml` file
-and the default will automatically be created the next time you start Notepad++.
 
 You can also change the colors in the "Style Configurator dialog", see menu item
 `Settings > Style configurator... > Language: CSV Lint`. The "CSV Lint" should
 be near bottom of list. If you have a CSV file open you'll immediately see the
-changes as you edit them.
+changes as you edit them. Note that selecting a default color scheme in `Setttings`
+will overwrite any changes made in the Style Configurator dialog.
 
 About
 -----
