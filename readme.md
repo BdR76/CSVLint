@@ -40,8 +40,8 @@ The CSV Lint plugin is available in the Plugins Admin in Notepad++ v8.1.9.1 or n
 If you have a Notepad++ version older than v8.1.9.1 or want to install it manually:
 
 * Go to the [releases page](https://github.com/BdR76/CSVLint/releases)
-* 32bit version; unzip [CSVLint.dll (32bit)](/CSVLint/releases/download/0.4.3/CSVLint_x86.zip/) to folder `.\Program Files (x86)\Notepad++\plugins\CSVLint\CSVLint.dll`.
-* 64bit version; unzip [CSVLint.dll (64bit)](/CSVLint/releases/download/0.4.3/CSVLint_x64.zip/) to folder `.\Program Files\Notepad++\plugins\CSVLint\CSVLint.dll`.
+* 32bit version; unzip [CSVLint.dll (32bit)](../../releases/download/0.4.3/CSVLint_x86.zip/) to folder `.\Program Files (x86)\Notepad++\plugins\CSVLint\CSVLint.dll`.
+* 64bit version; unzip [CSVLint.dll (64bit)](../../releases/download/0.4.3/CSVLint_x64.zip/) to folder `.\Program Files\Notepad++\plugins\CSVLint\CSVLint.dll`.
 
 How to use it
 -------------
