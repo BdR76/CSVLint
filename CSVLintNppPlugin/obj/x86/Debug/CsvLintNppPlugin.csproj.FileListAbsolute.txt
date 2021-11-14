@@ -1,8 +1,0 @@
-C:\Users\Bas\source\repos\MyNppPlugin1\MyNppPlugin1\bin\Debug\MyNppPlugin1.dll
-C:\Users\Bas\source\repos\MyNppPlugin1\MyNppPlugin1\bin\Debug\MyNppPlugin1.pdb
-C:\Users\Bas\source\repos\MyNppPlugin1\MyNppPlugin1\obj\x86\Debug\CsvLintNppPlugin.csprojAssemblyReference.cache
-C:\Users\Bas\source\repos\MyNppPlugin1\MyNppPlugin1\obj\x86\Debug\Kbg.NppPluginNET.frmMyDlg.resources
-C:\Users\Bas\source\repos\MyNppPlugin1\MyNppPlugin1\obj\x86\Debug\MyNppPlugin1.Properties.Resources.resources
-C:\Users\Bas\source\repos\MyNppPlugin1\MyNppPlugin1\obj\x86\Debug\CsvLintNppPlugin.csproj.GenerateResource.cache
-C:\Users\Bas\source\repos\MyNppPlugin1\MyNppPlugin1\obj\x86\Debug\MyNppPlugin1.dll
-C:\Users\Bas\source\repos\MyNppPlugin1\MyNppPlugin1\obj\x86\Debug\MyNppPlugin1.pdb
