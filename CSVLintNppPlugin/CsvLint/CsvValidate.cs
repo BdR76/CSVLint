@@ -214,11 +214,42 @@ namespace CSVLint
 
         /// <summary>
         ///     validate integer value
+        ///     Use custom function instead of using the standard `int.TryParse(val, out _);`
+        ///     which allows for max integer of 2147483647 (32bit) or 9223372036854775807 (64bit)
+        ///     
+        ///     This custom function gives the same result regardless of 32bit/64bit bytecode
+        ///     and only depends on the `IntegerDigitsMax` setting
+        ///     so that it will also correctly detect bigint/large int and even googolplex values
+        ///     (For typical datasets this function also performs faster, though only slightly; 180ns vs 160ns)
         /// </summary>
         /// <param name="val"> integer value, examples "1", "23", "-456" etc.</param>
         private bool EvaluateInteger(string val)
         {
-            bool isNumeric = int.TryParse(val, out _);
+            val = val.Trim();
+
+            bool isNumeric = true;
+            int sign = 0;
+            for (int i = 0; i < val.Length; i++)
+            {
+                char ch = val[i];
+                if ((ch < 48) || (ch > 57))
+                {
+                    // integer with plus/minus allowed but only on first position, '+' = chr(43) '-' = chr(45)
+                    if ((i == 0) && ((ch == 43) || (ch == 45)))
+                    {
+                        sign = 1;
+                    }
+                    else
+                    {
+                        isNumeric = false;
+                        break;
+                    }
+                }
+            }
+
+            // check max digits for integer value
+            if (val.Length - sign > Main.Settings.IntegerDigitsMax) isNumeric = false;
+
             return isNumeric;
         }
 

@@ -19,11 +19,17 @@ namespace Kbg.NppPluginNET
 
         //[Description("Maximum rows to analyze to automatically detect data types. Set to 0 to analyze all rows, set to 1000 for better performance with large files."), Category("Analyze"), DefaultValue(0)]
         //public int ScanRows { get; set; }
+		
+        [Description("Maximum amount of digits for integer values, if a value has more then it's considered a text value. Applies to both autodetecting datatypes and validating data. Useful to distinguish (bar)codes and actual numeric values."), Category("Analyze"), DefaultValue(12)]
+        public int IntegerDigitsMax { get; set; }
 
-        [Description("When detecting date or datetime values, years smaller than this value will be considered as invalid dates."), Category("Analyze"), DefaultValue(1900)]
+        //[Description("Decimal values must have leading zero, set to false to accept values like .5 or .01"), Category("Analyze"), DefaultValue(true)]
+        //public bool DecimalLeadingZeroIn { get; set; }
+
+        [Description("When detecting or validating date or datetime values, years smaller than this value will be considered as out-of-range."), Category("Analyze"), DefaultValue(1900)]
         public int YearMinimum { get; set; }
 
-        [Description("When detecting date or datetime values, years larger than this value will be considered as invalid dates."), Category("Analyze"), DefaultValue(2050)]
+        [Description("When detecting or validating date or datetime values, years larger than this value will be considered as out-of-range."), Category("Analyze"), DefaultValue(2050)]
         public int YearMaximum { get; set; }
 
         private int _sqlbatch;
@@ -132,12 +138,6 @@ namespace Kbg.NppPluginNET
 
         [Description("Trim values before analyzing or editing (recommended)."), Category("General"), DefaultValue(true)]
         public bool TrimValues { get; set; }
-
-        //[Description("Maximum length of an integer before it's considered a string instead"), Category("General"), DefaultValue(10)]
-        //public int IntegerDigitsMax { get; set; }
-
-        //[Description("Decimal values allow leading zero values, for example accept values like .5"), Category("General"), DefaultValue(false)]
-        //public bool DecimalLeadingZeroIn { get; set; }
 
         //[Description("Maximum errors output, limit errors logging, or 0 for no limit."), Category("Validate"), DefaultValue(0)]
         //public int MaxErrors { get; set; }
