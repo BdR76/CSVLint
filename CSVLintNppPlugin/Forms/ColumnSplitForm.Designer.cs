@@ -37,11 +37,12 @@ namespace CSVLintNppPlugin.Forms
             this.rdbtnSplitContains = new System.Windows.Forms.RadioButton();
             this.rdbtnSplitDecode = new System.Windows.Forms.RadioButton();
             this.txtSplitCharacter = new System.Windows.Forms.TextBox();
-            this.txtSplitSubstring = new System.Windows.Forms.TextBox();
             this.txtSplitContains = new System.Windows.Forms.TextBox();
             this.txtSplitDecode = new System.Windows.Forms.TextBox();
             this.txtSplitDecodeChar = new System.Windows.Forms.TextBox();
             this.chkDeleteOriginal = new System.Windows.Forms.CheckBox();
+            this.numSplitSubstring = new System.Windows.Forms.NumericUpDown();
+            ((System.ComponentModel.ISupportInitialize)(this.numSplitSubstring)).BeginInit();
             this.SuspendLayout();
             // 
             // lblTitle
@@ -153,16 +154,6 @@ namespace CSVLintNppPlugin.Forms
             this.txtSplitCharacter.Tag = "2";
             this.txtSplitCharacter.Text = "/";
             // 
-            // txtSplitSubstring
-            // 
-            this.txtSplitSubstring.Enabled = false;
-            this.txtSplitSubstring.Location = new System.Drawing.Point(191, 144);
-            this.txtSplitSubstring.Name = "txtSplitSubstring";
-            this.txtSplitSubstring.Size = new System.Drawing.Size(48, 20);
-            this.txtSplitSubstring.TabIndex = 8;
-            this.txtSplitSubstring.Tag = "3";
-            this.txtSplitSubstring.Text = "4";
-            // 
             // txtSplitContains
             // 
             this.txtSplitContains.Enabled = false;
@@ -204,15 +195,34 @@ namespace CSVLintNppPlugin.Forms
             this.chkDeleteOriginal.Text = "Remove original column";
             this.chkDeleteOriginal.UseVisualStyleBackColor = true;
             // 
+            // numSplitSubstring
+            // 
+            this.numSplitSubstring.Enabled = false;
+            this.numSplitSubstring.Location = new System.Drawing.Point(191, 144);
+            this.numSplitSubstring.Maximum = new decimal(new int[] {
+            999,
+            0,
+            0,
+            0});
+            this.numSplitSubstring.Minimum = new decimal(new int[] {
+            999,
+            0,
+            0,
+            -2147483648});
+            this.numSplitSubstring.Name = "numSplitSubstring";
+            this.numSplitSubstring.Size = new System.Drawing.Size(48, 20);
+            this.numSplitSubstring.TabIndex = 8;
+            this.numSplitSubstring.Tag = "3";
+            // 
             // ColumnSplitForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.ClientSize = new System.Drawing.Size(383, 320);
+            this.Controls.Add(this.numSplitSubstring);
             this.Controls.Add(this.chkDeleteOriginal);
             this.Controls.Add(this.txtSplitDecodeChar);
             this.Controls.Add(this.txtSplitDecode);
             this.Controls.Add(this.txtSplitContains);
-            this.Controls.Add(this.txtSplitSubstring);
             this.Controls.Add(this.txtSplitCharacter);
             this.Controls.Add(this.rdbtnSplitDecode);
             this.Controls.Add(this.rdbtnSplitContains);
@@ -235,11 +245,12 @@ namespace CSVLintNppPlugin.Forms
             this.Controls.SetChildIndex(this.rdbtnSplitContains, 0);
             this.Controls.SetChildIndex(this.rdbtnSplitDecode, 0);
             this.Controls.SetChildIndex(this.txtSplitCharacter, 0);
-            this.Controls.SetChildIndex(this.txtSplitSubstring, 0);
             this.Controls.SetChildIndex(this.txtSplitContains, 0);
             this.Controls.SetChildIndex(this.txtSplitDecode, 0);
             this.Controls.SetChildIndex(this.txtSplitDecodeChar, 0);
             this.Controls.SetChildIndex(this.chkDeleteOriginal, 0);
+            this.Controls.SetChildIndex(this.numSplitSubstring, 0);
+            ((System.ComponentModel.ISupportInitialize)(this.numSplitSubstring)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -255,7 +266,7 @@ namespace CSVLintNppPlugin.Forms
         private System.Windows.Forms.RadioButton rdbtnSplitContains;
         private System.Windows.Forms.RadioButton rdbtnSplitDecode;
         private System.Windows.Forms.TextBox txtSplitCharacter;
-        private System.Windows.Forms.TextBox txtSplitSubstring;
+        private System.Windows.Forms.NumericUpDown numSplitSubstring;
         private System.Windows.Forms.TextBox txtSplitContains;
         private System.Windows.Forms.TextBox txtSplitDecode;
         private System.Windows.Forms.TextBox txtSplitDecodeChar;

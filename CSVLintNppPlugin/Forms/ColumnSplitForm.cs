@@ -46,7 +46,7 @@ namespace CSVLintNppPlugin.Forms
             // load user preferences
             txtSplitCharacter.Text = Main.Settings.SplitChar;
 
-            txtSplitSubstring.Text = Main.Settings.SplitPos.ToString();
+            numSplitSubstring.Value = Main.Settings.SplitPos;
             txtSplitContains.Text = Main.Settings.SplitContain;
             txtSplitDecode.Text = Main.Settings.SplitDecode;
             txtSplitDecodeChar.Text = Main.Settings.SplitDecodeChar;
@@ -89,7 +89,7 @@ namespace CSVLintNppPlugin.Forms
             SplitParam1 = "";
             SplitParam2 = "";
             if (rdbtnSplitCharacter.Checked) SplitParam1 = txtSplitCharacter.Text;
-            if (rdbtnSplitSubstring.Checked) SplitParam1 = txtSplitSubstring.Text;
+            if (rdbtnSplitSubstring.Checked) SplitParam1 = numSplitSubstring.Value.ToString();
             if (rdbtnSplitContains.Checked)  SplitParam1 = txtSplitContains.Text;
             if (rdbtnSplitDecode.Checked)  { SplitParam1 = txtSplitDecode.Text; SplitParam2 = txtSplitDecodeChar.Text; }
 
@@ -112,10 +112,7 @@ namespace CSVLintNppPlugin.Forms
             Main.Settings.SplitOption = opt;
 
             Main.Settings.SplitChar = txtSplitCharacter.Text;
-
-            int.TryParse(txtSplitSubstring.Text, out int splitpos);
-            Main.Settings.SplitPos = splitpos;
-
+            Main.Settings.SplitPos = Convert.ToInt32(numSplitSubstring.Value);
             Main.Settings.SplitContain = txtSplitContains.Text;
             Main.Settings.SplitDecode = txtSplitDecode.Text;
             Main.Settings.SplitDecodeChar = txtSplitDecodeChar.Text;

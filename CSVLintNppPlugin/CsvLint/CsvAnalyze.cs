@@ -563,13 +563,18 @@ namespace CSVLint
                 // get unique value(s) from column indexes
                 for (int i = 0; i < colidx.Count(); i++)
                 {
-                    // add columnstats if needed
+                    // get index of selected column 
                     int col = colidx[i];
 
                     // if value contains separator character then put value in quotes
                     var val = (col < values.Count ? values[col] : "");
-                    if (val.IndexOf(csvdef.Separator) >= 0) val = string.Format("\"{0}\"", val);
+                    if (val.IndexOf(csvdef.Separator) >= 0)
+                    {
+                        val = val.Replace("\"", "\"\"");
+                        val = string.Format("\"{0}\"", val);
+                    }
 
+                    // concatenate selected column values as csv string, use same separator as source file
                     uniq += (i > 0 ? csvdef.Separator.ToString() : "") + val;
                 }
 
@@ -584,6 +589,9 @@ namespace CSVLint
             // output unique values and count to new file
             StringBuilder sb = new StringBuilder();
 
+            // new output unique values and count to new file
+            CsvDefinition csvnew = new CsvDefinition(csvdef.Separator);
+
             // get access to Notepad++
             INotepadPPGateway notepad = new NotepadPPGateway();
             IScintillaGateway editor = new ScintillaGateway(PluginBase.GetCurrentScintilla());
@@ -595,7 +603,11 @@ namespace CSVLint
                 var colname = (colidx[i] < csvdef.Fields.Count ? csvdef.Fields[colidx[i]].Name : "");
                 if (colname.IndexOf(csvdef.Separator) >= 0) colname = string.Format("\"{0}\"", colname);
 
+                // new header
                 sb.Append(String.Format("{0}{1}", colname, csvdef.Separator));
+
+                // new csv defintion
+                csvnew.AddColumn(i, colname, csvdef.Fields[colidx[i]].MaxWidth, csvdef.Fields[colidx[i]].DataType, csvdef.Fields[colidx[i]].Mask);
             }
             sb.Append("count_unique\r\n");
 
@@ -606,13 +618,22 @@ namespace CSVLint
             if ((sortValue == false) && (sortDesc == true )) uniquecount = uniquecount.OrderByDescending(obj => obj.Value).ToDictionary(obj => obj.Key, obj => obj.Value);
 
             // add all unique values, sort by count
+            var maxwidth = 0;
             foreach (KeyValuePair<String, int> unqcnt in uniquecount)
             {
                 sb.Append(String.Format("{0}{1}{2}\r\n", unqcnt.Key, csvdef.Separator, unqcnt.Value));
+                if (maxwidth < unqcnt.Value) maxwidth = unqcnt.Value;
             }
+            csvnew.AddColumn("count_unique", maxwidth.ToString().Length, ColumnType.Integer);
 
             // create new file
             notepad.FileNew();
+
+            // add csv def for this new list
+            //Main.CSVChangeFileTab();
+            Main.updateCSVChanges(csvnew, false);
+
+            // file content
             editor.SetText(sb.ToString());
         }
     }
