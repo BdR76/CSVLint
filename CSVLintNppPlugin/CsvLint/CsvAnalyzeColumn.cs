@@ -232,7 +232,7 @@ namespace CSVLint
                         if (fullstats) KeepMinMaxDateTime(data, ddmax1, ddmax2, 1);
                     }
                     // or datetime, examples "31-12-2019 23:59:00", "1/1/2019 12:00", "2019-12-31 23:59:59.000", "1-1-99 9:00" etc.
-                    else if ((length >= 13) && (length <= 23) && (datesep >= 2) && (datesep <= 6) && (digits >= 7) && (digits <= 17) && (ddmax1 > 0) && ((ddmax1 <= 31) || (ddmax1 >= 1900)))
+                    else if ((length >= 13) && (length <= 23) && (datesep > 2) && (datesep <= 6) && (digits >= 7) && (digits <= 17) && (ddmax1 > 0) && ((ddmax1 <= 31) || (ddmax1 >= 1900)))
                     {
                         this.CountDateTime++;
                         if (this.DateSep == '\0') this.DateSep = sep1;
@@ -253,7 +253,7 @@ namespace CSVLint
                         // keep full statistics
                         if (fullstats) KeepMinMaxDateTime(data, ddmax1, ddmax2, 2);
                     }
-                    else if ((digits > 0) && (point != 1) && (comma != 1) && (sign <= 1) && (signpos == 0) && (length <= 8) && (other == 0))
+                    else if ((digits > 0) && (point != 1) && (comma != 1) && (sign <= 1) && (signpos == 0) && (other == 0) && (length <= Main.Settings.IntegerDigitsMax))
                     {
                         // numeric integer, examples "123", "-99", "+10" etc. but not "000123"
                         if ((data.Length > 1) && (data[0] == '0'))

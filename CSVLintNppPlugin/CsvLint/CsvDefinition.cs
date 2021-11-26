@@ -860,8 +860,8 @@ namespace CSVLint
                     if (pos + w > line.Length) w = line.Length - pos;
 
                     // get column value
-                    string val = line.Substring(pos, w).Trim(); // fixed length columns, so always trim to remove extra spaces
-                    res.Add(val);
+                    string fixval = line.Substring(pos, w).Trim(); // fixed length columns, so always trim to remove extra spaces
+                    res.Add(fixval);
 
                     // start position of next column
                     pos += w;
@@ -870,8 +870,8 @@ namespace CSVLint
                     if ((i == fieldcount) && (line.Length > pos))
                     {
                         // add rest of line as one extra column
-                        val = line.Substring(pos, line.Length - pos).Trim(); // fixed length columns, so always trim to remove extra spaces
-                        res.Add(val);
+                        fixval = line.Substring(pos, line.Length - pos).Trim(); // fixed length columns, so always trim to remove extra spaces
+                        res.Add(fixval);
                     }
                 }
             }
@@ -891,9 +891,10 @@ namespace CSVLint
 
                     if (!quote)
                     {
-                        //const cellIsEmpty = line[line.length - 1].length === 0;
+                        // to catch where value is just two quotes "" right at start of line
                         bool cellIsEmpty = (value.Length == 0);
 
+                        // check if starting a quoted value or going next column or going to next line
                         if ((cur == quote_char) && cellIsEmpty) { quote = true; wasquoted = true; }
                         else if (cur == Separator) { bNextCol = true; }
                         else if ((cur == '\r') && (next == '\n')) { next = (char)strdata.Read();  bNextCol = true; isEOL = true; } // double carriage return/linefeed so also consume next character (i.e. skip it)
@@ -911,11 +912,11 @@ namespace CSVLint
                     if (bNextCol)
                     {
                         // check if column value is NULL value
-                        var val = value.ToString();
-                        if ((wasquoted == false) && (val == Main.Settings.NullValue)) val = "";
+                        var csvval = value.ToString();
+                        if ((wasquoted == false) && (csvval == Main.Settings.NullValue)) csvval = "";
 
                         // add column value
-                        res.Add(val);
+                        res.Add(csvval);
                         value.Clear();
 
                         bNextCol = false;
@@ -926,8 +927,8 @@ namespace CSVLint
                     isEOL = false;
                 }
 
-                // also ad last column value in file
-                if (value.Length > 0)
+                // also add last; if any left over value OR exception of file ends with separator so the very last value is empty
+                if ( (value.Length > 0) || (strdata.EndOfStream && (isEOL == false)) )
                 {
                     // check if column value is NULL value
                     var val = value.ToString();

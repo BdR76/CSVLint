@@ -232,10 +232,10 @@ namespace CSVLint
             for (int i = 0; i < val.Length; i++)
             {
                 char ch = val[i];
-                if ((ch < 48) || (ch > 57))
+                if ((ch < 48) || (ch > 57)) // not '0'..'9'
                 {
-                    // integer with plus/minus allowed but only on first position, '+' = chr(43) '-' = chr(45)
-                    if ((i == 0) && ((ch == 43) || (ch == 45)))
+                    // integer with plus/minus allowed but only on very first position
+                    if ((i == 0) && ((ch == 43) || (ch == 45))) // '+' = chr(43) '-' = chr(45)
                     {
                         sign = 1;
                     }
