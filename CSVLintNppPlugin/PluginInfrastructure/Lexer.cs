@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using Kbg.NppPluginNET;
 using Kbg.NppPluginNET.PluginInfrastructure;
 
@@ -435,6 +434,7 @@ namespace NppPluginNET.PluginInfrastructure
             int end_col = 0;
             int i = 0;
             bool bNextCol = false;
+            bool sepcol = SupportedProperties["separatorcolor"];
 
             // fixed width or separator
             if (separatorChar == '\0')
@@ -496,7 +496,6 @@ namespace NppPluginNET.PluginInfrastructure
             {
                 // JAVASCRIPT
                 bool quote = false;
-                bool sepcol = SupportedProperties["separatorcolor"];
                 char quote_char = Main.Settings.DefaultQuoteChar;
 
                 for (i = 0; i < length - 1; i++)
@@ -506,9 +505,10 @@ namespace NppPluginNET.PluginInfrastructure
 
                     if (!quote)
                     {
-                        //const cellIsEmpty = line[line.length - 1].length === 0;
+                        // to catch where value is just two quotes "" right at start of line
                         bool cellIsEmpty = (i - start_col == 0);
 
+                        // check if starting a quoted value or going next column or going to next line
                         if ((cur == quote_char) && cellIsEmpty) { quote = true; }
                         else if (cur == separatorChar) { bNextCol = true; end_col = i; }
                         else if ((cur == '\r') && (next == '\n')) { isEOL = true; end_col = i; i++; }
@@ -552,17 +552,24 @@ namespace NppPluginNET.PluginInfrastructure
                 }
             }
 
-            // style the last column
+            // style the last column; if any left over value OR exception of file ends with separator so the very last value is empty
             if (length - start_col > 0)
             {
                 vtable.StartStyling(p_access, (IntPtr)(start + start_col));
                 vtable.SetStyleFor(p_access, (IntPtr)(length - start_col), (char)idx);
+                // exception when csv AND separator character not colored AND file ends with separator so the very last value is empty
+                if ( (separatorChar != '\0') && (!sepcol) && (content[length-1] == separatorChar) )
+                {
+                    // style empty value between columns
+                    vtable.StartStyling(p_access, (IntPtr)(start + i));
+                    vtable.SetStyleFor(p_access, (IntPtr)1, (char)0); // 0 = white
+                }
             }
+
 
             // free allocated buffer
             Marshal.FreeHGlobal(buffer_ptr);
 
-            //Debug.WriteLine("{0} -- Lex finished!", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
         }
 
         // virtual void SCI_METHOD Fold(Sci_PositionU startPos, i64 lengthDoc, int initStyle, IDocument *pAccess) = 0;
