@@ -71,14 +71,16 @@ namespace CSVLint
             // count how many values
             this.CountAll++;
 
-            // next value to evaluate
-            data = data.Trim();
-
-            // adjust for quoted values
-            if ( (data.Length > 0) && (data[0] == Main.Settings.DefaultQuoteChar) )
+            // adjust for quoted values, trim first because can be a space before the first quote, example .., "BMI",..
+            var datatrim = data.Trim();
+            if ((datatrim.Length > 0) && (datatrim[0] == Main.Settings.DefaultQuoteChar))
             {
+                data = data.Trim();
                 data = data.Trim(Main.Settings.DefaultQuoteChar);
             }
+
+            // next value to evaluate
+            if (Main.Settings.TrimValues) data = data.Trim();
 
             // assume first line only contains column header names
             if (this.CountAll == 1)

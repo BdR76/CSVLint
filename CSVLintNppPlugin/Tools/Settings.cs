@@ -70,13 +70,13 @@ namespace Kbg.NppPluginNET
         //[Description("Decimal values remove leading zero, for example output 0.5 as .5"), Category("Edit"), DefaultValue(false)]
         //public bool DecimalLeadingZeroOut { get; set; }
 
-        [Description("Default quote escape character when quotes exists inside text"), Category("General"), DefaultValue('\"')]
+        [Description("Default quote escape character when quotes exists inside text"), Category("General"), DefaultValue('"')]
         public char DefaultQuoteChar { get; set; }
 
         [Description("Keyword for empty values or null values in the csv data, case-sensitive."), Category("General"), DefaultValue("NaN")]
         public String NullValue { get; set; }
 
-        [Description("Include separator in syntax highlighting colors. Set to false and the separator characters are always white."), Category("General"), DefaultValue(false)]
+        [Description("Include separator in syntax highlighting colors. Set to false and the separator characters are not colored."), Category("General"), DefaultValue(false)]
         public bool SeparatorColor { get; set; }
 
         [Description("Preferred characters when automatically detecting the separator character. For special characters like tab, use \\t or \\u0009."), Category("General"), DefaultValue(",;\\t|")]
@@ -136,7 +136,7 @@ namespace Kbg.NppPluginNET
         public String _charSeparators;
         private String _strSeparators;
 
-        [Description("Trim values before analyzing or editing (recommended)."), Category("General"), DefaultValue(true)]
+        [Description("Trim values before analyzing or editing, only applies to csv because for fixed width data it is always trimmed internally."), Category("General"), DefaultValue(true)]
         public bool TrimValues { get; set; }
 
         //[Description("Maximum errors output, limit errors logging, or 0 for no limit."), Category("Validate"), DefaultValue(0)]

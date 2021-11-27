@@ -108,8 +108,17 @@ namespace CSVLint
                 {
                     // next value and column number
                     String val = values[i];
-                    //val = val.Trim();
-                
+
+                    // adjust for quoted values, trim first because can be a space before the first quote, example .., "BMI",..
+                    var valtrim = val.Trim();
+                    if ((valtrim.Length > 0) && (valtrim[0] == Main.Settings.DefaultQuoteChar))
+                    {
+                        val = val.Trim();
+                        val = val.Trim(Main.Settings.DefaultQuoteChar);
+                    }
+
+                    if (Main.Settings.TrimValues) val = val.Trim();
+
                     if (val != "")
                     {
                         // within bounds of column definition and non-empty value

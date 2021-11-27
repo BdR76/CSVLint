@@ -928,7 +928,7 @@ namespace CSVLint
                 }
 
                 // also add last; if any left over value OR exception of file ends with separator so the very last value is empty
-                if ( (value.Length > 0) || (strdata.EndOfStream && (isEOL == false)) )
+                if ( (value.Length > 0) || ((isEOL == false) && strdata.EndOfStream) )
                 {
                     // check if column value is NULL value
                     var val = value.ToString();

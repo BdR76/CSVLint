@@ -284,6 +284,18 @@ namespace CSVLint
                     {
                         // format next value, quotes for varchar and datetime
                         var str = list[r];
+
+                        // adjust for quoted values, trim first because can be a space before the first quote, example .., "BMI",..
+                        var strtrim = str.Trim();
+                        if ((strtrim.Length > 0) && (strtrim[0] == Main.Settings.DefaultQuoteChar))
+                        {
+                            str = str.Trim();
+                            str = str.Trim(Main.Settings.DefaultQuoteChar);
+                        }
+
+                        // next value to evaluate
+                        if (Main.Settings.TrimValues) str = str.Trim();
+
                         if (str == "")
                         {
                             str = "NULL";
