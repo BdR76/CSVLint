@@ -264,33 +264,103 @@ namespace CSVLint
 
         /// <summary>
         ///     validate decimal value
+        ///     Use custom function instead of using the standard `float.TryParse(val, out _);`
+        ///     
+        ///     This custom function gives the same result regardless of 32bit/64bit bytecode
+        ///     and only depends on the `DecimalDigitsMax` setting
+        ///     so that it will also correctly detect values with lots of decimals
+        ///     and also detect incorrect thousand separators for example "123,45,678.00"
+        ///     (For typical datasets this function also performs faster; 320ns vs 180ns)
         /// </summary>
         /// <param name="val"> decimal value, example "1.23", "-4,56", ".5" etc.</param>
+        //private bool EvaluateDecimal(string val, CsvColumn coldef, out string err)
         private bool EvaluateDecimal(string val, CsvColumn coldef, out string err)
         {
-            // cannot be converted to decimal
-            bool isFloat = float.TryParse(val, out _);
-
             err = "";
 
-            // incorrect decimal character
-            int thopos = val.IndexOf(coldef.sTag[0]);
-            int decpos = val.IndexOf(coldef.sTag[1]);
-            if (thopos > decpos)
+            // cannot be converted to decimal
+            //bool isFloat = Double.TryParse(val, out _);
+            val = val.Trim();
+
+            bool isDecimal = true;
+            int digits = 0;
+            int sign = -1; // -1 is no sign character
+            int decsep = -1;
+            int thosep = -1;
+
+            for (int i = val.Length - 1; i >= 0; i--)
             {
-                isFloat = false;
-                err = "has incorrect decimal character";
+                char ch = val[i];
+                // digits '0' = chr(48) '9' = chr(57)
+                if ((ch >= 48) && (ch <= 57))
+                {
+                    digits++;
+                }
+                else
+                {
+                    // decimal with plus/minus allowed but only on first position, '+' = chr(43) '-' = chr(45)
+                    if ((ch == 43) || (ch == 45))
+                    {
+                        if (i > 0)
+                        {
+                            isDecimal = false;
+                            break;
+                        }
+                        sign = i;
+                    }
+                    // decimal character, cannot appear more than once
+                    else if ((decsep == -1) && (ch == coldef.sTag[1]))
+                    {
+                        // thousand seaparto before decimal
+                        if (thosep != -1)
+                        {
+                            err += "incorrect position of thousand separator";
+                            isDecimal = false;
+                            break;
+                        }
+                        // check max decimal digits
+                        if (digits > coldef.iTag)
+                        {
+                            isDecimal = false;
+                            if (err != "") err += " and ";
+                            err += "has too many decimals";
+                        }
+                        // position in string of decimal separator
+                        decsep = i;
+                        thosep = i; // decimal is also start point reference for thousand separators
+                    }
+                    // thousand separator, must be 3+1 characters apart example "12,345,678.00" but not "12,34,56.00"
+                    else if (ch == coldef.sTag[0])
+                    {
+                        // allow values with thousand separators but no decimal separator, example "12,345"
+                        if (thosep == -1) thosep = val.Length;
+
+                        // spaces
+                        if (thosep - i != (3 + 1))
+                        {
+                            err += "incorrect position of thousand separator";
+                            isDecimal = false;
+                            break;
+                        }
+                        // remember last thousand separator
+                        thosep = i;
+                    }
+                    else
+                    {
+                        isDecimal = false;
+                        break;
+                    }
+                }
             }
 
-            // too many decimals
-            if ( (decpos != -1) && (val.Length - decpos - 1 > coldef.iTag) )
+            // example ".25" or "-.5"
+            if ((decsep - sign == 1) && (Main.Settings.DecimalLeadingZero))
             {
-                isFloat = false;
-                if (err != "") err += " and ";
-                err += "has too many decimals";
+                err += "missing leading zero not allowed";
+                isDecimal = false;
             }
 
-            return isFloat;
+            return isDecimal;
         }
 
         /// <summary>

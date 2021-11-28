@@ -23,8 +23,11 @@ namespace Kbg.NppPluginNET
         [Description("Maximum amount of digits for integer values, if a value has more then it's considered a text value. Applies to both autodetecting datatypes and validating data. Useful to distinguish (bar)codes and actual numeric values."), Category("Analyze"), DefaultValue(12)]
         public int IntegerDigitsMax { get; set; }
 
-        //[Description("Decimal values must have leading zero, set to false to accept values like .5 or .01"), Category("Analyze"), DefaultValue(true)]
-        //public bool DecimalLeadingZeroIn { get; set; }
+        [Description("Maximum amount of decimals for decimal values, if a value has more then it's considered a text value. Applies to both autodetecting datatypes and validating data."), Category("Analyze"), DefaultValue(12)]
+        public int DecimalDigitsMax { get; set; }
+
+        [Description("Decimal values must have leading zero, set to false to accept values like .5 or .01"), Category("Analyze"), DefaultValue(true)]
+        public bool DecimalLeadingZero { get; set; }
 
         [Description("When detecting or validating date or datetime values, years smaller than this value will be considered as out-of-range."), Category("Analyze"), DefaultValue(1900)]
         public int YearMinimum { get; set; }

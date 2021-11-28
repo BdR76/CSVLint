@@ -269,7 +269,7 @@ namespace CSVLint
                             if (fullstats) KeepMinMaxInteger(data);
                         }
                     }
-                    else if ((digits > 0) && ((point == 1) || (comma == 1)) && (sign <= 1) && (length <= 12) && (datesep <= 2) && (other == 0)) // datesep <= 2 for example "-12.34" a dot and a minus
+                    else if ((digits > 0) && ((point == 1) || (comma == 1)) && (sign <= 1) && (other == 0) && (datesep <= 2) ) // datesep <= 2 for example "-12.34" a dot and a minus
                     {
                         // numeric integer, examples "12.3", "-99,9" etc.
                         this.CountDecimal++;
@@ -279,11 +279,17 @@ namespace CSVLint
                         // maximum decimal places, example "1234.567" = 4 digits and 3 decimals
                         int countdec = data.Length - data.LastIndexOf(dec) - 1;
                         int countdig = data.Length - countdec - 1;
-                        if (countdec > this.DecimalDecMax) this.DecimalDecMax = countdec;
-                        if (countdig > this.DecimalDigMax) this.DecimalDigMax = countdig;
 
-                        // keep full statistics
-                        if (fullstats) KeepMinMaxDecimal(data, dec);
+                        if (countdec <= Main.Settings.DecimalDigitsMax)
+                        {
+                            if (countdec > this.DecimalDecMax) this.DecimalDecMax = countdec;
+                            if (countdig > this.DecimalDigMax) this.DecimalDigMax = countdig;
+
+                            // keep full statistics
+                            if (fullstats) KeepMinMaxDecimal(data, dec);
+                        }
+                        else
+                            this.CountString++;
                     }
                     else
                     {
