@@ -182,6 +182,10 @@ namespace Kbg.NppPluginNET
                 {
                     msg += String.Format("Reformat datetime format from \"{0}\" to \"{1}\"\r\n", csvdef.DateTimeFormat, editDataTime);
                     csvdef.DateTimeFormat = editDataTime;
+                    foreach (var col in csvdef.Fields)
+                    {
+                        if (col.DataType == ColumnType.DateTime) col.UpdateDateTimeMask(editDataTime);
+                    }
                 };
 
                 if (editDecimal != "")
@@ -216,6 +220,10 @@ namespace Kbg.NppPluginNET
 
                 // refresh datadefinition
                 txtSchemaIni.Text = csvdef.GetIniLines();
+
+                txtSchemaIni.Modified = true;
+                txtSchemaIni_KeyDown(txtSchemaIni, null);
+                //btnApply.Enabled = true;
             }
         }
 

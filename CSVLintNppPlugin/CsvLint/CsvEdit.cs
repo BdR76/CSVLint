@@ -97,7 +97,7 @@ namespace CSVLint
                             // convert
                             try
                             {
-                                val = DateTime.ParseExact(val, csvdef.Fields[c].Mask, CultureInfo.InvariantCulture).ToString(reformatDatTime, CultureInfo.InvariantCulture);
+                                val = DateTime.ParseExact(val, csvdef.Fields[c].Mask, Main.dummyCulture).ToString(reformatDatTime, Main.dummyCulture);
                             }
                             catch
                             {
@@ -314,7 +314,7 @@ namespace CSVLint
                             {
                                 try
                                 {
-                                    var dt = DateTime.ParseExact(str, csvdef.Fields[r].Mask, System.Globalization.CultureInfo.InvariantCulture);
+                                    var dt = DateTime.ParseExact(str, csvdef.Fields[r].Mask, Main.dummyCulture);
                                     str = dt.ToString("yyyy-MM-dd HH:mm:ss");
                                 }
                                 catch

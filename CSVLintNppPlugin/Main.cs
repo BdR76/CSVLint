@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -20,6 +21,7 @@ namespace Kbg.NppPluginNET
     {
         internal const string PluginName = "CSV Lint";
         public static Settings Settings = new Settings();
+        public static CultureInfo dummyCulture;
 
         static string userConfigPath = null;
         static bool checkdarkmode = false;
@@ -83,10 +85,20 @@ namespace Kbg.NppPluginNET
             PluginBase.SetCommand(3, "Count unique values", CountUniqueValues);
             PluginBase.SetCommand(4, "Convert to SQL", convertToSQL);
             PluginBase.SetCommand(5, "---", null);
-            PluginBase.SetCommand(6, "&Settings", Settings.ShowDialog);
+            PluginBase.SetCommand(6, "&Settings", doSettings);
             PluginBase.SetCommand(7, "About / Help", doAboutForm);
+
+            RefreshFromSettings();
         }
 
+        internal static void RefreshFromSettings()
+        {
+            // the DateTime.TryParseExact requires a culture object, for much better performance DO NOT create on the fly for every call to EvaluateDateTime!
+            var tmp = (CultureInfo)(CultureInfo.InvariantCulture.Clone());
+            tmp.DateTimeFormat.Calendar.TwoDigitYearMax = Settings.intTwoDigitYearMax; // any cutoff you need
+                                                                // incorrect: tmp.Calendar.TwoDigitYearMax = 2039
+            dummyCulture = CultureInfo.ReadOnly(tmp);
+        }
 
         internal static bool CheckConfigDarkMode()
         {
@@ -176,16 +188,16 @@ namespace Kbg.NppPluginNET
             };
 
             // Create an XmlWriterSettings object with the correct options.
-            System.Xml.XmlWriterSettings settings = new System.Xml.XmlWriterSettings();
-            settings.Indent = true;
-            settings.IndentChars = "\t"; //  "\t";
-            settings.OmitXmlDeclaration = false;
+            System.Xml.XmlWriterSettings xmlsettings = new System.Xml.XmlWriterSettings();
+            xmlsettings.Indent = true;
+            xmlsettings.IndentChars = "\t"; //  "\t";
+            xmlsettings.OmitXmlDeclaration = false;
             //settings.Encoding = System.Text.Encoding.UTF8; // NOTE: this results in UTF-8-BOM, Notepad++ can only read UTF-8 xml
-            settings.Encoding = new UTF8Encoding(false); // The false means, do not emit the BOM.
+            xmlsettings.Encoding = new UTF8Encoding(false); // The false means, do not emit the BOM.
 
             try
             {
-                using (System.Xml.XmlWriter writer = System.Xml.XmlWriter.Create(filename, settings))
+                using (System.Xml.XmlWriter writer = System.Xml.XmlWriter.Create(filename, xmlsettings))
                 {
 
                     writer.WriteStartDocument();
@@ -460,6 +472,11 @@ namespace Kbg.NppPluginNET
         {
             // any clean up code here
         }
+        internal static void doSettings()
+        {
+            Settings.ShowDialog();
+            RefreshFromSettings();
+        }
 
         internal static void doAboutForm()
         {
@@ -576,7 +593,7 @@ namespace Kbg.NppPluginNET
             {
                 ver = ver.Substring(0, ver.Length - 2);
             }
-            return ver;
+            return ver;// + "ßeta";
         }
     }
 }

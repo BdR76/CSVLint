@@ -14,7 +14,6 @@ namespace CSVLint
         /// Csv Analyze Column, keep stats from data, determine datatype width etc.
         /// </summary>
         /// 
-        private CultureInfo dummyculture = new CultureInfo("en-US");
 
         // column statistics
         public String Name = "";
@@ -415,7 +414,7 @@ namespace CSVLint
 
             // try parse as datetime
             if (DateTime.TryParseExact(value, stat_dat_fromat,
-                                        dummyculture,
+                                        Main.dummyCulture,
                                         DateTimeStyles.None,
                                         out DateTime valdat))
             {

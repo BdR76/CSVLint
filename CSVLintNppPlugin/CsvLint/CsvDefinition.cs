@@ -91,6 +91,20 @@ namespace CSVLint
                 this.Decimals = this.Mask.Length - p - 1;
             }
         }
+        public void UpdateDateTimeMask(string newmask)
+        {
+            // update both mask and width based on mask
+            this.Mask = newmask;
+            this.MaxWidth = newmask.Length;
+
+            // For any mask part without leading zeros, add 1 to the max length
+            // For example Mask "d-m-yyyy h:nn" is length 13 but valid value "31-12-1999 23:59" is length 16
+            string[] tmp = new[] { "dd", "mm", "hh", "DD", "MM", "HH" };
+            foreach (var s in tmp)
+            {
+                if ((newmask.IndexOf(s) < 0) && (newmask.IndexOf(s[0]) >= 0)) this.MaxWidth++;
+            }
+        }
     }
 
     /// <summary>
@@ -511,7 +525,7 @@ namespace CSVLint
 
                         // valid datatype must be at end of line
                         spc = vallow.LastIndexOf(" ");
-                        pos = vallow.LastIndexOf("text");
+                        pos = vallow.IndexOf("text", spc);
                         if (pos == -1) pos = vallow.LastIndexOf("datetime");
                         if (pos == -1) pos = vallow.LastIndexOf("float");
                         if (pos == -1) pos = vallow.LastIndexOf("int");
