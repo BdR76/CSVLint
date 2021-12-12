@@ -29,6 +29,7 @@ namespace CSVLintNppPlugin.Forms
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.listColumns = new System.Windows.Forms.ListBox();
             this.lblDescription = new System.Windows.Forms.Label();
             this.panelSortWhat = new System.Windows.Forms.Panel();
@@ -39,8 +40,13 @@ namespace CSVLintNppPlugin.Forms
             this.labelSortHow = new System.Windows.Forms.Label();
             this.radioSortDesc = new System.Windows.Forms.RadioButton();
             this.radioSortAsc = new System.Windows.Forms.RadioButton();
+            this.ctxmnuColumns = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.mnuitmSelectAll = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuitmSelectNone = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuitmSelectInvert = new System.Windows.Forms.ToolStripMenuItem();
             this.panelSortWhat.SuspendLayout();
             this.panelSortHow.SuspendLayout();
+            this.ctxmnuColumns.SuspendLayout();
             this.SuspendLayout();
             // 
             // lblTitle
@@ -59,6 +65,7 @@ namespace CSVLintNppPlugin.Forms
             // 
             // listColumns
             // 
+            this.listColumns.ContextMenuStrip = this.ctxmnuColumns;
             this.listColumns.FormattingEnabled = true;
             this.listColumns.Location = new System.Drawing.Point(16, 77);
             this.listColumns.Name = "listColumns";
@@ -158,6 +165,37 @@ namespace CSVLintNppPlugin.Forms
             this.radioSortAsc.Text = "ascending";
             this.radioSortAsc.UseVisualStyleBackColor = true;
             // 
+            // ctxmnuColumns
+            // 
+            this.ctxmnuColumns.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mnuitmSelectAll,
+            this.mnuitmSelectNone,
+            this.mnuitmSelectInvert});
+            this.ctxmnuColumns.Name = "ctxmnuColumns";
+            this.ctxmnuColumns.Size = new System.Drawing.Size(181, 92);
+            // 
+            // mnuitmSelectAll
+            // 
+            this.mnuitmSelectAll.Name = "mnuitmSelectAll";
+            this.mnuitmSelectAll.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.A)));
+            this.mnuitmSelectAll.Size = new System.Drawing.Size(180, 22);
+            this.mnuitmSelectAll.Text = "Select all";
+            this.mnuitmSelectAll.Click += new System.EventHandler(this.mnuitmSelectAll_Click);
+            // 
+            // mnuitmSelectNone
+            // 
+            this.mnuitmSelectNone.Name = "mnuitmSelectNone";
+            this.mnuitmSelectNone.Size = new System.Drawing.Size(180, 22);
+            this.mnuitmSelectNone.Text = "Select none";
+            this.mnuitmSelectNone.Click += new System.EventHandler(this.mnuitmSelectNone_Click);
+            // 
+            // mnuitmSelectInvert
+            // 
+            this.mnuitmSelectInvert.Name = "mnuitmSelectInvert";
+            this.mnuitmSelectInvert.Size = new System.Drawing.Size(180, 22);
+            this.mnuitmSelectInvert.Text = "Invert selection";
+            this.mnuitmSelectInvert.Click += new System.EventHandler(this.mnuitmSelectInvert_Click);
+            // 
             // UniqueValuesForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -180,6 +218,7 @@ namespace CSVLintNppPlugin.Forms
             this.panelSortWhat.PerformLayout();
             this.panelSortHow.ResumeLayout(false);
             this.panelSortHow.PerformLayout();
+            this.ctxmnuColumns.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -197,5 +236,9 @@ namespace CSVLintNppPlugin.Forms
         private System.Windows.Forms.Label labelSortHow;
         private System.Windows.Forms.RadioButton radioSortDesc;
         private System.Windows.Forms.RadioButton radioSortAsc;
+        private System.Windows.Forms.ContextMenuStrip ctxmnuColumns;
+        private System.Windows.Forms.ToolStripMenuItem mnuitmSelectAll;
+        private System.Windows.Forms.ToolStripMenuItem mnuitmSelectNone;
+        private System.Windows.Forms.ToolStripMenuItem mnuitmSelectInvert;
     }
 }

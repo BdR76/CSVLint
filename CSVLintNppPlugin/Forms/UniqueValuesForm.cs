@@ -89,5 +89,23 @@ namespace CSVLintNppPlugin.Forms
             // save to file
             Main.Settings.SaveToIniFile();
         }
+
+        private void mnuitmSelectAll_Click(object sender, EventArgs e)
+        {
+            for (int i = 0; i < listColumns.Items.Count; i++)
+                listColumns.SetSelected(i, true);
+        }
+
+        private void mnuitmSelectNone_Click(object sender, EventArgs e)
+        {
+            for (int i = 0; i < listColumns.Items.Count; i++)
+                listColumns.SetSelected(i, false);
+        }
+
+        private void mnuitmSelectInvert_Click(object sender, EventArgs e)
+        {
+            for (int i = 0; i < listColumns.Items.Count; i++)
+                listColumns.SetSelected(i, !listColumns.GetSelected(i));
+        }
     }
 }
