@@ -543,7 +543,7 @@ namespace CSVLint
         /// Data statistical analysis report
         /// <param name="data"></param>
         /// <returns></returns>
-        public static void CountUniqueValues(CsvDefinition csvdef, List<int> colidx, bool sortValue, bool sortDesc)
+        public static void CountUniqueValues(CsvDefinition csvdef, List<int> colidx, bool sortBy, bool sortValue, bool sortDesc)
         {
             // examine data and keep list of counters per unique values
             Dictionary<String, int> uniquecount = new Dictionary<String, int>();
@@ -611,11 +611,15 @@ namespace CSVLint
             }
             sb.Append("count_unique\r\n");
 
-            // apply sorting, note that obj.Key actually contains the column value(s) and obj.Value contains the unique counter
-            if ((sortValue == true ) && (sortDesc == false)) uniquecount = uniquecount.OrderBy          (obj => obj.Key  ).ToDictionary(obj => obj.Key, obj => obj.Value);
-            if ((sortValue == true ) && (sortDesc == true )) uniquecount = uniquecount.OrderByDescending(obj => obj.Key  ).ToDictionary(obj => obj.Key, obj => obj.Value);
-            if ((sortValue == false) && (sortDesc == false)) uniquecount = uniquecount.OrderBy          (obj => obj.Value).ToDictionary(obj => obj.Key, obj => obj.Value);
-            if ((sortValue == false) && (sortDesc == true )) uniquecount = uniquecount.OrderByDescending(obj => obj.Value).ToDictionary(obj => obj.Key, obj => obj.Value);
+            // if sorting
+            if (sortBy)
+            {
+                // apply sorting, note that obj.Key actually contains the column value(s) and obj.Value contains the unique counter
+                if ((sortValue == true ) && (sortDesc == false)) uniquecount = uniquecount.OrderBy          (obj => obj.Key  ).ToDictionary(obj => obj.Key, obj => obj.Value);
+                if ((sortValue == true ) && (sortDesc == true )) uniquecount = uniquecount.OrderByDescending(obj => obj.Key  ).ToDictionary(obj => obj.Key, obj => obj.Value);
+                if ((sortValue == false) && (sortDesc == false)) uniquecount = uniquecount.OrderBy          (obj => obj.Value).ToDictionary(obj => obj.Key, obj => obj.Value);
+                if ((sortValue == false) && (sortDesc == true )) uniquecount = uniquecount.OrderByDescending(obj => obj.Value).ToDictionary(obj => obj.Key, obj => obj.Value);
+            }
 
             // add all unique values, sort by count
             var maxwidth = 0;

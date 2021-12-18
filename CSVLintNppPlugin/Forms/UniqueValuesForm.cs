@@ -18,6 +18,7 @@ namespace CSVLintNppPlugin.Forms
         }
 
         public List<int> columnIndexes { get; set; }
+        public bool sortBy { get; set; }
         public bool sortValue { get; set; }
         public bool sortDesc { get; set; }
 
@@ -31,6 +32,7 @@ namespace CSVLintNppPlugin.Forms
             }
 
             // set default values
+            chkSortBy.Checked = true;
             radioSortValue.Checked = true;
             radioSortAsc.Checked = true;
 
@@ -38,6 +40,7 @@ namespace CSVLintNppPlugin.Forms
             listColumns_SelectedIndexChanged(listColumns, null);
 
             // load user preferences
+            chkSortBy.Checked      = (Main.Settings.UniqueSortBy);
             radioSortValue.Checked = (Main.Settings.UniqueSortValue);
             radioSortCount.Checked = (!Main.Settings.UniqueSortValue);
 
@@ -57,10 +60,17 @@ namespace CSVLintNppPlugin.Forms
             // can not press OK when nothing selected
             btnOk.Enabled = (listColumns.SelectedIndices.Count > 0);
         }
+        private void chkSortBy_CheckedChanged(object sender, EventArgs e)
+        {
+            // which checkbox, see index in Tag property
+            bool chk = (sender as CheckBox).Checked;
+            ToggleControlBasedOnControl((sender as CheckBox), chk);
+        }
 
         private void UniqueValuesForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             // pass new values to previous form
+            sortBy = (chkSortBy.Checked);
             sortValue = (radioSortValue.Checked);
             sortDesc = (radioSortDesc.Checked);
 
@@ -75,6 +85,7 @@ namespace CSVLintNppPlugin.Forms
         private void btnOk_Click(object sender, EventArgs e)
         {
             // save user preferences
+            Main.Settings.UniqueSortBy = chkSortBy.Checked;
             Main.Settings.UniqueSortValue = radioSortValue.Checked;
             Main.Settings.UniqueSortAsc = radioSortAsc.Checked;
 

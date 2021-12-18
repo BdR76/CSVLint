@@ -521,6 +521,7 @@ namespace Kbg.NppPluginNET
 
                 // user clicked OK or Cancel
                 List<int> colidx = new List<int>(frmunq.columnIndexes);
+                bool sortBy = frmunq.sortBy;
                 bool sortValue = frmunq.sortValue;
                 bool sortDesc = frmunq.sortDesc;
 
@@ -531,7 +532,7 @@ namespace Kbg.NppPluginNET
                 if (r == DialogResult.OK)
                 {
                     // count unique values
-                    CsvAnalyze.CountUniqueValues(csvdef, colidx, sortValue, sortDesc);
+                    CsvAnalyze.CountUniqueValues(csvdef, colidx, sortBy, sortValue, sortDesc);
                 }
             }
         }

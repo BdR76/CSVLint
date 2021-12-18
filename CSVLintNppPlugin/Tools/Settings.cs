@@ -190,6 +190,9 @@ namespace Kbg.NppPluginNET
         [Description("Count unique values, list of selected columns."), Category("UserPref"), DefaultValue("")]
         public string UniqueColumns { get; set; }
 
+        [Description("Count unique values, sort result."), Category("UserPref"), DefaultValue(true)]
+        public bool UniqueSortBy { get; set; }
+
         [Description("Count unique values, sort by value or count."), Category("UserPref"), DefaultValue(false)]
         public bool UniqueSortValue { get; set; }
 
