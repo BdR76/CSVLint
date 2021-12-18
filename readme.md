@@ -31,6 +31,7 @@ How to install
 
 The CSV Lint plugin is available in the Plugins Admin in Notepad++ v8.1.9.1 or newer.
 
+* Install [Notepad++](https://notepad-plus-plus.org/) v8.1.9.1 or newer
 * In Notepad++ go to menu item `Plugins > Plugins Admin...`
 * On tab `Available` search for `csv lint`
 * Check the checkbox and press `Intall` button
@@ -40,6 +41,7 @@ The CSV Lint plugin is available in the Plugins Admin in Notepad++ v8.1.9.1 or n
 If you have a Notepad++ version older than v8.1.9.1 or want to install it manually:
 
 * Go to the [releases page](https://github.com/BdR76/CSVLint/releases)
+* Find the latest release
 * 32bit version; unzip [CSVLint.dll (32bit)](../../releases/download/0.4.3/CSVLint_x86.zip/) to folder `.\Program Files (x86)\Notepad++\plugins\CSVLint\CSVLint.dll`.
 * 64bit version; unzip [CSVLint.dll (64bit)](../../releases/download/0.4.3/CSVLint_x64.zip/) to folder `.\Program Files\Notepad++\plugins\CSVLint\CSVLint.dll`.
 
@@ -89,9 +91,10 @@ decimals digits for example `NumberDigits=2` for values like "1.23" or "-45.67" 
 
 Validating 
 ----------
-When you press "Validate data", the input data will be checked for technical errors,
-the line numbers of any errors will be logged in the textbox on the right.
-It will check the input data for the following errors:
+When you press "Validate data", the input data will be checked for technical
+errors, based on the metadata in the textbox on the left. The line numbers of
+any errors will be logged in the textbox on the right. It will check the input
+data for the following errors:
 
 * Values that are too long, example value "abcde" when column is "Width 4"
 * Non-numeric values in numeric columns, example value "n/a" when column datatype is Integer
@@ -146,7 +149,7 @@ With thanks to:
 * kbilsted for providing the excellent
 [NotepadPlusPlusPluginPack.Net](https://github.com/kbilsted/NotepadPlusPlusPluginPack.Net)
 * jokedst, [CsvQuery](https://github.com/jokedst/CsvQuery) was the inspiration for converting [datasetmultitool](https://github.com/BdR76/datasetmultitool) as a Notepad++ plug-in
-* Anyone who shared their [plug-in on GitHub](https://github.com/search?l=C%23&q=notepad%2B%2B&type=Repositories)
+* Anyone who shared their [plug-in on GitHub](https://github.com/search?l=C%23&q=notepad%2B%2B+plugin&type=Repositories)
 
 The CSV Lint plug-in couldn't have been created without their source examples and suggestions.
 

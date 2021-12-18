@@ -133,11 +133,12 @@ Trim spaces from all values, for example trim the value " Yes " to "Yes".
 ### Align vertically ###
 
 Align vertically, will add white space to vertically align all columns.
+The amount of white space is based on the column widths.
 
 This can be useful for viewing the data, but it's not recommended to store
 the data with this extra white space. The file size will become unnecessary
-large and it will potentially be harder for other applications to process the
-data correctly.
+large and it will be more difficult or even impossible for other
+applications to process the data correctly.
 
 Validate data
 -------------
@@ -167,8 +168,8 @@ Split values into new columns.
 ### Split valid and invalid values ###
 
 Split valid and invalid values is useful when an integer column also
-contains string values like `error` or `N/A`. This option will create a new
-column with just the valid values and a new column containing invalid values.
+contains string values like `error` or `N/A`. This option will create two new
+columns, one with just the valid values and one containing the invalid values.
 
 As an example, if there is a column VISITDAT and in the metadata it is defined
 as a date value formated as `dd-mm-yyyy`, see some example results below:
@@ -183,19 +184,17 @@ as a date value formated as `dd-mm-yyyy`, see some example results below:
 
 ### Split on character ###
 
-Split on a character will take a substring on values in the column.
-give a number of character as parameter,  use negative for right.
-
+Split on a character, split the value on the first occurence of character or string.
 For example split on `/` will split the orginal value `121/84` into `121` and
 `84`, see examples below:
 
 | bpvalue | bpvalue (2) | bpvalue (3) |
 |---------|-------------|-------------|
 | 113/79  | 113         | 79          |
-| 129/67  | 129         | 67          |
 | 169/102 | 169         | 102         |
 | 125     | 125         |             |
 | /85     |             | 85          |
+| 31/12/99| 31          | 12/99       |
 
 ### Split on position ###
 
@@ -241,11 +240,13 @@ and one column for the values without.
 ### Decode multiple values ###
 
 Decode multiple values is useful when a single variable contains a set of
-multiple values separated by a character, these are typically checkbox values
-that allow multiple answers.
+multiple codes separated by a character. These are typically checkbox values
+that allow multiple answers. For a checkbox question with 5 options, the
+answers are usually stored in a single value as `1;2;3` or `2;4` depending
+on which options were selected and how the answers are coded.
 
-For example `Hb;K;Nat;Lac` and character `;` will create 5 new columns,
-the 4 possible values plus one for any remaining values.
+For example use the codes `Hb;K;Nat;Lac` and character `;` to create 5 new columns,
+the 4 possible coded values plus one for any remaining values.
 
 | labchk          | labchk (2) | labchk (3) | labchk (4) | labchk (5) | labchk (6) |
 |-----------------|------------|------------|------------|------------|------------|
@@ -255,9 +256,9 @@ the 4 possible values plus one for any remaining values.
 | LDL;K;Hb;HDL    | Hb         | K          |            |            | LDL;HDL    |
 | IgM;Glu         |            |            |            |            | IgM;Glu    |
 
-Note that the order of the values within the original column does not matter,
-the new columns are always created in the order as specified by the decode-string.
-Also, the last new column `labchk (6)` contains any left-over unspecified values
+Note that the order of the values within the original column does not matter.
+The new columns are always created in the order as specified by the codes-string,
+and the last new column `labchk (6)` contains any left-over unspecified codes
 
 ### Remove original column ###
 
@@ -369,7 +370,7 @@ and they are stored in a settings file `%USERPROFILE%\AppData\Roaming\Notepad++\
 | SeparatorColor   | Include separator in syntax highlighting colors. Set to false and the separator characters are always white.    | false   |
 | Separators       | Preferred characters when automatically detecting the separator character. For special characters like tab, use \\t or \\u0009. | ,;\t| |
 | TrimValues       | Trim values before analyzing or editing (recommended).                                                          | true    |
-| UserPref section | Various settings for CSV Lint form defaults                                                                     |         |
+| UserPref section | Various input settings for the CSV Lint dialogs for Reformat, Split Column etc.                                 |         |
 
 Syntax highlighting colors
 --------------------------

@@ -53,7 +53,7 @@ namespace CSVLint
 
         // date format is unknown when no data read yet
         public int stat_dat_dmy = 0; // 0=unknown, 1=YMD, 2=DMY, 3=MDY, when beginning assume day-month order in dateformat is unknown until a value confirms either YMD or DMY or MDY
-        public string stat_dat_fromat = ""; // most likely format
+        public string stat_dat_format = ""; // most likely format
         public DateTime stat_mindat_mdy;
         public DateTime stat_maxdat_mdy;
         public string stat_mindat_mdy_org = "";
@@ -351,7 +351,7 @@ namespace CSVLint
             // try to determine datetime format
             if (stat_dat_dmy == 0)
             {
-                bool newformat = (stat_dat_fromat == "");
+                bool newformat = (stat_dat_format == "");
 
                 // date or datetime
                 if ((datatype == 1) || (datatype == 3))
@@ -360,7 +360,7 @@ namespace CSVLint
                     if (ddmax1 > 1000)
                     {
                         stat_dat_dmy = 1;
-                        stat_dat_fromat = string.Format("yyyy{0}M{0}d", this.DateSep == '\0' ? "" : this.DateSep.ToString());
+                        stat_dat_format = string.Format("yyyy{0}M{0}d", this.DateSep == '\0' ? "" : this.DateSep.ToString());
                         newformat = true;
                     }
 
@@ -368,7 +368,7 @@ namespace CSVLint
                     if ((ddmax1 > 12) && (ddmax1 <= 31))
                     {
                         stat_dat_dmy = 2;
-                        stat_dat_fromat = string.Format("d{0}M{0}yyyy", this.DateSep == '\0' ? "" : this.DateSep.ToString());
+                        stat_dat_format = string.Format("d{0}M{0}yyyy", this.DateSep == '\0' ? "" : this.DateSep.ToString());
                         newformat = true;
                     }
 
@@ -376,20 +376,20 @@ namespace CSVLint
                     if ((ddmax2 > 12) && (ddmax2 <= 31))
                     {
                         stat_dat_dmy = 3;
-                        stat_dat_fromat = string.Format("M{0}d{0}yyyy", this.DateSep == '\0' ? "" : this.DateSep.ToString());
+                        stat_dat_format = string.Format("M{0}d{0}yyyy", this.DateSep == '\0' ? "" : this.DateSep.ToString());
                         newformat = true;
                     }
 
                     // if not yet clear
-                    if (stat_dat_fromat == "")
+                    if (stat_dat_format == "")
                     {
                         if (ddmax1 > 31)
                         {
-                            stat_dat_fromat = string.Format("yyyy{0}M{0}d", this.DateSep == '\0' ? "" : this.DateSep.ToString());
+                            stat_dat_format = string.Format("yyyy{0}M{0}d", this.DateSep == '\0' ? "" : this.DateSep.ToString());
                         }
                         else
                         {
-                            stat_dat_fromat = string.Format("d{0}M{0}yyyy", this.DateSep == '\0' ? "" : this.DateSep.ToString());
+                            stat_dat_format = string.Format("d{0}M{0}yyyy", this.DateSep == '\0' ? "" : this.DateSep.ToString());
                         }
                     }
                 }
@@ -401,19 +401,19 @@ namespace CSVLint
                     if (newformat)
                     {
                         // space between
-                        if (stat_dat_fromat != "") stat_dat_fromat += " ";
+                        if (stat_dat_format != "") stat_dat_format += " ";
 
                         // count how many ':'
                         int count = 0;
                         foreach (var c in value) if (c == ':') count++;
-                        if (count == 1) stat_dat_fromat += "H:mm";
-                        if (count == 2) stat_dat_fromat += "H:mm:ss";
+                        if (count == 1) stat_dat_format += "H:mm";
+                        if (count == 2) stat_dat_format += "H:mm:ss";
                     }
                 }
             }
 
             // try parse as datetime
-            if (DateTime.TryParseExact(value, stat_dat_fromat,
+            if (DateTime.TryParseExact(value, stat_dat_format,
                                         Main.dummyCulture,
                                         DateTimeStyles.None,
                                         out DateTime valdat))
