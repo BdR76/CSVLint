@@ -44,13 +44,17 @@ press the save icon (blue disk) to apply it before continuing.
 
 ### Refresh from Data ###
 
-Press the "Refresh from Data" button the from the currently open data file.
-When a file is opened this auto-detection is also run once by default.
+Press the "Refresh from Data" button to auto-detect column types from the
+currently active file. The auto-detection function will try to infer the
+column separator character and column data types by looking at the data.
+When a file is opened and no schema.ini is found then
+this auto-detection feature will also run once by default.
+
 When a file is opened the plug-in will:
 
 1) check for a `schema.ini` file in same folder as data file
 2) check if the `schema.ini` contains a section for the filename
-2) if no `schema.ini` or section found, then run "Refresh from data"
+2) if no `schema.ini` or section found, then try to auto-detect metadata
 
 Note; if "Refresh from data" cannot automatically detected any columns, then
 the metadata definition will default to a "TextFile" with one column of
@@ -63,9 +67,9 @@ to apply the changes. This will also save the metadata to a `schema.ini` file
 in the same folder as the data file. The next time you open the datafile with
 the plug-in, it will automatically load the metadata from this file.
 
-The metadata will be save under a section with the filename, it can contain
-multiple metadata. A `schema.ini` file can contain the meta data for more
-than one data file, using separate sections for each file.
+The file and column metadata will be saved under a section with the filename.
+A `schema.ini` file can contain the meta data for more
+than one data file, using a separate section for each file.
 
 ### Split / Reformat / Validate ###
 
@@ -361,12 +365,14 @@ and they are stored in a settings file `%USERPROFILE%\AppData\Roaming\Notepad++\
 
 | setting          | description                                                                                                     | Default |
 |------------------|-----------------------------------------------------------------------------------------------------------------|---------|
+| DecimalDigitsMax | Maximum amount of decimals for decimal values, if a value has more then it's considered a text value. Applies to both autodetecting datatypes and validating data | 20 |
+|DecimalLeadingZero| Decimal values must have leading zero, set to false to accept values like .5 or .01                             | true    |
+| IntegerDigitsMax | Maximum amount of digits for integer values, if a value has more then it's considered a text value. Applies to both autodetecting datatypes and validating data. Useful to distinguish (bar)codes and actual numeric values  | 12 |
 | UniqueValuesMax  | Maximum unique values when reporting or detecting coded values, if column contains more than it's not reported. |   15    | 
-| ScanRows         | Maximum rows to analyze to automatically detect data types. Set to 0 to analyze all rows, set to 1000 for better performance with large files. | 0 |
 | YearMinimum      | When detecting date or datetime values, years smaller than this value will be considered as invalid dates.      | 1900    |
 | YearMaximum      | When detecting date or datetime values, years larger than this value will be considered as invalid dates.       | 2050    |
-| SQLBatchRows     | Maximum records per SQL insert batch, minimum batch size is 10.                                                 | 1000    |
 | SQLansi          | Convert to ANSI standard SQL script, set to true for mySQL or false for MS-SQL.                                 | true    |
+| SQLBatchRows     | Maximum records per SQL insert batch, minimum batch size is 10.                                                 | 1000    |
 | TwoDigitYearMax  | Maximum year for two digit year date values. For example, when set to 2024 the year values 24 and 25 will be interpreted as 2024 and 1925. Set as SysYear for current year. | SysYear |
 | DefaultQuoteChar | Default quote escape character when quotes exists inside text                                                   | "       |
 | NullValue        | Keyword for empty values or null values in the csv data, case-sensitive.                                        | NaN     |
