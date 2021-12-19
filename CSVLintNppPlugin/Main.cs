@@ -298,7 +298,7 @@ namespace Kbg.NppPluginNET
 
         public static void CSVChangeFileTab()
         {
-            // Notepad++ switc to a different file tab
+            // Notepad++ switch to a different file tab
             INotepadPPGateway notepad = new NotepadPPGateway();
 
             CsvDefinition csvdef;
@@ -336,6 +336,7 @@ namespace Kbg.NppPluginNET
             // if fixed width
             if ((csvdef.Separator == '\0') && (csvdef.FieldWidths != null))
             {
+                // also pass column widths to lexer
                 var strwidths = "";
                 for (var i = 0; i < csvdef.FieldWidths.Count; i++)
                 {
@@ -594,7 +595,7 @@ namespace Kbg.NppPluginNET
             {
                 ver = ver.Substring(0, ver.Length - 2);
             }
-            return ver;// + "ßeta";
+            return ver;
         }
     }
 }

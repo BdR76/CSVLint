@@ -56,12 +56,12 @@ namespace CSVLintNppPlugin.Forms
             // 
             // btnOk
             // 
-            this.btnOk.Location = new System.Drawing.Point(61, 343);
+            this.btnOk.Location = new System.Drawing.Point(61, 337);
             this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(180, 343);
+            this.btnCancel.Location = new System.Drawing.Point(180, 337);
             // 
             // listColumns
             // 
@@ -121,7 +121,7 @@ namespace CSVLintNppPlugin.Forms
             this.panelSortWhat.Controls.Add(this.radioSortValue);
             this.panelSortWhat.Location = new System.Drawing.Point(16, 282);
             this.panelSortWhat.Name = "panelSortWhat";
-            this.panelSortWhat.Size = new System.Drawing.Size(158, 52);
+            this.panelSortWhat.Size = new System.Drawing.Size(158, 48);
             this.panelSortWhat.TabIndex = 4;
             this.panelSortWhat.Tag = "";
             // 
@@ -168,7 +168,7 @@ namespace CSVLintNppPlugin.Forms
             this.panelSortHow.Controls.Add(this.radioSortAsc);
             this.panelSortHow.Location = new System.Drawing.Point(144, 282);
             this.panelSortHow.Name = "panelSortHow";
-            this.panelSortHow.Size = new System.Drawing.Size(132, 52);
+            this.panelSortHow.Size = new System.Drawing.Size(132, 48);
             this.panelSortHow.TabIndex = 8;
             this.panelSortHow.Tag = "";
             // 
@@ -209,7 +209,7 @@ namespace CSVLintNppPlugin.Forms
             // UniqueValuesForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.ClientSize = new System.Drawing.Size(292, 385);
+            this.ClientSize = new System.Drawing.Size(292, 379);
             this.Controls.Add(this.panelSortHow);
             this.Controls.Add(this.panelSortWhat);
             this.Controls.Add(this.lblDescription);

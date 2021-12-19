@@ -167,5 +167,6 @@ History
 17-oct-2021 - v0.4.1 various bugfixes  
 29-oct-2021 - v0.4.2 startup error "CSVLint.xml is missing" fixed, toggle toolbar icon, clean up settings  
 12-nov-2021 - v0.4.3 dark mode icons and colors, save form settings, documentation, bugfixes  
+19-dec-2021 - v0.4.4 Various bugfixes  
 
 BdR©2021 Free to use - send questions or comments: Bas de Reuver - bdr1976@gmail.com

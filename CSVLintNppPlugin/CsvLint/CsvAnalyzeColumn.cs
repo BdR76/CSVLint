@@ -254,7 +254,7 @@ namespace CSVLint
                         // keep full statistics
                         if (fullstats) KeepMinMaxDateTime(data, ddmax1, ddmax2, 2);
                     }
-                    else if ((digits > 0) && (point != 1) && (comma != 1) && (sign <= 1) && (signpos == 0) && (other == 0) && (length <= Main.Settings.IntegerDigitsMax))
+                    else if ((digits > 0) && (point == 0) && (comma == 0) && (sign <= 1) && (signpos == 0) && (other == 0) && (length <= Main.Settings.IntegerDigitsMax))
                     {
                         // numeric integer, examples "123", "-99", "+10" etc. but not "000123"
                         if ((data.Length > 1) && (data[0] == '0'))

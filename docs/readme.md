@@ -315,6 +315,9 @@ value of 3. Because it's sorted by `count_unique` you can check the beginning
 and end of the list to see if there are any participants with fewer or more
 than 3 measurements.
 
+When you disable sorting, the resulting list of values will be in the order as
+each values was first found in the dataset.
+
 Convert to SQL
 --------------
 Convert the currently selected CSV file to an SQL script that creates a database

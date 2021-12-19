@@ -23,31 +23,33 @@ namespace CSVLintNppPlugin.CsvLint
             // not a new file that hasn't been saved yet
             if ( (path != "") && (File.Exists(inifile)) )
             {
-                var reader = new StreamReader(inifile);
-                string line;
-                bool bSec = false;
-                while ((line = reader.ReadLine()) != null)
+                using (StreamReader reader = new StreamReader(inifile))
                 {
-                    if (line != "")
+                    string line;
+                    bool bSec = false;
+                    while ((line = reader.ReadLine()) != null)
                     {
-                        // check section
-                        if (line[0] == '[')
+                        if (line != "")
                         {
-                            // check current section and inilines index
-                            bSec = (line.ToLower() == section);
-                        }
-                        else if (bSec)
-                        {
-                            var spl = line.Split('=');
-                            var key = line;
-                            var val = "";
-                            if (spl.Length > 1)
+                            // check section
+                            if (line[0] == '[')
                             {
-                                key = spl[0];
-                                val = spl[1];
+                                // check current section and inilines index
+                                bSec = (line.ToLower() == section);
                             }
+                            else if (bSec)
+                            {
+                                var spl = line.Split('=');
+                                var key = line;
+                                var val = "";
+                                if (spl.Length > 1)
+                                {
+                                    key = spl[0];
+                                    val = spl[1];
+                                }
 
-                            inilines.Add(key, val);
+                                inilines.Add(key, val);
+                            }
                         }
                     }
                 }

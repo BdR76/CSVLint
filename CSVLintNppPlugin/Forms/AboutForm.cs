@@ -22,10 +22,6 @@ namespace Kbg.NppPluginNET
 
             DisplayEasterEgg();
         }
-        private void AboutForm_Load(object sender, EventArgs e)
-        {
-
-        }
 
         private int IsEaster(DateTime dt)
         {
