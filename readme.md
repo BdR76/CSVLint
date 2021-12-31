@@ -57,6 +57,10 @@ How to use it
 If there are no errors in the data, you can click "Reformat data" for data reformatting options,
 or select "Convert to SQL" menu item to generate an SQL insert script.
 
+Also see this quick tour video, which shows how the plug-in works.
+
+https://www.youtube.com/watch?v=_Me-ICCBu60
+
 Schema.ini
 ----------
 The metadata uses the standard schema.ini format, see documentation
