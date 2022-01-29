@@ -36,6 +36,21 @@ namespace CSVLint
         {
             // TODO: nullable parameters
 
+            // align vertically widths
+            List<int> alignwidths = new List<int>();
+
+            if (align) {
+                // add header column names
+                for (int c = 0; c < csvdef.Fields.Count; c++)
+                {
+                    // get maximum of column name length and column width
+                    var algwid = csvdef.Fields[c].Name.Length;
+                    if (algwid < csvdef.Fields[c].MaxWidth) algwid = csvdef.Fields[c].MaxWidth;
+
+                    alignwidths.Add(algwid);
+                }
+            }
+
             // handle to editor
             ScintillaGateway scintillaGateway = PluginBase.CurrentScintillaGateway;
 
@@ -110,9 +125,12 @@ namespace CSVLint
                             val = val.Replace(csvdef.DecimalSymbol, reformatDecimal[0]);
                         };
 
-                        // fixed width, text align left - numeric align right
-                        wid = csvdef.Fields[c].MaxWidth;
+                        // align vertically OR fixed width, text align left - numeric align right
+                        wid = (align ? alignwidths[c]  : csvdef.Fields[c].MaxWidth);
                         alignleft = !((csvdef.Fields[c].DataType == ColumnType.Integer) || (csvdef.Fields[c].DataType == ColumnType.Decimal));
+
+                        // exception for header -> always left align
+                        if ((linenr == 1) && csvdef.ColNameHeader) alignleft = true;
                     }
 
                     // construct new output data line
@@ -122,7 +140,7 @@ namespace CSVLint
                         if (alignleft)
                             datanew.Append(val.PadRight(wid, ' '));
                         else
-                            datanew.Append(val.PadLeft(wid, ' ')); 
+                            datanew.Append(val.PadLeft(wid, ' '));
                     }
                     else
                     {
