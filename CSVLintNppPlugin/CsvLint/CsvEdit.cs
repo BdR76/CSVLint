@@ -29,17 +29,43 @@ namespace CSVLint
         }
 
         /// <summary>
+        ///     apply quotes to value
+        /// </summary>
+        public static string ApplyQuotesToString(String strinput, int ApplyCode, char Separator, ColumnType DataType)
+        {
+            // default = none / minimal
+            bool apl = (strinput.IndexOf(Separator) >= 0);
+
+            if ((ApplyCode > 0) && (apl == false))
+            {
+                apl = (   (ApplyCode == 1 && strinput.IndexOf(" ") >= 0)    // space
+                       || (ApplyCode == 2 && DataType == ColumnType.String) // string
+                       || (ApplyCode == 3 && DataType != ColumnType.Integer && DataType != ColumnType.Decimal) // non-numeric
+                       || (ApplyCode == 4) // all
+                       );
+            }
+
+            // apply quotes
+            if (apl) strinput = String.Format("\"{0}\"", strinput);
+
+            return strinput;
+        }
+
+        /// <summary>
         ///     reformat file for date, decimal and separator
         /// </summary>
         /// <param name="data"> csv data </param>
-        public static void ReformatDataFile(CsvDefinition csvdef, string reformatDatTime, string reformatDecimal, string reformatSeparator, bool updateSeparator, bool trimAll, bool align)
+        public static void ReformatDataFile(CsvDefinition csvdef, string reformatDatTime, string reformatDecimal, string reformatSeparator, bool updateSeparator, int ApplyQuotes, bool trimAll, bool align)
         {
             // TODO: nullable parameters
 
             // align vertically widths
             List<int> alignwidths = new List<int>();
 
-            if (align) {
+            ColumnType tmpColumnType = ColumnType.String;
+
+            if (align)
+            {
                 // add header column names
                 for (int c = 0; c < csvdef.Fields.Count; c++)
                 {
@@ -125,9 +151,13 @@ namespace CSVLint
                             val = val.Replace(csvdef.DecimalSymbol, reformatDecimal[0]);
                         };
 
+
+                        // remember datatype for quotes
+                        tmpColumnType = csvdef.Fields[c].DataType;
+
                         // align vertically OR fixed width, text align left - numeric align right
-                        wid = (align ? alignwidths[c]  : csvdef.Fields[c].MaxWidth);
-                        alignleft = !((csvdef.Fields[c].DataType == ColumnType.Integer) || (csvdef.Fields[c].DataType == ColumnType.Decimal));
+                        wid = (align ? alignwidths[c] : csvdef.Fields[c].MaxWidth);
+                        alignleft = !((tmpColumnType == ColumnType.Integer) || (tmpColumnType == ColumnType.Decimal));
 
                         // exception for header -> always left align
                         if ((linenr == 1) && csvdef.ColNameHeader) alignleft = true;
@@ -145,7 +175,8 @@ namespace CSVLint
                     else
                     {
                         // if value contains separator character then put value in quotes
-                        if (val.IndexOf(newSep) >= 0) val = string.Format("\"{0}\"", val);
+                        val = ApplyQuotesToString(val, ApplyQuotes, newSep, tmpColumnType);
+                        //if (val.IndexOf(newSep) >= 0) val = string.Format("\"{0}\"", val);
 
                         // separator
                         if (c > 0) datanew.Append(newSep.ToString());
@@ -425,7 +456,7 @@ namespace CSVLint
                         var newname = csvdef.GetUniqueColumnName(csvdef.Fields[c].Name, out int postfix);
 
                         // when decoding csv values (SplitCode == 5) add more new columns, when normal split then just 2
-                        var addmax = (SplitCode == 5 ? decode1.Count+1 : 2); // +1 = one extra column of any left-over values
+                        var addmax = (SplitCode == 5 ? decode1.Count + 1 : 2); // +1 = one extra column of any left-over values
                         for (var cnew = 0; cnew < addmax; cnew++)
                         {
                             datanew.Append(String.Format("{0}{1} ({2})", sep, newname, postfix + cnew));

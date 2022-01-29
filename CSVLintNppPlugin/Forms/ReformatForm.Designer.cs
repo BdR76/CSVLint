@@ -37,6 +37,8 @@
             this.lblReformat = new System.Windows.Forms.Label();
             this.chkTrimAll = new System.Windows.Forms.CheckBox();
             this.chkAlignVert = new System.Windows.Forms.CheckBox();
+            this.chkApplyQuotes = new System.Windows.Forms.CheckBox();
+            this.cmbQuotes = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // lblTitle
@@ -46,13 +48,13 @@
             // 
             // btnOk
             // 
-            this.btnOk.Location = new System.Drawing.Point(128, 230);
+            this.btnOk.Location = new System.Drawing.Point(128, 270);
             this.btnOk.TabIndex = 8;
             this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(247, 230);
+            this.btnCancel.Location = new System.Drawing.Point(247, 270);
             this.btnCancel.TabIndex = 9;
             // 
             // chkDateTime
@@ -143,7 +145,7 @@
             // lblReformat
             // 
             this.lblReformat.AutoSize = true;
-            this.lblReformat.Location = new System.Drawing.Point(13, 201);
+            this.lblReformat.Location = new System.Drawing.Point(13, 233);
             this.lblReformat.Name = "lblReformat";
             this.lblReformat.Size = new System.Drawing.Size(278, 13);
             this.lblReformat.TabIndex = 8;
@@ -152,11 +154,11 @@
             // chkTrimAll
             // 
             this.chkTrimAll.AutoSize = true;
-            this.chkTrimAll.Location = new System.Drawing.Point(13, 137);
+            this.chkTrimAll.Location = new System.Drawing.Point(13, 169);
             this.chkTrimAll.Name = "chkTrimAll";
             this.chkTrimAll.Size = new System.Drawing.Size(93, 17);
             this.chkTrimAll.TabIndex = 6;
-            this.chkTrimAll.Tag = "4";
+            this.chkTrimAll.Tag = "5";
             this.chkTrimAll.Text = "Trim all values";
             this.chkTrimAll.UseVisualStyleBackColor = true;
             this.chkTrimAll.CheckedChanged += new System.EventHandler(this.OnChkbx_CheckedChanged);
@@ -164,23 +166,59 @@
             // chkAlignVert
             // 
             this.chkAlignVert.AutoSize = true;
-            this.chkAlignVert.Location = new System.Drawing.Point(12, 169);
+            this.chkAlignVert.Location = new System.Drawing.Point(13, 201);
             this.chkAlignVert.Name = "chkAlignVert";
             this.chkAlignVert.Size = new System.Drawing.Size(187, 17);
             this.chkAlignVert.TabIndex = 7;
-            this.chkAlignVert.Tag = "5";
+            this.chkAlignVert.Tag = "6";
             this.chkAlignVert.Text = "Align vertically (not recommended)";
             this.chkAlignVert.UseVisualStyleBackColor = true;
             this.chkAlignVert.CheckedChanged += new System.EventHandler(this.OnChkbx_CheckedChanged);
+            // 
+            // chkApplyQuotes
+            // 
+            this.chkApplyQuotes.AutoSize = true;
+            this.chkApplyQuotes.Location = new System.Drawing.Point(13, 137);
+            this.chkApplyQuotes.Name = "chkApplyQuotes";
+            this.chkApplyQuotes.Size = new System.Drawing.Size(103, 17);
+            this.chkApplyQuotes.TabIndex = 6;
+            this.chkApplyQuotes.Tag = "4";
+            this.chkApplyQuotes.Text = "Re-apply quotes";
+            this.chkApplyQuotes.UseVisualStyleBackColor = true;
+            this.chkApplyQuotes.CheckedChanged += new System.EventHandler(this.OnChkbx_CheckedChanged);
+            // 
+            // cmbQuotes
+            // 
+            this.cmbQuotes.AutoCompleteCustomSource.AddRange(new string[] {
+            "None / Minimal",
+            "Space",
+            "All string values",
+            "All non-numeric values",
+            "All values"});
+            this.cmbQuotes.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbQuotes.FormattingEnabled = true;
+            this.cmbQuotes.Items.AddRange(new object[] {
+            "None / Minimal",
+            "Values with spaces",
+            "All string values",
+            "All non-numeric values",
+            "All values"});
+            this.cmbQuotes.Location = new System.Drawing.Point(160, 137);
+            this.cmbQuotes.Name = "cmbQuotes";
+            this.cmbQuotes.Size = new System.Drawing.Size(180, 21);
+            this.cmbQuotes.TabIndex = 5;
+            this.cmbQuotes.Tag = "4";
             // 
             // ReformatForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(359, 272);
+            this.ClientSize = new System.Drawing.Size(359, 312);
             this.Controls.Add(this.lblReformat);
             this.Controls.Add(this.chkAlignVert);
+            this.Controls.Add(this.chkApplyQuotes);
             this.Controls.Add(this.chkTrimAll);
+            this.Controls.Add(this.cmbQuotes);
             this.Controls.Add(this.cmbSeparator);
             this.Controls.Add(this.chkSeparator);
             this.Controls.Add(this.cmbDecimal);
@@ -196,7 +234,9 @@
             this.Controls.SetChildIndex(this.cmbDecimal, 0);
             this.Controls.SetChildIndex(this.chkSeparator, 0);
             this.Controls.SetChildIndex(this.cmbSeparator, 0);
+            this.Controls.SetChildIndex(this.cmbQuotes, 0);
             this.Controls.SetChildIndex(this.chkTrimAll, 0);
+            this.Controls.SetChildIndex(this.chkApplyQuotes, 0);
             this.Controls.SetChildIndex(this.chkAlignVert, 0);
             this.Controls.SetChildIndex(this.lblReformat, 0);
             this.Controls.SetChildIndex(this.lblTitle, 0);
@@ -217,5 +257,7 @@
         private System.Windows.Forms.CheckBox chkTrimAll;
         private System.Windows.Forms.CheckBox chkAlignVert;
         private System.Windows.Forms.Label lblReformat;
+        private System.Windows.Forms.CheckBox chkApplyQuotes;
+        private System.Windows.Forms.ComboBox cmbQuotes;
     }
 }

@@ -100,7 +100,7 @@ namespace Kbg.NppPluginNET
 
                 // set actual character values
                 // replace escaped special characters, example "\t" "\x1b" etc.
-                Regex ItemRegex = new Regex(@"(\\u[0-9a-fA-F]{4}|\\[trnae]|.)", RegexOptions.Compiled);
+                Regex ItemRegex = new Regex(@"(\\u[0-9a-fA-F]{4}|\\x[0-9a-fA-F]{2}|\\[trnae]|.)", RegexOptions.Compiled);
                 foreach (Match ItemMatch in ItemRegex.Matches(this._strSeparators))
                 {
                     char c = '\0';
@@ -111,12 +111,12 @@ namespace Kbg.NppPluginNET
                         // check for default characters
                         if (ltr == "t") c = '\t'; // tab
                         if (ltr == "r") c = '\r'; // carriage return
-                        if (ltr == "n") c = '\n'; // life feed
+                        if (ltr == "n") c = '\n'; // line feed
                         if (ltr == "a") c = '\a'; // bell
                         if (ltr == "e") c = '\u0027'; // escape
 
-                        // check for x09 etc.
-                        if (ltr == "u")
+                        // check for u0009 or x09 etc.
+                        if ((ltr == "u") || (ltr == "x") )
                         {
                             String hexnr = ItemMatch.ToString().Substring(2, ItemMatch.Length - 2);
                             int number = Convert.ToInt32(hexnr, 16);
@@ -185,6 +185,9 @@ namespace Kbg.NppPluginNET
 
         [Description("Reformat dataset, column separator."), Category("UserPref"), DefaultValue(";")]
         public string ReformatColSep { get; set; }
+
+        [Description("Reformat dataset, apply quotes option."), Category("UserPref"), DefaultValue(0)]
+        public int ReformatQuotes { get; set; }
 
         // COUNT UNIQUE user preferences
         [Description("Count unique values, list of selected columns."), Category("UserPref"), DefaultValue("")]
