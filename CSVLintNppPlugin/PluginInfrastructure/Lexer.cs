@@ -269,6 +269,9 @@ namespace NppPluginNET.PluginInfrastructure
         static ILexer4 ilexer4 = new ILexer4 { };
         static IntPtr vtable_pointer = IntPtr.Zero;
 
+        private static Colour sCaretLineBack = new Colour(
+            Main.CheckConfigDarkMode() ? 0xFFFFFF: 0); // 0);// 
+
         public static IntPtr ILexerImplementation()
         {
             if (vtable_pointer == IntPtr.Zero)
@@ -409,6 +412,16 @@ namespace NppPluginNET.PluginInfrastructure
 
             int length = (int)length_doc;
             int start = (int)start_pos;
+
+            // create transparent cursor line
+            if (start == 0 && PluginBase.MainScintillaActive
+                && !Main.sShouldResetCaretBack)
+            {
+                var editor = new ScintillaGateway(PluginBase.GetCurrentScintilla());
+                editor.SetCaretLineBackAlpha((Alpha)16+8);
+                editor.SetCaretLineBack(sCaretLineBack);
+                Main.sShouldResetCaretBack = true;
+            }
 
             // allocate a buffer
             IntPtr buffer_ptr = Marshal.AllocHGlobal(length);

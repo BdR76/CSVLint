@@ -37,33 +37,54 @@ namespace Kbg.NppPluginNET
         static IScintillaGateway editor = new ScintillaGateway(PluginBase.GetCurrentScintilla());
         static Icon tbIcon = null;
 
+        static readonly Alpha sAlpha = editor.GetCaretLineBackAlpha();
+        static readonly Colour sCaretLineColor = editor.GetCaretLineBack();
+        internal static bool sShouldResetCaretBack = false;
+
+
         // list of files and csv definition for each
         static Dictionary<string, CsvDefinition> FileCsvDef = new Dictionary<string, CsvDefinition>();
         static CsvDefinition _CurrnetCsvDef;
 
         public static void OnNotification(ScNotification notification)
         {
+            uint code = notification.Header.Code;
             // This method is invoked whenever something is happening in notepad++
             // use eg. as
-            // if (notification.Header.Code == (uint)NppMsg.NPPN_xxx)
+            // if (code == (uint)NppMsg.NPPN_xxx)
             // { ... }
             // or
             //
-            // if (notification.Header.Code == (uint)SciMsg.SCNxxx)
+            // if (code == (uint)SciMsg.SCNxxx)
             // { ... }
 
             // changing tabs
-            if ((notification.Header.Code == (uint)NppMsg.NPPN_BUFFERACTIVATED) ||
-                (notification.Header.Code == (uint)NppMsg.NPPN_LANGCHANGED))
+            if ((code == (uint)NppMsg.NPPN_BUFFERACTIVATED) ||
+                (code == (uint)NppMsg.NPPN_LANGCHANGED))
             {
                 Main.CSVChangeFileTab();
             }
 
             // when closing a file
-            if (notification.Header.Code == (uint)NppMsg.NPPN_FILEBEFORECLOSE)
+            if (code == (uint)NppMsg.NPPN_FILEBEFORECLOSE)
             {
                 Main.RemoveCSVdef();
             }
+
+            if (code > int.MaxValue) // windows messages
+            {
+                int wm = -(int)code;
+                // leaving previous tab
+                if (wm == 0x22A && sShouldResetCaretBack) // =554 WM_MDI_SETACTIVE
+                {
+                    // set caret line to default on file change
+                    sShouldResetCaretBack = false;
+                    var editor = new ScintillaGateway(PluginBase.GetCurrentScintilla());
+                    editor.SetCaretLineBackAlpha(sAlpha);// Alpha.NOALPHA); // default
+                    editor.SetCaretLineBack(sCaretLineColor);
+                }
+            }
+
         }
 
         internal static void CommandMenuInit()
