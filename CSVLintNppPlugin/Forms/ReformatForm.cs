@@ -33,15 +33,15 @@ namespace CSVLintNppPlugin.Forms
             cmbDecimal.Text   = Main.Settings.ReformatDecSep;
             cmbSeparator.Text = Main.Settings.ReformatColSep;
 
-            cmbQuotes.SelectedIndex = (Main.Settings.ReformatQuotes >= 0 && Main.Settings.ReformatQuotes < cmbQuotes.Items.Count ? Main.Settings.ReformatQuotes : 0);
+            cmbQuotes.SelectedIndex = Main.Settings.ReformatQuotes >= 0 && Main.Settings.ReformatQuotes < cmbQuotes.Items.Count ? Main.Settings.ReformatQuotes : 0;
 
             // load user preferences
-            chkDateTime.Checked    = (Main.Settings.ReformatOptions.IndexOf("1;") >= 0);
-            chkDecimal.Checked     = (Main.Settings.ReformatOptions.IndexOf("2;") >= 0);
-            chkSeparator.Checked   = (Main.Settings.ReformatOptions.IndexOf("3;") >= 0);
-            chkApplyQuotes.Checked = (Main.Settings.ReformatOptions.IndexOf("4;") >= 0);
-            chkTrimAll.Checked     = (Main.Settings.ReformatOptions.IndexOf("5;") >= 0);
-            chkAlignVert.Checked   = (Main.Settings.ReformatOptions.IndexOf("6;") >= 0);
+            chkDateTime.Checked    = Main.Settings.ReformatOptions.IndexOf("1;") >= 0;
+            chkDecimal.Checked     = Main.Settings.ReformatOptions.IndexOf("2;") >= 0;
+            chkSeparator.Checked   = Main.Settings.ReformatOptions.IndexOf("3;") >= 0;
+            chkApplyQuotes.Checked = Main.Settings.ReformatOptions.IndexOf("4;") >= 0;
+            chkTrimAll.Checked     = Main.Settings.ReformatOptions.IndexOf("5;") >= 0;
+            chkAlignVert.Checked   = Main.Settings.ReformatOptions.IndexOf("6;") >= 0;
 
             // enable/disable all
             OnChkbx_CheckedChanged(chkDateTime, null);
@@ -56,22 +56,22 @@ namespace CSVLintNppPlugin.Forms
         {
             // which checkbox, see index in Tag property
             bool chk = (sender as CheckBox).Checked;
-            ToggleControlBasedOnControl((sender as CheckBox), chk);
+            ToggleControlBasedOnControl(sender as CheckBox, chk);
 
             // can not press OK when nothing selected
-            btnOk.Enabled = (chkDateTime.Checked | chkDecimal.Checked | chkSeparator.Checked | chkApplyQuotes.Checked | chkTrimAll.Checked | chkAlignVert.Checked);
+            btnOk.Enabled = chkDateTime.Checked | chkDecimal.Checked | chkSeparator.Checked | chkApplyQuotes.Checked | chkTrimAll.Checked | chkAlignVert.Checked;
         }
 
         private void ReformatForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             // pass new values to previous form
-            NewDataTime  = (chkDateTime.Checked  ? cmbDateTime.Text : "");
-            NewDecimal   = (chkDecimal.Checked   ? cmbDecimal.Text : "");
-            NewSeparator = (chkSeparator.Checked ? cmbSeparator.Text : "");
-            UpdateSeparator = (chkSeparator.Checked);
-            ApplyQuotes     = (chkApplyQuotes.Checked ? cmbQuotes.SelectedIndex : 0);
-            TrimAllValues   = (chkTrimAll.Checked);
-            alignVertically = (chkAlignVert.Checked);
+            NewDataTime  = chkDateTime.Checked  ? cmbDateTime.Text : "";
+            NewDecimal   = chkDecimal.Checked   ? cmbDecimal.Text : "";
+            NewSeparator = chkSeparator.Checked ? cmbSeparator.Text : "";
+            UpdateSeparator = chkSeparator.Checked;
+            ApplyQuotes     = chkApplyQuotes.Checked ? cmbQuotes.SelectedIndex : 0;
+            TrimAllValues   = chkTrimAll.Checked;
+            alignVertically = chkAlignVert.Checked;
 
             // exception
             if (NewSeparator == "{Tab}") NewSeparator = "\t";
@@ -87,13 +87,13 @@ namespace CSVLintNppPlugin.Forms
             Main.Settings.ReformatQuotes     = cmbQuotes.SelectedIndex;
 
             // load user preferences
-            var opt = "";
-            opt += (chkDateTime.Checked     ? "1;" : "") +
-                    (chkDecimal.Checked     ? "2;" : "") +
-                    (chkSeparator.Checked   ? "3;" : "") +
-                    (chkApplyQuotes.Checked ? "4;" : "") +
-                    (chkTrimAll.Checked     ? "5;" : "") +
-                    (chkAlignVert.Checked   ? "6;" : "");
+            string opt =
+                (chkDateTime.Checked    ? "1;" : "") +
+                (chkDecimal.Checked     ? "2;" : "") +
+                (chkSeparator.Checked   ? "3;" : "") +
+                (chkApplyQuotes.Checked ? "4;" : "") +
+                (chkTrimAll.Checked     ? "5;" : "") +
+                (chkAlignVert.Checked   ? "6;" : "");
             Main.Settings.ReformatOptions = opt;
 
             // save to file

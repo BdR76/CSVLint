@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using CSVLint;
-using CSVLintNppPlugin.CsvLint;
 using CSVLintNppPlugin.Forms;
 using CsvQuery.PluginInfrastructure;
 using Kbg.NppPluginNET.PluginInfrastructure;
@@ -37,7 +32,7 @@ namespace Kbg.NppPluginNET
             // analyze and determine csv definition
             CsvDefinition csvdef = CsvAnalyze.InferFromData();
 
-            Main.updateCSVChanges(csvdef, false);
+            Main.UpdateCSVChanges(csvdef, false);
 
             var dtElapsed = (DateTime.Now - dtStart).ToString(@"hh\:mm\:ss\.fff");
 
@@ -45,7 +40,7 @@ namespace Kbg.NppPluginNET
             txtSchemaIni.Text = csvdef.GetIniLines();
 
             txtOutput.Clear();
-            txtOutput.Text = String.Format("Refresh from data is ready, time elapsed {0}", dtElapsed);
+            txtOutput.Text = string.Format("Refresh from data is ready, time elapsed {0}", dtElapsed);
         }
 
         private void OnBtnValidate_Click(object sender, EventArgs e)
@@ -82,8 +77,8 @@ namespace Kbg.NppPluginNET
 
             // variables
             int linenumber = 0;
-            TextBox log = (sender as TextBox);
-            String errval = "";
+            TextBox log = sender as TextBox;
+            string errval = "";
 
             // determine current line number in textbox
             int lineNumber = log.GetLineFromCharIndex(log.SelectionStart);
@@ -100,7 +95,7 @@ namespace Kbg.NppPluginNET
                     position += 13; // "** error line " is 14 characters
                     string logline = log.Text.Substring(position, lineEnd - position);
 
-                    Int32.TryParse(logline, out linenumber);
+                    int.TryParse(logline, out linenumber);
 
                     // find error value
                     position = log.Text.IndexOf(" value \"", lineEnd);
@@ -134,6 +129,7 @@ namespace Kbg.NppPluginNET
                 }
             }
         }
+
         private bool GetReformatParameters(out string dt, out string dec, out string sep, out bool updsep, out int updquote, out bool trimall, out bool alignVert)
         {
             // show reformat form
@@ -154,7 +150,7 @@ namespace Kbg.NppPluginNET
             frmedit.Dispose();
 
             // return true (OK) or false (Cancel)
-            return (r == DialogResult.OK);
+            return r == DialogResult.OK;
         }
 
         private void OnBtnReformat_Click(object sender, EventArgs e)
@@ -176,12 +172,12 @@ namespace Kbg.NppPluginNET
 
                 var dtElapsed = (DateTime.Now - dtStart).ToString(@"hh\:mm\:ss\.fff");
 
-                String msg = "";
+                string msg = "";
 
                 // refresh datadefinition
                 if (editDataTime != "")
                 {
-                    msg += String.Format("Reformat datetime format from \"{0}\" to \"{1}\"\r\n", csvdef.DateTimeFormat, editDataTime);
+                    msg += string.Format("Reformat datetime format from \"{0}\" to \"{1}\"\r\n", csvdef.DateTimeFormat, editDataTime);
                     csvdef.DateTimeFormat = editDataTime;
                     foreach (var col in csvdef.Fields)
                     {
@@ -191,14 +187,14 @@ namespace Kbg.NppPluginNET
 
                 if (editDecimal != "")
                 {
-                    msg += String.Format("Reformat decimal separator from {0} to {1}\r\n", csvdef.DecimalSymbol, editDecimal);
+                    msg += string.Format("Reformat decimal separator from {0} to {1}\r\n", csvdef.DecimalSymbol, editDecimal);
                     csvdef.DecimalSymbol = editDecimal[0];
                 };
 
                 if (updateSeparator)
                 {
-                    string oldsep = (csvdef.Separator == '\0' ? "{Fixed width}" : (csvdef.Separator == '\t' ? "{Tab}" : csvdef.Separator.ToString()));
-                    string newsep = (editSeparator == "\0" ? "{Fixed width}" : (editSeparator == "\t" ? "{Tab}" : editSeparator));
+                    string oldsep = csvdef.Separator == '\0' ? "{Fixed width}" : (csvdef.Separator == '\t' ? "{Tab}" : csvdef.Separator.ToString());
+                    string newsep = editSeparator == "\0" ? "{Fixed width}" : (editSeparator == "\t" ? "{Tab}" : editSeparator);
 
                     // fixed width doesn't contain header line (for example, columns can be width=1, no room in header line for column name longer than 1 character)
                     if (editSeparator == "\0")
@@ -206,7 +202,7 @@ namespace Kbg.NppPluginNET
                         csvdef.ColNameHeader = false;
                     }
 
-                    msg += String.Format("Reformat column separator from {0} to {1}\r\n", oldsep, newsep);
+                    msg += string.Format("Reformat column separator from {0} to {1}\r\n", oldsep, newsep);
                     csvdef.Separator = editSeparator[0];
                 };
 
@@ -216,7 +212,7 @@ namespace Kbg.NppPluginNET
                 }
 
                 // display process message
-                msg += String.Format("Reformat data is ready, time elapsed {0}\r\n", dtElapsed);
+                msg += string.Format("Reformat data is ready, time elapsed {0}\r\n", dtElapsed);
                 txtOutput.Text = msg;
 
                 // refresh datadefinition
@@ -241,7 +237,7 @@ namespace Kbg.NppPluginNET
             CsvDefinition csvdef = new CsvDefinition(txtSchemaIni.Text);
 
             // update the master list of csv definitions
-            Main.updateCSVChanges(csvdef, true);
+            Main.UpdateCSVChanges(csvdef, true);
 
             // update screen, to smooth out any user input errors
             SetCsvDefinition(csvdef);
@@ -260,8 +256,8 @@ namespace Kbg.NppPluginNET
             // user clicked OK or Cancel
             int cod = frmsplit.SplitCode;
             int idx = frmsplit.SplitColumn;
-            String par1 = frmsplit.SplitParam1;
-            String par2 = frmsplit.SplitParam2;
+            string par1 = frmsplit.SplitParam1;
+            string par2 = frmsplit.SplitParam2;
             bool rem = frmsplit.SplitRemove;
 
             // clear up
@@ -282,16 +278,16 @@ namespace Kbg.NppPluginNET
                 var dtElapsed = (DateTime.Now - dtStart).ToString(@"hh\:mm\:ss\.fff");
 
                 // ready message
-                String msg = "";
+                string msg = "";
                 if (cod == 1) msg = "invalid values";
                 if (cod == 2) msg = "character " + par1;
                 if (cod == 3) msg = "position " + par1;
                 if (cod == 4) msg = "when contains " + par1;
                 if (cod == 5) msg = "decode multiple value " + par1;
-                msg = String.Format("Column \"{0}\" was split on \"{1}\"\r\n", csvdef.Fields[idx].Name, msg);
+                msg = string.Format("Column \"{0}\" was split on \"{1}\"\r\n", csvdef.Fields[idx].Name, msg);
 
                 // display process message
-                msg += String.Format("Split column is ready, time elapsed {0}\r\n", dtElapsed);
+                msg += string.Format("Split column is ready, time elapsed {0}\r\n", dtElapsed);
                 txtOutput.Text = msg;
 
                 // refresh datadefinition

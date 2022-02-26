@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using CSVLint.Tools;
 using CsvQuery.PluginInfrastructure;
 using Kbg.NppPluginNET.PluginInfrastructure;
@@ -95,7 +94,7 @@ namespace CSVLint
                     if (chr == ' ')
                     {
                         // more than 2 spaces could indicate new column
-                        if (++spaces > 1) bigSpaces.Increase((c + 1));
+                        if (++spaces > 1) bigSpaces.Increase(c + 1);
 
                         // one single space after a digit might be a new column
                         if (num == 1)
@@ -111,9 +110,9 @@ namespace CSVLint
                         spaces = 0;
 
                         // switch between alpha and numeric characters could indicate new column
-                        int checknum = ("0123456789".IndexOf(chr));
+                        int checknum = "0123456789".IndexOf(chr);
                         // ignore characters that can be both numeric or alpha values example "A.B." or "Smith-Johnson"
-                        int ignore = (".-+".IndexOf(chr));
+                        int ignore = ".-+".IndexOf(chr);
                         if (ignore < 0)
                         {
                             if (checknum < 0)
@@ -195,14 +194,14 @@ namespace CSVLint
                 result.TextQualifier = '\0';
 
             // head column name
-            result.ColNameHeader = (result.Separator != '\0');
+            result.ColNameHeader = result.Separator != '\0';
 
             // Exception, probably not tabular data file
             if ( (result.Separator == '\0') && ( (lineLengths.Count > 1) || (lineCount <= 1) ) )
             {
                 // check for typical XML characters
-                var xml1 = (occurrences.ContainsKey('>') ? occurrences['>'] : 0);
-                var xml2 = (occurrences.ContainsKey('<') ? occurrences['<'] : 0);
+                var xml1 = occurrences.ContainsKey('>') ? occurrences['>'] : 0;
+                var xml2 = occurrences.ContainsKey('<') ? occurrences['<'] : 0;
 
                 // check for binary characters, chr(31) or lower and not TAB
                 var bin = occurrences.Where(x => (int)x.Key < 32 && (int)x.Key != 9).Sum(x => x.Value);
@@ -270,7 +269,7 @@ namespace CSVLint
             // -----------------------------------------------------------------------------
 
             // reset string reader to first line is not possible, create a new one
-            bool fixedwidth = (result.Separator == '\0');
+            bool fixedwidth = result.Separator == '\0';
 
             var strdata = ScintillaStreams.StreamAllText();
 
@@ -287,16 +286,16 @@ namespace CSVLint
                 List<string> values = result.ParseNextLine(strdata);
 
                 // inspect all values
-                for (int i = 0; i < values.Count(); i++)
+                for (int i = 0; i < values.Count; i++)
                 {
                     // add columnstats if needed
-                    if (i > colstats.Count() - 1)
+                    if (i > colstats.Count - 1)
                     {
                         colstats.Add(new CsvAnalyzeColumn(i));
                     }
 
                     int fixedLength = -1;
-                    if (fixedwidth) fixedLength = (i < result.FieldWidths.Count ? result.FieldWidths[i] : values[i].Length);
+                    if (fixedwidth) fixedLength = i < result.FieldWidths.Count ? result.FieldWidths[i] : values[i].Length;
 
                     // next value to evaluate
                     colstats[i].InputData(values[i], fixedLength, false);
@@ -329,12 +328,12 @@ namespace CSVLint
             }
 
             // if all header Names (=frst row) comply with the column datatype, then there is no column names
-            result.ColNameHeader = (count > 0);
+            result.ColNameHeader = count > 0;
 
             // if no header column names rename all columns to "FIELD1", "FIELD2", "FIELD3" etc.
             if (!result.ColNameHeader)
             {
-                foreach (CSVLint.CsvColumn col in result.Fields) col.Name = string.Format("FIELD{0}", (col.Index + 1));
+                foreach (CsvColumn col in result.Fields) col.Name = string.Format("FIELD{0}", col.Index + 1);
             }
 
             // result
@@ -408,7 +407,7 @@ namespace CSVLint
 
             //List<CsvColumStats> colstats = new List<CsvColumStats>();
             int lineCount = 0;
-            bool fixedwidth = (csvdef.Separator == '\0');
+            bool fixedwidth = csvdef.Separator == '\0';
 
             var strdata = ScintillaStreams.StreamAllText();
 
@@ -422,10 +421,10 @@ namespace CSVLint
                 values = csvdef.ParseNextLine(strdata);
 
                 // inspect all values
-                for (int i = 0; i < values.Count(); i++)
+                for (int i = 0; i < values.Count; i++)
                 {
                     // add columnstats if needed
-                    if (i > colstats.Count() - 1)
+                    if (i > colstats.Count - 1)
                     {
                         colstats.Add(new CsvAnalyzeColumn(i));
                     }
@@ -450,14 +449,14 @@ namespace CSVLint
             IScintillaGateway editor = new ScintillaGateway(PluginBase.GetCurrentScintilla());
 
             string FILE_NAME = Path.GetFileName(notepad.GetCurrentFilePath());
-            string strhead = (csvdef.ColNameHeader ? " (+1 header line)" : "");
+            string strhead = csvdef.ColNameHeader ? " (+1 header line)" : "";
 
             sb.Append("Analyze dataset\r\n");
             sb.Append(string.Format("CSV Lint: v{0}\r\n", Main.GetVersion()));
             sb.Append(string.Format("File: {0}\r\n", FILE_NAME));
             sb.Append(string.Format("Date: {0}\r\n\r\n", DateTime.Now.ToString("dd-MMM-yyyy HH:mm")));
-            sb.Append(String.Format("Data records: {0}{1}\r\n", lineCount, strhead));
-            sb.Append(String.Format("Max.unique values: {0}\r\n", Main.Settings.UniqueValuesMax));
+            sb.Append(string.Format("Data records: {0}{1}\r\n", lineCount, strhead));
+            sb.Append(string.Format("Max.unique values: {0}\r\n", Main.Settings.UniqueValuesMax));
             sb.Append("\r\n");
 
 			// goal output, depending on data found:
@@ -480,29 +479,29 @@ namespace CSVLint
                 // next column
                 idx++;
                 sb.Append("----------------------------------------\r\n");
-                sb.Append(String.Format("{0}: {1}\r\n", idx, stats.Name));
+                sb.Append(string.Format("{0}: {1}\r\n", idx, stats.Name));
 
                 // count date types that were found
                 sb.Append("DataTypes      : ");
-                if (stats.CountDecimal  > 0) sb.Append(String.Format( "decimal ({0} = {1}%), ", stats.CountDecimal,  ReportPercentage(stats.CountDecimal,  lineCount)));
-                if (stats.CountInteger  > 0) sb.Append(String.Format( "integer ({0} = {1}%), ", stats.CountInteger,  ReportPercentage(stats.CountInteger,  lineCount)));
-                if (stats.CountString   > 0) sb.Append(String.Format(  "string ({0} = {1}%), ", stats.CountString,   ReportPercentage(stats.CountString,   lineCount)));
-                if (stats.CountDateTime > 0) sb.Append(String.Format("datetime ({0} = {1}%), ", stats.CountDateTime, ReportPercentage(stats.CountDateTime, lineCount)));
-                if (stats.CountEmpty    > 0) sb.Append(String.Format(   "empty ({0} = {1}%), ", stats.CountEmpty,    ReportPercentage(stats.CountEmpty,    lineCount)));
+                if (stats.CountDecimal  > 0) sb.Append(string.Format( "decimal ({0} = {1}%), ", stats.CountDecimal,  ReportPercentage(stats.CountDecimal,  lineCount)));
+                if (stats.CountInteger  > 0) sb.Append(string.Format( "integer ({0} = {1}%), ", stats.CountInteger,  ReportPercentage(stats.CountInteger,  lineCount)));
+                if (stats.CountString   > 0) sb.Append(string.Format(  "string ({0} = {1}%), ", stats.CountString,   ReportPercentage(stats.CountString,   lineCount)));
+                if (stats.CountDateTime > 0) sb.Append(string.Format("datetime ({0} = {1}%), ", stats.CountDateTime, ReportPercentage(stats.CountDateTime, lineCount)));
+                if (stats.CountEmpty    > 0) sb.Append(string.Format(   "empty ({0} = {1}%), ", stats.CountEmpty,    ReportPercentage(stats.CountEmpty,    lineCount)));
                 sb.Length -= 2; // remove last ", "
                 sb.Append("\r\n");
 
                 // width range
                 if (stats.MaxWidth > 0)
                 {
-                    var strwid = (stats.MinWidth == stats.MaxWidth ? stats.MaxWidth.ToString() : String.Format("{0} ~ {1}", stats.MinWidth, stats.MaxWidth));
-                    sb.Append(String.Format("Width range    : {0} characters\r\n", strwid));
+                    var strwid = stats.MinWidth == stats.MaxWidth ? stats.MaxWidth.ToString() : string.Format("{0} ~ {1}", stats.MinWidth, stats.MaxWidth);
+                    sb.Append(string.Format("Width range    : {0} characters\r\n", strwid));
                 }
 
                 // minimum maximum values
-                if (stats.CountInteger  > 0) sb.Append(String.Format("Integer range  : {0} ~ {1}\r\n", stats.stat_minint_org,  stats.stat_maxint_org));
-                if (stats.CountDecimal  > 0) sb.Append(String.Format("Decimal range  : {0} ~ {1}\r\n", stats.stat_mindbl_org,  stats.stat_maxdbl_org));
-                if (stats.CountDateTime > 0) sb.Append(String.Format("DateTime range : {0} ~ {1}\r\n", stats.stat_mindat_org,  stats.stat_maxdat_org));
+                if (stats.CountInteger  > 0) sb.Append(string.Format("Integer range  : {0} ~ {1}\r\n", stats.stat_minint_org,  stats.stat_maxint_org));
+                if (stats.CountDecimal  > 0) sb.Append(string.Format("Decimal range  : {0} ~ {1}\r\n", stats.stat_mindbl_org,  stats.stat_maxdbl_org));
+                if (stats.CountDateTime > 0) sb.Append(string.Format("DateTime range : {0} ~ {1}\r\n", stats.stat_mindat_org,  stats.stat_maxdat_org));
 
                 // if coded variable, unique values 
                 if ((stats.stat_uniquecount.Count > 0) && (stats.stat_uniquecount.Count <= Main.Settings.UniqueValuesMax))
@@ -514,11 +513,11 @@ namespace CSVLint
                     //stats.stat_uniquecount = stats.stat_uniquecount.OrderByDescending(obj => obj.Value).ToDictionary(obj => obj.Key, obj => obj.Value);
 
                     // list all unique values
-                    sb.Append(String.Format("-- Unique values ({0}) --\r\n", stats.stat_uniquecount.Count));
+                    sb.Append(string.Format("-- Unique values ({0}) --\r\n", stats.stat_uniquecount.Count));
                     foreach (var uqval in stats.stat_uniquecount)
                     {
-                        String strcount = uqval.Value.ToString();
-                        sb.Append(String.Format("n={0}: {1}\r\n", strcount.PadRight(13, ' '), uqval.Key));
+                        string strcount = uqval.Value.ToString();
+                        sb.Append(string.Format("n={0}: {1}\r\n", strcount.PadRight(13, ' '), uqval.Key));
                     }
                 }
 
@@ -532,9 +531,9 @@ namespace CSVLint
         /// Data statistical analysis report
         /// <param name="data"></param>
         /// <returns></returns>
-        private static String ReportPercentage(int iPart, int iTotal)
+        private static string ReportPercentage(int iPart, int iTotal)
         {
-            Double dPerc = (iPart * 100.0 / iTotal);
+            double dPerc = iPart * 100.0 / iTotal;
 
             return dPerc.ToString("0.0");
         }
@@ -546,7 +545,7 @@ namespace CSVLint
         public static void CountUniqueValues(CsvDefinition csvdef, List<int> colidx, bool sortBy, bool sortValue, bool sortDesc)
         {
             // examine data and keep list of counters per unique values
-            Dictionary<String, int> uniquecount = new Dictionary<String, int>();
+            Dictionary<string, int> uniquecount = new Dictionary<string, int>();
             var strdata = ScintillaStreams.StreamAllText();
             List<string> values;
 
@@ -558,16 +557,16 @@ namespace CSVLint
             {
                 // get next line of values
                 values = csvdef.ParseNextLine(strdata);
-                String uniq = "";
+                string uniq = "";
 
                 // get unique value(s) from column indexes
-                for (int i = 0; i < colidx.Count(); i++)
+                for (int i = 0; i < colidx.Count; i++)
                 {
                     // get index of selected column 
                     int col = colidx[i];
 
                     // if value contains separator character then put value in quotes
-                    var val = (col < values.Count ? values[col] : "");
+                    var val = col < values.Count ? values[col] : "";
                     if (val.IndexOf(csvdef.Separator) >= 0)
                     {
                         val = val.Replace("\"", "\"\"");
@@ -597,14 +596,14 @@ namespace CSVLint
             IScintillaGateway editor = new ScintillaGateway(PluginBase.GetCurrentScintilla());
 
             // get column names
-            for (int i = 0; i < colidx.Count(); i++)
+            for (int i = 0; i < colidx.Count; i++)
             {
                 // if column name contains separator character then put column name in quotes
-                var colname = (colidx[i] < csvdef.Fields.Count ? csvdef.Fields[colidx[i]].Name : "");
+                var colname = colidx[i] < csvdef.Fields.Count ? csvdef.Fields[colidx[i]].Name : "";
                 if (colname.IndexOf(csvdef.Separator) >= 0) colname = string.Format("\"{0}\"", colname);
 
                 // new header
-                sb.Append(String.Format("{0}{1}", colname, csvdef.Separator));
+                sb.Append(string.Format("{0}{1}", colname, csvdef.Separator));
 
                 // new csv defintion
                 csvnew.AddColumn(i, colname, csvdef.Fields[colidx[i]].MaxWidth, csvdef.Fields[colidx[i]].DataType, csvdef.Fields[colidx[i]].Mask);
@@ -623,9 +622,9 @@ namespace CSVLint
 
             // add all unique values, sort by count
             var maxwidth = 0;
-            foreach (KeyValuePair<String, int> unqcnt in uniquecount)
+            foreach (KeyValuePair<string, int> unqcnt in uniquecount)
             {
-                sb.Append(String.Format("{0}{1}{2}\r\n", unqcnt.Key, csvdef.Separator, unqcnt.Value));
+                sb.Append(string.Format("{0}{1}{2}\r\n", unqcnt.Key, csvdef.Separator, unqcnt.Value));
                 if (maxwidth < unqcnt.Value) maxwidth = unqcnt.Value;
             }
             csvnew.AddColumn("count_unique", maxwidth.ToString().Length, ColumnType.Integer);
@@ -635,7 +634,7 @@ namespace CSVLint
 
             // add csv def for this new list
             //Main.CSVChangeFileTab();
-            Main.updateCSVChanges(csvnew, false);
+            Main.UpdateCSVChanges(csvnew, false);
 
             // file content
             editor.SetText(sb.ToString());

@@ -9,11 +9,9 @@ using Kbg.NppPluginNET;
 using Kbg.NppPluginNET.PluginInfrastructure;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace CSVLint
 {
@@ -21,7 +19,7 @@ namespace CSVLint
     {
 
         /// <summary>
-        ///     variable safe name, no spaces
+        /// variable safe name, no spaces
         /// </summary>
         public static string StringToVariable(string strinput)
         {
@@ -29,30 +27,30 @@ namespace CSVLint
         }
 
         /// <summary>
-        ///     apply quotes to value
+        /// apply quotes to value
         /// </summary>
-        public static string ApplyQuotesToString(String strinput, int ApplyCode, char Separator, ColumnType DataType)
+        public static string ApplyQuotesToString(string strinput, int applyCode, char separator, ColumnType dataType)
         {
             // default = none / minimal
-            bool apl = (strinput.IndexOf(Separator) >= 0);
+            bool apl = strinput.Contains(separator);
 
-            if ((ApplyCode > 0) && (apl == false))
+            if ((applyCode > 0) && !apl)
             {
-                apl = (   (ApplyCode == 1 && strinput.IndexOf(" ") >= 0)    // space
-                       || (ApplyCode == 2 && DataType == ColumnType.String) // string
-                       || (ApplyCode == 3 && DataType != ColumnType.Integer && DataType != ColumnType.Decimal) // non-numeric
-                       || (ApplyCode == 4) // all
-                       );
+                apl = (applyCode == 1 && strinput.IndexOf(" ") >= 0)    // space
+                   || (applyCode == 2 && dataType == ColumnType.String) // string
+                   || (applyCode == 3 && dataType != ColumnType.Integer && dataType != ColumnType.Decimal) // non-numeric
+                   || (applyCode == 4) // all
+                   ;
             }
 
             // apply quotes
-            if (apl) strinput = String.Format("\"{0}\"", strinput);
+            if (apl) strinput = string.Format("\"{0}\"", strinput);
 
             return strinput;
         }
 
         /// <summary>
-        ///     reformat file for date, decimal and separator
+        /// reformat file for date, decimal and separator
         /// </summary>
         /// <param name="data"> csv data </param>
         public static void ReformatDataFile(CsvDefinition csvdef, string reformatDatTime, string reformatDecimal, string reformatSeparator, bool updateSeparator, int ApplyQuotes, bool trimAll, bool align)
@@ -88,13 +86,13 @@ namespace CSVLint
 
             StringBuilder datanew = new StringBuilder();
 
-            char newSep = (updateSeparator ? reformatSeparator[0] : csvdef.Separator);
+            char newSep = updateSeparator ? reformatSeparator[0] : csvdef.Separator;
 
             // convert to fixed width, skip header line from source data because there is no room for column names in Fixed Width due to columns width can be 1 or 2 characters
-            bool skipheader = ((updateSeparator) && (newSep == '\0') && (csvdef.ColNameHeader));
+            bool skipheader = updateSeparator && (newSep == '\0') && csvdef.ColNameHeader;
 
             // convert from fixed width to separated values, add header line
-            if ((updateSeparator) && (newSep != '\0') && (!csvdef.ColNameHeader))
+            if (updateSeparator && (newSep != '\0') && (!csvdef.ColNameHeader))
             {
                 // add header column names
                 for (int c = 0; c < csvdef.Fields.Count; c++)
@@ -114,13 +112,13 @@ namespace CSVLint
                 linenr++;
 
                 // skip header line in source data, no header line in Fixed Width output data
-                if ((linenr == 1) && (skipheader)) continue;
+                if ((linenr == 1) && skipheader) continue;
 
                 // reformat data line to new line
                 for (int c = 0; c < values.Count; c++)
                 {
                     // next value
-                    String val = values[c];
+                    string val = values[c];
 
                     // fixed width align
                     int wid = val.Length;
@@ -156,7 +154,7 @@ namespace CSVLint
                         tmpColumnType = csvdef.Fields[c].DataType;
 
                         // align vertically OR fixed width, text align left - numeric align right
-                        wid = (align ? alignwidths[c] : csvdef.Fields[c].MaxWidth);
+                        wid = align ? alignwidths[c] : csvdef.Fields[c].MaxWidth;
                         alignleft = !((tmpColumnType == ColumnType.Integer) || (tmpColumnType == ColumnType.Decimal));
 
                         // exception for header -> always left align
@@ -209,7 +207,7 @@ namespace CSVLint
         }
 
         /// <summary>
-        ///     update all date columns to new date format
+        /// update all date columns to new date format
         /// </summary>
         public static void ConvertToSQL(CsvDefinition csvdef)
         {
@@ -219,7 +217,7 @@ namespace CSVLint
 
             // if csv already contains "_record_number"
             var recidname = csvdef.GetUniqueColumnName("_record_number", out int postfix);
-            if (postfix > 0) recidname = String.Format("{0} ({1})", recidname, postfix);
+            if (postfix > 0) recidname = string.Format("{0} ({1})", recidname, postfix);
 
             // get access to Notepad++
             INotepadPPGateway notepad = new NotepadPPGateway();
@@ -232,7 +230,7 @@ namespace CSVLint
             sb.Append(string.Format("-- CSV Lint plug-in v{0}\r\n", VERSION_NO));
             sb.Append(string.Format("-- File: {0}\r\n", FILE_NAME));
             sb.Append(string.Format("-- Date: {0}\r\n", DateTime.Now.ToString("dd-MMM-yyyy HH:mm")));
-            sb.Append(string.Format("-- SQL ANSI: {0}\r\n", (Main.Settings.SQLansi ? "mySQL" : "MS-SQL")));
+            sb.Append(string.Format("-- SQL ANSI: {0}\r\n", Main.Settings.SQLansi ? "mySQL" : "MS-SQL"));
             sb.Append("-- -------------------------------------\r\n");
             sb.Append(string.Format("CREATE TABLE {0}(\r\n\t", TABLE_NAME));
 
@@ -245,7 +243,7 @@ namespace CSVLint
             for (var r = 0; r < csvdef.Fields.Count; r++)
             {
                 // determine sql column name -> mySQL = `colname`, MS-SQL = [colname]
-                string sqlname = string.Format((Main.Settings.SQLansi ? "`{0}`" : "[{0}]"), csvdef.Fields[r].Name);
+                string sqlname = string.Format(Main.Settings.SQLansi ? "`{0}`" : "[{0}]", csvdef.Fields[r].Name);
 
                 // determine sql datatype
                 var sqltype = "varchar";
@@ -273,7 +271,7 @@ namespace CSVLint
                 //    csvdef.Fields[r].Mask = masknew.Trim();
                 //}
 
-                sb.Append(String.Format("{0} {1}", sqlname, sqltype));
+                sb.Append(string.Format("{0} {1}", sqlname, sqltype));
                 cols += sqlname;
                 if (r < csvdef.Fields.Count - 1)
                 {
@@ -290,7 +288,7 @@ namespace CSVLint
             // use stringreader to go line by line
             var strdata = ScintillaStreams.StreamAllText();
 
-            int lineCount = (csvdef.ColNameHeader ? -1 : 0);
+            int lineCount = csvdef.ColNameHeader ? -1 : 0;
             int batchcomm = -1;  // batch comment line
             int batchstart = -1; // batch starting line
 
@@ -351,11 +349,11 @@ namespace CSVLint
                         }
                         else if (csvdef.Fields[r].DataType == ColumnType.Decimal)
                         {
-                            str = str.Replace((csvdef.Fields[r].DecimalSymbol == '.' ? "," : "."), ""); // remove thousand separator
+                            str = str.Replace(csvdef.Fields[r].DecimalSymbol == '.' ? "," : ".", ""); // remove thousand separator
                             str = str.Replace(csvdef.Fields[r].DecimalSymbol, '.');
                         }
                         else if ((csvdef.Fields[r].DataType == ColumnType.String)
-                                || (csvdef.Fields[r].DataType == ColumnType.DateTime))
+                              || (csvdef.Fields[r].DataType == ColumnType.DateTime))
                         //|| (csvdef.Fields[r].DataType == ColumnType.Guid))
                         {
                             // sql datetime format
@@ -401,9 +399,9 @@ namespace CSVLint
         }
 
         /// <summary>
-        ///     reformat file for date, decimal and separator
+        /// reformat file for date, decimal and separator
         /// </summary>
-        /// <param name="data"> csv data </param>
+        /// <param name="data">csv data</param>
         public static void ColumnSplit(CsvDefinition csvdef, int ColumnIndex, int SplitCode, string Parameter1, string Parameter2, bool bRemove)
         {
             // handle to editor
@@ -418,8 +416,8 @@ namespace CSVLint
             var IntPar2 = -1 * IntPar;
 
             // decode
-            List<String> decode1 = new List<String>();
-            List<String> decode2 = new List<String>();
+            List<string> decode1 = new List<string>();
+            List<string> decode2 = new List<string>();
 
             // decode
             if (SplitCode == 5)
@@ -456,10 +454,10 @@ namespace CSVLint
                         var newname = csvdef.GetUniqueColumnName(csvdef.Fields[c].Name, out int postfix);
 
                         // when decoding csv values (SplitCode == 5) add more new columns, when normal split then just 2
-                        var addmax = (SplitCode == 5 ? decode1.Count + 1 : 2); // +1 = one extra column of any left-over values
+                        var addmax = SplitCode == 5 ? decode1.Count + 1 : 2; // +1 = one extra column of any left-over values
                         for (var cnew = 0; cnew < addmax; cnew++)
                         {
-                            datanew.Append(String.Format("{0}{1} ({2})", sep, newname, postfix + cnew));
+                            datanew.Append(string.Format("{0}{1} ({2})", sep, newname, postfix + cnew));
                         }
                     }
                 }
@@ -478,7 +476,7 @@ namespace CSVLint
                 for (int c = 0; c < values.Count; c++)
                 {
                     // next value
-                    String val = values[c];
+                    string val = values[c];
 
                     // if value contains separator character then put value in quotes
                     if (val.IndexOf(sep) >= 0) val = string.Format("\"{0}\"", val);
@@ -493,9 +491,9 @@ namespace CSVLint
                     // add new split columns values
                     if (c == ColumnIndex)
                     {
-                        String val0 = values[c]; // original value without quotes
-                        String val1 = val0;
-                        String val2 = "";
+                        string val0 = values[c]; // original value without quotes
+                        string val1 = val0;
+                        string val2 = "";
 
                         // how to split value
                         if (SplitCode == 1)
@@ -607,7 +605,7 @@ namespace CSVLint
         }
 
         /// <summary>
-        ///     update all date columns to new date format
+        /// update all date columns to new date format
         /// </summary>
         public void UpdateAllDateFormat()
         {
@@ -617,7 +615,7 @@ namespace CSVLint
         }
 
         /// <summary>
-        ///     update all decimal columns to new decimal format
+        /// update all decimal columns to new decimal format
         /// </summary>
         public void UpdateAllDecimal()
         {
@@ -625,7 +623,7 @@ namespace CSVLint
         }
 
         /// <summary>
-        ///     update a single column to new data type
+        ///update a single column to new data type
         /// </summary>
         public void UpdateColumn()
         {
@@ -633,7 +631,7 @@ namespace CSVLint
         }
 
         /// <summary>
-        ///     split invalid values of column into a new column
+        /// split invalid values of column into a new column
         /// </summary>
         public void SplitColumn()
         {

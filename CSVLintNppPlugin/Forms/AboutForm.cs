@@ -13,7 +13,7 @@ namespace Kbg.NppPluginNET
         {
             InitializeComponent();
 
-            String ver = Main.GetVersion();
+            string ver = Main.GetVersion();
             lblTitle.Text += ver;
 
             // tooltip initialization
@@ -54,25 +54,25 @@ namespace Kbg.NppPluginNET
             return 0; // not Easter day
         }
         private void DisplayEasterEgg()
-		{
+        {
             // display easter egg icon on certain dates
             DateTime today = DateTime.Now.AddHours(-3); // day 'starts' in the morning and lasts after midnight (especially for new years eve etc.)
 
-            String msg = "";
-            String obj = "";
+            string msg = "";
+            string obj = "";
             Image img = CSVLintNppPlugin.Properties.Resources.easteregg;
 
             int easter = IsEaster(today);
             if (easter > 0)
             {
                 // March/April ?th, varies
-                msg = String.Format("Easter {0}day", (easter == 1 ? "Sun" : "Mon"));
+                msg = string.Format("Easter {0}day", easter == 1 ? "Sun" : "Mon");
                 obj = "an Easter egg";
                 img = CSVLintNppPlugin.Properties.Resources.easteregg;
             }
             else
             {
-                int daymonth = (today.Month * 100 + today.Day);
+                int daymonth = today.Month * 100 + today.Day;
 
                 switch (daymonth)
                 {
@@ -98,7 +98,7 @@ namespace Kbg.NppPluginNET
             // initialization easter egg
             if (msg != "")
             {
-                String tip = String.Format("Happy {0}! You've found {1} ;)", msg, obj);
+                string tip = string.Format("Happy {0}! You've found {1} ;)", msg, obj);
                 helperTip.SetToolTip(picEasterEgg, tip);
                 picEasterEgg.Image = img;
                 picEasterEgg.Visible = true;
@@ -131,7 +131,7 @@ namespace Kbg.NppPluginNET
         //}
         private void OnLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            LinkLabel lbl = (sender as LinkLabel);
+            LinkLabel lbl = sender as LinkLabel;
             string url = lbl.Text;
             string urlcopy = url;
             if ((string)lbl.Tag == "0")

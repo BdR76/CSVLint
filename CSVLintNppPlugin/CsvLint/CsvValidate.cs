@@ -9,9 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace CSVLint
 {
@@ -44,7 +42,7 @@ namespace CSVLint
         }
 
         /// <summary>
-        ///     validate csv data against the definition of a CsvDefinition 
+        /// validate csv data against the definition of a CsvDefinition
         /// </summary>
         /// <param name="strdata"> csv data </param>
         public void ValidateData(StreamReader strdata, CsvDefinition csvdef)
@@ -96,7 +94,7 @@ namespace CSVLint
                 // too many or too few columns
                 if (values.Count != csvdef.Fields.Count)
                 {
-                    err += string.Format("Too {0} columns, ", (values.Count > csvdef.Fields.Count ? "many" : "few"));
+                    err += string.Format("Too {0} columns, ", values.Count > csvdef.Fields.Count ? "many" : "few");
                     counterr++;
                 }
 
@@ -104,7 +102,7 @@ namespace CSVLint
                 for (var i = 0; i < values.Count; i++)
                 {
                     // next value and column number
-                    String val = values[i];
+                    string val = values[i];
 
                     // adjust for quoted values, trim first because can be a space before the first quote, example .., "BMI",..
                     var valtrim = val.Trim();
@@ -156,12 +154,12 @@ namespace CSVLint
             var dtElapsed = (DateTime.Now - dtStart).ToString(@"hh\:mm\:ss\.fff");
 
             // final ready message
-            var line = string.Format("Inspected {0} lines, {1} data errors found, time elapsed {2}", lineCount, (this.log.Count == 0 ? "no" : counterr.ToString()), dtElapsed);
+            var line = string.Format("Inspected {0} lines, {1} data errors found, time elapsed {2}", lineCount, this.log.Count == 0 ? "no" : counterr.ToString(), dtElapsed);
             this.log.Add(new LogLine(line, -1, -1));
         }
 
         /// <summary>
-        ///     validate csv data against the definition of a CsvDefinition 
+        /// validate csv data against the definition of a CsvDefinition 
         /// </summary>
         /// <param name="data"> csv data </param>
         public string EvaluateDataValue(string val, CsvColumn coldef, int idx)
@@ -219,14 +217,14 @@ namespace CSVLint
         }
 
         /// <summary>
-        ///     validate integer value
-        ///     Use custom function instead of using the standard `int.TryParse(val, out _);`
-        ///     which allows for max integer of 2147483647 (32bit) or 9223372036854775807 (64bit)
-        ///     
-        ///     This custom function gives the same result regardless of 32bit/64bit bytecode
-        ///     and only depends on the `IntegerDigitsMax` setting
-        ///     so that it will also correctly detect bigint/large int and even googolplex values
-        ///     (For typical datasets this function also performs faster, though only slightly; 180ns vs 160ns)
+        /// validate integer value
+        /// Use custom function instead of using the standard `int.TryParse(val, out _);`
+        /// which allows for max integer of 2147483647 (32bit) or 9223372036854775807 (64bit)
+        /// 
+        /// This custom function gives the same result regardless of 32bit/64bit bytecode
+        /// and only depends on the `IntegerDigitsMax` setting
+        /// so that it will also correctly detect bigint/large int and even googolplex values
+        /// (For typical datasets this function also performs faster, though only slightly; 180ns vs 160ns)
         /// </summary>
         /// <param name="val"> integer value, examples "1", "23", "-456" etc.</param>
         private bool EvaluateInteger(string val)
@@ -260,14 +258,14 @@ namespace CSVLint
         }
 
         /// <summary>
-        ///     validate decimal value
-        ///     Use custom function instead of using the standard `float.TryParse(val, out _);`
-        ///     
-        ///     This custom function gives the same result regardless of 32bit/64bit bytecode
-        ///     and only depends on the `DecimalDigitsMax` setting
-        ///     so that it will also correctly detect values with lots of decimals
-        ///     and also detect incorrect thousand separators for example "123,45,678.00"
-        ///     (For typical datasets this function also performs faster; 320ns vs 180ns)
+        /// validate decimal value
+        /// Use custom function instead of using the standard `float.TryParse(val, out _);`
+        /// 
+        /// This custom function gives the same result regardless of 32bit/64bit bytecode
+        /// and only depends on the `DecimalDigitsMax` setting
+        /// so that it will also correctly detect values with lots of decimals
+        /// and also detect incorrect thousand separators for example "123,45,678.00"
+        /// (For typical datasets this function also performs faster; 320ns vs 180ns)
         /// </summary>
         /// <param name="val"> decimal value, example "1.23", "-4,56", ".5" etc.</param>
         //private bool EvaluateDecimal(string val, CsvColumn coldef, out string err)
@@ -351,7 +349,7 @@ namespace CSVLint
             }
 
             // example ".25" or "-.5"
-            if ((decsep - sign == 1) && (Main.Settings.DecimalLeadingZero))
+            if ((decsep - sign == 1) && Main.Settings.DecimalLeadingZero)
             {
                 err += "missing leading zero not allowed";
                 isDecimal = false;
@@ -382,10 +380,10 @@ namespace CSVLint
                 // check year range
                 int year = dateValue.Year;
                 if (year < Main.Settings.YearMinimum || year > Main.Settings.YearMaximum)
-				{
+                {
                     isDate = false;
                     err = "is out of range";
-				};
+                };
             };
 
             return isDate;
