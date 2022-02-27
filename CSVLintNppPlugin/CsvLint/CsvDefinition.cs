@@ -870,7 +870,7 @@ namespace CSVLint
 
             if (Separator == '\0')
             {
-                var line = strdata.ReadLine();
+                String line = strdata.ReadLine();
 
                 // fixed width columns
                 int pos = 0;
@@ -884,7 +884,7 @@ namespace CSVLint
                     if (pos + w > line.Length) w = line.Length - pos;
 
                     // get column value
-                    string fixval = line.Substring(pos, w).Trim(); // fixed length columns, so always trim to remove extra spaces
+                    String fixval = line.Substring(pos, w).Trim(); // fixed length columns, so always trim to remove extra spaces
                     res.Add(fixval);
 
                     // start position of next column

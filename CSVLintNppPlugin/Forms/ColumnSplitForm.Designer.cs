@@ -42,13 +42,9 @@ namespace CSVLintNppPlugin.Forms
             this.txtSplitDecodeChar = new System.Windows.Forms.TextBox();
             this.chkDeleteOriginal = new System.Windows.Forms.CheckBox();
             this.numSplitSubstring = new System.Windows.Forms.NumericUpDown();
+            ((System.ComponentModel.ISupportInitialize)(this.picHelpIcon)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numSplitSubstring)).BeginInit();
             this.SuspendLayout();
-            // 
-            // lblTitle
-            // 
-            this.lblTitle.Size = new System.Drawing.Size(95, 20);
-            this.lblTitle.Text = "Split column";
             // 
             // btnOk
             // 
@@ -60,6 +56,20 @@ namespace CSVLintNppPlugin.Forms
             // 
             this.btnCancel.Location = new System.Drawing.Point(271, 278);
             this.btnCancel.TabIndex = 14;
+            // 
+            // lblTitle
+            // 
+            this.lblTitle.Size = new System.Drawing.Size(95, 20);
+            this.lblTitle.Text = "Split column";
+            // 
+            // picHelpIcon
+            // 
+            this.picHelpIcon.Location = new System.Drawing.Point(348, 9);
+            this.picHelpIcon.Tag = "split-column";
+            // 
+            // lblHorizontalLine
+            // 
+            this.lblHorizontalLine.Size = new System.Drawing.Size(376, 2);
             // 
             // lblSelectColumn
             // 
@@ -232,9 +242,12 @@ namespace CSVLintNppPlugin.Forms
             this.Controls.Add(this.cmbSelectColumn);
             this.Controls.Add(this.lblSelectColumn);
             this.Name = "ColumnSplitForm";
+            this.Tag = "split-column";
             this.Text = "Split column";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ColumnSplitForm_FormClosing);
+            this.Controls.SetChildIndex(this.picHelpIcon, 0);
             this.Controls.SetChildIndex(this.lblTitle, 0);
+            this.Controls.SetChildIndex(this.lblHorizontalLine, 0);
             this.Controls.SetChildIndex(this.btnOk, 0);
             this.Controls.SetChildIndex(this.btnCancel, 0);
             this.Controls.SetChildIndex(this.lblSelectColumn, 0);
@@ -250,6 +263,7 @@ namespace CSVLintNppPlugin.Forms
             this.Controls.SetChildIndex(this.txtSplitDecodeChar, 0);
             this.Controls.SetChildIndex(this.chkDeleteOriginal, 0);
             this.Controls.SetChildIndex(this.numSplitSubstring, 0);
+            ((System.ComponentModel.ISupportInitialize)(this.picHelpIcon)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numSplitSubstring)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
