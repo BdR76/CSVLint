@@ -39,28 +39,38 @@
             this.chkAlignVert = new System.Windows.Forms.CheckBox();
             this.chkApplyQuotes = new System.Windows.Forms.CheckBox();
             this.cmbQuotes = new System.Windows.Forms.ComboBox();
+            ((System.ComponentModel.ISupportInitialize)(this.picHelpIcon)).BeginInit();
             this.SuspendLayout();
+            // 
+            // btnOk
+            // 
+            this.btnOk.Location = new System.Drawing.Point(117, 267);
+            this.btnOk.TabIndex = 8;
+            this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
+            // 
+            // btnCancel
+            // 
+            this.btnCancel.Location = new System.Drawing.Point(236, 267);
+            this.btnCancel.TabIndex = 9;
+            // 
+            // lblHorizontalLine
+            // 
+            this.lblHorizontalLine.Size = new System.Drawing.Size(340, 2);
             // 
             // lblTitle
             // 
             this.lblTitle.Size = new System.Drawing.Size(112, 20);
             this.lblTitle.Text = "Reformat data";
             // 
-            // btnOk
+            // picHelpIcon
             // 
-            this.btnOk.Location = new System.Drawing.Point(128, 270);
-            this.btnOk.TabIndex = 8;
-            this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
-            // 
-            // btnCancel
-            // 
-            this.btnCancel.Location = new System.Drawing.Point(247, 270);
-            this.btnCancel.TabIndex = 9;
+            this.picHelpIcon.Location = new System.Drawing.Point(316, 8);
+            this.picHelpIcon.Tag = "reformat";
             // 
             // chkDateTime
             // 
             this.chkDateTime.AutoSize = true;
-            this.chkDateTime.Location = new System.Drawing.Point(13, 41);
+            this.chkDateTime.Location = new System.Drawing.Point(13, 48);
             this.chkDateTime.Name = "chkDateTime";
             this.chkDateTime.Size = new System.Drawing.Size(100, 17);
             this.chkDateTime.TabIndex = 0;
@@ -72,7 +82,7 @@
             // chkDecimal
             // 
             this.chkDecimal.AutoSize = true;
-            this.chkDecimal.Location = new System.Drawing.Point(13, 73);
+            this.chkDecimal.Location = new System.Drawing.Point(13, 80);
             this.chkDecimal.Name = "chkDecimal";
             this.chkDecimal.Size = new System.Drawing.Size(111, 17);
             this.chkDecimal.TabIndex = 2;
@@ -87,7 +97,7 @@
             this.cmbDecimal.Items.AddRange(new object[] {
             ".",
             ","});
-            this.cmbDecimal.Location = new System.Drawing.Point(257, 73);
+            this.cmbDecimal.Location = new System.Drawing.Point(257, 80);
             this.cmbDecimal.Name = "cmbDecimal";
             this.cmbDecimal.Size = new System.Drawing.Size(83, 21);
             this.cmbDecimal.TabIndex = 3;
@@ -109,7 +119,7 @@
             "yyyy-M-d H:mm:ss",
             "d-M-yyyy H:mm:ss",
             "M/d/yyyy H:mm:ss"});
-            this.cmbDateTime.Location = new System.Drawing.Point(160, 41);
+            this.cmbDateTime.Location = new System.Drawing.Point(160, 48);
             this.cmbDateTime.Name = "cmbDateTime";
             this.cmbDateTime.Size = new System.Drawing.Size(180, 21);
             this.cmbDateTime.TabIndex = 1;
@@ -118,7 +128,7 @@
             // chkSeparator
             // 
             this.chkSeparator.AutoSize = true;
-            this.chkSeparator.Location = new System.Drawing.Point(13, 105);
+            this.chkSeparator.Location = new System.Drawing.Point(13, 112);
             this.chkSeparator.Name = "chkSeparator";
             this.chkSeparator.Size = new System.Drawing.Size(108, 17);
             this.chkSeparator.TabIndex = 4;
@@ -136,7 +146,7 @@
             ";",
             "|",
             "{Fixed width}"});
-            this.cmbSeparator.Location = new System.Drawing.Point(257, 105);
+            this.cmbSeparator.Location = new System.Drawing.Point(257, 112);
             this.cmbSeparator.Name = "cmbSeparator";
             this.cmbSeparator.Size = new System.Drawing.Size(83, 21);
             this.cmbSeparator.TabIndex = 5;
@@ -145,7 +155,7 @@
             // lblReformat
             // 
             this.lblReformat.AutoSize = true;
-            this.lblReformat.Location = new System.Drawing.Point(13, 233);
+            this.lblReformat.Location = new System.Drawing.Point(13, 240);
             this.lblReformat.Name = "lblReformat";
             this.lblReformat.Size = new System.Drawing.Size(278, 13);
             this.lblReformat.TabIndex = 8;
@@ -154,7 +164,7 @@
             // chkTrimAll
             // 
             this.chkTrimAll.AutoSize = true;
-            this.chkTrimAll.Location = new System.Drawing.Point(13, 169);
+            this.chkTrimAll.Location = new System.Drawing.Point(13, 176);
             this.chkTrimAll.Name = "chkTrimAll";
             this.chkTrimAll.Size = new System.Drawing.Size(93, 17);
             this.chkTrimAll.TabIndex = 6;
@@ -166,7 +176,7 @@
             // chkAlignVert
             // 
             this.chkAlignVert.AutoSize = true;
-            this.chkAlignVert.Location = new System.Drawing.Point(13, 201);
+            this.chkAlignVert.Location = new System.Drawing.Point(13, 208);
             this.chkAlignVert.Name = "chkAlignVert";
             this.chkAlignVert.Size = new System.Drawing.Size(187, 17);
             this.chkAlignVert.TabIndex = 7;
@@ -178,7 +188,7 @@
             // chkApplyQuotes
             // 
             this.chkApplyQuotes.AutoSize = true;
-            this.chkApplyQuotes.Location = new System.Drawing.Point(13, 137);
+            this.chkApplyQuotes.Location = new System.Drawing.Point(13, 144);
             this.chkApplyQuotes.Name = "chkApplyQuotes";
             this.chkApplyQuotes.Size = new System.Drawing.Size(103, 17);
             this.chkApplyQuotes.TabIndex = 6;
@@ -203,7 +213,7 @@
             "All string values",
             "All non-numeric values",
             "All values"});
-            this.cmbQuotes.Location = new System.Drawing.Point(160, 137);
+            this.cmbQuotes.Location = new System.Drawing.Point(160, 144);
             this.cmbQuotes.Name = "cmbQuotes";
             this.cmbQuotes.Size = new System.Drawing.Size(180, 21);
             this.cmbQuotes.TabIndex = 5;
@@ -213,7 +223,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(359, 312);
+            this.ClientSize = new System.Drawing.Size(348, 309);
             this.Controls.Add(this.lblReformat);
             this.Controls.Add(this.chkAlignVert);
             this.Controls.Add(this.chkApplyQuotes);
@@ -228,6 +238,9 @@
             this.Name = "ReformatForm";
             this.Text = "Reformat data";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ReformatForm_FormClosing);
+            this.Controls.SetChildIndex(this.lblHorizontalLine, 0);
+            this.Controls.SetChildIndex(this.lblTitle, 0);
+            this.Controls.SetChildIndex(this.picHelpIcon, 0);
             this.Controls.SetChildIndex(this.chkDateTime, 0);
             this.Controls.SetChildIndex(this.cmbDateTime, 0);
             this.Controls.SetChildIndex(this.chkDecimal, 0);
@@ -239,9 +252,9 @@
             this.Controls.SetChildIndex(this.chkApplyQuotes, 0);
             this.Controls.SetChildIndex(this.chkAlignVert, 0);
             this.Controls.SetChildIndex(this.lblReformat, 0);
-            this.Controls.SetChildIndex(this.lblTitle, 0);
             this.Controls.SetChildIndex(this.btnOk, 0);
             this.Controls.SetChildIndex(this.btnCancel, 0);
+            ((System.ComponentModel.ISupportInitialize)(this.picHelpIcon)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 

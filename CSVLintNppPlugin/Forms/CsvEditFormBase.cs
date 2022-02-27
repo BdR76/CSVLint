@@ -14,6 +14,8 @@ namespace CSVLintNppPlugin.Forms
         public CsvEditFormBase()
         {
             InitializeComponent();
+
+            this.picHelpIcon.Image = Bitmap.FromHicon(SystemIcons.Question.Handle);
         }
 
         public void ToggleControlBasedOnControl(Control CheckCtrl, bool bEnable)
@@ -54,5 +56,16 @@ namespace CSVLintNppPlugin.Forms
             }
         }
 
+        private void picHelpIcon_Click(object sender, EventArgs e)
+        {
+            // icon Tag contains name of help chapter
+            object tag = (sender as Control).Tag;
+            string sec = (tag == null ? "" : tag.ToString());
+
+            string url = "https://github.com/BdR76/CSVLint/tree/master/docs" + (sec == "" ? "" : "#" + sec);
+
+            // Call the Process.Start method to open the default browser with a URL:
+            System.Diagnostics.Process.Start(url);
+        }
     }
 }
