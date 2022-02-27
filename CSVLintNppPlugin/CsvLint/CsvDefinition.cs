@@ -9,7 +9,6 @@ using Kbg.NppPluginNET;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 
 namespace CSVLint
@@ -77,13 +76,13 @@ namespace CSVLint
                 // get decimal position or -1 if not found
                 int pos1 = Mask.LastIndexOf('.');
                 int pos2 = Mask.LastIndexOf(',');
-                int p = (pos1 > pos2 ? pos1 : pos2);
+                int p = pos1 > pos2 ? pos1 : pos2;
 
                 // decimal character
-                this.DecimalSymbol = (pos1 > pos2 ? '.' : ',');
+                this.DecimalSymbol = pos1 > pos2 ? '.' : ',';
 
                 // sTag, thousand and decimand characters
-                this.sTag = (pos1 > pos2 ? ",." : ".,");
+                this.sTag = pos1 > pos2 ? ",." : ".,";
 
                 // iTag, max decimal places
                 this.iTag = this.Mask.Length - p - 1;
@@ -234,7 +233,7 @@ namespace CSVLint
                 // allow different datemask formats per column, but keep track of first datetime format as schema.ini global
 
                 // datetime column MUST have a mask
-                if (mask == "") mask = (this.DateTimeFormat == "" ? "yyyy-MM-dd" : this.DateTimeFormat);
+                if (mask == "") mask = this.DateTimeFormat == "" ? "yyyy-MM-dd" : this.DateTimeFormat;
 
                 // remember first datetime mask as the schema.ini global datetime mask
                 if (this.DateTimeFormat == "") this.DateTimeFormat = mask;
@@ -247,7 +246,7 @@ namespace CSVLint
                 int pos2 = mask.LastIndexOf(',');
 
                 if ( (pos1 >= 0) || (pos2 >= 0) ) {
-                    this.DecimalSymbol = (pos1 > pos2 ? '.' : ',');
+                    this.DecimalSymbol = pos1 > pos2 ? '.' : ',';
                     this.NumberDigits = mask.Length - (pos1 > pos2 ? pos1 : pos2) - 1;
                 }
             }
@@ -299,7 +298,7 @@ namespace CSVLint
             if ((pos1 < pos2) && (pos2 == namein.Length - 1))
             {
                 var strnr = namein.Substring(pos1 + 1, pos2 - pos1 - 1);
-                if (Int32.TryParse(strnr, out int inr))
+                if (int.TryParse(strnr, out int inr))
                 {
                     res = namein.Substring(0, pos1).Trim();
                     postfix = inr;
@@ -340,46 +339,58 @@ namespace CSVLint
             return namepart;
         }
 
-        // get csv definition from ini lines
+        /// <summary>
+        /// Create a new csv definition from ini lines.
+        /// </summary>
+        /// <param name="inilines">contains inifile sections
+        /// <example>"NumberDigits=1\nCol1=participant_id etc."</example></param>
         public CsvDefinition(string inilines)
         {
-            // inilines contains inifile sections example "NumberDigits=1\nCol1=participant_id etc."
-
             // get key values from  ini lines
-            var enstr = inilines.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)
-               .Select(part => part.Split('='));
+            var enstr = inilines.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+            Dictionary<string, string> result = new Dictionary<string, string>();
+            List<string> dup = new List<string>();
+            foreach (string line in enstr)
+            {
+                string[] parts = line.Split('=');
+                if(result.ContainsKey(parts[0]))
+                {
+                    dup.Add(parts[0]);
+                }
+                else
+                {
+                    result.Add(parts[0], parts[1]);
+                }
+            }
 
-            // check for duplicate keys before turning into dictionary
-            var dup = enstr.GroupBy(x => x[0])
-                          .Where(g => g.Count() > 1)
-                          .Select(y => y.Key)
-                          .ToList();
             if (dup.Count > 0)
             {
                 string errmsg = string.Format("Duplicate key(s) found ({0})", string.Join(",", dup));
-                throw new System.ArgumentException(errmsg);
+                throw new ArgumentException(errmsg);
                 //MessageBox.Show(errmsg, "Exception", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             else
             {
                 // create dictionary
-                Dictionary<String, String> keys = enstr.ToDictionary(split => split[0], split => split[1]);
-
-                // create dictionary
-                this.CsvDefInitFromKeys(keys);
+                this.CsvDefInitFromKeys(result);
             }
         }
-        public CsvDefinition(Dictionary<String, String> inikeys)
+
+        /// <summary>
+        /// Creates a new csv definition from key value pairs.
+        /// </summary>
+        /// <param name="inikeys">the key values pairs</param>
+        public CsvDefinition(Dictionary<string, string> inikeys)
         {
-            // inikeys contains key values pairs
             this.CsvDefInitFromKeys(inikeys);
         }
 
-        private void CsvDefInitFromKeys(Dictionary<String, String> inikeys)
+        private void CsvDefInitFromKeys(Dictionary<string, string> inikeys)
         {
             Fields = new List<CsvColumn>();
 
-            FieldWidths = new List<int>(); // TODO: really needed to also keep widths separate from Fields? because each Fields also contains a MaxWidth
+            // TODO: really needed to also keep widths separate from Fields? because each Fields also contains a MaxWidth
+            FieldWidths = new List<int>();
 
             // evaluate key values
             foreach (KeyValuePair<string, string> line in inikeys)
@@ -394,9 +405,9 @@ namespace CSVLint
                 {
                     // schema.ini structure
                     string k = line.Key.ToLower();
-                    string Val = line.Value.Trim();
-                    string vallow = Val.ToLower();
-                    int.TryParse(Val, out int vint);
+                    string val = line.Value.Trim();
+                    string vallow = val.ToLower();
+                    int.TryParse(val, out int vint);
 
                     // most important, what is the separator
                     if (k == "format")
@@ -409,7 +420,7 @@ namespace CSVLint
                         // custom character
                         if ((vallow.Substring(0, 10) == "delimited(") && (vallow.Substring(vallow.Length - 1, 1) == ")"))
                         {
-                            this.Separator = Val[10]; // first character after "Delimited("
+                            this.Separator = val[10]; // first character after "Delimited("
                         };
                     };
 
@@ -419,7 +430,7 @@ namespace CSVLint
                         // internally the datetime mask is c# format,         example "dd/MM/yyyy HH:mm"
                         // externally the datetime mask is schema.ini format, example "dd/mm/yyyy hh:nn"
                         // for full date format documentation see https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings?redirectedfrom=MSDN
-                        string tmp = Val;
+                        string tmp = val;
                         tmp = tmp.Replace("m", "M");
                         tmp = tmp.Replace("n", "m");
                         tmp = tmp.Replace("h", "H"); // hh=12h, HH=24h
@@ -427,18 +438,18 @@ namespace CSVLint
                     }
 
                     // schema.ini DecimalSymbol, typically ',' or '.' but can be set to any single character that is used to separate the integer from the fractional part of a number.
-                    if (k == "decimalsymbol") this.DecimalSymbol = Val[0];
+                    if (k == "decimalsymbol") this.DecimalSymbol = val[0];
 
                     // schema.ini NumberDigits, Indicates the number of decimal digits in the fractional portion of a number.
                     if (k == "numberdigits") this.NumberDigits = vint;
 
                     // schema.ini NumberLeadingZeros, 
                     // Specifies whether a decimal value less than 1 and more than -1 should contain leading zeros; this value can be either False (no leading zeros) or True.
-                    if (k == "numberleadingzeros") this.NumberLeadingZeros = (vallow[1] == 't');
+                    if (k == "numberleadingzeros") this.NumberLeadingZeros = vallow[1] == 't';
 
                     // schema.ini CurrencySymbol
                     // Indicates the currency symbol that can be used for currency values in the text file. Examples include the dollar sign ($) and Dm.
-                    if (k == "currencysymbol") this.CurrencySymbol = Val;
+                    if (k == "currencysymbol") this.CurrencySymbol = val;
 
                     // schema.ini CurrencyPosFormat
                     // Can be set to any of the following values:
@@ -446,7 +457,7 @@ namespace CSVLint
                     // - Currency symbol suffix with no separation(1$)
                     // - Currency symbol prefix with one character separation($ 1)
                     // - Currency symbol suffix with one character separation(1 $)
-                    if (k == "currencyposformat") this.CurrencyPosFormat = Val;
+                    if (k == "currencyposformat") this.CurrencyPosFormat = val;
 
                     // schema.ini CurrencyDigits
                     // Specifies the number of digits used for the fractional part of a currency amount.
@@ -456,20 +467,20 @@ namespace CSVLint
                     // Can be one of the following values:
                     // ($1)  -$1  $-1  $1 - (1$)  -1$  1 -$  1$- -1 $  -$ 1  1 $-  $ 1 -  $ -1  1 - $  ($ 1)  (1 $)
                     // This example shows the dollar sign, but you should replace it with the appropriate CurrencySymbol value in the actual program.
-                    if (k == "currencynegformat") this.CurrencyNegFormat = Val;
+                    if (k == "currencynegformat") this.CurrencyNegFormat = val;
 
                     // schema.ini CurrencyThousandSymbol
                     // Indicates the single-character symbol that can be used for separating currency values in the text file by thousands.
-                    if (k == "currencythousandsymbol") this.CurrencyThousandSymbol = Val[0];
+                    if (k == "currencythousandsymbol") this.CurrencyThousandSymbol = val[0];
 
                     // schema.ini CurrencyDecimalSymbol
                     // Can be set to any single character that is used to separate the whole from the fractional part of a currency amount.
-                    if (k == "currencydecimalsymbol") this.CurrencyDecimalSymbol = Val[0];
+                    if (k == "currencydecimalsymbol") this.CurrencyDecimalSymbol = val[0];
 
                     // schema.ini DecimalSymbol, typically ',' or '.' but can be set to any single character that is used to separate the integer from the fractional part of a number.
                     if (k == "colnameheader")
                     {
-                        this.ColNameHeader = (vallow[0] == 't');
+                        this.ColNameHeader = vallow[0] == 't';
                     } else
                     // schema.ini DateTimeFormat for all columns
                     if (k.Substring(0, 3) == "col")
@@ -478,7 +489,7 @@ namespace CSVLint
                         int idx = 0;
                         try
                         {
-                            idx = Int32.Parse(s) - 1;
+                            idx = int.Parse(s) - 1;
                         }
                         catch (FormatException)
                         {
@@ -499,11 +510,11 @@ namespace CSVLint
 
                         // NOT NULL must be at end of line
                         pos = vallow.LastIndexOf("not null");
-                        if (pos == Val.Count() - 8)
+                        if (pos == val.Length - 8)
                         {
-                            notnull = vallow.Substring(pos, Val.Length - pos);
-                            Val = Val.Substring(0, pos).Trim();
-                            vallow = Val.ToLower();
+                            notnull = vallow.Substring(pos, val.Length - pos);
+                            val = val.Substring(0, pos).Trim();
+                            vallow = val.ToLower();
                         }
 
                         // WIDTH must be at end of line
@@ -511,9 +522,9 @@ namespace CSVLint
                         pos = vallow.LastIndexOf("width");
                         if (pos == spc - 5)
                         {
-                            string width = vallow.Substring(pos, Val.Length - pos);
-                            Val = Val.Substring(0, pos).Trim();
-                            vallow = Val.ToLower();
+                            string width = vallow.Substring(pos, val.Length - pos);
+                            val = val.Substring(0, pos).Trim();
+                            vallow = val.ToLower();
 
                             width = width.Replace("width ", "");
                             if (int.TryParse(width, out int n))
@@ -530,8 +541,8 @@ namespace CSVLint
                         if (pos == -1) pos = vallow.LastIndexOf("int");
                         if ((pos >= 0) && (pos == spc + 1))
                         {
-                            datatypestr = vallow.Substring(pos, Val.Length - pos);
-                            Val = Val.Substring(0, pos).Trim();
+                            datatypestr = vallow.Substring(pos, val.Length - pos);
+                            val = val.Substring(0, pos).Trim();
                         }
                         // schema.ini datatype, string to ColumnType
                         if (datatypestr == "bit")      datatype = ColumnType.Integer;
@@ -564,25 +575,25 @@ namespace CSVLint
                             // data definition error; width shorter than nr of decimals
                             if (dig < 0) dig = 1;
 
-                            mask = string.Format("{0}{1}{2}", (new string('9', dig)), this.DecimalSymbol, (new string('9', dec)));
+                            mask = string.Format("{0}{1}{2}", new string('9', dig), this.DecimalSymbol, new string('9', dec));
                         };
 
                         // any left is the name of the column
-                        if (Val.Trim() != "") name = Val;
+                        if (val.Trim() != "") name = val;
 
                         // if quotes around name because of spaces
-                        int quote1 = Val.IndexOf('"');
-                        int quote2 = Val.LastIndexOf('"');
+                        int quote1 = val.IndexOf('"');
+                        int quote2 = val.LastIndexOf('"');
 
                         // check if incorrect and just one quote
                         if (quote1 == quote2)
                         {
-                            if (quote1 == 0) quote2 = Val.Length; // only quote at start
+                            if (quote1 == 0) quote2 = val.Length; // only quote at start
                             if (quote1 > 0) quote1 = -1;          // only quote at end
                         }
 
                         // if any quotes around name then remove them
-                        if (quote1 > 0 || quote2 > 0) name = Val.Substring(quote1 + 1, quote2 - quote1 - 1);
+                        if (quote1 > 0 || quote2 > 0) name = val.Substring(quote1 + 1, quote2 - quote1 - 1);
 
                         // add columns
                         this.AddColumn(idx, name, maxwidth, datatype, mask);
@@ -595,7 +606,7 @@ namespace CSVLint
                         string datatypestr = "";
                         try
                         {
-                            idxalt = Int32.Parse(s) - 1;
+                            idxalt = int.Parse(s) - 1;
                         }
                         catch (FormatException)
                         {
@@ -605,19 +616,19 @@ namespace CSVLint
                         ColumnType datatypealt = ColumnType.String;
 
                         // check for valid datatype must be at end of line
-                        int posalt = Val.LastIndexOf("DateTime");
+                        int posalt = val.LastIndexOf("DateTime");
                         if (posalt >= 0)
                         {
-                            int spcalt = Val.IndexOf(" ", posalt);
-                            datatypestr = Val.Substring(posalt, spcalt - posalt);
-                            Val = Val.Substring(spcalt, Val.Length - spcalt).Trim();
+                            int spcalt = val.IndexOf(" ", posalt);
+                            datatypestr = val.Substring(posalt, spcalt - posalt);
+                            val = val.Substring(spcalt, val.Length - spcalt).Trim();
                         }
-                        posalt = Val.LastIndexOf("Float");
+                        posalt = val.LastIndexOf("Float");
                         if (posalt >= 0)
                         {
-                            int spcalt = Val.IndexOf(" ", posalt);
-                            datatypestr = Val.Substring(posalt, spcalt - posalt);
-                            Val = Val.Substring(spcalt, Val.Length - spcalt).Trim();
+                            int spcalt = val.IndexOf(" ", posalt);
+                            datatypestr = val.Substring(posalt, spcalt - posalt);
+                            val = val.Substring(spcalt, val.Length - spcalt).Trim();
                         }
                         if (datatypestr == "DateTime") datatypealt = ColumnType.DateTime;
                         if (datatypestr == "Float") datatypealt = ColumnType.Decimal;
@@ -631,7 +642,7 @@ namespace CSVLint
                                 if (this.Fields[x].Index == idxalt)
                                 {
                                     this.Fields[x].DataType = datatypealt;
-                                    this.Fields[x].Mask = Val;
+                                    this.Fields[x].Mask = val;
                                     this.Fields[x].Initialize();
                                 }
                             };
@@ -770,7 +781,7 @@ namespace CSVLint
                     if (col.Decimals != this.NumberDigits)
                     {
                         // schma.ini doesn't support multiple floating point formats, i.e. with different amounts of decimals
-                        com = string.Format(";Col{0}={1} {2}\r\n", (i + 1), def, col.Mask);
+                        com = string.Format(";Col{0}={1} {2}\r\n", i + 1, def, col.Mask);
                     }
                 }
 
@@ -784,7 +795,7 @@ namespace CSVLint
                     else
                     {
                         // schma.ini doesn't support multiple datetime formats
-                        com = string.Format(";Col{0}={1} DateTime {2}\r\n", (i + 1), def, col.Mask);
+                        com = string.Format(";Col{0}={1} DateTime {2}\r\n", i + 1, def, col.Mask);
                         def += " Text";
                     }
                 }
@@ -793,7 +804,7 @@ namespace CSVLint
                 def += " Width " + col.MaxWidth;
 
                 // "Col1=LastName Text Width 50"
-                res += string.Format("Col{0}={1}\r\n", (i + 1), def);
+                res += string.Format("Col{0}={1}\r\n", i + 1, def);
 
                 // add alternative column format as comment
                 if (com != "") res += com;
@@ -847,13 +858,13 @@ namespace CSVLint
         /// reformat file for date, decimal and separator
         /// </summary>
         /// <param name="data"> csv data </param>
-        public List<String> ParseNextLine(StreamReader strdata)
+        public List<string> ParseNextLine(StreamReader strdata)
         {
             // algorithm in part based on "How can I parse a CSV string with JavaScript, which contains comma in data?"
             // answer by user Bachor https://stackoverflow.com/a/58181757/1745616
 
             // return list
-            var res = new List<String>();
+            var res = new List<string>();
 
             StringBuilder value = new StringBuilder();
 
@@ -863,7 +874,7 @@ namespace CSVLint
 
                 // fixed width columns
                 int pos = 0;
-                int fieldcount = FieldWidths.Count()-1;
+                int fieldcount = FieldWidths.Count - 1;
                 for (int i = 0; i <= fieldcount; i++)
                 {
                     // next column width
@@ -905,7 +916,7 @@ namespace CSVLint
                     if (!quote)
                     {
                         // to catch where value is just two quotes "" right at start of line
-                        bool cellIsEmpty = (value.Length == 0);
+                        bool cellIsEmpty = value.Length == 0;
 
                         // check if starting a quoted value or going next column or going to next line
                         if ((cur == quote_char) && cellIsEmpty) { quote = true; wasquoted = true; }
@@ -957,9 +968,9 @@ namespace CSVLint
         /// <summary>
         /// Based on the CsvDefinition, take array of data values and constructs one line of output
         /// </summary>
-        public String ConstructLine(string[] data)
+        public string ConstructLine(string[] data)
         {
-            String res = "";
+            string res = "";
 
             for (int c = 0; c < this.Fields.Count; c++)
             {

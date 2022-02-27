@@ -23,7 +23,6 @@ namespace Kbg.NppPluginNET
         public static CultureInfo dummyCulture;
 
         static string userConfigPath = null;
-        static bool checkdarkmode = false;
         static CsvLintWindow frmCsvLintDlg = null;
         static int idMyDlg = -1;
 
@@ -37,32 +36,54 @@ namespace Kbg.NppPluginNET
         static IScintillaGateway editor = new ScintillaGateway(PluginBase.GetCurrentScintilla());
         static Icon tbIcon = null;
 
+        static readonly Alpha sAlpha = editor.GetCaretLineBackAlpha();
+        static readonly Colour sCaretLineColor = editor.GetCaretLineBack();
+        internal static bool sShouldResetCaretBack = false;
+
+
         // list of files and csv definition for each
         static Dictionary<string, CsvDefinition> FileCsvDef = new Dictionary<string, CsvDefinition>();
         static CsvDefinition _CurrnetCsvDef;
 
         public static void OnNotification(ScNotification notification)
         {
+            uint code = notification.Header.Code;
             // This method is invoked whenever something is happening in notepad++
             // use eg. as
-            // if (notification.Header.Code == (uint)NppMsg.NPPN_xxx)
+            // if (code == (uint)NppMsg.NPPN_xxx)
             // { ... }
             // or
             //
-            // if (notification.Header.Code == (uint)SciMsg.SCNxxx)
+            // if (code == (uint)SciMsg.SCNxxx)
             // { ... }
 
             // changing tabs
-            if ((notification.Header.Code == (uint)NppMsg.NPPN_BUFFERACTIVATED) || (notification.Header.Code == (uint)NppMsg.NPPN_LANGCHANGED))
+            if ((code == (uint)NppMsg.NPPN_BUFFERACTIVATED) ||
+                (code == (uint)NppMsg.NPPN_LANGCHANGED))
             {
                 Main.CSVChangeFileTab();
             }
 
             // when closing a file
-            if (notification.Header.Code == (uint)NppMsg.NPPN_FILEBEFORECLOSE)
+            if (code == (uint)NppMsg.NPPN_FILEBEFORECLOSE)
             {
-                Main.removeCSVdef();
+                Main.RemoveCSVdef();
             }
+
+            if (code > int.MaxValue) // windows messages
+            {
+                int wm = -(int)code;
+                // leaving previous tab
+                if (wm == 0x22A && sShouldResetCaretBack) // =554 WM_MDI_SETACTIVE
+                {
+                    // set caret line to default on file change
+                    sShouldResetCaretBack = false;
+                    var editor = new ScintillaGateway(PluginBase.GetCurrentScintilla());
+                    editor.SetCaretLineBackAlpha(sAlpha);// Alpha.NOALPHA); // default
+                    editor.SetCaretLineBack(sCaretLineColor);
+                }
+            }
+
         }
 
         internal static void CommandMenuInit()
@@ -80,13 +101,13 @@ namespace Kbg.NppPluginNET
             //PluginBase.SetCommand(0, "MyMenuCommand", myMenuFunction, new ShortcutKey(false, false, false, Keys.None));
             PluginBase.SetCommand(0, "CSV Lint window", myDockableDialog); idMyDlg = 0;
             PluginBase.SetCommand(1, "---", null);
-            PluginBase.SetCommand(2, "Analyse data report", analyseDataReport);
+            PluginBase.SetCommand(2, "Analyse data report", AnalyseDataReport);
             PluginBase.SetCommand(3, "Count unique values", CountUniqueValues);
             PluginBase.SetCommand(4, "Convert data to..", convertData);
             //PluginBase.SetCommand(5, "Generate metadata", convertData);
             PluginBase.SetCommand(5, "---", null);
-            PluginBase.SetCommand(6, "&Settings", doSettings);
-            PluginBase.SetCommand(7, "About / Help", doAboutForm);
+            PluginBase.SetCommand(6, "&Settings", DoSettings);
+            PluginBase.SetCommand(7, "About / Help", DoAboutForm);
 
             RefreshFromSettings();
         }
@@ -94,9 +115,9 @@ namespace Kbg.NppPluginNET
         internal static void RefreshFromSettings()
         {
             // the DateTime.TryParseExact requires a culture object, for much better performance DO NOT create on the fly for every call to EvaluateDateTime!
-            var tmp = (CultureInfo)(CultureInfo.InvariantCulture.Clone());
+            var tmp = (CultureInfo)CultureInfo.InvariantCulture.Clone();
             tmp.DateTimeFormat.Calendar.TwoDigitYearMax = Settings.intTwoDigitYearMax; // any cutoff you need
-                                                                // incorrect: tmp.Calendar.TwoDigitYearMax = 2039
+                                                        // incorrect: tmp.Calendar.TwoDigitYearMax = 2039
             dummyCulture = CultureInfo.ReadOnly(tmp);
         }
 
@@ -111,12 +132,12 @@ namespace Kbg.NppPluginNET
                 config.Load(xmlfile);
 
                 XmlNode darkmode = config.DocumentElement.SelectSingleNode("/NotepadPlus/GUIConfigs/GUIConfig[@name='DarkMode']");
-                darkmodeenabled = ((darkmode != null) && (darkmode as XmlElement).HasAttribute("enable") ? darkmode.Attributes["enable"].Value : "no");
+                darkmodeenabled = (darkmode != null) &&
+                    (darkmode as XmlElement).HasAttribute("enable") ? darkmode.Attributes["enable"].Value : "no";
             }
             catch { };
 
-            // return value
-            return (darkmodeenabled == "yes");
+            return darkmodeenabled == "yes";
         }
 
         internal static void TryCreateLexerXml(int presetidx, bool overwrite)
@@ -129,7 +150,7 @@ namespace Kbg.NppPluginNET
                 if (presetidx == -1)
                 {
                     // initially give users random color preset, i.e. distribute random among all users, to see which they like best
-                    var checkdarkmode = CheckConfigDarkMode();
+                    bool checkdarkmode = CheckConfigDarkMode();
                     var sec = DateTime.Now.Second % 2; // semi-random 0..1
                     presetidx = (checkdarkmode ? 2 : 0) + sec; // 0..1 for normal, 2..3 for dark mode
                 }
@@ -188,7 +209,7 @@ namespace Kbg.NppPluginNET
             };
 
             // Create an XmlWriterSettings object with the correct options.
-            System.Xml.XmlWriterSettings xmlsettings = new System.Xml.XmlWriterSettings();
+            XmlWriterSettings xmlsettings = new XmlWriterSettings();
             xmlsettings.Indent = true;
             xmlsettings.IndentChars = "\t"; //  "\t";
             xmlsettings.OmitXmlDeclaration = false;
@@ -197,7 +218,7 @@ namespace Kbg.NppPluginNET
 
             try
             {
-                using (System.Xml.XmlWriter writer = System.Xml.XmlWriter.Create(filename, xmlsettings))
+                using (XmlWriter writer = XmlWriter.Create(filename, xmlsettings))
                 {
 
                     writer.WriteStartDocument();
@@ -247,10 +268,10 @@ namespace Kbg.NppPluginNET
                                 //writer.WriteAttributeString("fontName", "");
                                 //writer.WriteAttributeString("fontStyle", "0");
                             //writer.WriteEndElement();
-                            var name = (i == 0 ? "Default" : "ColumnColor" + i.ToString());
+                            var name = i == 0 ? "Default" : "ColumnColor" + i.ToString();
                             var fgcolor = colors[coloridx];
                             var bgcolor = colors[coloridx + 1];
-                            var bold = (ps == 0 || i == 0 ? "0" : "1");
+                            var bold = ps == 0 || i == 0 ? "0" : "1";
                             var str = string.Format("\r\n\t\t\t<WordsStyle styleID=\"{0}\" name=\"{1}\" fgColor=\"{2}\" bgColor=\"{3}\" fontName=\"\" fontStyle=\"{4}\" />", i, name, fgcolor, bgcolor, bold);
                             writer.WriteRaw(str);
 
@@ -265,7 +286,7 @@ namespace Kbg.NppPluginNET
 
                     writer.Flush();
                     writer.Close();
-                } // End Using writer 
+                } // End Using writer
             }
             catch
             {
@@ -298,15 +319,14 @@ namespace Kbg.NppPluginNET
 
         public static void CSVChangeFileTab()
         {
-            // Notepad++ switch to a different file tab
+            // Notepad++ switched to a different file tab
             INotepadPPGateway notepad = new NotepadPPGateway();
+            string filename = notepad.GetCurrentFilePath();
 
             CsvDefinition csvdef;
 
-            string filename = notepad.GetCurrentFilePath();
-
             // check if already in list
-            if (!FileCsvDef.ContainsKey(filename))
+            if (!FileCsvDef.TryGetValue(filename, out csvdef))
             {
                 // read schema.ini file
                 var lines = CsvSchemaIni.ReadIniSection(filename);
@@ -322,14 +342,10 @@ namespace Kbg.NppPluginNET
                 }
                 FileCsvDef.Add(filename, csvdef);
             }
-            else
-            {
-                csvdef = FileCsvDef[filename];
-            }
 
             // pass separator to lexer
             string sepchar = csvdef.Separator.ToString();
-            string sepcol = (Settings.SeparatorColor ? "1" : "0");
+            string sepcol = Settings.SeparatorColor ? "1" : "0";
             editor.SetProperty("separator", sepchar);
             editor.SetProperty("separatorcolor", sepcol);
 
@@ -357,27 +373,18 @@ namespace Kbg.NppPluginNET
             }
         }
 
-        public static void updateCSVChanges(CsvDefinition csvdef, bool saveini)
+        public static void UpdateCSVChanges(CsvDefinition csvdef, bool saveini)
         {
             // Notepad++ switc to a different file tab
             INotepadPPGateway notepad = new NotepadPPGateway();
             string filename = notepad.GetCurrentFilePath();
 
-            // check if already in list
-            if (!FileCsvDef.ContainsKey(filename))
-            {
-                // add csv definition
-                FileCsvDef.Add(filename, csvdef);
-            }
-            else
-            {
-                // overwrite old csv definition with new
-                FileCsvDef[filename] = csvdef;
-            }
+            // overwrite old or add new csv definition
+            FileCsvDef[filename] = csvdef;
 
             // pass separator to lexer
             string sepchar = csvdef.Separator.ToString();
-            string sepcol = (Settings.SeparatorColor ? "1" : "0");
+            string sepcol = Settings.SeparatorColor ? "1" : "0";
             editor.SetProperty("separator", sepchar);
             editor.SetProperty("separatorcolor", sepcol);
 
@@ -411,43 +418,32 @@ namespace Kbg.NppPluginNET
             INotepadPPGateway notepad = new NotepadPPGateway();
             string filename = notepad.GetCurrentFilePath();
 
-            // check if already in list
-            if (FileCsvDef.ContainsKey(filename))
-            {
-                return FileCsvDef[filename];
-            }
-
-            return null;
+            return FileCsvDef.TryGetValue(filename, out CsvDefinition result) ? result : null;
         }
 
-        public static void removeCSVdef()
+        public static void RemoveCSVdef()
         {
             // Notepad++ closes a file, also remove the definition from list
             INotepadPPGateway notepad = new NotepadPPGateway();
             string filename = notepad.GetCurrentFilePath();
 
-            // check if in list
-            if (FileCsvDef.ContainsKey(filename))
-            {
-                // remove csv definition
-                FileCsvDef.Remove(filename);
-            }
+            // remove csv definition if existant
+            FileCsvDef.Remove(filename);
         }
 
+        [Obsolete("There is no reference to this in the CsvLintSolution. If used from elsewhere please add in summary.", false)]
         public static void GetCurrentFileLexerParameters(out char sep)
         {
-
             sep = ';';
 
             // Notepad++ switc to a different file tab
             INotepadPPGateway notepad = new NotepadPPGateway();
+            string filename = notepad.GetCurrentFilePath();
 
             CsvDefinition csvdef;
 
-            string filename = notepad.GetCurrentFilePath();
-
             // check if already in list
-            if (!FileCsvDef.ContainsKey(filename))
+            if (!FileCsvDef.TryGetValue(filename, out csvdef))
             {
                 // read schema.ini file
                 var lines = CsvSchemaIni.ReadIniSection(filename);
@@ -464,10 +460,6 @@ namespace Kbg.NppPluginNET
 
                 FileCsvDef.Add(filename, csvdef);
             }
-            else
-            {
-                csvdef = FileCsvDef[filename];
-            }
             sep = csvdef.Separator;
         }
 
@@ -475,17 +467,17 @@ namespace Kbg.NppPluginNET
         {
             // any clean up code here
         }
-        internal static void doSettings()
+
+        internal static void DoSettings()
         {
             Settings.ShowDialog();
             RefreshFromSettings();
         }
 
-        internal static void doAboutForm()
+        internal static void DoAboutForm()
         {
-            var about = new AboutForm();
-            about.ShowDialog();
-            about.Dispose();
+            using (var about = new AboutForm())
+                about.ShowDialog();
         }
 
         internal static void convertData()
@@ -553,7 +545,7 @@ namespace Kbg.NppPluginNET
         //    }
         //}
 
-        internal static void analyseDataReport()
+        internal static void AnalyseDataReport()
         {
             // get dictionary
             CsvDefinition csvdef = GetCurrentCsvDef();
@@ -635,19 +627,19 @@ namespace Kbg.NppPluginNET
             else
             {
                 // toggle on/off
-                if (!frmCsvLintDlg.Visible)
-                    Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_DMMSHOW, 0, frmCsvLintDlg.Handle); // show
-                else
-                    Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_DMMHIDE, 0, frmCsvLintDlg.Handle); // hide
+                Win32.SendMessage(PluginBase.nppData._nppHandle,
+                    (uint)(frmCsvLintDlg.Visible ? NppMsg.NPPM_DMMHIDE : NppMsg.NPPM_DMMSHOW),
+                    0, frmCsvLintDlg.Handle);
             }
 
             // immediately show currnet csv metadata when activated
             CSVChangeFileTab();
         }
+
         public static string GetVersion()
         {
             // version for example "1.3.0.0"
-            String ver = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            string ver = Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
             // if 4 version digits, remove last two ".0" if any, example  "1.3.0.0" ->  "1.3" or  "2.0.0.0" ->  "2.0"
             while ((ver.Length > 4) && (ver.Substring(ver.Length - 2, 2) == ".0"))

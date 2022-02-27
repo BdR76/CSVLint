@@ -5,15 +5,14 @@ using System.Globalization;
 
 namespace CSVLint
 {
+    /// <summary>
+    /// Csv Analyze Column, keep stats from data, determine datatype width etc.
+    /// </summary>
     class CsvAnalyzeColumn
     {
-        /// <summary>
-        /// Csv Analyze Column, keep stats from data, determine datatype width etc.
-        /// </summary>
-        /// 
 
         // column statistics
-        public String Name = "";
+        public string Name = "";
         public int Index = 0;
         public int MinWidth = 9999;
         public int MaxWidth = 0;
@@ -51,18 +50,18 @@ namespace CSVLint
         // date format is unknown when no data read yet
         public int stat_dat_dmy = 0; // 0=unknown, 1=YMD, 2=DMY, 3=MDY, when beginning assume day-month order in dateformat is unknown until a value confirms either YMD or DMY or MDY
         public string stat_dat_format = ""; // most likely format
-        public DateTime stat_mindat_mdy;
-        public DateTime stat_maxdat_mdy;
-        public string stat_mindat_mdy_org = "";
-        public string stat_maxdat_mdy_org = "";
-        public Dictionary<String, int> stat_uniquecount = new Dictionary<String, int>();
+        //public DateTime stat_mindat_mdy;
+        //public DateTime stat_maxdat_mdy;
+        //public string stat_mindat_mdy_org = "";
+        //public string stat_maxdat_mdy_org = "";
+        public Dictionary<string, int> stat_uniquecount = new Dictionary<string, int>();
 
         public CsvAnalyzeColumn(int idx)
         {
             this.Index = idx;
         }
 
-        public void InputData(String data, int fixedLength, bool fullstats)
+        public void InputData(string data, int fixedLength, bool fullstats)
         {
             // count how many values
             this.CountAll++;
@@ -86,7 +85,7 @@ namespace CSVLint
             else
             {
                 // for fixed length files, the MaxWidth should be length of not-trimmed data
-                int length = (fixedLength > 0 ? fixedLength : data.Length);
+                int length = fixedLength > 0 ? fixedLength : data.Length;
 
                 // check for empty values, count empty strings
                 if (data.Length == 0)
@@ -241,7 +240,7 @@ namespace CSVLint
                         if (fullstats) KeepMinMaxDateTime(data, ddmax1, ddmax2, 3);
                     }
                     // or time, examples "9:00", "23:59:59", "23:59:59.000" etc.
-                    else if ((length >= 4) && (length <= 12) && (sep1 == ':') && (datesep >= 1) && (datesep <= 3) && (digits >= 3) && (digits <= 9) && (ddmax1 > 0) && ((ddmax1 <= 23) && (ddmax2 <= 59)))
+                    else if ((length >= 4) && (length <= 12) && (sep1 == ':') && (datesep >= 1) && (datesep <= 3) && (digits >= 3) && (digits <= 9) && (ddmax1 > 0) && (ddmax1 <= 23) && (ddmax2 <= 59))
                     {
                         this.CountDateTime++;
                         if (this.DateSep == '\0') this.DateSep = sep1;
@@ -299,7 +298,7 @@ namespace CSVLint
         /// <summary>
         /// Keep more stats only when running full analyze data report, not when scanning meta data
         /// </summary>
-        public void KeepMinMaxInteger(String value)
+        public void KeepMinMaxInteger(string value)
         {
             // try parse as integer
             if (int.TryParse(value, out int valint))
@@ -320,7 +319,7 @@ namespace CSVLint
             }
         }
 
-        public void KeepMinMaxDecimal(String value, char dec)
+        public void KeepMinMaxDecimal(string value, char dec)
         {
             // try parse as integer
             if (float.TryParse(value, out float valdbl))
@@ -341,14 +340,14 @@ namespace CSVLint
             }
         }
 
-        public void KeepMinMaxDateTime(String value, int ddmax1, int ddmax2, int datatype)
+        public void KeepMinMaxDateTime(string value, int ddmax1, int ddmax2, int datatype)
         {
             // TODO: this is not optimal, could still miss some minimum/maximum dates when initially assuming incorrect format
 
             // try to determine datetime format
             if (stat_dat_dmy == 0)
             {
-                bool newformat = (stat_dat_format == "");
+                bool newformat = stat_dat_format == "";
 
                 // date or datetime
                 if ((datatype == 1) || (datatype == 3))
@@ -432,7 +431,7 @@ namespace CSVLint
             }
         }
 
-        public void KeepUniqueValues(String value)
+        public void KeepUniqueValues(string value)
         {
             // when already found X unique values, no use in keep counting; probably not coded anyway
             if (stat_uniquecount.Count <= Main.Settings.UniqueValuesMax)
@@ -463,7 +462,7 @@ namespace CSVLint
             if ((this.CountInteger > 0) && (this.CountDecimal > 0))
             {
                 // decimal values ratio to integer values
-                var decratio = (1.0 * this.CountDecimal) / (this.CountInteger + this.CountDecimal);
+                var decratio = 1.0 * this.CountDecimal / (this.CountInteger + this.CountDecimal);
 
                 // if larger than 1 percent, example 10 decimal values and 990 integers
                 if (decratio > 0.01)
@@ -472,7 +471,7 @@ namespace CSVLint
                     this.CountDecimal += this.CountInteger;
                     this.CountInteger = 0;
                 }
-				// if less than 1% then interpret column as integers and decimals are errors in data
+                // if less than 1% then interpret column as integers and decimals are errors in data
             }
 
             // check if whole number integers (no decimals)
@@ -484,7 +483,7 @@ namespace CSVLint
             else if ((this.CountDecimal > this.CountString) && (this.CountDecimal > this.CountInteger) && (this.CountDecimal > this.CountDateTime))
             {
                 result.DataType = ColumnType.Decimal;
-                char dec = (this.CountDecimalPoint > this.CountDecimalComma ? '.' : ',');
+                char dec = this.CountDecimalPoint > this.CountDecimalComma ? '.' : ',';
 
                 // mask, example "9999.99"
                 mask = string.Format("{0}{1}{2}", mask.PadLeft(this.DecimalDigMax, '9'), dec, mask.PadLeft(this.DecimalDecMax, '9'));
@@ -568,25 +567,15 @@ namespace CSVLint
 
             result.MaxWidth = this.MaxWidth;
 
-            // add column 
+            // add column
             return result;
         }
-        public static String ColAsString(CsvColumn col)
+
+        public static string ColAsString(CsvColumn col)
         {
-
-            String str = "";
-
-            if (col.DataType == CSVLint.ColumnType.String)   str += "String";
-            if (col.DataType == CSVLint.ColumnType.Integer)  str += "Integer";
-            if (col.DataType == CSVLint.ColumnType.DateTime) str += "DateTime";
-            if (col.DataType == CSVLint.ColumnType.Decimal)  str += "Decimal";
-            if (col.DataType == CSVLint.ColumnType.Unknown)  str += "Unknown";
-
-            str = str + "\r\nwidth=" + col.MaxWidth + "\r\n";
-            str = str + "DecimalSymbol=" + col.DecimalSymbol + "\r\n";
-            str = str + "Decimals=" + col.Decimals + "\r\n";
-
-            return str;
+            return string.Format("{0}\r\nwidth={1}\r\nDecimalSymbol={2}\r\nDecimals={3}\r\n",
+                Enum.GetName(typeof(ColumnType), col.DataType),
+                col.MaxWidth, col.DecimalSymbol, col.Decimals);
         }
     }
 }

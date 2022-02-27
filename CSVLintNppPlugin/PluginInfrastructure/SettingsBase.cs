@@ -192,7 +192,7 @@ namespace CsvQuery.PluginInfrastructure
 
             var dialog = new Form
             {
-                Text = String.Format("Settings - {0} plug-in", Main.PluginName),
+                Text = string.Format("Settings - {0} plug-in", Main.PluginName),
                 ClientSize = new Size(DEFAULT_WIDTH, DEFAULT_HEIGHT),
                 MinimumSize = new Size(250, 250),
                 ShowIcon = false,

@@ -94,7 +94,7 @@ namespace CSVLint
                 // too many or too few columns
                 if (values.Count != csvdef.Fields.Count)
                 {
-                    err += string.Format("Too {0} columns, ", (values.Count > csvdef.Fields.Count ? "many" : "few"));
+                    err += string.Format("Too {0} columns, ", values.Count > csvdef.Fields.Count ? "many" : "few");
                     counterr++;
                 }
 
@@ -102,7 +102,7 @@ namespace CSVLint
                 for (var i = 0; i < values.Count; i++)
                 {
                     // next value and column number
-                    String val = values[i];
+                    string val = values[i];
 
                     // adjust for quoted values, trim first because can be a space before the first quote, example .., "BMI",..
                     var valtrim = val.Trim();
@@ -154,7 +154,7 @@ namespace CSVLint
             var dtElapsed = (DateTime.Now - dtStart).ToString(@"hh\:mm\:ss\.fff");
 
             // final ready message
-            var line = string.Format("Inspected {0} lines, {1} data errors found, time elapsed {2}", lineCount, (this.log.Count == 0 ? "no" : counterr.ToString()), dtElapsed);
+            var line = string.Format("Inspected {0} lines, {1} data errors found, time elapsed {2}", lineCount, this.log.Count == 0 ? "no" : counterr.ToString(), dtElapsed);
             this.log.Add(new LogLine(line, -1, -1));
         }
 
@@ -349,7 +349,7 @@ namespace CSVLint
             }
 
             // example ".25" or "-.5"
-            if ((decsep - sign == 1) && (Main.Settings.DecimalLeadingZero))
+            if ((decsep - sign == 1) && Main.Settings.DecimalLeadingZero)
             {
                 err += "missing leading zero not allowed";
                 isDecimal = false;
@@ -380,10 +380,10 @@ namespace CSVLint
                 // check year range
                 int year = dateValue.Year;
                 if (year < Main.Settings.YearMinimum || year > Main.Settings.YearMaximum)
-				{
+                {
                     isDate = false;
                     err = "is out of range";
-				};
+                };
             };
 
             return isDate;

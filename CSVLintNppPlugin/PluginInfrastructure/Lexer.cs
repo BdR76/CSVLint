@@ -22,7 +22,7 @@ namespace NppPluginNET.PluginInfrastructure
             { "fold.compact", false},
             { "separatorcolor", false},
             { "separator", false}
-    };
+        };
         static readonly Dictionary<string, string> PropertyDescription = new Dictionary<string, string>
         {
             { "fold", "Enable or disable the folding functionality."},
@@ -269,6 +269,9 @@ namespace NppPluginNET.PluginInfrastructure
         static ILexer4 ilexer4 = new ILexer4 { };
         static IntPtr vtable_pointer = IntPtr.Zero;
 
+        private static Colour sCaretLineBack = new Colour(
+            Main.CheckConfigDarkMode() ? 0xFFFFFF: 0); // 0);// 
+
         public static IntPtr ILexerImplementation()
         {
             if (vtable_pointer == IntPtr.Zero)
@@ -368,7 +371,7 @@ namespace NppPluginNET.PluginInfrastructure
             }
             else if (name == "fixedwidths")
             {
-                fixedWidths = value.Split(',').Select(Int32.Parse).ToList();
+                fixedWidths = value.Split(',').Select(int.Parse).ToList();
                 separatorChar = '\0';
             }
             else
@@ -409,6 +412,16 @@ namespace NppPluginNET.PluginInfrastructure
 
             int length = (int)length_doc;
             int start = (int)start_pos;
+
+            // create transparent cursor line
+            if (start == 0 && PluginBase.MainScintillaActive
+                && !Main.sShouldResetCaretBack)
+            {
+                var editor = new ScintillaGateway(PluginBase.GetCurrentScintilla());
+                editor.SetCaretLineBackAlpha((Alpha)16+8);
+                editor.SetCaretLineBack(sCaretLineBack);
+                Main.sShouldResetCaretBack = true;
+            }
 
             // allocate a buffer
             IntPtr buffer_ptr = Marshal.AllocHGlobal(length);
@@ -472,7 +485,7 @@ namespace NppPluginNET.PluginInfrastructure
 
                         // next color, cycle colors or reset at end of line
                         idx++;
-                        if ((idx > 8) || (isEOL)) idx = 1;
+                        if ((idx > 8) || isEOL) idx = 1;
 
                         // next width, or take the rest after last column width 
                         if (colidx < fixedWidths.Count)
@@ -506,7 +519,7 @@ namespace NppPluginNET.PluginInfrastructure
                     if (!quote)
                     {
                         // to catch where value is just two quotes "" right at start of line
-                        bool cellIsEmpty = (i - start_col == 0);
+                        bool cellIsEmpty = i - start_col == 0;
 
                         // check if starting a quoted value or going next column or going to next line
                         if ((cur == quote_char) && cellIsEmpty) { quote = true; }
@@ -543,7 +556,7 @@ namespace NppPluginNET.PluginInfrastructure
                         // next color
                         idx++;
 
-                        if ((idx > 8) || (isEOL)) idx = 1; // reset end of line
+                        if ((idx > 8) || isEOL) idx = 1; // reset end of line
 
                         bNextCol = false;
                         isEOL = false;

@@ -1,0 +1,7 @@
+﻿################################################################################
+# Diese .gitignore-Datei wurde von Microsoft(R) Visual Studio automatisch erstellt.
+################################################################################
+
+/CSVLintNppPlugin/obj
+/CSVLintNppPlugin/bin
+/.vs

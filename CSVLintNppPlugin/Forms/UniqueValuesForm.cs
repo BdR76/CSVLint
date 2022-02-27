@@ -6,7 +6,7 @@ using System.Windows.Forms;
 
 namespace CSVLintNppPlugin.Forms
 {
-    public partial class UniqueValuesForm : CSVLintNppPlugin.Forms.CsvEditFormBase
+    public partial class UniqueValuesForm : CsvEditFormBase
     {
         public UniqueValuesForm()
         {
@@ -36,12 +36,12 @@ namespace CSVLintNppPlugin.Forms
             listColumns_SelectedIndexChanged(listColumns, null);
 
             // load user preferences
-            chkSortBy.Checked      = (Main.Settings.UniqueSortBy);
-            radioSortValue.Checked = (Main.Settings.UniqueSortValue);
-            radioSortCount.Checked = (!Main.Settings.UniqueSortValue);
+            chkSortBy.Checked      = Main.Settings.UniqueSortBy;
+            radioSortValue.Checked = Main.Settings.UniqueSortValue;
+            radioSortCount.Checked = !Main.Settings.UniqueSortValue;
 
-            radioSortAsc.Checked = (Main.Settings.UniqueSortAsc);
-            radioSortDesc.Checked = (!Main.Settings.UniqueSortAsc);
+            radioSortAsc.Checked = Main.Settings.UniqueSortAsc;
+            radioSortDesc.Checked = !Main.Settings.UniqueSortAsc;
 
             // pre-select columns from previous
             var tmp = Main.Settings.UniqueColumns.Split('|');
@@ -54,21 +54,21 @@ namespace CSVLintNppPlugin.Forms
         private void listColumns_SelectedIndexChanged(object sender, EventArgs e)
         {
             // can not press OK when nothing selected
-            btnOk.Enabled = (listColumns.SelectedIndices.Count > 0);
+            btnOk.Enabled = listColumns.SelectedIndices.Count > 0;
         }
         private void chkSortBy_CheckedChanged(object sender, EventArgs e)
         {
             // which checkbox, see index in Tag property
             bool chk = (sender as CheckBox).Checked;
-            ToggleControlBasedOnControl((sender as CheckBox), chk);
+            ToggleControlBasedOnControl(sender as CheckBox, chk);
         }
 
         private void UniqueValuesForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             // pass new values to previous form
-            sortBy = (chkSortBy.Checked);
-            sortValue = (radioSortValue.Checked);
-            sortDesc = (radioSortDesc.Checked);
+            sortBy = chkSortBy.Checked;
+            sortValue = radioSortValue.Checked;
+            sortDesc = radioSortDesc.Checked;
 
             // indexes of selected columns
             columnIndexes = new List<int>();

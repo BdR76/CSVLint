@@ -8,29 +8,26 @@ using CsvQuery.PluginInfrastructure;
 using Kbg.NppPluginNET.PluginInfrastructure;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CSVLint
 {
     class CsvGenerateCode
     {
-		
+
         /// <summary>
-        ///		determine short variable names based on column names
+        /// determine short variable names based on column names
         /// </summary>
         /// <param name="data"> csv data </param>
         public void DetermineVariableNames(string data)
         {
             // shorten variable names based on column names
         }
-		
+
         /// <summary>
-        ///		determine short variable names based on column names
+        /// determine short variable names based on column names
         /// </summary>
         /// <param name="data"> csv data </param>
-        public String HeaderComment()
+        public string HeaderComment()
         {
             // default comment for all scripts
             //return "Generated using Notepad++ CSV Lint plug-in"
@@ -42,35 +39,35 @@ namespace CSVLint
         }
 
         /// <summary>
-        /// generate Python code based on columns (most asked on stackoverflow
+        /// generate Python code based on columns (most asked on stackoverflow)
         /// </summary>
         /// <param name="data"> csv data </param>
-        public String GeneratePython(string data)
+        public string GeneratePython(string data)
         {
             return "Python";
         }
 
         /// <summary>
-        /// generate Python Panda code based on columns (most asked on stackoverflow
+        /// generate Python Panda code based on columns (most asked on stackoverflow)
         /// </summary>
         /// <param name="data"> csv data </param>
-        public String GeneratePythonPanda(string data)
+        public string GeneratePythonPanda(string data)
         {
-			// fixed
-			// import pandas
-			// # Using Pandas with a column specification
-			// col_specification = [(0, 20), (21, 30), (31, 50), (51, 100)]
-			// data = pandas.read_fwf(path, colspecs=col_specification)
+            // fixed
+            // import pandas
+            // # Using Pandas with a column specification
+            // col_specification = [(0, 20), (21, 30), (31, 50), (51, 100)]
+            // data = pandas.read_fwf(path, colspecs=col_specification)
 
-			// separator
-			//import pandas
-			//df = pandas.read_csv('hrdata.csv', 
-			//            index_col='Employee', 
-			//            parse_dates=['Hired'],
-			//            sep=';',
-			//            header=0, 
-			//            names=['Employee', 'Hired', 'Salary', 'Sick Days'])
-			//df.to_csv('hrdata_modified.csv')
+            // separator
+            //import pandas
+            //df = pandas.read_csv('hrdata.csv', 
+            //            index_col='Employee', 
+            //            parse_dates=['Hired'],
+            //            sep=';',
+            //            header=0, 
+            //            names=['Employee', 'Hired', 'Salary', 'Sick Days'])
+            //df.to_csv('hrdata_modified.csv')
 
             return "Python Panda";
         }
@@ -79,7 +76,7 @@ namespace CSVLint
         /// generate SPSS code based on columns
         /// </summary>
         /// <param name="data"> csv data </param>
-        public String GenerateSPSS(string data)
+        public string GenerateSPSS(string data)
         {
             return "SPSS";
         }
@@ -88,7 +85,7 @@ namespace CSVLint
         /// generate SQL based on columns
         /// </summary>
         /// <param name="data"> csv data </param>
-        public String GenerateSQL(string data)
+        public string GenerateSQL(string data)
         {
             return "SQL";
         }
@@ -97,7 +94,7 @@ namespace CSVLint
         /// generate schema.ini based on columns
         /// </summary>
         /// <param name="data"> csv data </param>
-        public String GenerateSchemaIni(string data)
+        public string GenerateSchemaIni(string data)
         {
             return "schema.ini";
         }
@@ -106,7 +103,7 @@ namespace CSVLint
         /// generate R-scripting code based on columns
         /// </summary>
         /// <param name="data"> csv data </param>
-        public String GenerateRScript(string data)
+        public string GenerateRScript(string data)
         {
             return "R script";
         }
@@ -115,7 +112,7 @@ namespace CSVLint
         /// generate PowerShell script based on columns
         /// </summary>
         /// <param name="data"> csv data </param>
-        public String GeneratePowerShell(string data)
+        public string GeneratePowerShell(string data)
         {
             return "PowerShell";
         }
@@ -124,7 +121,7 @@ namespace CSVLint
         /// generate PHP code based on columns
         /// </summary>
         /// <param name="data"> csv data </param>
-        public String GeneratePHP(string data)
+        public string GeneratePHP(string data)
         {
             return "PHP";
         }
