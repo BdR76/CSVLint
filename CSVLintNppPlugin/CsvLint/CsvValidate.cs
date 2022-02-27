@@ -42,7 +42,7 @@ namespace CSVLint
         }
 
         /// <summary>
-        /// validate csv data against the definition of a CsvDefinition
+        /// validate csv data against the definition of a CsvDefinition 
         /// </summary>
         /// <param name="strdata"> csv data </param>
         public void ValidateData(StreamReader strdata, CsvDefinition csvdef)
@@ -359,7 +359,7 @@ namespace CSVLint
         }
 
         /// <summary>
-        ///     validate datetime value
+        /// validate datetime value
         /// </summary>
         /// <param name="val"> datetime value, example "31-12-2019", "12/31/2019", "2019-12-31 23:59" etc.</param>
         private bool EvaluateDateTime(string val, CsvColumn coldef, out string err)

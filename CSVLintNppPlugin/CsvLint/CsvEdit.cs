@@ -209,7 +209,7 @@ namespace CSVLint
 
 
         /// <summary>
-        ///     comment lines for scripts
+        /// comment lines for scripts
         /// </summary>
         private static List<String> ScriptInfo(INotepadPPGateway notepad)
         {
@@ -226,7 +226,7 @@ namespace CSVLint
         }
 
         /// <summary>
-        ///     conert to SQL insert script
+        /// convert to SQL insert script
         /// </summary>
         public static void ConvertToSQL(CsvDefinition csvdef)
         {
@@ -418,7 +418,7 @@ namespace CSVLint
         }
 
         /// <summary>
-        ///     conert to XML data
+        /// convert to XML data
         /// </summary>
         public static void ConvertToXML(CsvDefinition csvdef)
         {
@@ -530,7 +530,7 @@ namespace CSVLint
         }
 
         /// <summary>
-        ///     conert to JSON data
+        /// convert to JSON data
         /// </summary>
         public static void ConvertToJSON(CsvDefinition csvdef)
         {
@@ -643,7 +643,7 @@ namespace CSVLint
         }
 
         /// <summary>
-        ///     split column into new columns
+        /// split column into new columns
         /// </summary>
         /// <param name="data">csv data</param>
         public static void ColumnSplit(CsvDefinition csvdef, int ColumnIndex, int SplitCode, string Parameter1, string Parameter2, bool bRemove)

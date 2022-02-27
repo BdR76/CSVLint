@@ -84,8 +84,8 @@ namespace CSVLintNppPlugin.CsvLint
             string file = Path.GetFileName(filePath);
 
             // schema.ini and section name
-            string inifile = Path.Combine(path, INI_NAME);
-            string section = string.Format("[{0}]", file.ToLower());
+            var inifile = Path.Combine(path, "schema.ini");
+            var section = String.Format("[{0}]", file.ToLower());
 
             // read entire ini file and look for section
             var inilines = new List<string>();

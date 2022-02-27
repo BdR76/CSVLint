@@ -855,7 +855,7 @@ namespace CSVLint
         }
 
         /// <summary>
-        ///     reformat file for date, decimal and separator
+        /// reformat file for date, decimal and separator
         /// </summary>
         /// <param name="data"> csv data </param>
         public List<string> ParseNextLine(StreamReader strdata)
@@ -966,7 +966,7 @@ namespace CSVLint
         }
 
         /// <summary>
-        ///  Based on the CsvDefinition, take array of data values and constructs one line of output
+        /// Based on the CsvDefinition, take array of data values and constructs one line of output
         /// </summary>
         public string ConstructLine(string[] data)
         {
