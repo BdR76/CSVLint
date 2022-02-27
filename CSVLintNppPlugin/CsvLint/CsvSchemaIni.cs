@@ -14,7 +14,7 @@ namespace CSVLintNppPlugin.CsvLint
             var file = Path.GetFileName(FilePath);
 
             // schema.ini and section name
-            var inifile = String.Format("{0}\\{1}", path, "schema.ini");
+            var inifile = Path.Combine(path, "schema.ini");
             var section = String.Format("[{0}]", file.ToLower());
 
             // read entire ini file and look for section
@@ -66,7 +66,7 @@ namespace CSVLintNppPlugin.CsvLint
             errmsg = "";
 
             // schema.ini and section name
-            var inifile = String.Format("{0}\\{1}", path, "schema.ini");
+            var inifile = Path.Combine(path, "schema.ini");
             var section = String.Format("[{0}]", file.ToLower());
 
             // read entire ini file and look for section
