@@ -42,16 +42,16 @@ namespace CSVLint
         }
 
         /// <summary>
-        ///     generate Python code based on columns (most asked on stackoverflow
+        /// generate Python code based on columns (most asked on stackoverflow
         /// </summary>
         /// <param name="data"> csv data </param>
         public String GeneratePython(string data)
         {
             return "Python";
         }
-		
+
         /// <summary>
-        ///     generate Python Panda code based on columns (most asked on stackoverflow
+        /// generate Python Panda code based on columns (most asked on stackoverflow
         /// </summary>
         /// <param name="data"> csv data </param>
         public String GeneratePythonPanda(string data)
@@ -76,7 +76,7 @@ namespace CSVLint
         }
 
         /// <summary>
-        ///     generate SPSS code based on columns
+        /// generate SPSS code based on columns
         /// </summary>
         /// <param name="data"> csv data </param>
         public String GenerateSPSS(string data)
@@ -85,25 +85,25 @@ namespace CSVLint
         }
 
         /// <summary>
-        ///     generate SQL based on columns
+        /// generate SQL based on columns
         /// </summary>
         /// <param name="data"> csv data </param>
         public String GenerateSQL(string data)
         {
             return "SQL";
         }
-		
+
         /// <summary>
-        ///     generate schema.ini based on columns
+        /// generate schema.ini based on columns
         /// </summary>
         /// <param name="data"> csv data </param>
         public String GenerateSchemaIni(string data)
         {
             return "schema.ini";
         }
-		
+
         /// <summary>
-        ///     generate R-scripting code based on columns
+        /// generate R-scripting code based on columns
         /// </summary>
         /// <param name="data"> csv data </param>
         public String GenerateRScript(string data)
@@ -112,16 +112,16 @@ namespace CSVLint
         }
 
         /// <summary>
-        ///     generate PowerShell script based on columns
+        /// generate PowerShell script based on columns
         /// </summary>
         /// <param name="data"> csv data </param>
         public String GeneratePowerShell(string data)
         {
             return "PowerShell";
         }
-		
+
         /// <summary>
-        ///     generate PHP code based on columns
+        /// generate PHP code based on columns
         /// </summary>
         /// <param name="data"> csv data </param>
         public String GeneratePHP(string data)

@@ -42,7 +42,7 @@ namespace CSVLint
         }
 
         /// <summary>
-        ///     validate csv data against the definition of a CsvDefinition 
+        /// validate csv data against the definition of a CsvDefinition 
         /// </summary>
         /// <param name="strdata"> csv data </param>
         public void ValidateData(StreamReader strdata, CsvDefinition csvdef)
@@ -159,7 +159,7 @@ namespace CSVLint
         }
 
         /// <summary>
-        ///     validate csv data against the definition of a CsvDefinition 
+        /// validate csv data against the definition of a CsvDefinition 
         /// </summary>
         /// <param name="data"> csv data </param>
         public string EvaluateDataValue(string val, CsvColumn coldef, int idx)
@@ -217,14 +217,14 @@ namespace CSVLint
         }
 
         /// <summary>
-        ///     validate integer value
-        ///     Use custom function instead of using the standard `int.TryParse(val, out _);`
-        ///     which allows for max integer of 2147483647 (32bit) or 9223372036854775807 (64bit)
-        ///     
-        ///     This custom function gives the same result regardless of 32bit/64bit bytecode
-        ///     and only depends on the `IntegerDigitsMax` setting
-        ///     so that it will also correctly detect bigint/large int and even googolplex values
-        ///     (For typical datasets this function also performs faster, though only slightly; 180ns vs 160ns)
+        /// validate integer value
+        /// Use custom function instead of using the standard `int.TryParse(val, out _);`
+        /// which allows for max integer of 2147483647 (32bit) or 9223372036854775807 (64bit)
+        /// 
+        /// This custom function gives the same result regardless of 32bit/64bit bytecode
+        /// and only depends on the `IntegerDigitsMax` setting
+        /// so that it will also correctly detect bigint/large int and even googolplex values
+        /// (For typical datasets this function also performs faster, though only slightly; 180ns vs 160ns)
         /// </summary>
         /// <param name="val"> integer value, examples "1", "23", "-456" etc.</param>
         private bool EvaluateInteger(string val)
@@ -258,14 +258,14 @@ namespace CSVLint
         }
 
         /// <summary>
-        ///     validate decimal value
-        ///     Use custom function instead of using the standard `float.TryParse(val, out _);`
-        ///     
-        ///     This custom function gives the same result regardless of 32bit/64bit bytecode
-        ///     and only depends on the `DecimalDigitsMax` setting
-        ///     so that it will also correctly detect values with lots of decimals
-        ///     and also detect incorrect thousand separators for example "123,45,678.00"
-        ///     (For typical datasets this function also performs faster; 320ns vs 180ns)
+        /// validate decimal value
+        /// Use custom function instead of using the standard `float.TryParse(val, out _);`
+        /// 
+        /// This custom function gives the same result regardless of 32bit/64bit bytecode
+        /// and only depends on the `DecimalDigitsMax` setting
+        /// so that it will also correctly detect values with lots of decimals
+        /// and also detect incorrect thousand separators for example "123,45,678.00"
+        /// (For typical datasets this function also performs faster; 320ns vs 180ns)
         /// </summary>
         /// <param name="val"> decimal value, example "1.23", "-4,56", ".5" etc.</param>
         //private bool EvaluateDecimal(string val, CsvColumn coldef, out string err)
@@ -359,7 +359,7 @@ namespace CSVLint
         }
 
         /// <summary>
-        ///     validate datetime value
+        /// validate datetime value
         /// </summary>
         /// <param name="val"> datetime value, example "31-12-2019", "12/31/2019", "2019-12-31 23:59" etc.</param>
         private bool EvaluateDateTime(string val, CsvColumn coldef, out string err)
