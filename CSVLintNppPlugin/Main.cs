@@ -83,7 +83,8 @@ namespace Kbg.NppPluginNET
             PluginBase.SetCommand(1, "---", null);
             PluginBase.SetCommand(2, "Analyse data report", analyseDataReport);
             PluginBase.SetCommand(3, "Count unique values", CountUniqueValues);
-            PluginBase.SetCommand(4, "Convert to SQL", convertToSQL);
+            PluginBase.SetCommand(4, "Convert data to..", convertData);
+            //PluginBase.SetCommand(5, "Generate metadata", convertData);
             PluginBase.SetCommand(5, "---", null);
             PluginBase.SetCommand(6, "&Settings", doSettings);
             PluginBase.SetCommand(7, "About / Help", doAboutForm);
@@ -346,7 +347,8 @@ namespace Kbg.NppPluginNET
 
                 editor.SetProperty("fixedwidths", strwidths);
             }
-            
+            editor.SetIdleStyling(IdleStyling.ALL);
+
             // keep current csvdef
             _CurrnetCsvDef = FileCsvDef[filename];
 
@@ -392,6 +394,7 @@ namespace Kbg.NppPluginNET
 
                 editor.SetProperty("fixedwidths", strwidths);
             }
+            editor.SetIdleStyling(IdleStyling.ALL);
 
             // also write to schema.ini file
             if (saveini)
@@ -486,13 +489,70 @@ namespace Kbg.NppPluginNET
             about.Dispose();
         }
 
-        internal static void convertToSQL()
+        internal static void convertData()
         {
             // get dictionary
             CsvDefinition csvdef = GetCurrentCsvDef();
 
-            CsvEdit.ConvertToSQL(csvdef);
+            // show split column dialog
+            var frmparam = new DataConvertForm();
+            frmparam.InitialiseSetting();
+
+            DialogResult r = frmparam.ShowDialog();
+
+            // clear up
+            frmparam.Dispose();
+
+            // return true (OK) or false (Cancel)
+            if (r == DialogResult.OK)
+            {
+                switch (Main.Settings.DataConvertType)
+                {
+                    case 1: // XML
+                        CsvEdit.ConvertToXML(csvdef);
+                        break;
+                    case 2: // JSON
+                        CsvEdit.ConvertToJSON(csvdef);
+                        break;
+                    default: // case 0: SQL
+                        CsvEdit.ConvertToSQL(csvdef);
+                        break;
+                }
+            }
         }
+
+        //internal static void generateMetaData()
+        //{
+        //    // get dictionary
+        //    CsvDefinition csvdef = GetCurrentCsvDef();
+        //
+        //    // show metadata options
+        //    var frmparam = new MetaDataGenerateForm();
+        //    frmparam.InitialiseSetting();
+        //
+        //    DialogResult r = frmparam.ShowDialog();
+        //
+        //    // clear up
+        //    frmparam.Dispose();
+        //
+        //    // return true (OK) or false (Cancel)
+        //    if (r == DialogResult.OK)
+        //    {
+        //        switch (Main.Settings.MetadataGenerateType)
+        //        {
+        //            case 1: // schema JSON
+        //                break;
+        //            case 2: // Python script
+        //                break;
+        //            case 3: // R - script
+        //                break;
+        //            case 4: // SPSS syntax
+        //                break;
+        //            default: // case 0: schema ini
+        //                break;
+        //        }
+        //    }
+        //}
 
         internal static void analyseDataReport()
         {

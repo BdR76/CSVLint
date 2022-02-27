@@ -31,7 +31,7 @@ namespace CSVLint
         /// <summary>
         ///     apply quotes to value
         /// </summary>
-        public static string ApplyQuotesToString(String strinput, int ApplyCode, char Separator, ColumnType DataType)
+        public static String ApplyQuotesToString(String strinput, int ApplyCode, char Separator, ColumnType DataType)
         {
             // default = none / minimal
             bool apl = (strinput.IndexOf(Separator) >= 0);
@@ -70,8 +70,9 @@ namespace CSVLint
                 for (int c = 0; c < csvdef.Fields.Count; c++)
                 {
                     // get maximum of column name length and column width
-                    var algwid = csvdef.Fields[c].Name.Length;
-                    if (algwid < csvdef.Fields[c].MaxWidth) algwid = csvdef.Fields[c].MaxWidth;
+                    var algwid = csvdef.Fields[c].MaxWidth;
+
+                    if (algwid < csvdef.Fields[c].Name.Length) algwid = csvdef.Fields[c].Name.Length;
 
                     alignwidths.Add(algwid);
                 }
@@ -109,7 +110,7 @@ namespace CSVLint
             while (!strdata.EndOfStream)
             {
                 // get values from line
-                List<string> values = csvdef.ParseNextLine(strdata);
+                List<String> values = csvdef.ParseNextLine(strdata);
 
                 linenr++;
 
@@ -208,8 +209,26 @@ namespace CSVLint
             scintillaGateway.SetText(datanew.ToString());
         }
 
+
         /// <summary>
-        ///     update all date columns to new date format
+        ///     conert to XML data
+        /// </summary>
+        private static List<String> ScriptInfo(INotepadPPGateway notepad)
+        {
+            List<String> list = new List<String>();
+
+            string VERSION_NO = Main.GetVersion();
+            string FILE_NAME = Path.GetFileName(notepad.GetCurrentFilePath());
+
+            list.Add(string.Format("CSV Lint plug-in: v{0}", VERSION_NO));
+            list.Add(string.Format("File: {0}", FILE_NAME));
+            list.Add(string.Format("Date: {0}", DateTime.Now.ToString("dd-MMM-yyyy HH:mm")));
+
+            return list;
+        }
+
+        /// <summary>
+        ///     conert to SQL insert script
         /// </summary>
         public static void ConvertToSQL(CsvDefinition csvdef)
         {
@@ -394,6 +413,231 @@ namespace CSVLint
 
             // finalise script
             sb.Append(";\r\n\r\n");
+
+            // create new file
+            notepad.FileNew();
+            editor.SetText(sb.ToString());
+        }
+
+        /// <summary>
+        ///     conert to XML data
+        /// </summary>
+        public static void ConvertToXML(CsvDefinition csvdef)
+        {
+            StringBuilder sb = new StringBuilder();
+            int MAX_SQL_ROWS = Main.Settings.SQLBatchRows;
+
+            // get access to Notepad++
+            INotepadPPGateway notepad = new NotepadPPGateway();
+            IScintillaGateway editor = new ScintillaGateway(PluginBase.GetCurrentScintilla());
+
+            // default comment
+            List<String> comment = ScriptInfo(notepad);
+
+            // build XML
+            sb.Append("<xml>\r\n");
+            sb.Append("\t<!--\r\n");
+            foreach (var str in comment)
+            {
+                sb.Append(string.Format("\t\t{0}\r\n", str));
+            }
+            sb.Append("\t-->\r\n");
+
+            // use stringreader to go line by line
+            var strdata = ScintillaStreams.StreamAllText();
+
+            int lineCount = (csvdef.ColNameHeader ? -1 : 0);
+
+            while (!strdata.EndOfStream)
+            {
+                // get next 'record' from csv data
+                List<string> list = csvdef.ParseNextLine(strdata);
+
+                // skip header line
+                if (lineCount >= 0)
+                {
+                    // next record
+                    sb.Append("\t<record>\r\n");
+
+                    for (var col = 0; col < csvdef.Fields.Count; col++)
+                    {
+                        // format next value, quotes for varchar and datetime
+                        var colvalue = "";
+                        if (col <= list.Count) colvalue = list[col];
+
+                        var colname = csvdef.Fields[col].Name;
+
+                        // adjust for quoted values, trim first because can be a space before the first quote, example .., "BMI",..
+                        var strtrim = colvalue.Trim();
+                        if ((strtrim.Length > 0) && (strtrim[0] == Main.Settings.DefaultQuoteChar))
+                        {
+                            colvalue = colvalue.Trim();
+                            colvalue = colvalue.Trim(Main.Settings.DefaultQuoteChar);
+                        }
+
+                        // next value to evaluate
+                        if (Main.Settings.TrimValues) colvalue = colvalue.Trim();
+
+                        if (csvdef.Fields[col].DataType == ColumnType.Decimal)
+                        {
+                            colvalue = colvalue.Replace((csvdef.Fields[col].DecimalSymbol == '.' ? "," : "."), ""); // remove thousand separator
+                            colvalue = colvalue.Replace(csvdef.Fields[col].DecimalSymbol, '.');
+                        }
+                        else if ((csvdef.Fields[col].DataType == ColumnType.String)
+                                || (csvdef.Fields[col].DataType == ColumnType.DateTime))
+                        //|| (csvdef.Fields[col].DataType == ColumnType.Guid))
+                        {
+                            // sql datetime format
+                            if (csvdef.Fields[col].DataType == ColumnType.DateTime)
+                            {
+                                try
+                                {
+                                    var dt = DateTime.ParseExact(colvalue, csvdef.Fields[col].Mask, Main.dummyCulture);
+                                    colvalue = dt.ToString("yyyy-MM-dd HH:mm:ss");
+                                }
+                                catch
+                                {
+                                    // do nothing, just keep old value if error in date value
+                                    //str = ??
+                                }
+                            }
+                            // sql single quotes
+                            colvalue = colvalue.Replace("'", "''");
+                            colvalue = string.Format("'{0}'", colvalue);
+                        }
+
+                        if (colvalue == "")
+                        {
+                            sb.Append(string.Format("\t\t<{0}/>\r\n", colname));
+                        }
+                        else
+                        {
+                            sb.Append(string.Format("\t\t<{0}>{1}</{0}>\r\n", colname, colvalue));
+                        }
+                    }
+
+                    sb.Append("\t</record>\r\n");
+                }
+
+                // next line
+                lineCount++;
+            }
+
+            // finalise script
+            sb.Append("</xml>\r\n");
+
+            // create new file
+            notepad.FileNew();
+            editor.SetText(sb.ToString());
+        }
+
+        /// <summary>
+        ///     conert to XML data
+        /// </summary>
+        public static void ConvertToJSON(CsvDefinition csvdef)
+        {
+            StringBuilder sb = new StringBuilder();
+            int MAX_SQL_ROWS = Main.Settings.SQLBatchRows;
+
+            // get access to Notepad++
+            INotepadPPGateway notepad = new NotepadPPGateway();
+            IScintillaGateway editor = new ScintillaGateway(PluginBase.GetCurrentScintilla());
+
+            // build JSON
+            sb.Append("{\r\n");
+            // JSON doesn't support comments, add as values
+            List<String> comment = ScriptInfo(notepad);
+            foreach (var str in comment)
+            {
+                sb.Append(string.Format("\t\"{0}\",\r\n", str.Replace(": ", "\": \"")));
+            }
+
+            sb.Append("\t\"JSONdata\":[");
+
+            // use stringreader to go line by line
+            var strdata = ScintillaStreams.StreamAllText();
+
+            int lineCount = (csvdef.ColNameHeader ? -1 : 0);
+
+            while (!strdata.EndOfStream)
+            {
+                // get next 'record' from csv data
+                List<string> list = csvdef.ParseNextLine(strdata);
+
+                // skip header line
+                if (lineCount >= 0)
+                {
+
+                    // close previous line with comma (not the last records)
+                    if (lineCount > 0) sb.Append(",");
+
+                    // next record
+                    sb.Append("\r\n\t\t{\r\n");
+
+                    for (var col = 0; col < csvdef.Fields.Count; col++)
+                    {
+                        // format next value, quotes for varchar and datetime
+                        var colvalue = "";
+                        if (col <= list.Count) colvalue = list[col];
+
+                        var colname = csvdef.Fields[col].Name;
+
+                        // adjust for quoted values, trim first because can be a space before the first quote, example .., "BMI",..
+                        var strtrim = colvalue.Trim();
+                        if ((strtrim.Length > 0) && (strtrim[0] == Main.Settings.DefaultQuoteChar))
+                        {
+                            colvalue = colvalue.Trim();
+                            colvalue = colvalue.Trim(Main.Settings.DefaultQuoteChar);
+                        }
+
+                        // next value to evaluate
+                        if (Main.Settings.TrimValues) colvalue = colvalue.Trim();
+
+                        if (csvdef.Fields[col].DataType == ColumnType.Decimal)
+                        {
+                            colvalue = colvalue.Replace((csvdef.Fields[col].DecimalSymbol == '.' ? "," : "."), ""); // remove thousand separator
+                            colvalue = colvalue.Replace(csvdef.Fields[col].DecimalSymbol, '.');
+                        }
+                        else if ((csvdef.Fields[col].DataType == ColumnType.String)
+                                || (csvdef.Fields[col].DataType == ColumnType.DateTime))
+                        //|| (csvdef.Fields[col].DataType == ColumnType.Guid))
+                        {
+                            // sql datetime format
+                            if (csvdef.Fields[col].DataType == ColumnType.DateTime)
+                            {
+                                try
+                                {
+                                    var dt = DateTime.ParseExact(colvalue, csvdef.Fields[col].Mask, Main.dummyCulture);
+                                    colvalue = dt.ToString("yyyy-MM-dd HH:mm:ss");
+                                }
+                                catch
+                                {
+                                    // do nothing, just keep old value if error in date value
+                                    //str = ??
+                                }
+                            }
+                            // sql single quotes
+                            colvalue = colvalue.Replace("'", "''");
+                            colvalue = string.Format("'{0}'", colvalue);
+                        }
+
+                        var comma = (col < csvdef.Fields.Count - 1 ? "," : "");
+
+                        if (colvalue != "")
+                        {
+                            sb.Append(string.Format("\t\t\t\"{0}\": \"{1}\"{2}\r\n", colname, colvalue, comma));
+                        }
+                    }
+
+                    sb.Append("\t\t}");
+                }
+
+                // next line
+                lineCount++;
+            }
+
+            // finalise script
+            sb.Append("\r\n\t]\r\n}\r\n");
 
             // create new file
             notepad.FileNew();

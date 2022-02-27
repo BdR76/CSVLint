@@ -77,11 +77,23 @@
     <Compile Include="Forms\ColumnSplitForm.Designer.cs">
       <DependentUpon>ColumnSplitForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\DataConvertForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\DataConvertForm.Designer.cs">
+      <DependentUpon>DataConvertForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\CsvEditFormBase.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\CsvEditFormBase.Designer.cs">
       <DependentUpon>CsvEditFormBase.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\MetaDataGenerateForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\MetaDataGenerateForm.Designer.cs">
+      <DependentUpon>MetaDataGenerateForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\ReformatForm.cs">
       <SubType>Form</SubType>
@@ -150,6 +162,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\CsvLintWindow.resx">
       <DependentUpon>CsvLintWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\DataConvertForm.resx">
+      <DependentUpon>DataConvertForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\MetaDataGenerateForm.resx">
+      <DependentUpon>MetaDataGenerateForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ReformatForm.resx">
       <DependentUpon>ReformatForm.cs</DependentUpon>

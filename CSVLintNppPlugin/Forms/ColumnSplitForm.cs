@@ -30,18 +30,18 @@ namespace CSVLintNppPlugin.Forms
             {
                 var str = csvdef.Fields[i].Name;
                 cmbSelectColumn.Items.Add(str);
-                if (str == Main.Settings.SplitColName) idx = cmbSelectColumn.Items.Count-1;
+                if (str == Main.Settings.SplitColName) idx = cmbSelectColumn.Items.Count - 1;
             }
 
             // default select "(select column)" item
             cmbSelectColumn.SelectedIndex = idx;
 
             // which option selected
-            rdbtnSplitValid.Checked     = (Main.Settings.SplitOption == 0);
+            rdbtnSplitValid.Checked = (Main.Settings.SplitOption == 0);
             rdbtnSplitCharacter.Checked = (Main.Settings.SplitOption == 1);
             rdbtnSplitSubstring.Checked = (Main.Settings.SplitOption == 2);
-            rdbtnSplitContains.Checked  = (Main.Settings.SplitOption == 3);
-            rdbtnSplitDecode.Checked    = (Main.Settings.SplitOption == 4);
+            rdbtnSplitContains.Checked = (Main.Settings.SplitOption == 3);
+            rdbtnSplitDecode.Checked = (Main.Settings.SplitOption == 4);
 
             // load user preferences
             txtSplitCharacter.Text = Main.Settings.SplitChar;
@@ -52,7 +52,8 @@ namespace CSVLintNppPlugin.Forms
             txtSplitDecodeChar.Text = Main.Settings.SplitDecodeChar;
 
             chkDeleteOriginal.Checked = Main.Settings.SplitRemoveOrg;
-            }
+        }
+
         private void cmbSelectColumn_SelectedIndexChanged(object sender, EventArgs e)
         {
             EvaluateOkButton();

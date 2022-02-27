@@ -202,6 +202,12 @@ namespace Kbg.NppPluginNET
         [Description("Count unique values, sort ascending or descending."), Category("UserPref"), DefaultValue(false)]
         public bool UniqueSortAsc { get; set; }
 
+        [Description("Data convert, convert to type."), Category("UserPref"), DefaultValue(0)]
+        public int DataConvertType { get; set; }
+
+        [Description("Metadata generate type."), Category("UserPref"), DefaultValue(0)]
+        public int MetadataType { get; set; }
+
         // helper function for "SysYear" as year values
         private int getYearFromString(String yr)
         {
