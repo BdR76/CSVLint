@@ -13,7 +13,6 @@ using CSVLint;
 using CSVLintNppPlugin.CsvLint;
 using CSVLintNppPlugin.Forms;
 using Kbg.NppPluginNET.PluginInfrastructure;
-using NppPluginNET.PluginInfrastructure;
 
 namespace Kbg.NppPluginNET
 {

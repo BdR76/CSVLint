@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using CSVLint.Tools;
 using CsvQuery.PluginInfrastructure;
 using Kbg.NppPluginNET.PluginInfrastructure;

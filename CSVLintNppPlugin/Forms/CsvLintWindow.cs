@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using CSVLint;
-using CSVLintNppPlugin.CsvLint;
 using CSVLintNppPlugin.Forms;
 using CsvQuery.PluginInfrastructure;
 using Kbg.NppPluginNET.PluginInfrastructure;
