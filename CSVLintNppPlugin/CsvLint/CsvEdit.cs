@@ -211,7 +211,7 @@ namespace CSVLint
 
 
         /// <summary>
-        ///     conert to XML data
+        ///     comment lines for scripts
         /// </summary>
         private static List<String> ScriptInfo(INotepadPPGateway notepad)
         {
@@ -532,7 +532,7 @@ namespace CSVLint
         }
 
         /// <summary>
-        ///     conert to XML data
+        ///     conert to JSON data
         /// </summary>
         public static void ConvertToJSON(CsvDefinition csvdef)
         {
@@ -645,7 +645,7 @@ namespace CSVLint
         }
 
         /// <summary>
-        ///     reformat file for date, decimal and separator
+        ///     split column into new columns
         /// </summary>
         /// <param name="data"> csv data </param>
         public static void ColumnSplit(CsvDefinition csvdef, int ColumnIndex, int SplitCode, string Parameter1, string Parameter2, bool bRemove)
@@ -848,40 +848,6 @@ namespace CSVLint
 
             // add columns to csv definition
             //csvdef.AddColumn() ??
-        }
-
-        /// <summary>
-        ///     update all date columns to new date format
-        /// </summary>
-        public void UpdateAllDateFormat()
-        {
-            // read all text and replace
-            //var sr = ScintillaStreams.StreamAllText();
-            //ScintillaGateway scintillaGateway = PluginBase.CurrentScintillaGateway;
-        }
-
-        /// <summary>
-        ///     update all decimal columns to new decimal format
-        /// </summary>
-        public void UpdateAllDecimal()
-        {
-            // TODO implement
-        }
-
-        /// <summary>
-        ///     update a single column to new data type
-        /// </summary>
-        public void UpdateColumn()
-        {
-            // TODO implement
-        }
-
-        /// <summary>
-        ///     split invalid values of column into a new column
-        /// </summary>
-        public void SplitColumn()
-        {
-            // TODO implement
         }
     }
 }

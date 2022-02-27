@@ -348,7 +348,7 @@ namespace CSVLint
             uncertancy = 0;
 
             // The char with lowest variance is most likely the separator
-            // Optimistic: check prefered with 0 variance 
+            // Optimistic: check prefered with 0 variance (0f = floating point 0)
             var separator = variances
                 .Where(x => x.Value == 0f && preferredSeparators.IndexOf(x.Key) != -1)
                 .OrderByDescending(x => occurrences[x.Key])
