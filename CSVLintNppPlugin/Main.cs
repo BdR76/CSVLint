@@ -320,12 +320,11 @@ namespace Kbg.NppPluginNET
 
         public static void CSVChangeFileTab()
         {
-            // Notepad++ switch to a different file tab
+            // Notepad++ switched to a different file tab
             INotepadPPGateway notepad = new NotepadPPGateway();
+            string filename = notepad.GetCurrentFilePath();
 
             CsvDefinition csvdef;
-
-            string filename = notepad.GetCurrentFilePath();
 
             // check if already in list
             if (!FileCsvDef.TryGetValue(filename, out csvdef))
@@ -433,6 +432,7 @@ namespace Kbg.NppPluginNET
             FileCsvDef.Remove(filename);
         }
 
+        [Obsolete("There is no reference to this in the CsvLintSolution. If used from elsewhere please add in summary.", false)]
         public static void GetCurrentFileLexerParameters(out char sep)
         {
             sep = ';';
