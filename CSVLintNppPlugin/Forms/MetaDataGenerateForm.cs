@@ -11,14 +11,12 @@ namespace CSVLintNppPlugin.Forms
             InitializeComponent();
         }
 
-        public void InitialiseSetting(CsvDefinition csvdef)
+        public void InitialiseSetting()
         {
             // save user preferences
-            rdbtnSchemaIni.Checked    = (Main.Settings.SplitOption == 0); // schema ini
-            rdbtnSchemaJSON.Checked   = (Main.Settings.SplitOption == 1); // schema JSON
-            rdbtnPythonScript.Checked = (Main.Settings.SplitOption == 2); // Python script
-            rdbtnRScript.Checked      = (Main.Settings.SplitOption == 3); // R - script
-            rdbtnSPSSScript.Checked   = (Main.Settings.SplitOption == 4); // SPSS syntax;
+            rdbtnSchemaIni.Checked    = (Main.Settings.MetadataType == 0); // schema ini
+            rdbtnSchemaJSON.Checked   = (Main.Settings.MetadataType == 1); // schema JSON
+            rdbtnRScript.Checked      = (Main.Settings.MetadataType == 2); // R - script
         }
 
         private void btnOk_Click(object sender, EventArgs e)
@@ -26,9 +24,7 @@ namespace CSVLintNppPlugin.Forms
             // save user preferences
             int idx = 0; // schema ini
             if (rdbtnSchemaJSON.Checked)   idx = 1; // schema JSON
-            if (rdbtnPythonScript.Checked) idx = 2; // Python script
-            if (rdbtnRScript.Checked)      idx = 3; // R - script
-            if (rdbtnSPSSScript.Checked)   idx = 4; // SPSS syntax;
+            if (rdbtnRScript.Checked)      idx = 2; // R - script
 
             Main.Settings.MetadataType = idx;
 

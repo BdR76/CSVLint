@@ -212,7 +212,7 @@ namespace CSVLint
         /// <summary>
         /// comment lines for scripts
         /// </summary>
-        private static List<String> ScriptInfo(INotepadPPGateway notepad)
+        public static List<String> ScriptInfo(INotepadPPGateway notepad)
         {
             List<String> list = new List<String>();
 

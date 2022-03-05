@@ -104,10 +104,10 @@ namespace Kbg.NppPluginNET
             PluginBase.SetCommand(2, "Analyse data report", AnalyseDataReport);
             PluginBase.SetCommand(3, "Count unique values", CountUniqueValues);
             PluginBase.SetCommand(4, "Convert data to..", convertData);
-            //PluginBase.SetCommand(5, "Generate metadata", convertData);
-            PluginBase.SetCommand(5, "---", null);
-            PluginBase.SetCommand(6, "&Settings", DoSettings);
-            PluginBase.SetCommand(7, "About / Help", DoAboutForm);
+            PluginBase.SetCommand(5, "Generate metadata", generateMetaData);
+            PluginBase.SetCommand(6, "---", null);
+            PluginBase.SetCommand(7, "&Settings", DoSettings);
+            PluginBase.SetCommand(8, "About / Help", DoAboutForm);
 
             RefreshFromSettings();
         }
@@ -512,38 +512,37 @@ namespace Kbg.NppPluginNET
             }
         }
 
-        //internal static void generateMetaData()
-        //{
-        //    // get dictionary
-        //    CsvDefinition csvdef = GetCurrentCsvDef();
-        //
-        //    // show metadata options
-        //    var frmparam = new MetaDataGenerateForm();
-        //    frmparam.InitialiseSetting();
-        //
-        //    DialogResult r = frmparam.ShowDialog();
-        //
-        //    // clear up
-        //    frmparam.Dispose();
-        //
-        //    // return true (OK) or false (Cancel)
-        //    if (r == DialogResult.OK)
-        //    {
-        //        switch (Main.Settings.MetadataGenerateType)
-        //        {
-        //            case 1: // schema JSON
-        //                break;
-        //            case 2: // Python script
-        //                break;
-        //            case 3: // R - script
-        //                break;
-        //            case 4: // SPSS syntax
-        //                break;
-        //            default: // case 0: schema ini
-        //                break;
-        //        }
-        //    }
-        //}
+        internal static void generateMetaData()
+        {
+            // get dictionary
+            CsvDefinition csvdef = GetCurrentCsvDef();
+        
+            // show metadata options
+            var frmparam = new MetaDataGenerateForm();
+            frmparam.InitialiseSetting();
+
+            DialogResult r = frmparam.ShowDialog();
+        
+            // clear up
+            frmparam.Dispose();
+        
+            // return true (OK) or false (Cancel)
+            if (r == DialogResult.OK)
+            {
+                switch (Main.Settings.MetadataType)
+                {
+                    case 1: // schema JSON
+                        CsvGenerateCode.GenerateJSONmetadata(csvdef);
+                        break;
+                    case 2: // R - script
+                        CsvGenerateCode.GenerateRScript(csvdef);
+                        break;
+                    default: // case 0: schema ini
+                        CsvGenerateCode.GenerateSchemaIni(csvdef);
+                        break;
+                }
+            }
+        }
 
         internal static void AnalyseDataReport()
         {
