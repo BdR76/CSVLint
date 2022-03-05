@@ -270,7 +270,7 @@ namespace NppPluginNET.PluginInfrastructure
         static IntPtr vtable_pointer = IntPtr.Zero;
 
         private static Colour sCaretLineBack = new Colour(
-            Main.CheckConfigDarkMode() ? 0xFFFFFF: 0); // 0);// 
+            Main.CheckConfigDarkMode() ? 0xFFFFFF: 0); // default = white or black
 
         public static IntPtr ILexerImplementation()
         {
@@ -510,6 +510,7 @@ namespace NppPluginNET.PluginInfrastructure
                 // JAVASCRIPT
                 bool quote = false;
                 char quote_char = Main.Settings.DefaultQuoteChar;
+                bool whitespace = true; // to catch where value is just two quotes "" right at start of line
 
                 for (i = 0; i < length - 1; i++)
                 {
@@ -518,15 +519,18 @@ namespace NppPluginNET.PluginInfrastructure
 
                     if (!quote)
                     {
-                        // to catch where value is just two quotes "" right at start of line
-                        bool cellIsEmpty = i - start_col == 0;
-
                         // check if starting a quoted value or going next column or going to next line
-                        if ((cur == quote_char) && cellIsEmpty) { quote = true; }
+                        if ((cur == quote_char) && whitespace) { quote = true; whitespace = false; }
                         else if (cur == separatorChar) { bNextCol = true; end_col = i; }
                         else if ((cur == '\r') && (next == '\n')) { isEOL = true; end_col = i; i++; }
                         else if ((cur == '\n') || (cur == '\r')) { isEOL = true; end_col = i; }
                         //else line[line.length - 1] += cur;
+
+                        // If separator directly followed by spaces then interpret spaces as empty whitespace,
+                        // any quotes following  empty/white are interpreted as starting/opening quote, so for example:
+                        // ..,  "12,3",..
+                        // ..,"",..
+                        if ((whitespace) && (cur != ' ')) whitespace = false;
                     }
                     else
                     {
@@ -561,6 +565,7 @@ namespace NppPluginNET.PluginInfrastructure
                         bNextCol = false;
                         isEOL = false;
                         start_col = i + 1;
+                        whitespace = true;
                     }
                 }
             }

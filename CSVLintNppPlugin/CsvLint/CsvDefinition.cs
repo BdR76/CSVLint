@@ -907,6 +907,7 @@ namespace CSVLint
                 bool bNextCol = false;
                 bool isEOL = false;
                 char quote_char = Main.Settings.DefaultQuoteChar;
+                bool whitespace = true; // to catch where value is just two quotes "" right at start of line
 
                 while (!strdata.EndOfStream)
                 {
@@ -915,15 +916,18 @@ namespace CSVLint
 
                     if (!quote)
                     {
-                        // to catch where value is just two quotes "" right at start of line
-                        bool cellIsEmpty = value.Length == 0;
-
                         // check if starting a quoted value or going next column or going to next line
-                        if ((cur == quote_char) && cellIsEmpty) { quote = true; wasquoted = true; }
+                        if ((cur == quote_char) && whitespace) { quote = true; wasquoted = true; whitespace = false; }
                         else if (cur == Separator) { bNextCol = true; }
                         else if ((cur == '\r') && (next == '\n')) { next = (char)strdata.Read();  bNextCol = true; isEOL = true; } // double carriage return/linefeed so also consume next character (i.e. skip it)
                         else if ((cur == '\n') || (cur == '\r')) { bNextCol = true; isEOL = true; }
                         else if (cur != '\0') value.Append(cur);
+
+                        // If separator directly followed by spaces then interpret spaces as empty whitespace,
+                        // any quotes following  empty/white are interpreted as starting/opening quote, so for example:
+                        // ..,  "12,3",..
+                        // ..,"",..
+                        if ((whitespace) && (cur != ' ')) whitespace = false;
                     }
                     else
                     {
@@ -945,6 +949,7 @@ namespace CSVLint
 
                         bNextCol = false;
                         wasquoted = false;
+                        whitespace = true;
                     }
 
                     if (isEOL) break;
