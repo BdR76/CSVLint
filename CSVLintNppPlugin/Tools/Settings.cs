@@ -38,23 +38,6 @@ namespace Kbg.NppPluginNET
             Category("Analyze"), DefaultValue(2050)]
         public int YearMaximum { get; set; }
 
-        private int _sqlbatch;
-
-        [Description("Maximum records per SQL insert batch, minimum batch size is 10."),
-            Category("Edit"), DefaultValue(1000)]
-        public int SQLBatchRows
-        {
-            get { return _sqlbatch; }
-            set
-            {
-                _sqlbatch = Math.Max(value, 10);
-            }
-        }
-
-        [Description("Convert to ANSI standard SQL script, set to true for mySQL or false for MS-SQL."),
-            Category("Edit"), DefaultValue(true)]
-        public bool SQLansi { get; set; }
-
         [Description("Maximum year for two digit year date values. For example, when set to 2024 the year values 24 and 25 will be interpreted as 2024 and 1925. Set as SysYear for current year."),
             Category("Edit"), DefaultValue("SysYear")]
         public string TwoDigitYearMax
@@ -220,6 +203,22 @@ namespace Kbg.NppPluginNET
 
         [Description("Data convert, convert to type."), Category("UserPref"), DefaultValue(0)]
         public int DataConvertType { get; set; }
+
+        private int _sqlbatch;
+
+        [Description("Maximum records per SQL insert batch, minimum batch size is 10."),
+            Category("UserPref"), DefaultValue(1000)]
+        public int DataConvertBatch
+        {
+            get { return _sqlbatch; }
+            set
+            {
+                _sqlbatch = Math.Max(value, 10);
+            }
+        }
+
+        [Description("Convert data to SQL, database type mySQL, MS-SQL or PostgreSQL (0, 1 or 2)."), Category("UserPref"), DefaultValue(0)]
+        public int DataConvertSQL { get; set; }
 
         [Description("Metadata generate type."), Category("UserPref"), DefaultValue(0)]
         public int MetadataType { get; set; }

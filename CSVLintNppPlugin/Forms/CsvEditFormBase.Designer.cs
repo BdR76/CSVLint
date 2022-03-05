@@ -59,6 +59,16 @@ namespace CSVLintNppPlugin.Forms
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
             // 
+            // lblHorizontalLine
+            // 
+            this.lblHorizontalLine.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblHorizontalLine.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.lblHorizontalLine.Location = new System.Drawing.Point(4, 38);
+            this.lblHorizontalLine.Name = "lblHorizontalLine";
+            this.lblHorizontalLine.Size = new System.Drawing.Size(310, 2);
+            this.lblHorizontalLine.TabIndex = 4;
+            // 
             // lblTitle
             // 
             this.lblTitle.AutoSize = true;
@@ -73,6 +83,7 @@ namespace CSVLintNppPlugin.Forms
             // picHelpIcon
             // 
             this.picHelpIcon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.picHelpIcon.Cursor = System.Windows.Forms.Cursors.Hand;
             this.picHelpIcon.Location = new System.Drawing.Point(290, 8);
             this.picHelpIcon.Name = "picHelpIcon";
             this.picHelpIcon.Size = new System.Drawing.Size(24, 24);
@@ -80,16 +91,6 @@ namespace CSVLintNppPlugin.Forms
             this.picHelpIcon.TabIndex = 9;
             this.picHelpIcon.TabStop = false;
             this.picHelpIcon.Click += new System.EventHandler(this.picHelpIcon_Click);
-            // 
-            // lblHorizontalLine
-            // 
-            this.lblHorizontalLine.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblHorizontalLine.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.lblHorizontalLine.Location = new System.Drawing.Point(4, 38);
-            this.lblHorizontalLine.Name = "lblHorizontalLine";
-            this.lblHorizontalLine.Size = new System.Drawing.Size(310, 2);
-            this.lblHorizontalLine.TabIndex = 4;
             // 
             // CsvEditFormBase
             // 

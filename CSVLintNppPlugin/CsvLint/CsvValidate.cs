@@ -227,7 +227,7 @@ namespace CSVLint
         /// (For typical datasets this function also performs faster, though only slightly; 180ns vs 160ns)
         /// </summary>
         /// <param name="val"> integer value, examples "1", "23", "-456" etc.</param>
-        private bool EvaluateInteger(string val)
+        public bool EvaluateInteger(string val)
         {
             val = val.Trim();
 
@@ -269,7 +269,7 @@ namespace CSVLint
         /// </summary>
         /// <param name="val"> decimal value, example "1.23", "-4,56", ".5" etc.</param>
         //private bool EvaluateDecimal(string val, CsvColumn coldef, out string err)
-        private bool EvaluateDecimal(string val, CsvColumn coldef, out string err)
+        public bool EvaluateDecimal(string val, CsvColumn coldef, out string err)
         {
             err = "";
 

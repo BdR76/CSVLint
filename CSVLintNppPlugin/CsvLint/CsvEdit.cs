@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace CSVLint
 {
@@ -232,7 +233,7 @@ namespace CSVLint
         {
             StringBuilder sb = new StringBuilder();
             string VERSION_NO = Main.GetVersion();
-            int MAX_SQL_ROWS = Main.Settings.SQLBatchRows;
+            int MAX_SQL_ROWS = Main.Settings.DataConvertBatch;
 
             // if csv already contains "_record_number"
             var recidname = csvdef.GetUniqueColumnName("_record_number", out int postfix);
@@ -244,30 +245,39 @@ namespace CSVLint
 
             string FILE_NAME = Path.GetFileName(notepad.GetCurrentFilePath());
             string TABLE_NAME = StringToVariable(Path.GetFileNameWithoutExtension(notepad.GetCurrentFilePath()));
+            string SQL_TYPE = (Main.Settings.DataConvertSQL <= 1 ? (Main.Settings.DataConvertSQL == 0 ? "mySQL" : "MS-SQL") : "PostgreSQL");
 
             sb.Append("-- -------------------------------------\r\n");
             sb.Append(string.Format("-- CSV Lint plug-in v{0}\r\n", VERSION_NO));
             sb.Append(string.Format("-- File: {0}\r\n", FILE_NAME));
             sb.Append(string.Format("-- Date: {0}\r\n", DateTime.Now.ToString("dd-MMM-yyyy HH:mm")));
-            sb.Append(string.Format("-- SQL ANSI: {0}\r\n", Main.Settings.SQLansi ? "mySQL" : "MS-SQL"));
+            sb.Append(string.Format("-- SQL type: {0}\r\n", SQL_TYPE));
             sb.Append("-- -------------------------------------\r\n");
-            sb.Append(string.Format("CREATE TABLE {0}(\r\n\t", TABLE_NAME));
+            sb.Append(string.Format("CREATE TABLE {0} (\r\n\t", TABLE_NAME));
 
-            if (Main.Settings.SQLansi)
-                sb.Append(string.Format("`{0}` int AUTO_INCREMENT NOT NULL,\r\n\t", recidname)); // mySQL
-            else
-                sb.Append(string.Format("[{0}] int IDENTITY(1,1) PRIMARY KEY,\r\n\t", recidname)); // MS-SQL
+            switch (Main.Settings.DataConvertSQL)
+            {
+                case 1:
+                    sb.Append(string.Format("[{0}] int IDENTITY(1,1) PRIMARY KEY,\r\n\t", recidname)); // MS-SQL
+                    break;
+                case 2:
+                    sb.Append(string.Format("\"{0}\" SERIAL PRIMARY KEY,\r\n\t", recidname)); // PostgreSQL
+                    break;
+                default: // 0=mySQL
+                    sb.Append(string.Format("`{0}` int AUTO_INCREMENT NOT NULL,\r\n\t", recidname)); // mySQL
+                    break;
+            }
             var cols = "\t";
 
             for (var r = 0; r < csvdef.Fields.Count; r++)
             {
                 // determine sql column name -> mySQL = `colname`, MS-SQL = [colname]
-                string sqlname = string.Format(Main.Settings.SQLansi ? "`{0}`" : "[{0}]", csvdef.Fields[r].Name);
+                string sqlname = string.Format((Main.Settings.DataConvertSQL <= 1 ? (Main.Settings.DataConvertSQL == 0 ? "`{0}`" : "[{0}]") : "\"{0}\""), csvdef.Fields[r].Name);
 
                 // determine sql datatype
                 var sqltype = "varchar";
                 if (csvdef.Fields[r].DataType == ColumnType.Integer) sqltype = "integer";
-                if (csvdef.Fields[r].DataType == ColumnType.DateTime) sqltype = "datetime";
+                if (csvdef.Fields[r].DataType == ColumnType.DateTime) sqltype = (Main.Settings.DataConvertSQL < 2 ? "datetime" : "timestamp");
                 //if (csvdef.Fields[r].DataType == ColumnType.Guid) sqltype = "varchar(36)";
                 if (csvdef.Fields[r].DataType == ColumnType.Decimal)
                 {
@@ -300,7 +310,7 @@ namespace CSVLint
             };
 
             // primary key definition for mySQL
-            if (Main.Settings.SQLansi) sb.Append(string.Format(",\r\n\tprimary key(`{0}`)", recidname));
+            if (Main.Settings.DataConvertSQL == 0) sb.Append(string.Format(",\r\n\tprimary key(`{0}`)", recidname));
 
             sb.Append("\r\n)");
 
@@ -423,7 +433,7 @@ namespace CSVLint
         public static void ConvertToXML(CsvDefinition csvdef)
         {
             StringBuilder sb = new StringBuilder();
-            int MAX_SQL_ROWS = Main.Settings.SQLBatchRows;
+            int MAX_SQL_ROWS = Main.Settings.DataConvertBatch;
 
             // get access to Notepad++
             INotepadPPGateway notepad = new NotepadPPGateway();
@@ -431,6 +441,19 @@ namespace CSVLint
 
             // default comment
             List<String> comment = ScriptInfo(notepad);
+
+            // pre-build XML-safe column names, so doesn't have to run regex again for each data record
+            List<String> xmlnames = new List<String>();
+            for (var col = 0; col < csvdef.Fields.Count; col++)
+            {
+                var colname = csvdef.Fields[col].Name;
+
+                // xml safe tag
+                colname = Regex.Replace(colname, "[^a-zA-Z0-9]", "_"); // not letter or digit
+                colname = Regex.Replace(colname, "[_]{2,}", "_"); // double underscore to single underscore
+
+                xmlnames.Add(colname);
+            }
 
             // build XML
             sb.Append("<xml>\r\n");
@@ -461,9 +484,10 @@ namespace CSVLint
                     {
                         // format next value, quotes for varchar and datetime
                         var colvalue = "";
-                        if (col <= list.Count) colvalue = list[col];
+                        if (col < list.Count) colvalue = list[col];
 
-                        var colname = csvdef.Fields[col].Name;
+                        //var colname = csvdef.Fields[col].Name;
+                        var colname = xmlnames[col];
 
                         // adjust for quoted values, trim first because can be a space before the first quote, example .., "BMI",..
                         var strtrim = colvalue.Trim();
@@ -491,7 +515,8 @@ namespace CSVLint
                                 try
                                 {
                                     var dt = DateTime.ParseExact(colvalue, csvdef.Fields[col].Mask, Main.dummyCulture);
-                                    colvalue = dt.ToString("yyyy-MM-dd HH:mm:ss");
+                                    colvalue = dt.ToString("s");
+                                    //colvalue = dt.ToString("yyyy-MM-ddTHH\\:mm\\:ss"); // no milliseconds or timezone
                                 }
                                 catch
                                 {
@@ -499,9 +524,21 @@ namespace CSVLint
                                     //str = ??
                                 }
                             }
-                            // sql single quotes
+                            // XML escape characters
+                            colvalue = colvalue.Replace("&", "&amp;"); // ampersnd
+                            colvalue = colvalue.Replace("<", "&lt;"); // less than
+                            colvalue = colvalue.Replace(">", "&gt;"); // greater than
+
+                            colvalue = colvalue.Replace("\b", "&#09;"); // \b Backspace(ascii code 08)
+                            colvalue = colvalue.Replace("\f", "&#0C;"); // \f Form feed(ascii code 0C)
+                            colvalue = colvalue.Replace("\n", "&#10;"); // \n New line
+                            colvalue = colvalue.Replace("\r", "&#13;"); // \r Carriage return
+                            colvalue = colvalue.Replace("\t", "&#09;"); // \t Tab
+                            colvalue = colvalue.Replace("\"", "&quote;"); // quote
+                            colvalue = colvalue.Replace("'", "&apos;"); // single quote/apostrophe
+
                             colvalue = colvalue.Replace("'", "''");
-                            colvalue = string.Format("'{0}'", colvalue);
+                            colvalue = string.Format("{0}", colvalue);
                         }
 
                         if (colvalue == "")
@@ -535,11 +572,14 @@ namespace CSVLint
         public static void ConvertToJSON(CsvDefinition csvdef)
         {
             StringBuilder sb = new StringBuilder();
-            int MAX_SQL_ROWS = Main.Settings.SQLBatchRows;
+            int MAX_SQL_ROWS = Main.Settings.DataConvertBatch;
 
             // get access to Notepad++
             INotepadPPGateway notepad = new NotepadPPGateway();
             IScintillaGateway editor = new ScintillaGateway(PluginBase.GetCurrentScintilla());
+
+            // to evaluate integer and decimals
+            CsvValidate csveval = new CsvValidate();
 
             // build JSON
             sb.Append("{\r\n");
@@ -562,7 +602,11 @@ namespace CSVLint
                 // get next 'record' from csv data
                 List<string> list = csvdef.ParseNextLine(strdata);
 
-                // skip header line
+                if (lineCount >= 54)
+                {
+                    sb.Append("");
+                }
+                    // skip header line
                 if (lineCount >= 0)
                 {
 
@@ -576,7 +620,7 @@ namespace CSVLint
                     {
                         // format next value, quotes for varchar and datetime
                         var colvalue = "";
-                        if (col <= list.Count) colvalue = list[col];
+                        if (col < list.Count) colvalue = list[col];
 
                         var colname = csvdef.Fields[col].Name;
 
@@ -591,10 +635,26 @@ namespace CSVLint
                         // next value to evaluate
                         if (Main.Settings.TrimValues) colvalue = colvalue.Trim();
 
-                        if (csvdef.Fields[col].DataType == ColumnType.Decimal)
+                        if (csvdef.Fields[col].DataType == ColumnType.Integer)
                         {
-                            colvalue = colvalue.Replace((csvdef.Fields[col].DecimalSymbol == '.' ? "," : "."), ""); // remove thousand separator
-                            colvalue = colvalue.Replace(csvdef.Fields[col].DecimalSymbol, '.');
+                            if (!csveval.EvaluateInteger(colvalue))
+                            {
+                                // only put in double quotes when it's not an integer
+                                colvalue = string.Format("\"{0}\"", colvalue);
+                            }
+                        }
+                        else if (csvdef.Fields[col].DataType == ColumnType.Decimal)
+                        {
+                            if (!csveval.EvaluateDecimal(colvalue, csvdef.Fields[col], out _))
+                            {
+                                // only put in double quotes when it's not a valid decimal
+                                colvalue = string.Format("\"{0}\"", colvalue);
+                            }
+                            else
+                            {
+                                colvalue = colvalue.Replace((csvdef.Fields[col].DecimalSymbol == '.' ? "," : "."), ""); // remove thousand separator
+                                colvalue = colvalue.Replace(csvdef.Fields[col].DecimalSymbol, '.');
+                            }
                         }
                         else if ((csvdef.Fields[col].DataType == ColumnType.String)
                                 || (csvdef.Fields[col].DataType == ColumnType.DateTime))
@@ -606,7 +666,8 @@ namespace CSVLint
                                 try
                                 {
                                     var dt = DateTime.ParseExact(colvalue, csvdef.Fields[col].Mask, Main.dummyCulture);
-                                    colvalue = dt.ToString("yyyy-MM-dd HH:mm:ss");
+                                    colvalue = dt.ToString("s");
+                                    //colvalue = dt.ToString("yyyy-MM-ddTHH\\:mm\\:ss"); // no milliseconds or timezone
                                 }
                                 catch
                                 {
@@ -614,16 +675,24 @@ namespace CSVLint
                                     //str = ??
                                 }
                             }
-                            // sql single quotes
-                            colvalue = colvalue.Replace("'", "''");
-                            colvalue = string.Format("'{0}'", colvalue);
+                            // JSON escape characters
+                            colvalue = colvalue.Replace("\\", "\\\\"); // \\  Backslash character
+                            colvalue = colvalue.Replace("\b", "\\b"); // \b Backspace(ascii code 08)
+                            colvalue = colvalue.Replace("\f", "\\f"); // \f Form feed(ascii code 0C)
+                            colvalue = colvalue.Replace("\n", "\\n"); // \n New line
+                            colvalue = colvalue.Replace("\r", "\\r"); // \r Carriage return
+                            colvalue = colvalue.Replace("\t", "\\t"); // \t Tab
+                            colvalue = colvalue.Replace("\"", "\\\""); // \"  Double quote
+
+                            // put value in double quotes
+                            colvalue = string.Format("\"{0}\"", colvalue);
                         }
 
                         var comma = (col < csvdef.Fields.Count - 1 ? "," : "");
 
                         if (colvalue != "")
                         {
-                            sb.Append(string.Format("\t\t\t\"{0}\": \"{1}\"{2}\r\n", colname, colvalue, comma));
+                            sb.Append(string.Format("\t\t\t\"{0}\": {1}{2}\r\n", colname, colvalue, comma));
                         }
                     }
 
