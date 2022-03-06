@@ -50,6 +50,10 @@ namespace CSVLintNppPlugin.Forms
             this.lblTitle.Size = new System.Drawing.Size(209, 20);
             this.lblTitle.Text = "Generate metadata or script";
             // 
+            // picHelpIcon
+            // 
+            this.picHelpIcon.Tag = "generate-metadata";
+            // 
             // lblHorizontalLine
             // 
             this.lblHorizontalLine.Size = new System.Drawing.Size(316, 2);

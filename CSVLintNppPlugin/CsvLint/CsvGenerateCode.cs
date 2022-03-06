@@ -74,6 +74,7 @@ namespace CSVLint
                 // prepare JSON variables
                 var dattyp = "string";
                 var mask = "";
+                var dec = "";
                 var len = coldef.MaxWidth.ToString();
                 switch (coldef.DataType)
                 {
@@ -86,7 +87,9 @@ namespace CSVLint
                         break;
                     case ColumnType.Decimal:
                         dattyp = "number";
-                        mask = coldef.Mask;
+                        //mask = coldef.Mask;
+                        mask = "#0" + coldef.DecimalSymbol + "".PadRight(coldef.Decimals, '0');
+                        dec = coldef.DecimalSymbol.ToString();
                         break;
                 };
 
@@ -95,7 +98,18 @@ namespace CSVLint
                 jsonmeta.Append("\r\n\t\t\t{\r\n");
 
                 jsonmeta.Append(string.Format("\t\t\t\t\"name\": \"{0}\"", coldef.Name));
-                if (mask != "")
+                if ((mask != "") && (dec != ""))
+                {
+                    jsonmeta.Append("\r\n\t\t\t\t\"datatype\": {");
+                    jsonmeta.Append(string.Format("\r\n\t\t\t\t\t\"base\": \"{0}\"", dattyp));
+                    jsonmeta.Append(string.Format(",\r\n\t\t\t\t\t\"length\": \"{0}\"", len));
+                    jsonmeta.Append(",\r\n\t\t\t\t\t\"format\": {");
+                    jsonmeta.Append(string.Format("\r\n\t\t\t\t\t\t\"decimalChar\": \"{0}\"", dec));
+                    jsonmeta.Append(string.Format(",\r\n\t\t\t\t\t\t\"pattern\": \"{0}\"", mask));
+                    jsonmeta.Append("\r\n\t\t\t\t\t}");
+                    jsonmeta.Append("\r\n\t\t\t\t}");
+                }
+                else if (mask != "")
                 {
                     jsonmeta.Append("\r\n\t\t\t\t\"datatype\": {");
                     jsonmeta.Append(string.Format("\r\n\t\t\t\t\t\"base\": \"{0}\"", dattyp));
@@ -237,6 +251,8 @@ namespace CSVLint
             var col_dates = "";
             var col_numbs = "";
 
+            var r_dec = "";
+
             for (int c = 0; c < csvdef.Fields.Count; c++)
             {
                 // next field
@@ -246,7 +262,7 @@ namespace CSVLint
                 var colname = coldef.Name;
                 colname = Regex.Replace(colname, "[^a-zA-Z0-9]", "."); // not letter or digit
 
-                var comma = (c < csvdef.Fields.Count-1 ? "," : ")");
+                var comma = (c < csvdef.Fields.Count - 1 ? "," : ")");
 
                 // indent for next lines
                 if (c > 0) col_types += "              ";
@@ -258,13 +274,14 @@ namespace CSVLint
                         col_types += string.Format("\"{0}\"=\"character\"{1} # {2}\r\n", colname, comma, coldef.Mask);
                         var msk = coldef.Mask;
 
-                        // build R-date fomat example "M/d/yyyy" -> "%m/%d/%Y"
+                        // build R-date fomat example "M/d/yyyy HH:m:s" -> "%m/%d/%Y %H:%M:%S"
+                        // Note that in R-script lowercase m = month and capital M = minutes
                         msk = msk.Replace("HH", "H");
                         msk = msk.Replace("H", "%H"); // hour
                         msk = msk.Replace("mm", "m");
-                        msk = msk.Replace("m", "%n"); // minutes
+                        msk = msk.Replace("m", "n"); // minutes, use temporary 'n' placeholder
                         msk = msk.Replace("ss", "s");
-                        msk = msk.Replace("s", "%s"); // seconds
+                        msk = msk.Replace("s", "%S"); // seconds
 
                         msk = msk.Replace("yy", "y");
                         msk = msk.Replace("yy", "y");
@@ -275,6 +292,8 @@ namespace CSVLint
                         msk = msk.Replace("dd", "d");
                         msk = msk.Replace("d", "%d"); // day
 
+                        msk = msk.Replace("n", "%M"); // in R-script lowercase m = month and capital M = minutes, opposite of internal mask format, use temporary 'n' to work around this
+
                         col_dates += string.Format("df${0} <- as.Date(df${0}, format=\"{1}\")\r\n", colname, msk);
                         break;
                     case ColumnType.Integer:
@@ -283,12 +302,18 @@ namespace CSVLint
                     case ColumnType.Decimal:
                         col_types += string.Format("\"{0}\"=\"character\"{1} # numeric\n", colname, comma);
                         col_numbs += string.Format("df${0} <- as.numeric(df${0})\r\n", colname);
+
+                        // just use the first decimal symbol
+                        if (r_dec == "") r_dec = coldef.DecimalSymbol.ToString();
                         break;
                     default:
                         col_types += string.Format("\"{0}\"=\"character\"{1}\r\n", colname, comma);
                         break;
                 };
             }
+
+            // no decimals, then not technically needed but nice to have as example code
+            if (r_dec == "") r_dec = ".";
 
             // column types
             rscript.Append(string.Format("colTypes <- {0}\r\n", col_types));
@@ -299,7 +324,7 @@ namespace CSVLint
             var header = (csvdef.ColNameHeader ? "TRUE" : "FALSE");
 
             rscript.Append("# read csv file\r\n");
-            rscript.Append(string.Format("df <- read.csv(filename, sep='{0}', dec=\".\", fileEncoding='UTF-8-BOM', colClasses=colTypes, header={1})\r\n\r\n", separator, header));
+            rscript.Append(string.Format("df <- read.csv(filename, sep='{0}', dec=\"{1}\", fileEncoding='UTF-8-BOM', colClasses=colTypes, header={2})\r\n\r\n", separator, r_dec, header));
 
             // date time format script
             if (col_dates != "")
