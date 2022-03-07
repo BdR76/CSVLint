@@ -246,10 +246,15 @@ namespace CSVLint
             rscript.Append(string.Format("filename = \"{0}\"\r\n\r\n", FILE_NAME));
 
             rscript.Append("# column datatypes\r\n");
+            rscript.Append("# NOTE: using colClasses parameter doesn't work when for example integers are in quotes etc.\r\n");
+            rscript.Append("# and read.csv will mostly interpret datatypes correctly anyway\r\n");
 
             var col_types = "c(";
             var col_dates = "";
             var col_numbs = "";
+
+            var exampleOrder = "";
+            var exampleDate = "myDateField";
 
             var r_dec = "";
 
@@ -260,9 +265,12 @@ namespace CSVLint
 
                 // R-script safe tag, replace .
                 var colname = coldef.Name;
-                colname = Regex.Replace(colname, "[^a-zA-Z0-9]", "."); // not letter or digit
+                colname = Regex.Replace(colname, "[^a-zA-Z0-9]", "_"); // not letter or digit
 
                 var comma = (c < csvdef.Fields.Count - 1 ? "," : ")");
+
+                if (c > 0) exampleOrder += "              ";
+                exampleOrder += string.Format("\"{0}\"{1}\r\n", colname, comma);
 
                 // indent for next lines
                 if (c > 0) col_types += "              ";
@@ -271,7 +279,7 @@ namespace CSVLint
                 switch (coldef.DataType)
                 {
                     case ColumnType.DateTime:
-                        col_types += string.Format("\"{0}\"=\"character\"{1} # {2}\r\n", colname, comma, coldef.Mask);
+                        col_types += string.Format("\"{0}\" = \"character\"{1} # {2}\r\n", colname, comma, coldef.Mask);
                         var msk = coldef.Mask;
 
                         // build R-date fomat example "M/d/yyyy HH:m:s" -> "%m/%d/%Y %H:%M:%S"
@@ -295,19 +303,20 @@ namespace CSVLint
                         msk = msk.Replace("n", "%M"); // in R-script lowercase m = month and capital M = minutes, opposite of internal mask format, use temporary 'n' to work around this
 
                         col_dates += string.Format("df${0} <- as.Date(df${0}, format=\"{1}\")\r\n", colname, msk);
+                        exampleDate = colname;
                         break;
                     case ColumnType.Integer:
-                        col_types += string.Format("\"{0}\"=\"integer\"{1}\r\n", colname, comma);
+                        col_types += string.Format("\"{0}\" = \"integer\"{1}\r\n", colname, comma);
                         break;
                     case ColumnType.Decimal:
-                        col_types += string.Format("\"{0}\"=\"character\"{1} # numeric\n", colname, comma);
+                        col_types += string.Format("\"{0}\" = \"character\"{1} # numeric\n", colname, comma);
                         col_numbs += string.Format("df${0} <- as.numeric(df${0})\r\n", colname);
 
                         // just use the first decimal symbol
                         if (r_dec == "") r_dec = coldef.DecimalSymbol.ToString();
                         break;
                     default:
-                        col_types += string.Format("\"{0}\"=\"character\"{1}\r\n", colname, comma);
+                        col_types += string.Format("\"{0}\" = \"character\"{1}\r\n", colname, comma);
                         break;
                 };
             }
@@ -324,13 +333,14 @@ namespace CSVLint
             var header = (csvdef.ColNameHeader ? "TRUE" : "FALSE");
 
             rscript.Append("# read csv file\r\n");
-            rscript.Append(string.Format("df <- read.csv(filename, sep='{0}', dec=\"{1}\", fileEncoding='UTF-8-BOM', colClasses=colTypes, header={2})\r\n\r\n", separator, r_dec, header));
+            rscript.Append(string.Format("#df <- read.csv(filename, sep='{0}', dec=\"{1}\", fileEncoding='UTF-8-BOM', colClasses=colTypes, header={2})\r\n", separator, r_dec, header));
+            rscript.Append(string.Format("df <- read.csv(filename, sep='{0}', dec=\"{1}\", fileEncoding='UTF-8-BOM', header={2})\r\n\r\n", separator, r_dec, header));
 
             // date time format script
             if (col_dates != "")
             {
                 rscript.Append("# datetime values\r\n");
-                rscript.Append("# NOTE: any datetime formatting errors will result in empty/NA values\r\n");
+                rscript.Append("# NOTE: any datetime formatting errors will result in empty/NA values without any warning\r\n");
                 rscript.Append(col_dates);
                 rscript.Append("\r\n");
             }
@@ -344,13 +354,26 @@ namespace CSVLint
                 rscript.Append("\r\n");
             }
 
-            rscript.Append("# column update examples\r\n\r\n");
+            // R-script examples of typical data transformations
+            rscript.Append("# --------------------------------------\r\n");
+            rscript.Append("# Data transformation suggestions\r\n");
+            rscript.Append("# --------------------------------------\r\n\r\n");
 
-            // TODO: add R-script examples of create new column + reformat/update column + move column + delete column
+            rscript.Append("# reorder columns\r\n");
+            rscript.Append(string.Format("colOrder <- c({0}", exampleOrder));
+            rscript.Append("df <- df[, colOrder]\r\n\r\n");
+
+            rscript.Append("# date to string format MM/dd/yyyy\r\n");
+            rscript.Append(string.Format("df${0} <- format(df${0}, \"%m/%d/%Y\")\r\n\r\n", exampleDate));
+
+            rscript.Append("# replace codes with labels\r\n");
+            rscript.Append("#lookuplist <- data.frame(\"code\" = c(\"0\", \"1\"),\r\n");
+            rscript.Append("#                    \"label\" = c(\"No\", \"Yes\") )\r\n");
+            rscript.Append("#df$fieldyesno <- lookuplist$label[match(df$fieldyesno, lookuplist$code)]\r\n\r\n");
 
             rscript.Append("# csv write new output\r\n");
             rscript.Append("filenew = \"output.txt\"\r\n");
-            rscript.Append("write.table(df, file=filenew, sep=\";\", dec=\",\")\r\n");
+            rscript.Append("write.table(df, file=filenew, sep=\";\", dec=\",\", na=\"\", row.names=FALSE)\r\n");
 
             // create new file
             notepad.FileNew();

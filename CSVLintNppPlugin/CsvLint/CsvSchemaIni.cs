@@ -46,6 +46,10 @@ namespace CSVLintNppPlugin.CsvLint
                         // check section
                         if (line[0] == '[')
                         {
+                            // if correct section handled, then no need to read other sections
+                            if (bSec) break;
+                            // TODO: throw exception for duplicate section names?
+
                             // check current section and inilines index
                             bSec = line.ToLower() == section;
                         }
@@ -60,7 +64,8 @@ namespace CSVLintNppPlugin.CsvLint
                                 val = spl[1];
                             }
 
-                            inilines.Add(key, val);
+                            // TODO: throw exception for duplicate key names?
+                            if (!inilines.ContainsKey(key)) inilines.Add(key, val);
                         }
                     }
                 }
