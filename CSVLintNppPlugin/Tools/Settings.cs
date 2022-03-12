@@ -132,7 +132,7 @@ namespace Kbg.NppPluginNET
         public string _charSeparators;
         private string _strSeparators;
 
-        [Description("Transparent cursor line, changin this setting will require a restart of Notepad++."), Category("General"), DefaultValue(true)]
+        [Description("Transparent cursor line, changing this setting will require a restart of Notepad++."), Category("General"), DefaultValue(true)]
         public bool TransparentCursor { get; set; }
 
         [Description("Trim values before analyzing or editing, only applies to csv because for fixed width data it is always trimmed internally."),

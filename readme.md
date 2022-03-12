@@ -172,5 +172,6 @@ History
 29-oct-2021 - v0.4.2 startup error "CSVLint.xml is missing" fixed, toggle toolbar icon, clean up settings  
 12-nov-2021 - v0.4.3 dark mode icons and colors, save form settings, documentation, bugfixes  
 19-dec-2021 - v0.4.4 Support large integer values, various bugfixes  
+12-mar-2022 - v0.4.5 Render on background thread, transparent cursor line, convert to XML/JSON, generate metadata, quotes reformat, help icons, bugfixes  
 
 BdR©2021 Free to use - send questions or comments: Bas de Reuver - bdr1976@gmail.com

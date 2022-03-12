@@ -1,7 +1,7 @@
 CSV Lint plug-in documentation
 ==============================
 
-**CSV Lint** is a plug-in for Notepad++ to work with  csv and fixed width data files.
+**CSV Lint** is a plug-in for Notepad++ to work with csv and fixed width data files.
 
 * [CSV Lint plug-in](https://github.com/BdR76/CSVLint/)
 * [Notepad++ homepage](http://notepad-plus-plus.org/)
@@ -10,9 +10,9 @@ CSV Lint plug-in documentation
 
 Use the **CSV Lint** plug-in to quickly and easily inspect csv data files,
 add column syntax highlighting, detect technical errors and fix datetime and
-decimal formatting. It is a quality control tool to examine, verify or polish
-up a dataset before further processing, it's not meant as a replacement for a
-spreadsheet program.
+decimal formatting. It's not meant as a replacement for a spreadsheet program,
+but rather it's a quality control tool to examine, verify or polish up a
+dataset before further processing.
 
 First install and open Notepad++, then go to the menu item `Plugins > Plugins Admin...`,
 search for "csv lint", check the checkbox and press Intall. This will add
@@ -322,27 +322,36 @@ than 3 measurements.
 When you disable sorting, the resulting list of values will be in the order as
 the values were first found in the dataset.
 
-Convert to SQL
---------------
-Convert the currently selected CSV file to an SQL script that creates a database
+Convert data
+------------
+Convert the currently selected CSV file to SQL, XML or JSON format.
+
+![CSV Lint Convert data dialog](/docs/csvlint_convert_data.png?raw=true "CSV Lint plug-in Convert data dialog")
+
+Select SQL to convert the data to an SQL script to create a database
 table and inserts all records from the csv datafile into that table.
-The insert statement will be grouped in batches of X lines of csv data,
-see the `SQLBatchRows` setting. For compatibility with both mySQL or MS-SQL,
-the script will generate the column names as \`columnname\` or [columnname]
-depending on the `SQLansi` setting.
+The insert statement will be grouped in
+batches of X lines of csv data, as set by the Batch size number.
+
+Selected the database type MySQL, MS-SQL or PostgreSQL, and the create table
+part and the autonumber field `_record_number` will be slightly different
+according to the database type.
 
 See below for an example of an SQL insert script the plugin will generate:
 
     -- -------------------------------------
-    -- CSV Lint plug-in v0.4.2
+    -- CSV Lint plug-in v0.4.5
     -- File: cardio.txt
+    -- SQL type: mySQL
     -- -------------------------------------
     CREATE TABLE cardio(
+        `_record_number` int AUTO_INCREMENT NOT NULL,
         `patid` integer,
         `visitdat` datetime,
-        `labpth` numeric(5,1)
+        `labpth` numeric(5,1),
+        primary key(`_record_number`)
     );
-
+    
     -- -------------------------------------
     -- insert records 1 - 1000
     -- -------------------------------------
@@ -355,6 +364,35 @@ See below for an example of an SQL insert script the plugin will generate:
     (2, '2021-09-05', 143.5),
     (3, '2021-09-24', 76.4),
     -- etc.
+
+Select XML or JSON to convert the data to an XML or JSON dataset.
+The plug-in will automatically apply formatting based on the metadata,
+as well as applying character escaping where needed for these formats.
+
+Generate metadata
+-----------------
+Generate metadata in different formats to make it easier to process your csv files.
+
+![CSV Lint Generate metadata dialog](/docs/csvlint_generate_metadata.png?raw=true "CSV Lint plug-in Generate metadata dialog")
+
+### schema ini ###
+
+File and column metadata in [schema.ini](https://docs.microsoft.com/en-us/sql/odbc/microsoft/schema-ini-file-text-file-driver?view=sql-server-ver15)
+format for the Microsoft Jet OLE DB, also known as the ODBC text driver.
+
+### schema JSON ###
+
+File and column metadata in W3 schema JSON format (preliminary support).
+
+### R-script ###
+
+Generates an [R-script](https://www.r-project.org/) to read the csv data file
+as a dataframe. It contains the required scripting for the appropriate
+datatypes, and it is meant as a starting point for further processing in
+[R-Studio](https://www.rstudio.com/products/rstudio/).
+
+Note that the generated script doesn't handle any data errors,
+you'll need to write additional code to suit your data processing needs.
 
 Settings
 --------
@@ -371,15 +409,14 @@ and they are stored in a settings file `%USERPROFILE%\AppData\Roaming\Notepad++\
 | UniqueValuesMax  | Maximum unique values when reporting or detecting coded values, if column contains more than it's not reported. |   15    | 
 | YearMinimum      | When detecting date or datetime values, years smaller than this value will be considered as invalid dates.      | 1900    |
 | YearMaximum      | When detecting date or datetime values, years larger than this value will be considered as invalid dates.       | 2050    |
-| SQLansi          | Convert to ANSI standard SQL script, set to true for mySQL or false for MS-SQL.                                 | true    |
-| SQLBatchRows     | Maximum records per SQL insert batch, minimum batch size is 10.                                                 | 1000    |
 | TwoDigitYearMax  | Maximum year for two digit year date values. For example, when set to 2024 the year values 24 and 25 will be interpreted as 2024 and 1925. Set as SysYear for current year. | SysYear |
 | DefaultQuoteChar | Default quote escape character when quotes exists inside text                                                   | "       |
 | NullValue        | Keyword for empty values or null values in the csv data, case-sensitive.                                        | NaN     |
 | SeparatorColor   | Include separator in syntax highlighting colors. Set to false and the separator characters are always white.    | false   |
 | Separators       | Preferred characters when automatically detecting the separator character. For special characters like tab, use \\t or \\u0009. | ,;\t| |
+| TransparentCursor| Transparent cursor line, changing this setting will require a restart of Notepad++                              | true    |
 | TrimValues       | Trim values before analyzing or editing (recommended).                                                          | true    |
-| UserPref section | Various input settings for the CSV Lint dialogs for Reformat, Split Column etc.                                 |         |
+| UserPref section | Various input settings for the CSV Lint dialogs for Convert Data, Reformat, Split Column etc.                   |         |
 
 Syntax highlighting colors
 --------------------------
@@ -389,6 +426,11 @@ At first time startup, the plug-in will select normal or darkmode color scheme,
 depending on the Dark Mode setting in the Notepad++ `config.xml`.
 
 ![CSV Lint color styles for syntax highlighting](/docs/csvlint_color_styles.png?raw=true "CSV Lint plug-in color styles for syntax highlighting")
+
+Note that the rendering of the syntax highlighting runs on a separate thread
+in the background. This means that for larger file (~50MB or more) it can
+happen that the beginning of the file has column colors but at the end of the
+file it's still uncolored.
 
 The color scheme settings are stored in a file `CSVLint.xml` which is
 automatically created at first time startup or when the file is missing,
@@ -411,4 +453,4 @@ Disclaimer
 This software is free-to-use and it is provided as-is without warranty of any kind,
 always back-up your data files to prevent data loss.
 
-BdR©2021 Free to use - send questions or comments: Bas de Reuver - bdr1976@gmail.com
+BdR©2022 Free to use - send questions or comments: Bas de Reuver - bdr1976@gmail.com
