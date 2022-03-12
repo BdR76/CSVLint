@@ -103,11 +103,12 @@ namespace Kbg.NppPluginNET
             PluginBase.SetCommand(1, "---", null);
             PluginBase.SetCommand(2, "Analyse data report", AnalyseDataReport);
             PluginBase.SetCommand(3, "Count unique values", CountUniqueValues);
-            PluginBase.SetCommand(4, "Convert data to..", convertData);
-            PluginBase.SetCommand(5, "Generate metadata", generateMetaData);
-            PluginBase.SetCommand(6, "---", null);
-            PluginBase.SetCommand(7, "&Settings", DoSettings);
-            PluginBase.SetCommand(8, "About / Help", DoAboutForm);
+            PluginBase.SetCommand(4, "---", null);
+            PluginBase.SetCommand(5, "Convert data", convertData);
+            PluginBase.SetCommand(6, "Generate metadata", generateMetaData);
+            PluginBase.SetCommand(7, "---", null);
+            PluginBase.SetCommand(8, "&Settings", DoSettings);
+            PluginBase.SetCommand(9, "About / Help", DoAboutForm);
 
             RefreshFromSettings();
         }

@@ -333,7 +333,7 @@ namespace CSVLint
                         // spaces
                         if (thosep - i != (3 + 1))
                         {
-                            err += "incorrect position of thousand separator";
+                            err += (decsep == -1 ? "incorrect decimal separator" : "incorrect position of thousand separator");
                             isDecimal = false;
                             break;
                         }

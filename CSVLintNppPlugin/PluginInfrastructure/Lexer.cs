@@ -413,14 +413,18 @@ namespace NppPluginNET.PluginInfrastructure
             int length = (int)length_doc;
             int start = (int)start_pos;
 
-            // create transparent cursor line
-            if (start == 0 && PluginBase.MainScintillaActive
-                && !Main.sShouldResetCaretBack)
+            // transparent cursor line is optional
+            if (Main.Settings.TransparentCursor)
             {
-                var editor = new ScintillaGateway(PluginBase.GetCurrentScintilla());
-                editor.SetCaretLineBackAlpha((Alpha)16+8);
-                editor.SetCaretLineBack(sCaretLineBack);
-                Main.sShouldResetCaretBack = true;
+                // create transparent cursor line
+                if (start == 0 && PluginBase.MainScintillaActive
+                    && !Main.sShouldResetCaretBack)
+                {
+                    var editor = new ScintillaGateway(PluginBase.GetCurrentScintilla());
+                    editor.SetCaretLineBackAlpha((Alpha)16 + 8);
+                    editor.SetCaretLineBack(sCaretLineBack);
+                    Main.sShouldResetCaretBack = true;
+                }
             }
 
             // allocate a buffer
@@ -438,6 +442,9 @@ namespace NppPluginNET.PluginInfrastructure
 
             // convert the buffer into a managed string
             string content = Marshal.PtrToStringAnsi(buffer_ptr, length);
+
+            // TODO: fix this; this is just a quick & dirty way to prevent index overflow when Windows = code page 65001
+            length = content.Length;
 
             // column color index
             int idx = 1;
@@ -507,7 +514,7 @@ namespace NppPluginNET.PluginInfrastructure
             }
             else
             {
-                // JAVASCRIPT
+                // variables (algorithm based on JAVASCRIPT prototype)
                 bool quote = false;
                 char quote_char = Main.Settings.DefaultQuoteChar;
                 bool whitespace = true; // to catch where value is just two quotes "" right at start of line

@@ -35,6 +35,7 @@
             this.lnkContact = new System.Windows.Forms.LinkLabel();
             this.picEasterEgg = new System.Windows.Forms.PictureBox();
             this.lblDisclaimer = new System.Windows.Forms.Label();
+            this.lblLine = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.picEasterEgg)).BeginInit();
             this.SuspendLayout();
             // 
@@ -53,9 +54,11 @@
             // 
             this.lblTitle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblTitle.Location = new System.Drawing.Point(8, 8);
+            this.lblTitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTitle.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.lblTitle.Location = new System.Drawing.Point(8, 10);
             this.lblTitle.Name = "lblTitle";
-            this.lblTitle.Size = new System.Drawing.Size(192, 13);
+            this.lblTitle.Size = new System.Drawing.Size(192, 20);
             this.lblTitle.TabIndex = 1;
             this.lblTitle.Text = "CSV Lint plug-in NPP v";
             this.lblTitle.TextAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -64,7 +67,7 @@
             // 
             this.lblInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblInfo.Location = new System.Drawing.Point(8, 32);
+            this.lblInfo.Location = new System.Drawing.Point(8, 41);
             this.lblInfo.Name = "lblInfo";
             this.lblInfo.Size = new System.Drawing.Size(192, 38);
             this.lblInfo.TabIndex = 2;
@@ -75,7 +78,7 @@
             // 
             this.lnkGithub.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.lnkGithub.Location = new System.Drawing.Point(8, 132);
+            this.lnkGithub.Location = new System.Drawing.Point(8, 136);
             this.lnkGithub.Name = "lnkGithub";
             this.lnkGithub.Size = new System.Drawing.Size(192, 13);
             this.lnkGithub.TabIndex = 3;
@@ -89,7 +92,7 @@
             // 
             this.lnkContact.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.lnkContact.Location = new System.Drawing.Point(8, 156);
+            this.lnkContact.Location = new System.Drawing.Point(8, 160);
             this.lnkContact.Name = "lnkContact";
             this.lnkContact.Size = new System.Drawing.Size(192, 13);
             this.lnkContact.TabIndex = 4;
@@ -113,13 +116,24 @@
             // 
             this.lblDisclaimer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblDisclaimer.Location = new System.Drawing.Point(8, 69);
+            this.lblDisclaimer.Location = new System.Drawing.Point(8, 78);
             this.lblDisclaimer.Name = "lblDisclaimer";
             this.lblDisclaimer.Size = new System.Drawing.Size(192, 59);
             this.lblDisclaimer.TabIndex = 2;
             this.lblDisclaimer.Text = "This software is free-to-use and it is provided as-is without warranty of any kin" +
     "d, always back-up your data files to prevent data loss.";
             this.lblDisclaimer.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
+            // lblLine
+            // 
+            this.lblLine.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblLine.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.lblLine.Location = new System.Drawing.Point(4, 34);
+            this.lblLine.Name = "lblLine";
+            this.lblLine.Size = new System.Drawing.Size(200, 2);
+            this.lblLine.TabIndex = 1;
+            this.lblLine.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // AboutForm
             // 
@@ -132,6 +146,7 @@
             this.Controls.Add(this.btnOk);
             this.Controls.Add(this.lblDisclaimer);
             this.Controls.Add(this.lblInfo);
+            this.Controls.Add(this.lblLine);
             this.Controls.Add(this.lblTitle);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.MaximizeBox = false;
@@ -153,5 +168,6 @@
         private System.Windows.Forms.LinkLabel lnkContact;
         private System.Windows.Forms.PictureBox picEasterEgg;
         private System.Windows.Forms.Label lblDisclaimer;
+        private System.Windows.Forms.Label lblLine;
     }
 }

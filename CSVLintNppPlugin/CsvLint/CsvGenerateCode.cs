@@ -249,11 +249,12 @@ namespace CSVLint
             rscript.Append("# NOTE: using colClasses parameter doesn't work when for example integers are in quotes etc.\r\n");
             rscript.Append("# and read.csv will mostly interpret datatypes correctly anyway\r\n");
 
+            var col_names = "c(";
             var col_types = "c(";
             var col_dates = "";
             var col_numbs = "";
+            var col_widths = "c(";
 
-            var exampleOrder = "";
             var exampleDate = "myDateField";
 
             var r_dec = "";
@@ -269,8 +270,13 @@ namespace CSVLint
 
                 var comma = (c < csvdef.Fields.Count - 1 ? "," : ")");
 
-                if (c > 0) exampleOrder += "              ";
-                exampleOrder += string.Format("\"{0}\"{1}\r\n", colname, comma);
+
+                //col_widths += coldef.MaxWidth.ToString() + comma;
+                col_widths += string.Format("{0}{1} ", coldef.MaxWidth, comma);
+
+                var indent = (c > 0 ? "              " : "");
+
+                col_names += string.Format("{0}\"{1}\"{2}\r\n", indent, colname, comma);
 
                 // indent for next lines
                 if (c > 0) col_types += "              ";
@@ -302,7 +308,9 @@ namespace CSVLint
 
                         msk = msk.Replace("n", "%M"); // in R-script lowercase m = month and capital M = minutes, opposite of internal mask format, use temporary 'n' to work around this
 
-                        col_dates += string.Format("df${0} <- as.Date(df${0}, format=\"{1}\")\r\n", colname, msk);
+                        var rtype = (msk.IndexOf("H") == -1 ? "Date" : "POSIXct"); // date OR datetime
+
+                        col_dates += string.Format("df${0} <- as.{1}(df${0}, format=\"{2}\")\r\n", colname, rtype, msk);
                         exampleDate = colname;
                         break;
                     case ColumnType.Integer:
@@ -324,6 +332,14 @@ namespace CSVLint
             // no decimals, then not technically needed but nice to have as example code
             if (r_dec == "") r_dec = ".";
 
+            // colnames
+            var nameparam = "";
+            if (!csvdef.ColNameHeader)
+            {
+                rscript.Append(string.Format("colNames <- {0}\r\n", col_names));
+                nameparam = "col.name=colNames, ";
+            }
+
             // column types
             rscript.Append(string.Format("colTypes <- {0}\r\n", col_types));
 
@@ -332,9 +348,18 @@ namespace CSVLint
             if (separator == "\t") separator = "\\t";
             var header = (csvdef.ColNameHeader ? "TRUE" : "FALSE");
 
-            rscript.Append("# read csv file\r\n");
-            rscript.Append(string.Format("#df <- read.csv(filename, sep='{0}', dec=\"{1}\", fileEncoding='UTF-8-BOM', colClasses=colTypes, header={2})\r\n", separator, r_dec, header));
-            rscript.Append(string.Format("df <- read.csv(filename, sep='{0}', dec=\"{1}\", fileEncoding='UTF-8-BOM', header={2})\r\n\r\n", separator, r_dec, header));
+            if (csvdef.Separator == '\0')
+            {
+                // fixed width
+                rscript.Append("# fixed width\r\n");
+                rscript.Append(string.Format("colWidths <- {0}\r\n", col_widths));
+                rscript.Append(string.Format("df <- read.fwf(filename, {0}colClasses=colTypes, width=colWidths, stringsAsFactors=FALSE, comment.char='', header={1})\r\n\r\n", nameparam, header));
+            } else {
+                // character separated
+                rscript.Append("# read csv file\r\n");
+                rscript.Append(string.Format("#df <- read.csv(filename, sep='{0}', dec=\"{1}\", {2}colClasses=colTypes, header={3})\r\n", separator, r_dec, nameparam, header));
+                rscript.Append(string.Format("df <- read.csv(filename, sep='{0}', dec=\"{1}\", {2}header={3})\r\n\r\n", separator, r_dec, nameparam, header));
+            }
 
             // date time format script
             if (col_dates != "")
@@ -360,7 +385,7 @@ namespace CSVLint
             rscript.Append("# --------------------------------------\r\n\r\n");
 
             rscript.Append("# reorder columns\r\n");
-            rscript.Append(string.Format("colOrder <- c({0}", exampleOrder));
+            rscript.Append(string.Format("colOrder <- {0}", col_names));
             rscript.Append("df <- df[, colOrder]\r\n\r\n");
 
             rscript.Append("# date to string format MM/dd/yyyy\r\n");

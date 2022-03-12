@@ -58,7 +58,7 @@ namespace CSVLintNppPlugin.Forms
             // picHelpIcon
             // 
             this.picHelpIcon.Location = new System.Drawing.Point(239, 8);
-            this.picHelpIcon.Tag = "convert-data-to";
+            this.picHelpIcon.Tag = "convert-data";
             // 
             // lblHorizontalLine
             // 

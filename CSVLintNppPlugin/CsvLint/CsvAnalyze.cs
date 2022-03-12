@@ -322,9 +322,13 @@ namespace CSVLint
             var csvvalid = new CsvValidate();
             foreach (CSVLint.CsvColumn col in result.Fields)
             {
-                // if fist row values (=Names) are all valid datatypes, then probably not actually column names
-                var str = csvvalid.EvaluateDataValue(col.Name, col, col.Index);
-                if (str != "") count++;
+                // don't check for invalid string, because only "invalid string" is too long which doesn't say much about wether it's a header or not
+                if (col.DataType != ColumnType.String)
+                {
+                    // if fist row values (=Names) are all valid datatypes, then probably not actually column names
+                    var str = csvvalid.EvaluateDataValue(col.Name, col, col.Index);
+                    if (str != "") count++;
+                }
             }
 
             // if all header Names (=frst row) comply with the column datatype, then there is no column names
