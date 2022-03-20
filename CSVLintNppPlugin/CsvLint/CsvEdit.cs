@@ -244,7 +244,8 @@ namespace CSVLint
             IScintillaGateway editor = new ScintillaGateway(PluginBase.GetCurrentScintilla());
 
             string FILE_NAME = Path.GetFileName(notepad.GetCurrentFilePath());
-            string TABLE_NAME = StringToVariable(Path.GetFileNameWithoutExtension(notepad.GetCurrentFilePath()));
+            string TABLE_NAME = Main.Settings.DataConvertName;
+            if (TABLE_NAME == "") TABLE_NAME = StringToVariable(Path.GetFileNameWithoutExtension(notepad.GetCurrentFilePath()));
             string SQL_TYPE = (Main.Settings.DataConvertSQL <= 1 ? (Main.Settings.DataConvertSQL == 0 ? "mySQL" : "MS-SQL") : "PostgreSQL");
 
             sb.Append("-- -------------------------------------\r\n");
@@ -276,6 +277,7 @@ namespace CSVLint
 
                 // determine sql datatype
                 var sqltype = "varchar";
+                var comment = "";
                 if (csvdef.Fields[r].DataType == ColumnType.Integer) sqltype = "integer";
                 if (csvdef.Fields[r].DataType == ColumnType.DateTime) sqltype = (Main.Settings.DataConvertSQL < 2 ? "datetime" : "timestamp");
                 //if (csvdef.Fields[r].DataType == ColumnType.Guid) sqltype = "varchar(36)";
@@ -286,7 +288,13 @@ namespace CSVLint
                 // for SQL date format always needs to be ISO format
                 if (csvdef.Fields[r].DataType == ColumnType.String)
                 {
-                    sqltype = string.Format("varchar({0})", csvdef.Fields[r].MaxWidth);
+                    var wd = csvdef.Fields[r].MaxWidth;
+                    if (wd == 0)
+                    {
+                        comment = (wd == 0 ? " -- width unknown" : "");
+                        wd = 10;
+                    }
+                    sqltype = string.Format("varchar({0})", wd);
                 }
                 // for SQL date format always needs to be ISO format
                 //if (csvdef.Fields[r].DataType == ColumnType.DateTime)
@@ -300,17 +308,20 @@ namespace CSVLint
                 //    csvdef.Fields[r].Mask = masknew.Trim();
                 //}
 
-                sb.Append(string.Format("{0} {1}", sqlname, sqltype));
+                // no comma after last column, except for mySQL
+                var comma = (r < csvdef.Fields.Count - 1 || Main.Settings.DataConvertSQL == 0 ? "," : "");
+
+                sb.Append(string.Format("{0} {1}{2}{3}", sqlname, sqltype, comma, comment));
                 cols += sqlname;
                 if (r < csvdef.Fields.Count - 1)
                 {
-                    sb.Append(",\r\n\t");
+                    sb.Append("\r\n\t");
                     cols += ",\r\n\t";
                 };
             };
 
             // primary key definition for mySQL
-            if (Main.Settings.DataConvertSQL == 0) sb.Append(string.Format(",\r\n\tprimary key(`{0}`)", recidname));
+            if (Main.Settings.DataConvertSQL == 0) sb.Append(string.Format("\r\n\tprimary key(`{0}`)", recidname));
 
             sb.Append("\r\n)");
 
@@ -338,7 +349,7 @@ namespace CSVLint
                     sb.Append("-- insert records \r\n");
                     batchcomm = sb.Length - 2; // -2 because of the 2 characters \r\n
                     sb.Append("-- -------------------------------------\r\n");
-                    sb.Append(string.Format("insert into {0}(\r\n", TABLE_NAME));
+                    sb.Append(string.Format("insert into {0} (\r\n", TABLE_NAME));
                     sb.Append(cols);
                     sb.Append("\r\n) values");
                 }
@@ -427,6 +438,16 @@ namespace CSVLint
             editor.SetText(sb.ToString());
         }
 
+        private static string XMLSafeName(string name)
+        {
+            // xml safe tag name
+            name = Regex.Replace(name, "[^a-zA-Z0-9]", "_"); // not letter or digit
+            name = Regex.Replace(name, "[_]{2,}", "_"); // double underscore to single underscore
+
+            return name;
+        }
+
+
         /// <summary>
         /// convert to XML data
         /// </summary>
@@ -439,6 +460,11 @@ namespace CSVLint
             INotepadPPGateway notepad = new NotepadPPGateway();
             IScintillaGateway editor = new ScintillaGateway(PluginBase.GetCurrentScintilla());
 
+            // record tag name
+            string TABLE_NAME = Main.Settings.DataConvertName;
+            if (TABLE_NAME == "") TABLE_NAME = StringToVariable(Path.GetFileNameWithoutExtension(notepad.GetCurrentFilePath()));
+            TABLE_NAME = XMLSafeName(TABLE_NAME);
+
             // default comment
             List<String> comment = ScriptInfo(notepad);
 
@@ -447,12 +473,7 @@ namespace CSVLint
             for (var col = 0; col < csvdef.Fields.Count; col++)
             {
                 var colname = csvdef.Fields[col].Name;
-
-                // xml safe tag
-                colname = Regex.Replace(colname, "[^a-zA-Z0-9]", "_"); // not letter or digit
-                colname = Regex.Replace(colname, "[_]{2,}", "_"); // double underscore to single underscore
-
-                xmlnames.Add(colname);
+                xmlnames.Add(XMLSafeName(colname));
             }
 
             // build XML
@@ -478,7 +499,7 @@ namespace CSVLint
                 if (lineCount >= 0)
                 {
                     // next record
-                    sb.Append("\t<record>\r\n");
+                    sb.Append(string.Format("\t<{0}>\r\n", TABLE_NAME));
 
                     for (var col = 0; col < csvdef.Fields.Count; col++)
                     {
@@ -551,7 +572,7 @@ namespace CSVLint
                         }
                     }
 
-                    sb.Append("\t</record>\r\n");
+                    sb.Append(string.Format("\t</{0}>\r\n", TABLE_NAME));
                 }
 
                 // next line

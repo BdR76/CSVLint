@@ -36,7 +36,21 @@ namespace CSVLintNppPlugin.Forms
                     var t = ctrl.Tag;
                     if (t != null)
                     {
-                        int.TryParse(t.ToString(), out int CtrlTag);
+                        string tagtest = t.ToString();
+
+                        int CtrlTag = -1;
+                        if (tagtest.Contains(","))
+                        {
+                            var tmp = tagtest.Split(',');
+                            foreach (string s in tmp)
+                            {
+                                if (s == iTag.ToString()) CtrlTag = iTag;
+                            }
+                        }
+                        else
+                        {
+                            int.TryParse(tagtest, out CtrlTag);
+                        }
 
                         // if tag same
                         if (CtrlTag == iTag)

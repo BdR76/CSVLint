@@ -207,6 +207,9 @@ namespace Kbg.NppPluginNET
         [Description("Data convert, convert to type."), Category("UserPref"), DefaultValue(0)]
         public int DataConvertType { get; set; }
 
+        [Description("Data convert, SQL tablename or XML tag name."), Category("UserPref"), DefaultValue("")]
+        public string DataConvertName { get; set; }
+
         private int _sqlbatch;
 
         [Description("Maximum records per SQL insert batch, minimum batch size is 10."),

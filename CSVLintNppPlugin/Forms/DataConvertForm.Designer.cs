@@ -37,18 +37,20 @@ namespace CSVLintNppPlugin.Forms
             this.lblSQLtype = new System.Windows.Forms.Label();
             this.lblSQLBatchSize = new System.Windows.Forms.Label();
             this.numSQLBatchSize = new System.Windows.Forms.NumericUpDown();
+            this.txtTablename = new System.Windows.Forms.TextBox();
+            this.lblTablename = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.picHelpIcon)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numSQLBatchSize)).BeginInit();
             this.SuspendLayout();
             // 
             // btnOk
             // 
-            this.btnOk.Location = new System.Drawing.Point(35, 153);
+            this.btnOk.Location = new System.Drawing.Point(38, 188);
             this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(154, 153);
+            this.btnCancel.Location = new System.Drawing.Point(157, 188);
             // 
             // lblTitle
             // 
@@ -57,12 +59,12 @@ namespace CSVLintNppPlugin.Forms
             // 
             // picHelpIcon
             // 
-            this.picHelpIcon.Location = new System.Drawing.Point(239, 8);
+            this.picHelpIcon.Location = new System.Drawing.Point(242, 8);
             this.picHelpIcon.Tag = "convert-data";
             // 
             // lblHorizontalLine
             // 
-            this.lblHorizontalLine.Size = new System.Drawing.Size(259, 2);
+            this.lblHorizontalLine.Size = new System.Drawing.Size(262, 2);
             // 
             // lblConvertTo
             // 
@@ -76,7 +78,7 @@ namespace CSVLintNppPlugin.Forms
             // rdbtnSQL
             // 
             this.rdbtnSQL.AutoSize = true;
-            this.rdbtnSQL.Location = new System.Drawing.Point(96, 46);
+            this.rdbtnSQL.Location = new System.Drawing.Point(100, 46);
             this.rdbtnSQL.Name = "rdbtnSQL";
             this.rdbtnSQL.Size = new System.Drawing.Size(46, 17);
             this.rdbtnSQL.TabIndex = 4;
@@ -89,7 +91,7 @@ namespace CSVLintNppPlugin.Forms
             // rdbtnXML
             // 
             this.rdbtnXML.AutoSize = true;
-            this.rdbtnXML.Location = new System.Drawing.Point(144, 46);
+            this.rdbtnXML.Location = new System.Drawing.Point(148, 46);
             this.rdbtnXML.Name = "rdbtnXML";
             this.rdbtnXML.Size = new System.Drawing.Size(47, 17);
             this.rdbtnXML.TabIndex = 4;
@@ -102,7 +104,7 @@ namespace CSVLintNppPlugin.Forms
             // rdbtnJSON
             // 
             this.rdbtnJSON.AutoSize = true;
-            this.rdbtnJSON.Location = new System.Drawing.Point(192, 46);
+            this.rdbtnJSON.Location = new System.Drawing.Point(196, 46);
             this.rdbtnJSON.Name = "rdbtnJSON";
             this.rdbtnJSON.Size = new System.Drawing.Size(53, 17);
             this.rdbtnJSON.TabIndex = 4;
@@ -121,36 +123,36 @@ namespace CSVLintNppPlugin.Forms
             "MySQL",
             "MS-SQL",
             "PostgreSQL"});
-            this.cmbSQLtype.Location = new System.Drawing.Point(94, 77);
+            this.cmbSQLtype.Location = new System.Drawing.Point(98, 109);
             this.cmbSQLtype.Name = "cmbSQLtype";
             this.cmbSQLtype.Size = new System.Drawing.Size(92, 21);
-            this.cmbSQLtype.TabIndex = 6;
+            this.cmbSQLtype.TabIndex = 8;
             this.cmbSQLtype.Tag = "1";
             // 
             // lblSQLtype
             // 
             this.lblSQLtype.AutoSize = true;
-            this.lblSQLtype.Location = new System.Drawing.Point(12, 80);
+            this.lblSQLtype.Location = new System.Drawing.Point(12, 112);
             this.lblSQLtype.Name = "lblSQLtype";
             this.lblSQLtype.Size = new System.Drawing.Size(76, 13);
-            this.lblSQLtype.TabIndex = 3;
+            this.lblSQLtype.TabIndex = 7;
             this.lblSQLtype.Tag = "";
             this.lblSQLtype.Text = "Database type";
             // 
             // lblSQLBatchSize
             // 
             this.lblSQLBatchSize.AutoSize = true;
-            this.lblSQLBatchSize.Location = new System.Drawing.Point(12, 112);
+            this.lblSQLBatchSize.Location = new System.Drawing.Point(12, 144);
             this.lblSQLBatchSize.Name = "lblSQLBatchSize";
             this.lblSQLBatchSize.Size = new System.Drawing.Size(56, 13);
-            this.lblSQLBatchSize.TabIndex = 3;
+            this.lblSQLBatchSize.TabIndex = 9;
             this.lblSQLBatchSize.Tag = "";
             this.lblSQLBatchSize.Text = "Batch size";
             // 
             // numSQLBatchSize
             // 
             this.numSQLBatchSize.Enabled = false;
-            this.numSQLBatchSize.Location = new System.Drawing.Point(94, 110);
+            this.numSQLBatchSize.Location = new System.Drawing.Point(98, 142);
             this.numSQLBatchSize.Maximum = new decimal(new int[] {
             99999999,
             0,
@@ -171,16 +173,36 @@ namespace CSVLintNppPlugin.Forms
             0,
             0});
             // 
+            // txtTablename
+            // 
+            this.txtTablename.Location = new System.Drawing.Point(98, 78);
+            this.txtTablename.Name = "txtTablename";
+            this.txtTablename.Size = new System.Drawing.Size(160, 20);
+            this.txtTablename.TabIndex = 6;
+            this.txtTablename.Tag = "1,2";
+            // 
+            // lblTablename
+            // 
+            this.lblTablename.AutoSize = true;
+            this.lblTablename.Location = new System.Drawing.Point(12, 80);
+            this.lblTablename.Name = "lblTablename";
+            this.lblTablename.Size = new System.Drawing.Size(83, 13);
+            this.lblTablename.TabIndex = 5;
+            this.lblTablename.Tag = "";
+            this.lblTablename.Text = "Table/tag name";
+            // 
             // DataConvertForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.ClientSize = new System.Drawing.Size(266, 195);
+            this.ClientSize = new System.Drawing.Size(269, 230);
+            this.Controls.Add(this.txtTablename);
             this.Controls.Add(this.numSQLBatchSize);
             this.Controls.Add(this.cmbSQLtype);
             this.Controls.Add(this.rdbtnJSON);
             this.Controls.Add(this.rdbtnXML);
             this.Controls.Add(this.rdbtnSQL);
             this.Controls.Add(this.lblSQLBatchSize);
+            this.Controls.Add(this.lblTablename);
             this.Controls.Add(this.lblSQLtype);
             this.Controls.Add(this.lblConvertTo);
             this.Name = "DataConvertForm";
@@ -192,12 +214,14 @@ namespace CSVLintNppPlugin.Forms
             this.Controls.SetChildIndex(this.btnCancel, 0);
             this.Controls.SetChildIndex(this.lblConvertTo, 0);
             this.Controls.SetChildIndex(this.lblSQLtype, 0);
+            this.Controls.SetChildIndex(this.lblTablename, 0);
             this.Controls.SetChildIndex(this.lblSQLBatchSize, 0);
             this.Controls.SetChildIndex(this.rdbtnSQL, 0);
             this.Controls.SetChildIndex(this.rdbtnXML, 0);
             this.Controls.SetChildIndex(this.rdbtnJSON, 0);
             this.Controls.SetChildIndex(this.cmbSQLtype, 0);
             this.Controls.SetChildIndex(this.numSQLBatchSize, 0);
+            this.Controls.SetChildIndex(this.txtTablename, 0);
             ((System.ComponentModel.ISupportInitialize)(this.picHelpIcon)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numSQLBatchSize)).EndInit();
             this.ResumeLayout(false);
@@ -211,6 +235,8 @@ namespace CSVLintNppPlugin.Forms
         private System.Windows.Forms.RadioButton rdbtnSQL;
         private System.Windows.Forms.RadioButton rdbtnXML;
         private System.Windows.Forms.RadioButton rdbtnJSON;
+        private System.Windows.Forms.Label lblTablename;
+        private System.Windows.Forms.TextBox txtTablename;
         private System.Windows.Forms.ComboBox cmbSQLtype;
         private System.Windows.Forms.Label lblSQLtype;
         private System.Windows.Forms.Label lblSQLBatchSize;

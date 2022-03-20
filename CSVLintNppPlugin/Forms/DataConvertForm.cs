@@ -18,6 +18,8 @@ namespace CSVLintNppPlugin.Forms
             rdbtnXML.Checked  = (Main.Settings.DataConvertType == 1); // XML
             rdbtnJSON.Checked = (Main.Settings.DataConvertType == 2); // JSON
 
+            txtTablename.Text = Main.Settings.DataConvertName;
+
             var idx = Main.Settings.DataConvertSQL;
             cmbSQLtype.SelectedIndex = (idx >= 0 && idx <= 2 ? idx : 0);
 
@@ -32,6 +34,7 @@ namespace CSVLintNppPlugin.Forms
             // save user preferences
             int idx = (rdbtnSQL.Checked ? 0 : (rdbtnXML.Checked ? 1 : (rdbtnJSON.Checked ? 2 : 0)));
             Main.Settings.DataConvertType = idx;
+            Main.Settings.DataConvertName = txtTablename.Text;
             Main.Settings.DataConvertSQL = cmbSQLtype.SelectedIndex;
 
             // save to file
