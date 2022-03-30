@@ -96,7 +96,7 @@ Format can be CSVDelimited for commas, TabDelimited for tabs, for any other
 delimiter use for example Format=Delimited(;). Use FixedLength for fixed
 width text files and set the Width for each column.
 
-DateTimeFormat is not case sensitive and uses dd/mm/yyyy or yyyy-mm-dd hh:nn:ss etc.
+DateTimeFormat is not case sensitive and uses `dd/mm/yyyy` or `yyyy-mm-dd hh:nn:ss` etc.
 
 DecimalSymbol can be either `.` or `,` and CSV Lint will assume the thousand
 separators symbol is the opposite of the DecimalSymbol. Define the maximum
@@ -130,9 +130,19 @@ Any values that contain the new separator character will be put in quotes, for e
 When converting to fixed width format, it will use the width of each column as set in the metadata.
 Integer or decimal values will be right aligned, any other datatypes are left aligned.
 
+### Re-apply quotes ###
+
+Apply quotes to the cell values, with the following options
+
+* None / Minimal = No quotes except when a value contains the separator character (this always applies, also when selecting other options)
+* Values with spaces = Values with that contains separator character or spaces
+* All string values = All columns with datatype Text
+* All non-numeric values = All columns except datatypes Integer or Float
+* All values = All values in all columns
+
 ### Trim all values ###
 
-Trim spaces from all values, for example trim the value " Yes " to "Yes".
+Trim spaces from all values, for example trim the value " 1234AB " to just "1234AB".
 
 ### Align vertically ###
 
@@ -182,9 +192,9 @@ as a date value formated as `dd-mm-yyyy`, see some example results below:
 |------------|--------------|--------------|
 | 15-04-2020 | 15-04-2020   |              |
 | 23-05-2019 | 23-05-2019   |              |
-| 07-26-2021 |              | 07-26-2021   |
+| 07/26/2021 |              | 07/26/2021   |
 | 18-09-2020 | 18-09-2020   |              |
-| noshow     |              | noshow       |
+| No show    |              | No show      |
 
 ### Split on character ###
 
@@ -209,8 +219,8 @@ other examples below
 
 | position        | position (2) | position (3) |
 |-----------------|--------------|--------------|
-| ZKH\21-006-4929 | ZKH          | \21-006-4929 |
-| OZG\19-006-4929 | OZG          | \19-006-4929 |
+| ZKH\21-006-2516 | ZKH          | \21-006-2516 |
+| OZG\19-006-1489 | OZG          | \19-006-1489 |
 | abcdefghijk     | abc          | defghijk     |
 | 123.45          | 123          | .45          |
 | 12345.67        | 123          | 45.67        |
@@ -250,7 +260,7 @@ answers are usually stored in a single value as `1;2;3` or `2;4` depending
 on which options were selected and how the answers are coded.
 
 For example use the codes `Hb;K;Nat;Lac` and character `;` to create 5 new columns,
-the 4 possible coded values plus one for any remaining values.
+the 4 possible coded values `Hb`, `K`, `Nat` and `Lac` plus one for any remaining values.
 
 | labchk          | labchk (2) | labchk (3) | labchk (4) | labchk (5) | labchk (6) |
 |-----------------|------------|------------|------------|------------|------------|

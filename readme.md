@@ -1,6 +1,6 @@
 CSV Lint - Notepad++ plugin
 ===========================
-
+![Release version](https://img.shields.io/github/v/release/BdR76/CSVLint) ![GitHub all releases](https://img.shields.io/github/downloads/BdR76/CSVLint/total) ![GitHub latest release](https://img.shields.io/github/downloads/BdR76/CSVLint/latest/total)  
 CSV Lint is a plug-in for [Notepad++](http://notepad-plus-plus.org/) for metadata discovery, technical data
 validation and reformatting on tabular data files.
 
@@ -173,5 +173,7 @@ History
 12-nov-2021 - v0.4.3 dark mode icons and colors, save form settings, documentation, bugfixes  
 19-dec-2021 - v0.4.4 Support large integer values, various bugfixes  
 12-mar-2022 - v0.4.5 Render on background thread, transparent cursor line, convert to XML/JSON, generate metadata, quotes reformat, help icons, bugfixes  
+
+Total downloads v0.4.1 `3.9k`, v0.4.2 `93`, v0.4.3 `10k`, v0.4.4 `12k`
 
 BdR©2021 Free to use - send questions or comments: Bas de Reuver - bdr1976@gmail.com
