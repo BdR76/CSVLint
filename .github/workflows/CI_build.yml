@@ -23,14 +23,14 @@ jobs:
 
     - name: Archive artifacts for x64
       if: matrix.build_platform == 'x64' && matrix.build_configuration == 'Release'
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
           name: plugin_dll_x64
           path: CSVLintNppPlugin\bin\${{ matrix.build_configuration }}-x64\CSVLint.dll
 
     - name: Archive artifacts for x86
       if: matrix.build_platform == 'x86' && matrix.build_configuration == 'Release'
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
           name: plugin_dll_x86
           path: CSVLintNppPlugin\bin\${{ matrix.build_configuration }}\CSVLint.dll
