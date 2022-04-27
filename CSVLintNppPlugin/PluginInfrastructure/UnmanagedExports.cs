@@ -77,6 +77,21 @@ namespace Kbg.NppPluginNET
         }
 
         [DllExport(CallingConvention = CallingConvention.StdCall)]
+        static IntPtr CreateLexer(IntPtr pName)
+        {
+            // function will be called by scintilla
+            // Required for Notepad++ update from iLexer4 -> iLexer5
+
+            string sName = Marshal.PtrToStringAnsi(pName);
+
+            if (sName == ILexer.Name.Trim('\0'))
+            {
+                return ILexer.ILexerImplementation();
+            }
+            return IntPtr.Zero;
+        }
+
+        [DllExport(CallingConvention = CallingConvention.StdCall)]
         static void GetLexerName(uint index, IntPtr name, int buffer_length)
         {
             // function will be called twice, once by npp and once by scintilla

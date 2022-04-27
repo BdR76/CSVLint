@@ -345,7 +345,8 @@ batches of X lines of csv data, as set by the Batch size number.
 
 Selected the database type MySQL, MS-SQL or PostgreSQL, and the create table
 part and the autonumber field `_record_number` will be slightly different
-according to the database type.
+according to the database type. Enter a table name to use, or leave it empty to
+use the current filename as table name.
 
 See below for an example of an SQL insert script the plugin will generate:
 
@@ -378,6 +379,8 @@ See below for an example of an SQL insert script the plugin will generate:
 Select XML or JSON to convert the data to an XML or JSON dataset.
 The plug-in will automatically apply formatting based on the metadata,
 as well as applying character escaping where needed for these formats.
+For XML, enter a `Table/tag name` to use as tag name for each record,
+or leave it empty to use the current filename.
 
 Generate metadata
 -----------------

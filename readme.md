@@ -59,7 +59,7 @@ or select "Convert to SQL" menu item to generate an SQL insert script.
 
 Also see this quick tour video, which shows how the plug-in works.
 
-[![CSV Lint plug-in Notepad++](http://img.youtube.com/vi/_Me-ICCBu60/0.jpg)](http://www.youtube.com/watch?v=_Me-ICCBu60 "CSV Lint plug-in Notepad++")
+[![CSV Lint plug-in Notepad++](http://img.youtube.com/vi/_Me-ICCBu60/mqdefault.jpg)](http://www.youtube.com/watch?v=_Me-ICCBu60 "CSV Lint plug-in Notepad++")
 
 Schema.ini
 ----------
