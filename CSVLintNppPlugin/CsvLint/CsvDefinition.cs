@@ -535,7 +535,7 @@ namespace CSVLint
 
                         // valid datatype must be at end of line
                         spc = vallow.LastIndexOf(" ");
-                        pos = vallow.IndexOf("text", spc);
+                        pos = vallow.IndexOf("text", (spc >= 0 ? spc : 0) );
                         if (pos == -1) pos = vallow.LastIndexOf("datetime");
                         if (pos == -1) pos = vallow.LastIndexOf("float");
                         if (pos == -1) pos = vallow.LastIndexOf("int");

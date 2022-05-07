@@ -570,12 +570,5 @@ namespace CSVLint
             // add column
             return result;
         }
-
-        public static string ColAsString(CsvColumn col)
-        {
-            return string.Format("{0}\r\nwidth={1}\r\nDecimalSymbol={2}\r\nDecimals={3}\r\n",
-                Enum.GetName(typeof(ColumnType), col.DataType),
-                col.MaxWidth, col.DecimalSymbol, col.Decimals);
-        }
     }
 }

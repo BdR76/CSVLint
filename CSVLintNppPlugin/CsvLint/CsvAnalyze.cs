@@ -288,17 +288,20 @@ namespace CSVLint
                 // inspect all values
                 for (int i = 0; i < values.Count; i++)
                 {
-                    // add columnstats if needed
-                    if (i > colstats.Count - 1)
+                    // add columnstats if needed, assume first row contains the correct number of columns, i.e. do not add columns due to errors in data
+                    if (lineCount == 1 && (i > colstats.Count - 1))
                     {
                         colstats.Add(new CsvAnalyzeColumn(i));
                     }
 
-                    int fixedLength = -1;
-                    if (fixedwidth) fixedLength = i < result.FieldWidths.Count ? result.FieldWidths[i] : values[i].Length;
+                    // value index within column indexes, i.e. don't evaluate "extra columns data" due to errors in data, for example unclosed " quotes, superfluous separator characters etc.
+                    if (i <= colstats.Count - 1) {
+                        int fixedLength = -1;
+                        if (fixedwidth) fixedLength = i < result.FieldWidths.Count ? result.FieldWidths[i] : values[i].Length;
 
-                    // next value to evaluate
-                    colstats[i].InputData(values[i], fixedLength, false);
+                        // next value to evaluate
+                        colstats[i].InputData(values[i], fixedLength, false);
+                    }
                 }
             }
 

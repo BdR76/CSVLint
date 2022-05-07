@@ -173,7 +173,8 @@ History
 12-nov-2021 - v0.4.3 dark mode icons and colors, save form settings, documentation, bugfixes  
 19-dec-2021 - v0.4.4 Support large integer values, various bugfixes  
 12-mar-2022 - v0.4.5 Render on background thread, transparent cursor line, convert to XML/JSON, generate metadata, quotes reformat, help icons, bugfixes  
+27-apr-2022 - v0.4.5.1 bugfix for Notepad++ 8.4 Lexer v5 update  
 
-Total downloads v0.4.1 `3.9k`, v0.4.2 `93`, v0.4.3 `10k`, v0.4.4 `12k`
+Total downloads v0.4.1 `4k`, v0.4.2 `95`, v0.4.3 `11k`, v0.4.4 `13k`, v0.4.5 `8.8k`
 
 BdR©2021 Free to use - send questions or comments: Bas de Reuver - bdr1976@gmail.com
