@@ -19,9 +19,10 @@ search for "csv lint", check the checkbox and press Intall. This will add
 CSV Lint under the `Plugins > CSV Lint` menu item and a CSV Lint icon in the
 toolbar icon.
 
-**If you like the CSV Lint plug-in you can support the project by buying me a coffee, thanks!**
-
-[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/bdr76)
+<p align="center">
+<b>If you like the CSV Lint plug-in you can support the project by buying me a coffee, thanks!<b/>
+<a href="https://www.buymeacoffee.com/bdr76" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>
+</p>
 
 CSV Lint window
 ---------------
