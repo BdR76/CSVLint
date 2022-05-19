@@ -26,7 +26,7 @@ so if you encounter any bugs or unexpected output I encourage you to [report iss
 CSVLint is based on a prototype project [Dataset MultiTool](https://github.com/BdR76/datasetmultitool)
 
 <p align="center">
-<b>If you like the CSV Lint plug-in you can support the project by buying me a coffee, thanks!<b/>
+<b>If you like the CSV Lint plug-in you can support the project by buying me a coffee, thanks!<b/><br>
 <a href="https://www.buymeacoffee.com/bdr76" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>
 </p>
 
