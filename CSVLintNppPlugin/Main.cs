@@ -108,7 +108,8 @@ namespace Kbg.NppPluginNET
             PluginBase.SetCommand(6, "Generate metadata", generateMetaData);
             PluginBase.SetCommand(7, "---", null);
             PluginBase.SetCommand(8, "&Settings", DoSettings);
-            PluginBase.SetCommand(9, "About / Help", DoAboutForm);
+            PluginBase.SetCommand(9, "&Documentation", DoDocumentation);
+            PluginBase.SetCommand(10, "About", DoAboutForm);
 
             RefreshFromSettings();
         }
@@ -473,6 +474,11 @@ namespace Kbg.NppPluginNET
         {
             Settings.ShowDialog();
             RefreshFromSettings();
+        }
+        internal static void DoDocumentation()
+        {
+            // Call the Process.Start method to open the default browser with a URL:
+            System.Diagnostics.Process.Start("https://github.com/BdR76/CSVLint/tree/master/docs#csv-lint-plug-in-documentation");
         }
 
         internal static void DoAboutForm()

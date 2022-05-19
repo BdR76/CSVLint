@@ -23,6 +23,7 @@ hrtavg = (60, 100, 80)
 # list of dates
 alldates = []
 testdate = datetime.datetime.now()
+curryear = testdate.year()
 for i in range(int(MAX_LINES / 3)+1):
     sec = random.randrange(300,900) # 5 min to 15 min
     testdate = testdate - datetime.timedelta(seconds=sec)
@@ -52,7 +53,7 @@ for i in range(MAX_PERSONS):
     glitch = random.randrange(1, 50)
     patnrs.append(n)
     patsex.append(random.choice(['Male','Female']))
-    rnddate = datetime.datetime(random.randrange(1940,2005), random.randrange(1,12), random.randrange(1,28))
+    rnddate = datetime.datetime(random.randrange(curryear-80,curryear-15), random.randrange(1,12), random.randrange(1,28))
     if i == 10: rnddate = rnddate - 900 * datetime.timedelta(days=365)
     dob = rnddate.strftime("%#d-%#m-%Y")
     if glitch == 1: dob = "NaN"

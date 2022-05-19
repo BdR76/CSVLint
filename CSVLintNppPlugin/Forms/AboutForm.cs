@@ -17,7 +17,7 @@ namespace Kbg.NppPluginNET
             lblTitle.Text += ver;
 
             // tooltip initialization
-            helperTip.SetToolTip(lnkGithub, "Open the documentation page (right-click to copy url)");
+            helperTip.SetToolTip(lnkDonate, "Support this plug-in by buying me a coffee!");
             helperTip.SetToolTip(lnkContact, "Send comments or suggestions (right-click to copy address)");
 
             DisplayEasterEgg();
@@ -136,7 +136,7 @@ namespace Kbg.NppPluginNET
             string urlcopy = url;
             if ((string)lbl.Tag == "0")
             {
-                url = "https://github.com/BdR76/CSVLint/tree/master/docs#csv-lint-plug-in-documentation";
+                url = "https://www.buymeacoffee.com/bdr76";
                 urlcopy = url;
             }
             else

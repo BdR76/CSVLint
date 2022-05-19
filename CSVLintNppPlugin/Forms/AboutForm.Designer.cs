@@ -31,7 +31,7 @@
             this.btnOk = new System.Windows.Forms.Button();
             this.lblTitle = new System.Windows.Forms.Label();
             this.lblInfo = new System.Windows.Forms.Label();
-            this.lnkGithub = new System.Windows.Forms.LinkLabel();
+            this.lnkDonate = new System.Windows.Forms.LinkLabel();
             this.lnkContact = new System.Windows.Forms.LinkLabel();
             this.picEasterEgg = new System.Windows.Forms.PictureBox();
             this.lblDisclaimer = new System.Windows.Forms.Label();
@@ -74,19 +74,19 @@
             this.lblInfo.Text = "Validate, reformat and clean up dataset textfiles, by Bas de Reuver";
             this.lblInfo.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
-            // lnkGithub
+            // lnkDonate
             // 
-            this.lnkGithub.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.lnkDonate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.lnkGithub.Location = new System.Drawing.Point(8, 136);
-            this.lnkGithub.Name = "lnkGithub";
-            this.lnkGithub.Size = new System.Drawing.Size(192, 13);
-            this.lnkGithub.TabIndex = 3;
-            this.lnkGithub.TabStop = true;
-            this.lnkGithub.Tag = "0";
-            this.lnkGithub.Text = "Documentation && Help";
-            this.lnkGithub.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.lnkGithub.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnLinkClicked);
+            this.lnkDonate.Location = new System.Drawing.Point(8, 136);
+            this.lnkDonate.Name = "lnkDonate";
+            this.lnkDonate.Size = new System.Drawing.Size(192, 13);
+            this.lnkDonate.TabIndex = 3;
+            this.lnkDonate.TabStop = true;
+            this.lnkDonate.Tag = "0";
+            this.lnkDonate.Text = "Donate / Buy me a coffee";
+            this.lnkDonate.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.lnkDonate.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnLinkClicked);
             // 
             // lnkContact
             // 
@@ -142,7 +142,7 @@
             this.ClientSize = new System.Drawing.Size(208, 217);
             this.Controls.Add(this.picEasterEgg);
             this.Controls.Add(this.lnkContact);
-            this.Controls.Add(this.lnkGithub);
+            this.Controls.Add(this.lnkDonate);
             this.Controls.Add(this.btnOk);
             this.Controls.Add(this.lblDisclaimer);
             this.Controls.Add(this.lblInfo);
@@ -164,7 +164,7 @@
         private System.Windows.Forms.Button btnOk;
         private System.Windows.Forms.Label lblTitle;
         private System.Windows.Forms.Label lblInfo;
-        private System.Windows.Forms.LinkLabel lnkGithub;
+        private System.Windows.Forms.LinkLabel lnkDonate;
         private System.Windows.Forms.LinkLabel lnkContact;
         private System.Windows.Forms.PictureBox picEasterEgg;
         private System.Windows.Forms.Label lblDisclaimer;
