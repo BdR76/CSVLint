@@ -885,8 +885,10 @@ namespace NppPluginNET.PluginInfrastructure
         {
             /*  returns Property Value.
              *  Equivalent to editor.getProperty('key') in PythonScript.
+             *  When Lexilla5 issue is fixed for SC_GETPROPERTY call, replace the return line below with:
+             *  return Marshal.StringToHGlobalAnsi(Main.editor.GetProperty(Marshal.PtrToStringAnsi(key)));
              */
-            return Marshal.StringToHGlobalAnsi("N/A");
+            return Marshal.StringToHGlobalAnsi("N/A\0");
         }
     }
 }
