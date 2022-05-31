@@ -11,7 +11,7 @@ namespace NppPluginNET.PluginInfrastructure
     {
         public static readonly string Name = "CSVLint\0";
         public static readonly string StatusText = "CSV Linter and validator\0";
-        static readonly int LexerID = 1976;
+        public static readonly int LexerID = 1976;
 
         public static char separatorChar = ';';
         public static List<int> fixedWidths;
