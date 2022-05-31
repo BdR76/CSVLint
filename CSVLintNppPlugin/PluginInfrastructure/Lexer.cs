@@ -11,6 +11,7 @@ namespace NppPluginNET.PluginInfrastructure
     {
         public static readonly string Name = "CSVLint\0";
         public static readonly string StatusText = "CSV Linter and validator\0";
+        static readonly int LexerID = 1976;
 
         public static char separatorChar = ';';
         public static List<int> fixedWidths;
@@ -235,6 +236,16 @@ namespace NppPluginNET.PluginInfrastructure
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         public delegate IntPtr ILexerDescriptionOfStyle(IntPtr instance, int style);
 
+        // iLexer5 Declarations
+        [UnmanagedFunctionPointer(CallingConvention.StdCall)]
+        public delegate IntPtr ILexerGetName(IntPtr instance);
+
+        [UnmanagedFunctionPointer(CallingConvention.StdCall)]
+        public delegate int ILexerGetIdentifier(IntPtr instance);
+
+        [UnmanagedFunctionPointer(CallingConvention.StdCall)]
+        public delegate IntPtr ILexerPropertyGet(IntPtr instance, IntPtr key);
+
         [StructLayout(LayoutKind.Sequential)]
         public struct ILexer4
         {
@@ -263,6 +274,11 @@ namespace NppPluginNET.PluginInfrastructure
             public ILexerNameOfStyle NameOfStyle;
             public ILexerTagsOfStyle TagsOfStyle;
             public ILexerDescriptionOfStyle DescriptionOfStyle;
+
+            // iLexer5 Members
+            public ILexerGetName GetName;
+            public ILexerGetIdentifier GetIdentifier;
+            public ILexerPropertyGet PropertyGet;
         }
         #endregion ILexer
 
@@ -302,6 +318,12 @@ namespace NppPluginNET.PluginInfrastructure
                 ilexer4.NameOfStyle = new ILexerNameOfStyle(NameOfStyle);
                 ilexer4.TagsOfStyle = new ILexerTagsOfStyle(TagsOfStyle);
                 ilexer4.DescriptionOfStyle = new ILexerDescriptionOfStyle(DescriptionOfStyle);
+
+                // iLexer5 Member Assignments
+                ilexer4.GetName = new ILexerGetName(GetName);
+                ilexer4.GetIdentifier = new ILexerGetIdentifier(GetIdentifier);
+                ilexer4.PropertyGet = new ILexerPropertyGet(PropertyGet);
+
                 IntPtr vtable = Marshal.AllocHGlobal(Marshal.SizeOf(ilexer4));
                 Marshal.StructureToPtr(ilexer4, vtable, false);
                 vtable_pointer = Marshal.AllocHGlobal(Marshal.SizeOf(vtable));
@@ -836,6 +858,35 @@ namespace NppPluginNET.PluginInfrastructure
         {
             // Fill styles with a byte for each style that can be split into substyles.
             return IntPtr.Zero;
+        }
+
+        // --- iLexer5 Member Function Definitions ---
+
+        // virtual const char * SCI_METHOD GetName() = 0
+        public static IntPtr GetName(IntPtr instance)
+        {
+            /*  returns Lexer Language.
+             *  Equivalent to editor.getLexerLanguage() in PythonScript.
+             */
+            return Marshal.StringToHGlobalAnsi(ILexer.Name);
+        }
+
+        // virtual int SCI_METHOD GetIdentifier() = 0
+        public static int GetIdentifier(IntPtr instance)
+        {
+            /*  returns Lexer ID.
+             *  Equivalent to editor.getLexer() in PythonScript.
+             */
+            return LexerID;
+        }
+
+        // virtual const char * SCI_METHOD PropertyGet() = 0
+        public static IntPtr PropertyGet(IntPtr instance, IntPtr key)
+        {
+            /*  returns Property Value.
+             *  Equivalent to editor.getProperty('key') in PythonScript.
+             */
+            return Marshal.StringToHGlobalAnsi("N/A");
         }
     }
 }
