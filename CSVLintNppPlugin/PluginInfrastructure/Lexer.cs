@@ -11,7 +11,6 @@ namespace NppPluginNET.PluginInfrastructure
     {
         public static readonly string Name = "CSVLint\0";
         public static readonly string StatusText = "CSV Linter and validator\0";
-        public static readonly int LexerID = 1976;
 
         public static char separatorChar = ';';
         public static List<int> fixedWidths;
@@ -877,7 +876,7 @@ namespace NppPluginNET.PluginInfrastructure
             /*  returns Lexer ID.
              *  Equivalent to editor.getLexer() in PythonScript.
              */
-            return LexerID;
+            return (int)Lexer.AUTOMATIC;
         }
 
         // virtual const char * SCI_METHOD PropertyGet() = 0
@@ -888,7 +887,24 @@ namespace NppPluginNET.PluginInfrastructure
              *  When Lexilla5 issue is fixed for SC_GETPROPERTY call, replace the return line below with:
              *  return Marshal.StringToHGlobalAnsi(Main.editor.GetProperty(Marshal.PtrToStringAnsi(key)));
              */
-            return Marshal.StringToHGlobalAnsi("N/A\0");
+            string name = Marshal.PtrToStringAnsi(key);
+            string value = "";
+            if (SupportedProperties.ContainsKey(name))
+            {
+                if (name == "separator")
+                {
+                    value = $"{separatorChar}";
+                }
+                else if (SupportedProperties.TryGetValue(name, out bool val))
+                {
+                    value = val ? "1" : "0";
+                }
+            }
+
+            if (value == "")
+                return IntPtr.Zero;
+            else
+                return Marshal.StringToHGlobalAnsi($"{value}\0"); 
         }
     }
 }
