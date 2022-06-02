@@ -544,6 +544,9 @@ namespace Kbg.NppPluginNET
                     case 2: // R - script
                         CsvGenerateCode.GenerateRScript(csvdef);
                         break;
+                    case 3: // Python
+                        CsvGenerateCode.GeneratePythonPanda(csvdef);
+                        break;
                     default: // case 0: schema ini
                         CsvGenerateCode.GenerateSchemaIni(csvdef);
                         break;

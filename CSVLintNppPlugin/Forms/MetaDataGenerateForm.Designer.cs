@@ -33,17 +33,18 @@ namespace CSVLintNppPlugin.Forms
             this.rdbtnSchemaIni = new System.Windows.Forms.RadioButton();
             this.rdbtnSchemaJSON = new System.Windows.Forms.RadioButton();
             this.rdbtnRScript = new System.Windows.Forms.RadioButton();
+            this.rdbtnPython = new System.Windows.Forms.RadioButton();
             ((System.ComponentModel.ISupportInitialize)(this.picHelpIcon)).BeginInit();
             this.SuspendLayout();
             // 
             // btnOk
             // 
-            this.btnOk.Location = new System.Drawing.Point(93, 130);
+            this.btnOk.Location = new System.Drawing.Point(93, 155);
             this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(212, 130);
+            this.btnCancel.Location = new System.Drawing.Point(212, 155);
             // 
             // lblTitle
             // 
@@ -100,10 +101,22 @@ namespace CSVLintNppPlugin.Forms
             this.rdbtnRScript.Text = "R-script";
             this.rdbtnRScript.UseVisualStyleBackColor = true;
             // 
+            // rdbtnPython
+            // 
+            this.rdbtnPython.AutoSize = true;
+            this.rdbtnPython.Location = new System.Drawing.Point(104, 120);
+            this.rdbtnPython.Name = "rdbtnPython";
+            this.rdbtnPython.Size = new System.Drawing.Size(58, 17);
+            this.rdbtnPython.TabIndex = 6;
+            this.rdbtnPython.TabStop = true;
+            this.rdbtnPython.Text = "Python";
+            this.rdbtnPython.UseVisualStyleBackColor = true;
+            // 
             // MetaDataGenerateForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.ClientSize = new System.Drawing.Size(324, 172);
+            this.ClientSize = new System.Drawing.Size(324, 197);
+            this.Controls.Add(this.rdbtnPython);
             this.Controls.Add(this.rdbtnRScript);
             this.Controls.Add(this.rdbtnSchemaJSON);
             this.Controls.Add(this.rdbtnSchemaIni);
@@ -119,6 +132,7 @@ namespace CSVLintNppPlugin.Forms
             this.Controls.SetChildIndex(this.rdbtnSchemaIni, 0);
             this.Controls.SetChildIndex(this.rdbtnSchemaJSON, 0);
             this.Controls.SetChildIndex(this.rdbtnRScript, 0);
+            this.Controls.SetChildIndex(this.rdbtnPython, 0);
             ((System.ComponentModel.ISupportInitialize)(this.picHelpIcon)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -131,5 +145,6 @@ namespace CSVLintNppPlugin.Forms
         private System.Windows.Forms.RadioButton rdbtnSchemaIni;
         private System.Windows.Forms.RadioButton rdbtnSchemaJSON;
         private System.Windows.Forms.RadioButton rdbtnRScript;
+        private System.Windows.Forms.RadioButton rdbtnPython;
     }
 }

@@ -17,6 +17,7 @@ namespace CSVLintNppPlugin.Forms
             rdbtnSchemaIni.Checked    = (Main.Settings.MetadataType == 0); // schema ini
             rdbtnSchemaJSON.Checked   = (Main.Settings.MetadataType == 1); // schema JSON
             rdbtnRScript.Checked      = (Main.Settings.MetadataType == 2); // R - script
+            rdbtnPython.Checked       = (Main.Settings.MetadataType == 3); // Python
         }
 
         private void btnOk_Click(object sender, EventArgs e)
@@ -25,6 +26,7 @@ namespace CSVLintNppPlugin.Forms
             int idx = 0; // schema ini
             if (rdbtnSchemaJSON.Checked)   idx = 1; // schema JSON
             if (rdbtnRScript.Checked)      idx = 2; // R - script
+            if (rdbtnPython.Checked)       idx = 3; // Python
 
             Main.Settings.MetadataType = idx;
 
