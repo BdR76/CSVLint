@@ -409,7 +409,13 @@ as a dataframe. It contains the required scripting for the appropriate
 datatypes, and it is meant as a starting point for further processing in
 [R-Studio](https://www.rstudio.com/products/rstudio/).
 
-Note that the generated script doesn't handle any data errors,
+### Python ###
+
+Generates a [Python](https://www.python.org/) script to read the csv data file
+as a dataframe. It contains the required scripting for the appropriate
+datatypes, and it is meant as just a starting point for further script development.
+
+Note that the generated scripts doesn't handle all possible data errors,
 you'll need to write additional code to suit your data processing needs.
 
 Settings

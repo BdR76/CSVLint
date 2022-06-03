@@ -212,9 +212,9 @@ namespace CSVLint
                 // next field
                 var coldef = csvdef.Fields[c];
 
-                // R-script safe tag, replace .
+                // any characters are allowed in Python column names
                 var colname = coldef.Name;
-                colname = Regex.Replace(colname, "[^a-zA-Z0-9]", "_"); // not letter or digit
+                //colname = Regex.Replace(colname, "[^a-zA-Z0-9]", "_"); // not letter or digit
 
                 var comma = (c < csvdef.Fields.Count - 1 ? "," : "");
 

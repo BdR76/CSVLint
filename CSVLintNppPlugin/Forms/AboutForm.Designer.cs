@@ -31,11 +31,11 @@
             this.btnOk = new System.Windows.Forms.Button();
             this.lblTitle = new System.Windows.Forms.Label();
             this.lblInfo = new System.Windows.Forms.Label();
-            this.lnkDonate = new System.Windows.Forms.LinkLabel();
             this.lnkContact = new System.Windows.Forms.LinkLabel();
             this.picEasterEgg = new System.Windows.Forms.PictureBox();
             this.lblDisclaimer = new System.Windows.Forms.Label();
             this.lblLine = new System.Windows.Forms.Label();
+            this.btnDonate = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.picEasterEgg)).BeginInit();
             this.SuspendLayout();
             // 
@@ -43,9 +43,9 @@
             // 
             this.btnOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnOk.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.btnOk.Location = new System.Drawing.Point(66, 185);
+            this.btnOk.Location = new System.Drawing.Point(45, 182);
             this.btnOk.Name = "btnOk";
-            this.btnOk.Size = new System.Drawing.Size(76, 23);
+            this.btnOk.Size = new System.Drawing.Size(119, 25);
             this.btnOk.TabIndex = 0;
             this.btnOk.Text = "Ok";
             this.btnOk.UseVisualStyleBackColor = true;
@@ -69,30 +69,16 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lblInfo.Location = new System.Drawing.Point(8, 41);
             this.lblInfo.Name = "lblInfo";
-            this.lblInfo.Size = new System.Drawing.Size(192, 38);
+            this.lblInfo.Size = new System.Drawing.Size(192, 30);
             this.lblInfo.TabIndex = 2;
             this.lblInfo.Text = "Validate, reformat and clean up dataset textfiles, by Bas de Reuver";
             this.lblInfo.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            // 
-            // lnkDonate
-            // 
-            this.lnkDonate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.lnkDonate.Location = new System.Drawing.Point(8, 136);
-            this.lnkDonate.Name = "lnkDonate";
-            this.lnkDonate.Size = new System.Drawing.Size(192, 13);
-            this.lnkDonate.TabIndex = 3;
-            this.lnkDonate.TabStop = true;
-            this.lnkDonate.Tag = "0";
-            this.lnkDonate.Text = "Donate / Buy me a coffee";
-            this.lnkDonate.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.lnkDonate.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnLinkClicked);
             // 
             // lnkContact
             // 
             this.lnkContact.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.lnkContact.Location = new System.Drawing.Point(8, 160);
+            this.lnkContact.Location = new System.Drawing.Point(8, 72);
             this.lnkContact.Name = "lnkContact";
             this.lnkContact.Size = new System.Drawing.Size(192, 13);
             this.lnkContact.TabIndex = 4;
@@ -105,7 +91,7 @@
             // picEasterEgg
             // 
             this.picEasterEgg.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.picEasterEgg.Location = new System.Drawing.Point(170, 179);
+            this.picEasterEgg.Location = new System.Drawing.Point(170, 176);
             this.picEasterEgg.Name = "picEasterEgg";
             this.picEasterEgg.Size = new System.Drawing.Size(32, 32);
             this.picEasterEgg.TabIndex = 7;
@@ -116,7 +102,7 @@
             // 
             this.lblDisclaimer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblDisclaimer.Location = new System.Drawing.Point(8, 78);
+            this.lblDisclaimer.Location = new System.Drawing.Point(8, 91);
             this.lblDisclaimer.Name = "lblDisclaimer";
             this.lblDisclaimer.Size = new System.Drawing.Size(192, 59);
             this.lblDisclaimer.TabIndex = 2;
@@ -135,14 +121,24 @@
             this.lblLine.TabIndex = 1;
             this.lblLine.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
+            // btnDonate
+            // 
+            this.btnDonate.Location = new System.Drawing.Point(45, 150);
+            this.btnDonate.Name = "btnDonate";
+            this.btnDonate.Size = new System.Drawing.Size(119, 25);
+            this.btnDonate.TabIndex = 8;
+            this.btnDonate.Text = "Donate";
+            this.btnDonate.UseVisualStyleBackColor = true;
+            this.btnDonate.Click += new System.EventHandler(this.btnDonate_Click);
+            // 
             // AboutForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(208, 217);
+            this.ClientSize = new System.Drawing.Size(208, 214);
+            this.Controls.Add(this.btnDonate);
             this.Controls.Add(this.picEasterEgg);
             this.Controls.Add(this.lnkContact);
-            this.Controls.Add(this.lnkDonate);
             this.Controls.Add(this.btnOk);
             this.Controls.Add(this.lblDisclaimer);
             this.Controls.Add(this.lblInfo);
@@ -164,10 +160,10 @@
         private System.Windows.Forms.Button btnOk;
         private System.Windows.Forms.Label lblTitle;
         private System.Windows.Forms.Label lblInfo;
-        private System.Windows.Forms.LinkLabel lnkDonate;
         private System.Windows.Forms.LinkLabel lnkContact;
         private System.Windows.Forms.PictureBox picEasterEgg;
         private System.Windows.Forms.Label lblDisclaimer;
         private System.Windows.Forms.Label lblLine;
+        private System.Windows.Forms.Button btnDonate;
     }
 }

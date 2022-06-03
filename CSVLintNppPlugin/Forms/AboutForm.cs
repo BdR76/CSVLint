@@ -17,7 +17,7 @@ namespace Kbg.NppPluginNET
             lblTitle.Text += ver;
 
             // tooltip initialization
-            helperTip.SetToolTip(lnkDonate, "Support this plug-in by buying me a coffee!");
+            helperTip.SetToolTip(btnDonate, "Support this plug-in by buying me a coffee!");
             helperTip.SetToolTip(lnkContact, "Send comments or suggestions (right-click to copy address)");
 
             DisplayEasterEgg();
@@ -134,16 +134,16 @@ namespace Kbg.NppPluginNET
             LinkLabel lbl = sender as LinkLabel;
             string url = lbl.Text;
             string urlcopy = url;
-            if ((string)lbl.Tag == "0")
-            {
-                url = "https://www.buymeacoffee.com/bdr76";
-                urlcopy = url;
-            }
-            else
-            {
+            //if ((string)lbl.Tag == "0")
+            //{
+            //    url = "https://www.buymeacoffee.com/bdr76";
+            //    urlcopy = url;
+            //}
+            //else
+            //{
                 string sub = lblTitle.Text.Replace(" ", "%20");
                 url = string.Format("mailto:{0}?subject={1}", url, sub);
-            }
+            //}
 
             if (e.Button == MouseButtons.Right)
             {
@@ -165,6 +165,13 @@ namespace Kbg.NppPluginNET
                 helperTip.SetToolTip(picEasterEgg, "On certain days in the year you'll find an easter egg here ;)");
                 picEasterEgg.Image = CSVLintNppPlugin.Properties.Resources.easteregg;
             }
+        }
+
+        private void btnDonate_Click(object sender, EventArgs e)
+        {
+            // Call the Process.Start method to open the default browser with a URL:
+            var url = "https://www.buymeacoffee.com/bdr76";
+            System.Diagnostics.Process.Start(url);
         }
     }
 }
