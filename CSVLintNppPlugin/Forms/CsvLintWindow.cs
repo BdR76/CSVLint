@@ -206,6 +206,17 @@ namespace Kbg.NppPluginNET
                     csvdef.Separator = editSeparator[0];
                 };
 
+                //if (updateQuotes != 0)
+                //{
+                    var quotetxt = "None / Minimal";
+                    if (updateQuotes == 1) quotetxt = "Values with spaces";
+                    if (updateQuotes == 2) quotetxt = "All string values";
+                    if (updateQuotes == 3) quotetxt = "All non-numeric values";
+                    if (updateQuotes == 4) quotetxt = "All values";
+
+                    msg += string.Format("Reformat apply quotes: {0}\r\n", quotetxt);
+                //};
+
                 if (trimAllValues)
                 {
                     msg += "Trim all values\r\n";

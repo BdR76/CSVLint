@@ -33,7 +33,7 @@ namespace CSVLint
         public static string ApplyQuotesToString(string strinput, int applyCode, char separator, ColumnType dataType)
         {
             // default = none / minimal
-            bool apl = strinput.Contains(separator);
+            bool apl = strinput.Contains(separator) || strinput.Contains(Main.Settings.DefaultQuoteChar);
 
             if ((applyCode > 0) && !apl)
             {
@@ -45,7 +45,17 @@ namespace CSVLint
             }
 
             // apply quotes
-            if (apl) strinput = string.Format("\"{0}\"", strinput);
+            if (apl)
+            {
+                // escape any quote characters, example "Value "test" 123" -> "Value ""test"" 123"
+                if (strinput.Contains(Main.Settings.DefaultQuoteChar))
+                {
+                    var quote2 = new string(Main.Settings.DefaultQuoteChar, 2);
+                    strinput = strinput.Replace(Main.Settings.DefaultQuoteChar.ToString(), quote2);
+                }
+                // add quotes
+                strinput = string.Format("{0}{1}{0}", Main.Settings.DefaultQuoteChar, strinput);
+            }
 
             return strinput;
         }
