@@ -147,7 +147,7 @@ Apply quotes to the cell values, with the following options
 
 ### Trim all values ###
 
-Trim spaces from all values, for example trim the value " 1234AB " to just "1234AB".
+Trim spaces from all values, for example trim the value `" No sample "` to just `"No sample"`.
 
 ### Align vertically ###
 
@@ -324,10 +324,11 @@ expected amount of unique records.
 
 ![CSV Lint unique values dialog](/docs/csvlint_unique_values.png?raw=true "CSV Lint plug-in unique values dialog")
 
-As an example, in a blood pressure file each line is one measurement and each
-participant is expected to have exactly 3 measurements. In this case you can
-select just the column participantId and select sort by count, to sort the
-result by the new `count_unique` column.
+As an example, if you have a data file where each line is one blood pressure
+measurement of a participant, and you want to verify that each participant in
+the data file has exactly 3 measurements. In that case you can select just the
+column participantId and select sort by `count`, to sort the result by the new
+`count_unique` column.
 
 If the data is correct, it should list all participantId with a `count_unique`
 value of 3. Because it's sorted by `count_unique` you can check the beginning
@@ -431,8 +432,8 @@ and they are stored in a settings file `%USERPROFILE%\AppData\Roaming\Notepad++\
 |DecimalLeadingZero| Decimal values must have leading zero, set to false to accept values like .5 or .01                             | true    |
 | IntegerDigitsMax | Maximum amount of digits for integer values, if a value has more then it's considered a text value. Applies to both autodetecting datatypes and validating data. Useful to distinguish (bar)codes and actual numeric values  | 12 |
 | UniqueValuesMax  | Maximum unique values when reporting or detecting coded values, if column contains more than it's not reported. |   15    | 
-| YearMinimum      | When detecting date or datetime values, years smaller than this value will be considered as invalid dates.      | 1900    |
-| YearMaximum      | When detecting date or datetime values, years larger than this value will be considered as invalid dates.       | 2050    |
+| YearMinimum      | When detecting date or datetime values, years smaller than this value will be considered an out-of-range date.  | 1900    |
+| YearMaximum      | When detecting date or datetime values, years larger than this value will be considered an out-of-range date.   | 2050    |
 | TwoDigitYearMax  | Maximum year for two digit year date values. For example, when set to 2024 the year values 24 and 25 will be interpreted as 2024 and 1925. Set as SysYear for current year. | SysYear |
 | DefaultQuoteChar | Default quote escape character when quotes exists inside text                                                   | "       |
 | NullValue        | Keyword for empty values or null values in the csv data, case-sensitive.                                        | NaN     |

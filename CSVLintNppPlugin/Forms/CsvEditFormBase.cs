@@ -65,6 +65,12 @@ namespace CSVLintNppPlugin.Forms
             }
         }
 
+        private void lblTitle_TextChanged(object sender, EventArgs e)
+        {
+            string txt = "View documentation on " + lblTitle.Text.ToLower();
+            toolTipBase.SetToolTip(this.picHelpIcon, txt);
+        }
+
         private void picHelpIcon_Click(object sender, EventArgs e)
         {
             // icon Tag contains name of help chapter

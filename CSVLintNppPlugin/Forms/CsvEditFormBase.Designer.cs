@@ -29,11 +29,13 @@ namespace CSVLintNppPlugin.Forms
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.btnOk = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
             this.lblHorizontalLine = new System.Windows.Forms.Label();
             this.lblTitle = new System.Windows.Forms.Label();
             this.picHelpIcon = new System.Windows.Forms.PictureBox();
+            this.toolTipBase = new System.Windows.Forms.ToolTip(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.picHelpIcon)).BeginInit();
             this.SuspendLayout();
             // 
@@ -79,6 +81,7 @@ namespace CSVLintNppPlugin.Forms
             this.lblTitle.Size = new System.Drawing.Size(34, 20);
             this.lblTitle.TabIndex = 6;
             this.lblTitle.Text = "title";
+            this.lblTitle.TextChanged += new System.EventHandler(this.lblTitle_TextChanged);
             // 
             // picHelpIcon
             // 
@@ -120,5 +123,6 @@ namespace CSVLintNppPlugin.Forms
         protected System.Windows.Forms.Label lblTitle;
         protected System.Windows.Forms.PictureBox picHelpIcon;
         protected System.Windows.Forms.Label lblHorizontalLine;
+        private System.Windows.Forms.ToolTip toolTipBase;
     }
 }
