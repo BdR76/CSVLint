@@ -125,7 +125,7 @@ a time part to all values.
 
 ### Decimal separator ###
 
-Set the decimal separator for all decimal/float values, select either the  `.` or `,`.
+Set the decimal separator for all decimal/float values, select either the dot `.` or the comma `,`.
 
 ### Column separator ###
 
@@ -137,13 +137,16 @@ Integer or decimal values will be right aligned, any other datatypes are left al
 
 ### Re-apply quotes ###
 
-Apply quotes to the cell values, with the following options
+Apply quotes to the cell values, with the following options.
 
-* None / Minimal = No quotes except when a value contains the separator character (this always applies, also when selecting other options)
-* Values with spaces = Values with that contains separator character or spaces
-* All string values = All columns with datatype Text
-* All non-numeric values = All columns except datatypes Integer or Float
-* All values = All values in all columns
+* None / Minimal = Do not use quotes except when a value contains the separator character (this always applies, also for the options below)
+* Values with spaces = Apply quotes to values that contain one or more spaces
+* All string values = Apply quotes to all columns with datatype Text
+* All non-numeric values = Apply quotes to all columns except datatypes Integer or Float
+* All values = Apply quotes to all values in all columns
+
+Note: Any quote character in a value will be escaped using two quote characters.
+For example applying quotes to text value `CP 3/8" KAVD` will result in `"CP 3/8"" KAVD"`.
 
 ### Trim all values ###
 
@@ -151,8 +154,10 @@ Trim spaces from all values, for example trim the value `" No sample "` to just 
 
 ### Align vertically ###
 
-Align vertically, will add white space to vertically align all columns.
+Align vertically, will add spaces to vertically align all columns.
 The amount of white space is based on the column widths.
+Integer and decimal values will be right aligned and any other datatypes are left aligned,
+similar to reformatting as fixed-width format.
 
 This can be useful for viewing the data, but it's not recommended to store
 the data with this extra white space. The file size will become unnecessary
