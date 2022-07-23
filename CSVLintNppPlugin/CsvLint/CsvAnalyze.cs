@@ -76,62 +76,65 @@ namespace CSVLint
                 wordStarts.Increase(line.Length);
 
                 // process characters in this line
-                int spaces = 0, c = 0, num = -1;
+                int spaces = 0, pos = 0, num = -1; // num  0 = text value  1 = numeric value  -1 = currently unknown
                 foreach (var chr in line)
                 {
+                    // check for separators
                     letterFrequency.Increase(chr);
                     occurrences.Increase(chr);
 
+                    // string value in quotes, treat as one continuous value, i.e. do not check content for column breaks
                     if (chr == Main.Settings.DefaultQuoteChar) inQuotes = !inQuotes;
                     else if (!inQuotes)
                     {
                         letterFrequencyQuoted.Increase(chr);
                         occurrencesQuoted.Increase(chr);
-                    }
 
-                    // check fixed columns
-                    int newcol = 0;
-                    if (chr == ' ')
-                    {
-                        // more than 2 spaces could indicate new column
-                        if (++spaces > 1) bigSpaces.Increase(c + 1);
-
-                        // one single space after a digit might be a new column
-                        if (num == 1)
+                        // check fixed columns
+                        int newcol = 0;
+                        if (chr == ' ')
                         {
-                            wordStarts.Increase(c);
-                            num = 0;
+                            // more than 2 spaces or 1 space after digits could indicate new column
+                            if ((++spaces > 1) || (num == 1)) bigSpaces.Increase(pos + 1);
+
+                            // space after numeric value, reset text/numeric indicator because probably a new column
+                            if (num == 1) {
+                                spaces++; // space after numeric counts as "big space"
+                                num = -1;
+                            }
+                        }
+                        else
+                        {
+                            // more than 2 spaces could indicate new column
+                            if (spaces > 1) newcol = 1;
+                            spaces = 0;
+
+                            // switch between alpha and numeric characters could indicate new column
+                            int isdigit = "0123456789".IndexOf(chr);
+                            // ignore characters that can be both numeric or alpha values example "A.B." or "Smith-Johnson"
+                            // Digits connected by certain characters can be one single column, not multiple,
+                            // For example date, time, telephonenr "12:34","555-890-4327" etc.
+                            int ignore = ".-+:/\\".IndexOf(chr);
+                            if (ignore < 0)
+                            {
+                                if (isdigit < 0)
+                                {
+                                    if (num == 1) newcol = 1;
+                                    num = 0; // currently in text value
+                                }
+                                else
+                                {
+                                    if (num == 0) newcol = 1;
+                                    num = 1; // currently in numeric value
+                                };
+                            };
+                            // new column found
+                            if (newcol == 1) wordStarts.Increase(pos);
                         }
                     }
-                    else
-                    {
-                        // more than 2 spaces could indicate new column
-                        if (spaces > 1) newcol = 1;
-                        spaces = 0;
 
-                        // switch between alpha and numeric characters could indicate new column
-                        int checknum = "0123456789".IndexOf(chr);
-                        // ignore characters that can be both numeric or alpha values example "A.B." or "Smith-Johnson"
-                        int ignore = ".-+".IndexOf(chr);
-                        if (ignore < 0)
-                        {
-                            if (checknum < 0)
-                            {
-                                if (num == 1) newcol = 1;
-                                num = 0;
-                            }
-                            else
-                            {
-                                if (num == 0) newcol = 1;
-                                num = 1;
-                            };
-                        };
-                        // new column found
-                        if (newcol == 1) wordStarts.Increase(c);
-                    }
-
-                    // next character
-                    c++;
+                    // next character position
+                    pos++;
                 }
 
                 frequencies.Add(letterFrequency);
@@ -221,11 +224,13 @@ namespace CSVLint
             // Failed to detect separator, could it be a fixed-width file?
             if (result.Separator == '\0')
             {
-                // big spaces
-                var commonSpace = bigSpaces.Where(x => x.Value == lineCount).Select(x => x.Key).OrderByDescending(x => x);
+                // Sort big spaces descending, i.e. go from end of the line to the beginning
+                var commonSpace = bigSpaces.Where(x => x.Value >= lineCount-1).Select(x => x.Key).OrderByDescending(x => x);
                 var lastvalue = 0;
                 int lastStart = 0;
                 var foundfieldWidths = new List<int>();
+
+                // Go backwards and find the end positions of "big spaces", i.e. the right-most part of consecutive spaces
                 foreach (var space in commonSpace)
                 {
                     if (space != lastvalue - 1)
@@ -296,11 +301,8 @@ namespace CSVLint
 
                     // value index within column indexes, i.e. don't evaluate "extra columns data" due to errors in data, for example unclosed " quotes, superfluous separator characters etc.
                     if (i <= colstats.Count - 1) {
-                        int fixedLength = -1;
-                        if (fixedwidth) fixedLength = i < result.FieldWidths.Count ? result.FieldWidths[i] : values[i].Length;
-
                         // next value to evaluate
-                        colstats[i].InputData(values[i], fixedLength, false);
+                        colstats[i].InputData(values[i], false);
                     }
                 }
             }
@@ -313,6 +315,11 @@ namespace CSVLint
             {
                 // get data type up
                 CSVLint.CsvColumn col = stats.InferDatatype();
+
+                // Fixed width, values can be shorter than column width or even empty, so re-apply all columns widths
+                if ( (fixedwidth) && (idx < result.FieldWidths.Count) ) {
+                    col.MaxWidth = result.FieldWidths[idx];
+                }
 
                 // add column
                 result.AddColumn(idx, col.Name, col.MaxWidth, col.DataType, col.Mask);
@@ -397,15 +404,16 @@ namespace CSVLint
             uncertancy++;
 
             // Ok, screw the preferred separators, is any other char a perfect separator? (and common, i.e. at least 3 per line)
-            separator = variances
-                .Where(x => x.Value == 0f && occurrences[x.Key] >= lineCount * 2)
-                .OrderByDescending(x => occurrences[x.Key])
-                .Select(x => (char?)x.Key)
-                .FirstOrDefault();
-            if (separator != null)
-                return separator.Value;
-
-            uncertancy++;
+            // Bugfix; Looking outside the preferred separators will in practise lead to choosing a random letter, like the letter E, as the separator which makes no sense
+            //separator = variances
+            //    .Where(x => x.Value == 0f && occurrences[x.Key] >= lineCount * 2)
+            //    .OrderByDescending(x => occurrences[x.Key])
+            //    .Select(x => (char?)x.Key)
+            //    .FirstOrDefault();
+            //if (separator != null)
+            //    return separator.Value;
+            //
+            //uncertancy++;
 
             // Ok, I have no idea
             return '\0';
@@ -444,11 +452,8 @@ namespace CSVLint
                         colstats.Add(new CsvAnalyzeColumn(i));
                     }
 
-                    int fixedLength = -1;
-                    //if (fixedwidth) fixedLength = (i < result.FieldWidths.Count ? result.FieldWidths[i] : values[i].Length);
-
                     // next value to evaluate
-                    colstats[i].InputData(values[i], fixedLength, true);
+                    colstats[i].InputData(values[i], true);
                 }
             }
 

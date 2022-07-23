@@ -61,7 +61,7 @@ namespace CSVLint
             this.Index = idx;
         }
 
-        public void InputData(string data, int fixedLength, bool fullstats)
+        public void InputData(string data, bool fullstats)
         {
             // count how many values
             this.CountAll++;
@@ -85,7 +85,7 @@ namespace CSVLint
             else
             {
                 // for fixed length files, the MaxWidth should be length of not-trimmed data
-                int length = fixedLength > 0 ? fixedLength : data.Length;
+                int length = data.Length;
 
                 // check for empty values, count empty strings
                 if (data.Length == 0)
