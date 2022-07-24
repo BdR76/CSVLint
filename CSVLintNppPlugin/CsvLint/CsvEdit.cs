@@ -64,7 +64,7 @@ namespace CSVLint
         /// reformat file for date, decimal and separator
         /// </summary>
         /// <param name="data"> csv data </param>
-        public static void ReformatDataFile(CsvDefinition csvdef, string reformatDatTime, string reformatDecimal, string reformatSeparator, bool updateSeparator, int ApplyQuotes, bool trimAll, bool align)
+        public static void ReformatDataFile(CsvDefinition csvdef, string reformatDatTime, string reformatDecimal, string reformatSeparator, bool updateSeparator, int ApplyQuotes, string ReplaceCrLf, bool trimAll, bool align)
         {
             // TODO: nullable parameters
 
@@ -187,6 +187,17 @@ namespace CSVLint
                         // if value contains separator character then put value in quotes
                         val = ApplyQuotesToString(val, ApplyQuotes, newSep, tmpColumnType);
                         //if (val.IndexOf(newSep) >= 0) val = string.Format("\"{0}\"", val);
+
+                        // replace any carriage retursn/line feeds
+                        if (ReplaceCrLf != "\r\n")
+                        {
+                            if ((val.IndexOf("\r") >= 0) || (val.IndexOf("\n") >= 0))
+                            {
+                                val = val.Replace("\r\n", ReplaceCrLf); // windows
+                                val = val.Replace("\n", ReplaceCrLf); // linux
+                                val = val.Replace("\r", ReplaceCrLf); // old macos
+                            }
+                        }
 
                         // separator
                         if (c > 0) datanew.Append(newSep.ToString());

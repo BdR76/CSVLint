@@ -34,28 +34,26 @@
             this.cmbDateTime = new System.Windows.Forms.ComboBox();
             this.chkSeparator = new System.Windows.Forms.CheckBox();
             this.cmbSeparator = new System.Windows.Forms.ComboBox();
-            this.lblReformat = new System.Windows.Forms.Label();
-            this.chkTrimAll = new System.Windows.Forms.CheckBox();
             this.chkAlignVert = new System.Windows.Forms.CheckBox();
             this.chkApplyQuotes = new System.Windows.Forms.CheckBox();
             this.cmbQuotes = new System.Windows.Forms.ComboBox();
+            this.chkReplaceCrLf = new System.Windows.Forms.CheckBox();
+            this.txtReplaceCrLf = new System.Windows.Forms.TextBox();
+            this.chkTrimAll = new System.Windows.Forms.CheckBox();
+            this.lblReformat = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.picHelpIcon)).BeginInit();
             this.SuspendLayout();
             // 
             // btnOk
             // 
-            this.btnOk.Location = new System.Drawing.Point(117, 267);
+            this.btnOk.Location = new System.Drawing.Point(117, 299);
             this.btnOk.TabIndex = 8;
             this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(236, 267);
+            this.btnCancel.Location = new System.Drawing.Point(236, 299);
             this.btnCancel.TabIndex = 9;
-            // 
-            // lblHorizontalLine
-            // 
-            this.lblHorizontalLine.Size = new System.Drawing.Size(340, 2);
             // 
             // lblTitle
             // 
@@ -66,6 +64,10 @@
             // 
             this.picHelpIcon.Location = new System.Drawing.Point(316, 8);
             this.picHelpIcon.Tag = "reformat";
+            // 
+            // lblHorizontalLine
+            // 
+            this.lblHorizontalLine.Size = new System.Drawing.Size(340, 2);
             // 
             // chkDateTime
             // 
@@ -152,35 +154,14 @@
             this.cmbSeparator.TabIndex = 5;
             this.cmbSeparator.Tag = "3";
             // 
-            // lblReformat
-            // 
-            this.lblReformat.AutoSize = true;
-            this.lblReformat.Location = new System.Drawing.Point(13, 240);
-            this.lblReformat.Name = "lblReformat";
-            this.lblReformat.Size = new System.Drawing.Size(278, 13);
-            this.lblReformat.TabIndex = 8;
-            this.lblReformat.Text = "(note: always back-up your data files to prevent data loss)";
-            // 
-            // chkTrimAll
-            // 
-            this.chkTrimAll.AutoSize = true;
-            this.chkTrimAll.Location = new System.Drawing.Point(13, 176);
-            this.chkTrimAll.Name = "chkTrimAll";
-            this.chkTrimAll.Size = new System.Drawing.Size(93, 17);
-            this.chkTrimAll.TabIndex = 6;
-            this.chkTrimAll.Tag = "5";
-            this.chkTrimAll.Text = "Trim all values";
-            this.chkTrimAll.UseVisualStyleBackColor = true;
-            this.chkTrimAll.CheckedChanged += new System.EventHandler(this.OnChkbx_CheckedChanged);
-            // 
             // chkAlignVert
             // 
             this.chkAlignVert.AutoSize = true;
-            this.chkAlignVert.Location = new System.Drawing.Point(13, 208);
+            this.chkAlignVert.Location = new System.Drawing.Point(13, 240);
             this.chkAlignVert.Name = "chkAlignVert";
             this.chkAlignVert.Size = new System.Drawing.Size(187, 17);
-            this.chkAlignVert.TabIndex = 7;
-            this.chkAlignVert.Tag = "6";
+            this.chkAlignVert.TabIndex = 12;
+            this.chkAlignVert.Tag = "7";
             this.chkAlignVert.Text = "Align vertically (not recommended)";
             this.chkAlignVert.UseVisualStyleBackColor = true;
             this.chkAlignVert.CheckedChanged += new System.EventHandler(this.OnChkbx_CheckedChanged);
@@ -216,15 +197,58 @@
             this.cmbQuotes.Location = new System.Drawing.Point(160, 144);
             this.cmbQuotes.Name = "cmbQuotes";
             this.cmbQuotes.Size = new System.Drawing.Size(180, 21);
-            this.cmbQuotes.TabIndex = 5;
+            this.cmbQuotes.TabIndex = 7;
             this.cmbQuotes.Tag = "4";
+            // 
+            // chkReplaceCrLf
+            // 
+            this.chkReplaceCrLf.AutoSize = true;
+            this.chkReplaceCrLf.Location = new System.Drawing.Point(13, 176);
+            this.chkReplaceCrLf.Name = "chkReplaceCrLf";
+            this.chkReplaceCrLf.Size = new System.Drawing.Size(174, 17);
+            this.chkReplaceCrLf.TabIndex = 8;
+            this.chkReplaceCrLf.Tag = "5";
+            this.chkReplaceCrLf.Text = "Replace CrLf within values with";
+            this.chkReplaceCrLf.UseVisualStyleBackColor = true;
+            this.chkReplaceCrLf.CheckedChanged += new System.EventHandler(this.OnChkbx_CheckedChanged);
+            // 
+            // txtReplaceCrLf
+            // 
+            this.txtReplaceCrLf.Location = new System.Drawing.Point(265, 176);
+            this.txtReplaceCrLf.Name = "txtReplaceCrLf";
+            this.txtReplaceCrLf.Size = new System.Drawing.Size(75, 20);
+            this.txtReplaceCrLf.TabIndex = 9;
+            this.txtReplaceCrLf.Tag = "5";
+            // 
+            // chkTrimAll
+            // 
+            this.chkTrimAll.AutoSize = true;
+            this.chkTrimAll.Location = new System.Drawing.Point(13, 208);
+            this.chkTrimAll.Name = "chkTrimAll";
+            this.chkTrimAll.Size = new System.Drawing.Size(93, 17);
+            this.chkTrimAll.TabIndex = 10;
+            this.chkTrimAll.Tag = "6";
+            this.chkTrimAll.Text = "Trim all values";
+            this.chkTrimAll.UseVisualStyleBackColor = true;
+            this.chkTrimAll.CheckedChanged += new System.EventHandler(this.OnChkbx_CheckedChanged);
+            // 
+            // lblReformat
+            // 
+            this.lblReformat.AutoSize = true;
+            this.lblReformat.Location = new System.Drawing.Point(13, 272);
+            this.lblReformat.Name = "lblReformat";
+            this.lblReformat.Size = new System.Drawing.Size(278, 13);
+            this.lblReformat.TabIndex = 8;
+            this.lblReformat.Text = "(note: always back-up your data files to prevent data loss)";
             // 
             // ReformatForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(348, 309);
+            this.ClientSize = new System.Drawing.Size(348, 341);
+            this.Controls.Add(this.txtReplaceCrLf);
             this.Controls.Add(this.lblReformat);
+            this.Controls.Add(this.chkReplaceCrLf);
             this.Controls.Add(this.chkAlignVert);
             this.Controls.Add(this.chkApplyQuotes);
             this.Controls.Add(this.chkTrimAll);
@@ -251,9 +275,11 @@
             this.Controls.SetChildIndex(this.chkTrimAll, 0);
             this.Controls.SetChildIndex(this.chkApplyQuotes, 0);
             this.Controls.SetChildIndex(this.chkAlignVert, 0);
+            this.Controls.SetChildIndex(this.chkReplaceCrLf, 0);
             this.Controls.SetChildIndex(this.lblReformat, 0);
             this.Controls.SetChildIndex(this.btnOk, 0);
             this.Controls.SetChildIndex(this.btnCancel, 0);
+            this.Controls.SetChildIndex(this.txtReplaceCrLf, 0);
             ((System.ComponentModel.ISupportInitialize)(this.picHelpIcon)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -272,5 +298,7 @@
         private System.Windows.Forms.Label lblReformat;
         private System.Windows.Forms.CheckBox chkApplyQuotes;
         private System.Windows.Forms.ComboBox cmbQuotes;
+        private System.Windows.Forms.CheckBox chkReplaceCrLf;
+        private System.Windows.Forms.TextBox txtReplaceCrLf;
     }
 }

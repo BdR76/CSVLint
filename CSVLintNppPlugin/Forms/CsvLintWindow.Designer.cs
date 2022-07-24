@@ -64,7 +64,7 @@
             // 
             this.splitContainer1.Panel2.Controls.Add(this.btnValidate);
             this.splitContainer1.Panel2.Controls.Add(this.txtOutput);
-            this.splitContainer1.Size = new System.Drawing.Size(1170, 354);
+            this.splitContainer1.Size = new System.Drawing.Size(1170, 352);
             this.splitContainer1.SplitterDistance = 390;
             this.splitContainer1.TabIndex = 7;
             // 
@@ -122,7 +122,7 @@
             this.txtSchemaIni.Multiline = true;
             this.txtSchemaIni.Name = "txtSchemaIni";
             this.txtSchemaIni.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtSchemaIni.Size = new System.Drawing.Size(374, 302);
+            this.txtSchemaIni.Size = new System.Drawing.Size(374, 300);
             this.txtSchemaIni.TabIndex = 5;
             this.txtSchemaIni.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtSchemaIni_KeyDown);
             // 
@@ -149,7 +149,7 @@
             this.txtOutput.Name = "txtOutput";
             this.txtOutput.ReadOnly = true;
             this.txtOutput.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtOutput.Size = new System.Drawing.Size(761, 300);
+            this.txtOutput.Size = new System.Drawing.Size(761, 298);
             this.txtOutput.TabIndex = 4;
             this.txtOutput.DoubleClick += new System.EventHandler(this.OnTxtOutput_DoubleClick);
             // 
@@ -159,7 +159,6 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1170, 353);
             this.Controls.Add(this.splitContainer1);
-            this.IsMdiContainer = true;
             this.Name = "CsvLintWindow";
             this.Text = "CSV Lint";
             this.splitContainer1.Panel1.ResumeLayout(false);

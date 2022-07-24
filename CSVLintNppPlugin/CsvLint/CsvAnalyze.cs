@@ -94,18 +94,19 @@ namespace CSVLint
                         int newcol = 0;
                         if (chr == ' ')
                         {
-                            // more than 2 spaces or 1 space after digits could indicate new column
-                            if ((++spaces > 1) || (num == 1)) bigSpaces.Increase(pos + 1);
-
-                            // space after numeric value, reset text/numeric indicator because probably a new column
-                            if (num == 1) {
-                                spaces++; // space after numeric counts as "big space"
-                                num = -1;
+                            // a space after a numeric value
+                            if (num == 1)
+                            {
+                                num = -1; // reset text/numeric indicator because probably a new column
+                                spaces++; // count single space as "big space" i.e. 2 spaces or more
                             }
+
+                            // 2 spaces or more could indicate new column
+                            if (++spaces > 1) bigSpaces.Increase(pos + 1);
                         }
                         else
                         {
-                            // more than 2 spaces could indicate new column
+                            // 2 spaces or more could indicate new column
                             if (spaces > 1) newcol = 1;
                             spaces = 0;
 

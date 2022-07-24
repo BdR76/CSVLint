@@ -191,6 +191,9 @@ namespace Kbg.NppPluginNET
         [Description("Reformat dataset, apply quotes option."), Category("UserPref"), DefaultValue(0)]
         public int ReformatQuotes { get; set; }
 
+        [Description("Reformat dataset, replace carriage return line feeds with this string value."), Category("UserPref"), DefaultValue("<br>")]
+        public string ReformatReplaceCrLf { get; set; }
+
         // COUNT UNIQUE user preferences
         [Description("Count unique values, list of selected columns."), Category("UserPref"), DefaultValue("")]
         public string UniqueColumns { get; set; }

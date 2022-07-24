@@ -63,7 +63,7 @@ or select "Convert to SQL" menu item to generate an SQL insert script.
 
 Also see this quick tour video, which shows how the plug-in works.
 
-[![CSV Lint plug-in Notepad++](http://img.youtube.com/vi/_Me-ICCBu60/mqdefault.jpg)](http://www.youtube.com/watch?v=_Me-ICCBu60 "CSV Lint plug-in Notepad++")
+[![Watch video, CSV Lint plug-in features oveview](http://img.youtube.com/vi/_Me-ICCBu60/mqdefault.jpg)](http://www.youtube.com/watch?v=_Me-ICCBu60 "CSV Lint plug-in Notepad++")
 
 Schema.ini
 ----------
@@ -156,10 +156,11 @@ With thanks to:
 
 * kbilsted for providing the excellent
 [NotepadPlusPlusPluginPack.Net](https://github.com/kbilsted/NotepadPlusPlusPluginPack.Net)
-* jokedst, [CsvQuery](https://github.com/jokedst/CsvQuery) was the inspiration for converting [datasetmultitool](https://github.com/BdR76/datasetmultitool) as a Notepad++ plug-in
+* jokedst, [CsvQuery](https://github.com/jokedst/CsvQuery) was the inspiration for converting [datasetmultitool](https://github.com/BdR76/datasetmultitool) to a Notepad++ plug-in
+* [DonHo](https://github.com/donho) for creating Notepad++ and everyone at the [Notepad++ Community forum](https://community.notepad-plus-plus.org/) for providing feedback
 * Anyone who shared their [plug-in on GitHub](https://github.com/search?l=C%23&q=notepad%2B%2B+plugin&type=Repositories)
 
-The CSV Lint plug-in couldn't have been created without their source examples and suggestions.
+The CSV Lint plug-in couldn't have been created without their source examples, suggestions and valuable feedback.
 
 Disclaimer
 ----------
@@ -179,6 +180,7 @@ History
 12-mar-2022 - v0.4.5 Render on background thread, transparent cursor line, convert to XML/JSON, generate metadata, quotes reformat, help icons, bugfixes  
 27-apr-2022 - v0.4.5.1 bugfix for Notepad++ 8.4 Lexer v5 update  
 03-jun-2022 - v0.4.5.2 Another Lexer v5 bugfix, generate Python script  
+25-jul-2022 - v0.4.5.3 Improved detection for fixed width  
 
 Total downloads v0.4.1 `4.1k`, v0.4.2 `98`, v0.4.3 `11k`, v0.4.4 `13k`, v0.4.5 `13k`, v0.4.5.1 `2.2k`
 
