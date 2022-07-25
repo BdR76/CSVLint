@@ -1,9 +1,9 @@
-﻿using System;
-using System.Windows.Forms;
-using CSVLint;
+﻿using CSVLint;
 using CSVLintNppPlugin.Forms;
 using CsvQuery.PluginInfrastructure;
 using Kbg.NppPluginNET.PluginInfrastructure;
+using System;
+using System.Windows.Forms;
 
 namespace Kbg.NppPluginNET
 {
@@ -12,6 +12,7 @@ namespace Kbg.NppPluginNET
         public CsvLintWindow()
         {
             InitializeComponent();
+            chkAutoDetect.Checked = Main.Settings.AutoDetectColumns;
         }
 
         public void SetCsvDefinition(CsvDefinition csvdef)
@@ -21,26 +22,40 @@ namespace Kbg.NppPluginNET
             btnApply.Enabled = false;
         }
 
-        private void OnBtnRefresh_Click(object sender, EventArgs e)
+        private void OnBtnDetectColumns_Click(object sender, EventArgs e)
         {
-            // clear any previous output
-            txtOutput.Clear();
-            txtOutput.Update();
+            bool usercancel = false;
+            char sep = '\0';
+            bool header = false;
 
-            var dtStart = DateTime.Now;
+            // manual override auto-detect
+            if (!chkAutoDetect.Checked) {
+                bool ok = GetDetectColumnsParameters(out sep, out header);
+                usercancel = !ok;
+            }
 
-            // analyze and determine csv definition
-            CsvDefinition csvdef = CsvAnalyze.InferFromData();
+            if (!usercancel)
+            {
+                // clear any previous output
+                txtOutput.Clear();
+                txtOutput.Update();
 
-            Main.UpdateCSVChanges(csvdef, false);
+                var dtStart = DateTime.Now;
 
-            var dtElapsed = (DateTime.Now - dtStart).ToString(@"hh\:mm\:ss\.fff");
+                // analyze and determine csv definition
+                CsvDefinition csvdef = CsvAnalyze.InferFromData(chkAutoDetect.Checked, sep, header);
 
-            // display csv definition
-            txtSchemaIni.Text = csvdef.GetIniLines();
+                Main.UpdateCSVChanges(csvdef, false);
 
-            txtOutput.Clear();
-            txtOutput.Text = string.Format("Refresh from data is ready, time elapsed {0}", dtElapsed);
+                var dtElapsed = (DateTime.Now - dtStart).ToString(@"hh\:mm\:ss\.fff");
+
+                // display csv definition
+                txtSchemaIni.Text = csvdef.GetIniLines();
+                btnApply.Enabled = true;
+
+                txtOutput.Clear();
+                txtOutput.Text = string.Format("Detecting columns from data is ready, time elapsed {0}", dtElapsed);
+            }
         }
 
         private void OnBtnValidate_Click(object sender, EventArgs e)
@@ -130,11 +145,29 @@ namespace Kbg.NppPluginNET
             }
         }
 
+        private bool GetDetectColumnsParameters(out char sep, out bool header)
+        {
+            // show manually detect columns parameters form
+            var frmdetect = new DetectColumnsForm();
+            frmdetect.InitialiseSetting();
+            DialogResult r = frmdetect.ShowDialog();
+
+            // user clicked OK or Cancel
+            sep = frmdetect.Separator;
+            header = frmdetect.HeaderNames;
+
+            // clear up
+            frmdetect.Dispose();
+
+            // return true (OK) or false (Cancel)
+            return r == DialogResult.OK;
+        }
+
         private bool GetReformatParameters(out string dt, out string dec, out string sep, out bool updsep, out int updquote, out string replacecrlf, out bool trimall, out bool alignVert)
         {
             // show reformat form
             var frmedit = new ReformatForm();
-            frmedit.InitialiseSetting("yyyy-MM-dd hh:mm:ss", ".", "|");
+            frmedit.InitialiseSetting();
             DialogResult r = frmedit.ShowDialog();
 
             // user clicked OK or Cancel
@@ -229,9 +262,7 @@ namespace Kbg.NppPluginNET
 
                 // refresh datadefinition
                 txtSchemaIni.Text = csvdef.GetIniLines();
-
-                txtSchemaIni.Modified = true;
-                txtSchemaIni_KeyDown(txtSchemaIni, null);
+                btnApply.Enabled = true;
                 //btnApply.Enabled = true;
             }
         }
@@ -303,8 +334,15 @@ namespace Kbg.NppPluginNET
                 txtOutput.Text = msg;
 
                 // refresh datadefinition
-                OnBtnRefresh_Click(sender, e);
+                OnBtnDetectColumns_Click(sender, e);
             }
+        }
+
+        private void chkAutoDetect_Click(object sender, EventArgs e)
+        {
+            Main.Settings.AutoDetectColumns = chkAutoDetect.Checked;
+            // save to file
+            Main.Settings.SaveToIniFile();
         }
     }
 }

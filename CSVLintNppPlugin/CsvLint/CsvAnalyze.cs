@@ -39,9 +39,11 @@ namespace CSVLint
         /// <summary>
         /// Infer CSV definition from data; determine separators, column names, datatypes etc
         /// </summary>
-        /// <param name="data"></param>
+        /// <param name="autodetect">automatically detect separator and header names</param>
+        /// <param name="mansep">Override automatic detection, manually provided column separator</param>
+        /// <param name="manhead">Override automatic detection, manually set first header row contains columns names</param>
         /// <returns></returns>
-        public static CsvDefinition InferFromData()
+        public static CsvDefinition InferFromData(bool autodetect, char mansep, bool manhead)
         {
             // First do a letter frequency analysis on each row
             var strfreq = ScintillaStreams.StreamAllText();
@@ -197,8 +199,14 @@ namespace CSVLint
             else if (uncertancy < uncertancyQuoted || (uncertancy == uncertancyQuoted && lineCount > linesQuoted)) // It was better ignoring quotes!
                 result.TextQualifier = '\0';
 
+            // Override auto-detection, user sets column separator manually
+            if (!autodetect) result.Separator = mansep;
+
             // head column name
             result.ColNameHeader = result.Separator != '\0';
+
+            // Override auto-detection, user sets column header names manually
+            if (!autodetect) result.ColNameHeader = manhead;
 
             // Exception, probably not tabular data file
             if ( (result.Separator == '\0') && ( (lineLengths.Count > 1) || (lineCount <= 1) ) )
@@ -352,6 +360,9 @@ namespace CSVLint
 
             // if all header Names (=frst row) comply with the column datatype, then there is no column names
             result.ColNameHeader = ( (allstrings || count > 0) && !emptyname);
+
+            // Override auto-detection, user sets column header names manually
+            if (!autodetect) result.ColNameHeader = manhead;
 
             // if no header column names rename all columns to "FIELD1", "FIELD2", "FIELD3" etc.
             if (!result.ColNameHeader)

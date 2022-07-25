@@ -340,7 +340,7 @@ namespace Kbg.NppPluginNET
                 else
                 {
                     // analyze and determine csv definition
-                    csvdef = CsvAnalyze.InferFromData();
+                    csvdef = CsvAnalyze.InferFromData(true, '\0', false); // parameters '', false don't matter
                 }
                 FileCsvDef.Add(filename, csvdef);
             }
@@ -457,7 +457,7 @@ namespace Kbg.NppPluginNET
                 else
                 {
                     // analyze and determine csv definition
-                    csvdef = CsvAnalyze.InferFromData();
+                    csvdef = CsvAnalyze.InferFromData(true, '\0', false); // parameters '\0', false don't matter
                 }
 
                 FileCsvDef.Add(filename, csvdef);

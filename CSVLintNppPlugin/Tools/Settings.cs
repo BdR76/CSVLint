@@ -139,6 +139,9 @@ namespace Kbg.NppPluginNET
             Category("General"), DefaultValue(true)]
         public bool TrimValues { get; set; }
 
+        [Description("Detect columns automatically, uncheck this option to manually set the column separator and header names parameters before detecting column datatypes."), Category("General"), DefaultValue(true)]
+        public bool AutoDetectColumns { get; set; }
+
         //[Description("Maximum errors output, limit errors logging, or 0 for no limit."),
         //    Category("Validate"), DefaultValue(0)]
         //public int MaxErrors { get; set; }
@@ -193,6 +196,13 @@ namespace Kbg.NppPluginNET
 
         [Description("Reformat dataset, replace carriage return line feeds with this string value."), Category("UserPref"), DefaultValue("<br>")]
         public string ReformatReplaceCrLf { get; set; }
+
+        // DETECT COLUMNS user preferences
+        [Description("Detect columns, contains separator character."), Category("UserPref"), DefaultValue(",")]
+        public string DetectColumnSep { get; set; }
+
+        [Description("Detect columns, contains header names."), Category("UserPref"), DefaultValue(false)]
+        public bool DetectColumnHeader { get; set; }
 
         // COUNT UNIQUE user preferences
         [Description("Count unique values, list of selected columns."), Category("UserPref"), DefaultValue("")]

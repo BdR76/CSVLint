@@ -42,14 +42,14 @@ the data file, the plug-in will detect the columns incorrectly. This can lead
 to unexpected results when reformatting or validating the data.
 
 The metadata is based on the `schema.ini` format and it is important for the
-edit options in the plug-in to work correctly. You can press "Refresh from
-Data" to automatically detect the metadata from the datafile, and/or manually
+edit options in the plug-in to work correctly. You can press "Detect columns"
+to automatically detect the metadata from the datafile, and/or manually
 edit the metadata in the textbox. When manually editing the metadata, always
 press the save icon (blue disk) to apply it before continuing.
 
-### Refresh from Data ###
+### Detect columns ###
 
-Press the "Refresh from Data" button to auto-detect column types from the
+Press the "Detect columns" button to auto-detect column types from the
 currently active file. The auto-detection function will try to infer the
 column separator character and column data types by looking at the data.
 When a file is opened and no schema.ini is found then
@@ -61,9 +61,16 @@ When a file is opened the plug-in will:
 2) check if the `schema.ini` contains a section for the filename
 2) if no `schema.ini` or section found, then try to auto-detect metadata
 
-Note; if "Refresh from data" cannot automatically detected any columns, then
+Note; if "Detect columns" cannot automatically detected any columns, then
 the metadata definition will default to a "TextFile" with one column of
 width 9999 characters, i.e. no columns found.
+
+You can manually override the auto-detection by unchecking the auto-detect
+checkbox. When the auto-detect is not checked and you press "Detect columns",
+a dialog will appear where you can manually enter the column separator and
+indicate whether or not the first line contains the column names.
+
+![CSV Lint detect columns manually dialog](/docs/csvlint_detect_columns.png?raw=true "CSV Lint plug-in detect columns manually dialog")
 
 ### Save icon ###
 
@@ -148,6 +155,14 @@ Apply quotes to the cell values, with the following options.
 Note: Any quote character in a value will be escaped using two quote characters.
 For example applying quotes to text value `CP 3/8" KAVD` will result in `"CP 3/8"" KAVD"`.
 
+### Replace CrLf within values ###
+
+Replace new-line characters (carriage return / line feed) within quoted values with a given string.
+New lines usually indicate the next record in a dataset. However, quoted values may also contain a new line character.
+Sometimes this can cause problems and these values aren't processed correctly.
+You can use this option to replace the new-lines with for example `<br>` or `\par` or just a space ` `.
+The plug-in will only replace the new-line characters within a quoted value, not the new-lines at the end of each record.
+
 ### Trim all values ###
 
 Trim spaces from all values, for example trim the value `" No sample "` to just `"No sample"`.
@@ -180,7 +195,7 @@ right. It will check the input data for the following errors:
 Important note: If you've edited the data file, for example changed the column
 separator or added columns using the Split function, make sure to also update
 the metadata before validating. Make sure the metadata reflects the current
-data file by either pressing "Refresh from data" or updating it manually and
+data file by either pressing "Detect columns" or updating it manually and
 then saving it.
 
 Split column

@@ -30,10 +30,11 @@
         {
             this.components = new System.ComponentModel.Container();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.chkAutoDetect = new System.Windows.Forms.CheckBox();
             this.btnSplit = new System.Windows.Forms.Button();
             this.btnApply = new System.Windows.Forms.Button();
             this.btnReformat = new System.Windows.Forms.Button();
-            this.btnRefresh = new System.Windows.Forms.Button();
+            this.btnDetectColumns = new System.Windows.Forms.Button();
             this.txtSchemaIni = new System.Windows.Forms.TextBox();
             this.btnValidate = new System.Windows.Forms.Button();
             this.txtOutput = new System.Windows.Forms.TextBox();
@@ -54,10 +55,11 @@
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.chkAutoDetect);
             this.splitContainer1.Panel1.Controls.Add(this.btnSplit);
             this.splitContainer1.Panel1.Controls.Add(this.btnApply);
             this.splitContainer1.Panel1.Controls.Add(this.btnReformat);
-            this.splitContainer1.Panel1.Controls.Add(this.btnRefresh);
+            this.splitContainer1.Panel1.Controls.Add(this.btnDetectColumns);
             this.splitContainer1.Panel1.Controls.Add(this.txtSchemaIni);
             // 
             // splitContainer1.Panel2
@@ -67,6 +69,18 @@
             this.splitContainer1.Size = new System.Drawing.Size(1170, 352);
             this.splitContainer1.SplitterDistance = 390;
             this.splitContainer1.TabIndex = 7;
+            // 
+            // chkAutoDetect
+            // 
+            this.chkAutoDetect.AutoSize = true;
+            this.chkAutoDetect.Location = new System.Drawing.Point(80, 5);
+            this.chkAutoDetect.Name = "chkAutoDetect";
+            this.chkAutoDetect.Size = new System.Drawing.Size(51, 30);
+            this.chkAutoDetect.TabIndex = 10;
+            this.chkAutoDetect.Text = "auto-\nmatic";
+            this.chkAutoDetect.TextAlign = System.Drawing.ContentAlignment.TopLeft;
+            this.chkAutoDetect.UseVisualStyleBackColor = true;
+            this.chkAutoDetect.Click += new System.EventHandler(this.chkAutoDetect_Click);
             // 
             // btnSplit
             // 
@@ -82,7 +96,7 @@
             // btnApply
             // 
             this.btnApply.Image = global::CSVLintNppPlugin.Properties.Resources.disksave;
-            this.btnApply.Location = new System.Drawing.Point(129, 3);
+            this.btnApply.Location = new System.Drawing.Point(133, 3);
             this.btnApply.Name = "btnApply";
             this.btnApply.Size = new System.Drawing.Size(32, 32);
             this.btnApply.TabIndex = 8;
@@ -100,17 +114,16 @@
             this.btnReformat.UseVisualStyleBackColor = true;
             this.btnReformat.Click += new System.EventHandler(this.OnBtnReformat_Click);
             // 
-            // btnRefresh
+            // btnDetectColumns
             // 
-            this.btnRefresh.Location = new System.Drawing.Point(3, 3);
-            this.btnRefresh.Name = "btnRefresh";
-            this.btnRefresh.Size = new System.Drawing.Size(120, 32);
-            this.btnRefresh.TabIndex = 6;
-            this.btnRefresh.Text = "Refresh from data";
-            this.tooltipCsvLint.SetToolTip(this.btnRefresh, "Automatically detect metadata and column datatypes\r\nfrom the currently selected f" +
-        "ile.");
-            this.btnRefresh.UseVisualStyleBackColor = true;
-            this.btnRefresh.Click += new System.EventHandler(this.OnBtnRefresh_Click);
+            this.btnDetectColumns.Location = new System.Drawing.Point(3, 3);
+            this.btnDetectColumns.Name = "btnDetectColumns";
+            this.btnDetectColumns.Size = new System.Drawing.Size(72, 32);
+            this.btnDetectColumns.TabIndex = 6;
+            this.btnDetectColumns.Text = "Detect columns";
+            this.tooltipCsvLint.SetToolTip(this.btnDetectColumns, "Automatically detect columns and datatypes\r\nfrom the currently selected file.");
+            this.btnDetectColumns.UseVisualStyleBackColor = true;
+            this.btnDetectColumns.Click += new System.EventHandler(this.OnBtnDetectColumns_Click);
             // 
             // txtSchemaIni
             // 
@@ -174,7 +187,7 @@
         #endregion
 
         private System.Windows.Forms.SplitContainer splitContainer1;
-        private System.Windows.Forms.Button btnRefresh;
+        private System.Windows.Forms.Button btnDetectColumns;
         private System.Windows.Forms.TextBox txtSchemaIni;
         private System.Windows.Forms.Button btnValidate;
         private System.Windows.Forms.TextBox txtOutput;
@@ -182,5 +195,6 @@
         private System.Windows.Forms.Button btnReformat;
         private System.Windows.Forms.Button btnApply;
         private System.Windows.Forms.Button btnSplit;
+        private System.Windows.Forms.CheckBox chkAutoDetect;
     }
 }
