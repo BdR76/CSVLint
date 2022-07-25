@@ -29,7 +29,7 @@ namespace CSVLintNppPlugin.Forms
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new System.Windows.Forms.Label();
+            this.lblMetadataType = new System.Windows.Forms.Label();
             this.rdbtnSchemaIni = new System.Windows.Forms.RadioButton();
             this.rdbtnSchemaJSON = new System.Windows.Forms.RadioButton();
             this.rdbtnRScript = new System.Windows.Forms.RadioButton();
@@ -59,14 +59,14 @@ namespace CSVLintNppPlugin.Forms
             // 
             this.lblHorizontalLine.Size = new System.Drawing.Size(316, 2);
             // 
-            // label1
+            // lblMetadataType
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(13, 48);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(75, 13);
-            this.label1.TabIndex = 3;
-            this.label1.Text = "Metadata type";
+            this.lblMetadataType.AutoSize = true;
+            this.lblMetadataType.Location = new System.Drawing.Point(13, 48);
+            this.lblMetadataType.Name = "lblMetadataType";
+            this.lblMetadataType.Size = new System.Drawing.Size(75, 13);
+            this.lblMetadataType.TabIndex = 3;
+            this.lblMetadataType.Text = "Metadata type";
             // 
             // rdbtnSchemaIni
             // 
@@ -120,7 +120,7 @@ namespace CSVLintNppPlugin.Forms
             this.Controls.Add(this.rdbtnRScript);
             this.Controls.Add(this.rdbtnSchemaJSON);
             this.Controls.Add(this.rdbtnSchemaIni);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.lblMetadataType);
             this.Name = "MetaDataGenerateForm";
             this.Text = "Generate metadata";
             this.Controls.SetChildIndex(this.lblHorizontalLine, 0);
@@ -128,7 +128,7 @@ namespace CSVLintNppPlugin.Forms
             this.Controls.SetChildIndex(this.picHelpIcon, 0);
             this.Controls.SetChildIndex(this.btnOk, 0);
             this.Controls.SetChildIndex(this.btnCancel, 0);
-            this.Controls.SetChildIndex(this.label1, 0);
+            this.Controls.SetChildIndex(this.lblMetadataType, 0);
             this.Controls.SetChildIndex(this.rdbtnSchemaIni, 0);
             this.Controls.SetChildIndex(this.rdbtnSchemaJSON, 0);
             this.Controls.SetChildIndex(this.rdbtnRScript, 0);
@@ -141,7 +141,7 @@ namespace CSVLintNppPlugin.Forms
 
         #endregion
 
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label lblMetadataType;
         private System.Windows.Forms.RadioButton rdbtnSchemaIni;
         private System.Windows.Forms.RadioButton rdbtnSchemaJSON;
         private System.Windows.Forms.RadioButton rdbtnRScript;

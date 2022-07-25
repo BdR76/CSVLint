@@ -23,7 +23,7 @@ hrtavg = (60, 100, 80)
 # list of dates
 alldates = []
 testdate = datetime.datetime.now()
-curryear = testdate.year()
+curryear = testdate.year
 for i in range(int(MAX_LINES / 3)+1):
     sec = random.randrange(300,900) # 5 min to 15 min
     testdate = testdate - datetime.timedelta(seconds=sec)

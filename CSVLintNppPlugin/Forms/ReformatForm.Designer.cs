@@ -47,13 +47,13 @@
             // btnOk
             // 
             this.btnOk.Location = new System.Drawing.Point(117, 299);
-            this.btnOk.TabIndex = 8;
+            this.btnOk.TabIndex = 12;
             this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
             // 
             // btnCancel
             // 
             this.btnCancel.Location = new System.Drawing.Point(236, 299);
-            this.btnCancel.TabIndex = 9;
+            this.btnCancel.TabIndex = 13;
             // 
             // lblTitle
             // 
@@ -81,6 +81,28 @@
             this.chkDateTime.UseVisualStyleBackColor = true;
             this.chkDateTime.CheckedChanged += new System.EventHandler(this.OnChkbx_CheckedChanged);
             // 
+            // cmbDateTime
+            // 
+            this.cmbDateTime.FormattingEnabled = true;
+            this.cmbDateTime.Items.AddRange(new object[] {
+            "yyyy-MM-dd",
+            "dd-MM-yyyy",
+            "MM/dd/yyyy",
+            "yyyy-MM-dd HH:mm:ss",
+            "dd-MM-yyyy HH:mm:ss",
+            "MM/dd/yyyy HH:mm:ss",
+            "yyyy-M-d",
+            "d-M-yyyy",
+            "M/d/yyyy",
+            "yyyy-M-d H:mm:ss",
+            "d-M-yyyy H:mm:ss",
+            "M/d/yyyy H:mm:ss"});
+            this.cmbDateTime.Location = new System.Drawing.Point(160, 48);
+            this.cmbDateTime.Name = "cmbDateTime";
+            this.cmbDateTime.Size = new System.Drawing.Size(180, 21);
+            this.cmbDateTime.TabIndex = 1;
+            this.cmbDateTime.Tag = "1";
+            // 
             // chkDecimal
             // 
             this.chkDecimal.AutoSize = true;
@@ -104,28 +126,6 @@
             this.cmbDecimal.Size = new System.Drawing.Size(83, 21);
             this.cmbDecimal.TabIndex = 3;
             this.cmbDecimal.Tag = "2";
-            // 
-            // cmbDateTime
-            // 
-            this.cmbDateTime.FormattingEnabled = true;
-            this.cmbDateTime.Items.AddRange(new object[] {
-            "yyyy-MM-dd",
-            "dd-MM-yyyy",
-            "MM/dd/yyyy",
-            "yyyy-MM-dd HH:mm:ss",
-            "dd-MM-yyyy HH:mm:ss",
-            "MM/dd/yyyy HH:mm:ss",
-            "yyyy-M-d",
-            "d-M-yyyy",
-            "M/d/yyyy",
-            "yyyy-M-d H:mm:ss",
-            "d-M-yyyy H:mm:ss",
-            "M/d/yyyy H:mm:ss"});
-            this.cmbDateTime.Location = new System.Drawing.Point(160, 48);
-            this.cmbDateTime.Name = "cmbDateTime";
-            this.cmbDateTime.Size = new System.Drawing.Size(180, 21);
-            this.cmbDateTime.TabIndex = 1;
-            this.cmbDateTime.Tag = "1";
             // 
             // chkSeparator
             // 
@@ -153,18 +153,6 @@
             this.cmbSeparator.Size = new System.Drawing.Size(83, 21);
             this.cmbSeparator.TabIndex = 5;
             this.cmbSeparator.Tag = "3";
-            // 
-            // chkAlignVert
-            // 
-            this.chkAlignVert.AutoSize = true;
-            this.chkAlignVert.Location = new System.Drawing.Point(13, 240);
-            this.chkAlignVert.Name = "chkAlignVert";
-            this.chkAlignVert.Size = new System.Drawing.Size(187, 17);
-            this.chkAlignVert.TabIndex = 12;
-            this.chkAlignVert.Tag = "7";
-            this.chkAlignVert.Text = "Align vertically (not recommended)";
-            this.chkAlignVert.UseVisualStyleBackColor = true;
-            this.chkAlignVert.CheckedChanged += new System.EventHandler(this.OnChkbx_CheckedChanged);
             // 
             // chkApplyQuotes
             // 
@@ -232,6 +220,18 @@
             this.chkTrimAll.UseVisualStyleBackColor = true;
             this.chkTrimAll.CheckedChanged += new System.EventHandler(this.OnChkbx_CheckedChanged);
             // 
+            // chkAlignVert
+            // 
+            this.chkAlignVert.AutoSize = true;
+            this.chkAlignVert.Location = new System.Drawing.Point(13, 240);
+            this.chkAlignVert.Name = "chkAlignVert";
+            this.chkAlignVert.Size = new System.Drawing.Size(187, 17);
+            this.chkAlignVert.TabIndex = 11;
+            this.chkAlignVert.Tag = "7";
+            this.chkAlignVert.Text = "Align vertically (not recommended)";
+            this.chkAlignVert.UseVisualStyleBackColor = true;
+            this.chkAlignVert.CheckedChanged += new System.EventHandler(this.OnChkbx_CheckedChanged);
+            // 
             // lblReformat
             // 
             this.lblReformat.AutoSize = true;
@@ -246,13 +246,13 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(348, 341);
-            this.Controls.Add(this.txtReplaceCrLf);
             this.Controls.Add(this.lblReformat);
-            this.Controls.Add(this.chkReplaceCrLf);
             this.Controls.Add(this.chkAlignVert);
-            this.Controls.Add(this.chkApplyQuotes);
             this.Controls.Add(this.chkTrimAll);
+            this.Controls.Add(this.txtReplaceCrLf);
+            this.Controls.Add(this.chkReplaceCrLf);
             this.Controls.Add(this.cmbQuotes);
+            this.Controls.Add(this.chkApplyQuotes);
             this.Controls.Add(this.cmbSeparator);
             this.Controls.Add(this.chkSeparator);
             this.Controls.Add(this.cmbDecimal);
@@ -271,15 +271,15 @@
             this.Controls.SetChildIndex(this.cmbDecimal, 0);
             this.Controls.SetChildIndex(this.chkSeparator, 0);
             this.Controls.SetChildIndex(this.cmbSeparator, 0);
-            this.Controls.SetChildIndex(this.cmbQuotes, 0);
-            this.Controls.SetChildIndex(this.chkTrimAll, 0);
             this.Controls.SetChildIndex(this.chkApplyQuotes, 0);
-            this.Controls.SetChildIndex(this.chkAlignVert, 0);
+            this.Controls.SetChildIndex(this.cmbQuotes, 0);
             this.Controls.SetChildIndex(this.chkReplaceCrLf, 0);
+            this.Controls.SetChildIndex(this.txtReplaceCrLf, 0);
+            this.Controls.SetChildIndex(this.chkTrimAll, 0);
+            this.Controls.SetChildIndex(this.chkAlignVert, 0);
             this.Controls.SetChildIndex(this.lblReformat, 0);
             this.Controls.SetChildIndex(this.btnOk, 0);
             this.Controls.SetChildIndex(this.btnCancel, 0);
-            this.Controls.SetChildIndex(this.txtReplaceCrLf, 0);
             ((System.ComponentModel.ISupportInitialize)(this.picHelpIcon)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -288,17 +288,17 @@
 
         #endregion
         private System.Windows.Forms.CheckBox chkDateTime;
+        private System.Windows.Forms.ComboBox cmbDateTime;
         private System.Windows.Forms.CheckBox chkDecimal;
         private System.Windows.Forms.ComboBox cmbDecimal;
-        private System.Windows.Forms.ComboBox cmbDateTime;
         private System.Windows.Forms.CheckBox chkSeparator;
         private System.Windows.Forms.ComboBox cmbSeparator;
-        private System.Windows.Forms.CheckBox chkTrimAll;
-        private System.Windows.Forms.CheckBox chkAlignVert;
-        private System.Windows.Forms.Label lblReformat;
         private System.Windows.Forms.CheckBox chkApplyQuotes;
         private System.Windows.Forms.ComboBox cmbQuotes;
         private System.Windows.Forms.CheckBox chkReplaceCrLf;
         private System.Windows.Forms.TextBox txtReplaceCrLf;
+        private System.Windows.Forms.CheckBox chkTrimAll;
+        private System.Windows.Forms.CheckBox chkAlignVert;
+        private System.Windows.Forms.Label lblReformat;
     }
 }

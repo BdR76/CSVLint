@@ -21,7 +21,7 @@ namespace CSVLintNppPlugin.Forms
         public bool TrimAllValues { get; set; }
         public bool alignVertically { get; set; }
 
-        public void InitialiseSetting(string dtFormat, string decSep, string colSep)
+        public void InitialiseSetting()
         {
             // load user preferences
             cmbDateTime.Text    = Main.Settings.ReformatDateFormat;

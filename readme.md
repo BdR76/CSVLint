@@ -180,7 +180,7 @@ History
 12-mar-2022 - v0.4.5 Render on background thread, transparent cursor line, convert to XML/JSON, generate metadata, quotes reformat, help icons, bugfixes  
 27-apr-2022 - v0.4.5.1 bugfix for Notepad++ 8.4 Lexer v5 update  
 03-jun-2022 - v0.4.5.2 Another Lexer v5 bugfix, generate Python script  
-25-jul-2022 - v0.4.5.3 Improved detection for fixed width  
+25-jul-2022 - v0.4.5.3 Manually detect columns, improved fixed width support  
 
 Total downloads v0.4.1 `4.1k`, v0.4.2 `98`, v0.4.3 `11k`, v0.4.4 `13k`, v0.4.5 `13k`, v0.4.5.1 `2.2k`
 
