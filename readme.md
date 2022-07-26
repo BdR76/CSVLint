@@ -54,7 +54,7 @@ How to use it
 
 1. Open your dataset in [Notepad++](http://notepad-plus-plus.org/)
 2. Open the "CSV Lint window" from the plug-in menu or toolbar
-3. Press "Refresh from data" to automatically detect format
+3. Press "Detect columns" to automatically detect format
 4. Optionally, manually enter or adjust metadata
 5. Press "Validate data" to detect any data errors
 
@@ -140,9 +140,9 @@ Trouble shooting / Known issues
 -------------------------------
 * When you press the "Validate Data" button after editing the data file, the text and metadata are not
 always synchronised immediately. if you get unexpected validation results, try saving the datafile
-or refreshing the meta data before clicking "Refresh from data".
+or refreshing the meta data before clicking "Detect columns".
 
-* When you press "Refresh from data" the datetime format of the data isn't always detected correctly.
+* When you press "Detect columns" the datetime format of the data isn't always detected correctly.
 Especially when the data contains values like `05/06/2021` the order of day and month can be incorrect.
 You can adjust it manually to match your data before pressing the "Validate data" button.
 

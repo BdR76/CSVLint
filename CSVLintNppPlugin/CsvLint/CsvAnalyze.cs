@@ -117,7 +117,7 @@ namespace CSVLint
                             // ignore characters that can be both numeric or alpha values example "A.B." or "Smith-Johnson"
                             // Digits connected by certain characters can be one single column, not multiple,
                             // For example date, time, telephonenr "12:34","555-890-4327" etc.
-                            int ignore = ".-+:/\\".IndexOf(chr);
+                            int ignore = ",.-+:/\\".IndexOf(chr);
                             if (ignore < 0)
                             {
                                 if (isdigit < 0)
