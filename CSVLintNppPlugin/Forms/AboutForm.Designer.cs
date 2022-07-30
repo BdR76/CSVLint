@@ -135,6 +135,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.CancelButton = this.btnOk;
             this.ClientSize = new System.Drawing.Size(208, 214);
             this.Controls.Add(this.btnDonate);
             this.Controls.Add(this.picEasterEgg);

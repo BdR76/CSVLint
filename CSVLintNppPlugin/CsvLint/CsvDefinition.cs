@@ -352,14 +352,19 @@ namespace CSVLint
             List<string> dup = new List<string>();
             foreach (string line in enstr)
             {
-                string[] parts = line.Split('=');
-                if(result.ContainsKey(parts[0]))
+                // ignore empty lines and lines without equals sign '='
+                var nextline = line.Trim();
+                if ( (nextline != "") && (nextline.IndexOf('=') > 0) )
                 {
-                    dup.Add(parts[0]);
-                }
-                else
-                {
-                    result.Add(parts[0], parts[1]);
+                    string[] parts = nextline.Split('=');
+                    if (result.ContainsKey(parts[0]))
+                    {
+                        dup.Add(parts[0]);
+                    }
+                    else
+                    {
+                        result.Add(parts[0], parts[1]);
+                    }
                 }
             }
 
