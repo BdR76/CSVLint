@@ -1,10 +1,13 @@
 CSV Lint - Notepad++ plugin
 ===========================
 ![Release version](https://img.shields.io/github/v/release/BdR76/CSVLint) ![GitHub all releases](https://img.shields.io/github/downloads/BdR76/CSVLint/total) ![GitHub latest release](https://img.shields.io/github/downloads/BdR76/CSVLint/latest/total)  
-CSV Lint is a plug-in for [Notepad++](http://notepad-plus-plus.org/) for metadata discovery, technical data
-validation and reformatting on tabular data files.
 
-Use CSV Lint to quickly detect any technical errors in csv data or fix datetime and decimal formatting.  
+CSV Lint is a plug-in for [Notepad++](http://notepad-plus-plus.org/) which
+adds syntax highlighting to csv and fixed width data files to make them more
+readable. It can also detect technical data errors and fix datetime and
+decimal formatting errors.
+
+Use CSV Lint for metadata discovery, technical data validation and reformatting on tabular data files.
 It is _not_ meant to be a replacement for spreadsheet programs like Excel or SPSS,  
 but rather it's a quality control tool to examine, verify or polish up a dataset before further processing.
 
@@ -38,7 +41,7 @@ The CSV Lint plugin is available in the Plugins Admin in Notepad++ v8.1.9.1 or n
 * Install [Notepad++](https://notepad-plus-plus.org/) v8.1.9.1 or newer
 * In Notepad++ go to menu item `Plugins > Plugins Admin...`
 * On tab `Available` search for `csv lint`
-* Check the checkbox and press `Intall` button
+* Check the checkbox and press `Install` button
 * Click `Yes` to quit Notepad++ and "continue the operations"
 * Click `Yes` on the Windows notification "Allow app to make changes"
 

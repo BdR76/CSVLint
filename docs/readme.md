@@ -15,7 +15,7 @@ but rather it's a quality control tool to examine, verify or polish up a
 dataset before further processing.
 
 First install and open Notepad++, then go to the menu item `Plugins > Plugins Admin...`,
-search for "csv lint", check the checkbox and press Intall. This will add
+search for "csv lint", check the checkbox and press Install. This will add
 CSV Lint under the `Plugins > CSV Lint` menu item and a CSV Lint icon in the
 toolbar icon.
 
