@@ -115,6 +115,9 @@ namespace CSVLint
                     char sep2 = '\0';
                     int ddmax1 = -1;
                     int ddmax2 = -1;
+                    int ddmax3 = -1;
+                    string digitpart = "";
+                    int digitpartcount = 0;
                     char dec = '\0';
 
                     // inspect all characters of string
@@ -123,82 +126,78 @@ namespace CSVLint
                     for (int charidx = 0; charidx < vallength; charidx++)
                     {
                         char ch = data[charidx];
+                        bool isdigit = (ch >= '0' && ch <= '9');
 
-                        if (ch >= '0' && ch <= '9')
+                        // if digit character
+                        if (isdigit)
                         {
                             digits++;
+                            digitpart += ch;
                         }
-                        else if (ch == ',')
+
+                        // not a digit character, or last character of value
+                        if (!isdigit || (charidx == vallength-1) )
                         {
-                            comma++;
-                            dec = ch;
-                        }
-                        else if ("\\/-:. ".IndexOf(ch) >= 0) // check date separators
-                        {
-                            other++;
-                            datesep++;
-                            if ((sep1 == '\0') && (datesep == 1))
+                            // count digit part, for example "31-12-2004"
+                            //                              1-^  ^-2  ^-3
+                            if (digitpart != "") digitpartcount++;
+                            // keep max number example "31-12-2020" -> keep 31
+                            bool isNumeric = false;
+                            if (int.TryParse(digitpart, out int n1))
                             {
-                                // check if numeric up to the first separator
-                                sep1 = ch;
-                                string datedig1 = data.Substring(0, data.IndexOf(ch));
-                                // keep max number example 31-12-2020 -> keep 31
-                                bool isNumeric = int.TryParse(datedig1, out int n1);
-                                if (isNumeric)
-                                {
-                                    if (ddmax1 < n1) ddmax1 = n1;
-                                }
-
-                                // check if cannot be a datetime
-                                if ( (!isNumeric) || (datedig1.Length == 3) || (datedig1.Length > 4))
-                                {
-                                    ddmax1 = -1; // force the most likely datatype to not be non-datetime
-                                }
+                                if ((digitpartcount == 1) && (ddmax1 < n1)) ddmax1 = n1;
+                                if ((digitpartcount == 2) && (ddmax2 < n1)) ddmax2 = n1;
+                                if ((digitpartcount == 3) && (ddmax3 < n1)) ddmax3 = n1; // <- ddmax3=2020 when last character of "31-12-2020"
+                                isNumeric = true;
                             }
-                            else if ((sep2 == '\0') && (datesep == 2))
-                                {
-                                // check if numeric up to the first separator
-                                sep2 = ch;
-                                int pos1 = data.IndexOf(sep1) + 1;
-                                string datedig2 = data.Substring(pos1, data.IndexOf(ch, pos1) - pos1);
-                                // keep max number example 31-12-2020 -> keep 31
-                                bool isNumeric = int.TryParse(datedig2, out int n2);
-                                if (isNumeric)
-                                {
-                                    if (ddmax2 < n2) ddmax2 = n2;
-                                }
-                                // check if cannot be a datetime
-                                if ((!isNumeric) || (datedig2.Length == 3) || (datedig2.Length > 4))
-                                {
-                                    ddmax2 = -1; // force the most likely datatype to not be non-datetime
-                                }
+                            // check if cannot be a datetime
+                            if ((!isNumeric) || (digitpart.Length == 3) || (digitpart.Length > 4))
+                            {
+                                ddmax1 = -1; // force the most likely datatype to not be non-datetime
                             }
-                        }
-                        else
-                        {
-                            other++;
-                        };
 
-                        // dot is decimal separator, check separately because dot is also counted as date separator, example "12.03.2018"
-                        if (ch == '.')
-                        {
-                            point++;
-                            dec = ch;
-                            other--; // in hindsight was incorrectly counted as 'other' because ''. -> correction
+                            if (ch == ',')
+                            {
+                                comma++;
+                                dec = ch;
+                            }
+                            else if ("\\/-:. ".IndexOf(ch) >= 0) // check date separators
+                            {
+                                other++;
+                                datesep++;
+                                if ((sep1 == '\0') && (datesep == 1)) sep1 = ch;
+                                else if ((sep2 == '\0') && (datesep == 2)) sep2 = ch;
+                            }
+                            else if (!isdigit)
+                            {
+                                // any other non-digit characters
+                                other++;
+                            };
+
+                            // dot is decimal separator, check separately because dot is also counted as date separator, example "12.03.2018"
+                            if (ch == '.')
+                            {
+                                point++;
+                                dec = ch;
+                                other--; // in hindsight was incorrectly counted as 'other' because '.' -> correction
+                            }
+                            // plus and minus are signs for digits, check separately because minus ('-') is also counted as date separator, example "31-12-1999"
+                            if (ch == '+')
+                            {
+                                sign++;
+                                signpos = charidx;
+                            }
+                            // plus and minus are signs for digits, check separately because minus ('-') is also counted as date separator, example "31-12-1999"
+                            if (ch == '-')
+                            {
+                                sign++;
+                                signpos = charidx;
+                                other--; // in hindsight was incorrectly counted as 'other' because '-' could also be integer -> correction
+                            }
+                            // reset digit part
+                            digitpart = "";
                         }
-                        // plus and minus are signs for digits, check separately because minus ('-') is also counted as date separator, example "31-12-1999"
-                        if (ch == '+')
-                        {
-                            sign++;
-                            signpos = charidx;
-                        }
-                        // plus and minus are signs for digits, check separately because minus ('-') is also counted as date separator, example "31-12-1999"
-                        if (ch == '-')
-                        {
-                            sign++;
-                            signpos = charidx;
-                            other--; // in hindsight was incorrectly counted as 'other' because '-' could also be integer -> correction
-                        }
+
                     }
 
                     // exception for time values like "12:23" -> also fill ddmax2 "23"
@@ -218,12 +217,13 @@ namespace CSVLint
                     // determine most likely datatype based on characters in string
 
                     // date, examples "31-12-2019", "1/1/2019", "2019-12-31", "1-1-99" etc.
-                    if ((length >= 8) && (length <= 10) && (datesep == 2) && (sep1 != ':') && (digits >= 4) && (digits <= 8) && (ddmax1 > 0) && ((ddmax1 <= 31) || (ddmax1 >= 1900)))
+                    if ((length >= 6) && (length <= 10) && (datesep == 2) && (sep1 != ':') && (digits >= 4) && (digits <= 8) && (ddmax1 > 0) && ((ddmax1 <= 31) || (ddmax1 >= 1900)))
                     {
                         this.CountDateTime++;
                         if (this.DateSep == '\0') this.DateSep = sep1;
                         if (this.DateMax1 < ddmax1) this.DateMax1 = ddmax1;
                         if (this.DateMax2 < ddmax2) this.DateMax2 = ddmax2;
+                        if (this.DateMax3 < ddmax3) this.DateMax3 = ddmax3;
 
                         // keep full statistics
                         if (fullstats) KeepMinMaxDateTime(data, ddmax1, ddmax2, 1);
@@ -235,6 +235,7 @@ namespace CSVLint
                         if (this.DateSep == '\0') this.DateSep = sep1;
                         if (this.DateMax1 < ddmax1) this.DateMax1 = ddmax1;
                         if (this.DateMax2 < ddmax2) this.DateMax2 = ddmax2;
+                        if (this.DateMax3 < ddmax3) this.DateMax3 = ddmax3;
 
                         // keep full statistics
                         if (fullstats) KeepMinMaxDateTime(data, ddmax1, ddmax2, 3);
@@ -246,6 +247,7 @@ namespace CSVLint
                         if (this.DateSep == '\0') this.DateSep = sep1;
                         if (this.DateMax1 < ddmax1) this.DateMax1 = ddmax1;
                         if (this.DateMax2 < ddmax2) this.DateMax2 = ddmax2;
+                        if (this.DateMax3 < ddmax3) this.DateMax3 = ddmax3;
 
                         // keep full statistics
                         if (fullstats) KeepMinMaxDateTime(data, ddmax1, ddmax2, 2);
@@ -544,8 +546,8 @@ namespace CSVLint
                     mask = mask.Replace(":ss", "");
                 }
 
-                // single digit year, example "31-12-99"
-                if ((this.MinWidth == this.MaxWidth) && (this.MinWidth == 8))
+                // two digit year, example "31-12-99"
+                if ((this.MinWidth >= 6) && (this.MinWidth <= 8) && (this.DateMax1 < 100) && (this.DateMax3 < 100) )
                 {
                     mask = mask.Replace("yyyy", "yy");
                 }
@@ -556,7 +558,7 @@ namespace CSVLint
                 if (this.MaxWidth > 19) mask += ".fff";   // example "01-01-2019 12:00:00.000"
 
                 // build mask, fixed length date "dd-mm-yyyy" or not fixed length "d-m-yyyy" without prefix zeroes
-                if (this.MinWidth < this.MaxWidth)
+                if ( (this.MinWidth < this.MaxWidth) || (this.MaxWidth < mask.Length) )
                 {
                     mask = mask.Replace("dd", "d").Replace("MM", "M").Replace("HH", "H");
                 }

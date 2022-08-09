@@ -1,8 +1,9 @@
 # generate data
 # -------------
-# Generate semi-random data with errors/glitches
-# for testing large data files.
-# Change constants for file name and lines
+# Generate a large dataset for testing purposes
+# Random but realistic data, incl. data entry errors
+# Structure is based on a real medical dataset
+# Change constants for file name and data size
 # BdR 2020 - bdr1976@gmail.com
 
 import csv
@@ -88,6 +89,12 @@ for i in range(MAX_LINES):
         dob = patdob[idx]
         sex = patsex[idx]
         heartrate = random.randrange(80, 100) + ( 80.0 * (w1 / 220))
+        # data entry error, extra space
+        if i == 120:
+            pid = " " + str(pid)
+        # data entry error, entered current date for dob
+        if i == 300:
+            dob = testdate.strftime("%#d-%#m-%Y")
         # glitch error on purpose
         glitch = random.randrange(1, 15)
 
