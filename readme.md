@@ -86,7 +86,7 @@ See schema.ini example below:
 	DecimalSymbol=.
 	NumberDigits=2
 	Col1=OrderId Integer Width 8
-	Col2=Quantity Integer Width 3
+	Col2=Price Float Width 7
 	Col3=PartName Text Width 50
 	Col4=OrderDate DateTime Width 10
 
@@ -124,7 +124,7 @@ The CSV Lint plugin is work-in-progress, here is list of features I want to add 
 * ~~Count unique values based on column(s)~~
 * ~~Allow format masks per individual column~~
 * ~~Support quoted strings~~
-* Support two-digit year date values
+* ~~Support two-digit year date values~~
 * Support for currency/thousand separator "12.345,00" or "1,250,000.00" etc.
 * ~~Load/save schema.ini~~
 * ~~Improve automatic datatype detection~~
@@ -184,6 +184,7 @@ History
 27-apr-2022 - v0.4.5.1 bugfix for Notepad++ 8.4 Lexer v5 update  
 03-jun-2022 - v0.4.5.2 Another Lexer v5 bugfix, generate Python script  
 25-jul-2022 - v0.4.5.3 Manually detect columns, improved fixed width support  
+14-aug-2022 - v0.4.5.4 Improved datatype and datetime mask detection, various bugfixes  
 
 Total downloads v0.4.1 `4.1k`, v0.4.2 `98`, v0.4.3 `11k`, v0.4.4 `13k`, v0.4.5 `13k`, v0.4.5.1 `2.2k`
 

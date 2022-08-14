@@ -450,6 +450,7 @@ and they are stored in a settings file `%USERPROFILE%\AppData\Roaming\Notepad++\
 |------------------|-----------------------------------------------------------------------------------------------------------------|---------|
 | DecimalDigitsMax | Maximum amount of decimals for decimal values, if a value has more then it's considered a text value. Applies to both autodetecting datatypes and validating data | 20 |
 |DecimalLeadingZero| Decimal values must have leading zero, set to false to accept values like .5 or .01                             | true    |
+| ErrorTolerance   | Error tolerance percentage, when analyzing allow X % errors. For example when a column has 991 integers and 9 decimal values it's interpreted as an integer column. | 1 |
 | IntegerDigitsMax | Maximum amount of digits for integer values, if a value has more then it's considered a text value. Applies to both autodetecting datatypes and validating data. Useful to distinguish (bar)codes and actual numeric values  | 12 |
 | UniqueValuesMax  | Maximum unique values when reporting or detecting coded values, if column contains more than it's not reported. |   15    | 
 | YearMinimum      | When detecting date or datetime values, years smaller than this value will be considered an out-of-range date.  | 1900    |

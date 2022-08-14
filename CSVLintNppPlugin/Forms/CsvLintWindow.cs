@@ -199,49 +199,52 @@ namespace Kbg.NppPluginNET
                 // get dictionary
                 CsvDefinition csvdef = new CsvDefinition(txtSchemaIni.Text);
 
-                var dtStart = DateTime.Now;
-
-                // analyze and determine csv definition
-                CsvEdit.ReformatDataFile(csvdef, editDataTime, editDecimal, editSeparator, updateSeparator, updateQuotes, replaceCrLf, trimAllValues, alignVert);
-
-                var dtElapsed = (DateTime.Now - dtStart).ToString(@"hh\:mm\:ss\.fff");
-
-                string msg = "";
-
-                // refresh datadefinition
-                if (editDataTime != "")
+                // check if valid dictionary
+                if (csvdef.Fields.Count > 0)
                 {
-                    msg += string.Format("Reformat datetime format from \"{0}\" to \"{1}\"\r\n", csvdef.DateTimeFormat, editDataTime);
-                    csvdef.DateTimeFormat = editDataTime;
-                    foreach (var col in csvdef.Fields)
+                    var dtStart = DateTime.Now;
+
+                    // analyze and determine csv definition
+                    CsvEdit.ReformatDataFile(csvdef, editDataTime, editDecimal, editSeparator, updateSeparator, updateQuotes, replaceCrLf, trimAllValues, alignVert);
+
+                    var dtElapsed = (DateTime.Now - dtStart).ToString(@"hh\:mm\:ss\.fff");
+
+                    // display the reformat parameters to user
+                    string msg = "";
+
+                    if (editDataTime != "")
                     {
-                        if (col.DataType == ColumnType.DateTime) col.UpdateDateTimeMask(editDataTime);
-                    }
-                };
+                        msg += string.Format("Reformat datetime format from \"{0}\" to \"{1}\"\r\n", csvdef.DateTimeFormat, editDataTime);
+                        csvdef.DateTimeFormat = editDataTime;
+                        foreach (var col in csvdef.Fields)
+                        {
+                            if (col.DataType == ColumnType.DateTime) col.UpdateDateTimeMask(editDataTime);
+                        }
+                    };
 
-                if (editDecimal != "")
-                {
-                    msg += string.Format("Reformat decimal separator from {0} to {1}\r\n", csvdef.DecimalSymbol, editDecimal);
-                    csvdef.DecimalSymbol = editDecimal[0];
-                };
-
-                if (updateSeparator)
-                {
-                    string oldsep = csvdef.Separator == '\0' ? "{Fixed width}" : (csvdef.Separator == '\t' ? "{Tab}" : csvdef.Separator.ToString());
-                    string newsep = editSeparator == "\0" ? "{Fixed width}" : (editSeparator == "\t" ? "{Tab}" : editSeparator);
-
-                    // fixed width doesn't contain header line (for example, columns can be width=1, no room in header line for column name longer than 1 character)
-                    if (editSeparator == "\0")
+                    if (editDecimal != "")
                     {
-                        csvdef.ColNameHeader = false;
-                    }
+                        msg += string.Format("Reformat decimal separator from {0} to {1}\r\n", csvdef.DecimalSymbol, editDecimal);
+                        csvdef.DecimalSymbol = editDecimal[0];
+                    };
 
-                    msg += string.Format("Reformat column separator from {0} to {1}\r\n", oldsep, newsep);
-                    csvdef.Separator = editSeparator[0];
-                };
+                    if (updateSeparator)
+                    {
+                        string oldsep = csvdef.Separator == '\0' ? "{Fixed width}" : (csvdef.Separator == '\t' ? "{Tab}" : csvdef.Separator.ToString());
+                        string newsep = editSeparator == "\0" ? "{Fixed width}" : (editSeparator == "\t" ? "{Tab}" : editSeparator);
 
-                //if (updateQuotes != 0)
-                //{
+                        // fixed width doesn't contain header line (for example, columns can be width=1, no room in header line for column name longer than 1 character)
+                        if (editSeparator == "\0")
+                        {
+                            csvdef.ColNameHeader = false;
+                        }
+
+                        msg += string.Format("Reformat column separator from {0} to {1}\r\n", oldsep, newsep);
+                        csvdef.Separator = editSeparator[0];
+                    };
+
+                    //if (updateQuotes != 0)
+                    //{
                     var quotetxt = "None / Minimal";
                     if (updateQuotes == 1) quotetxt = "Values with spaces";
                     if (updateQuotes == 2) quotetxt = "All string values";
@@ -249,21 +252,22 @@ namespace Kbg.NppPluginNET
                     if (updateQuotes == 4) quotetxt = "All values";
 
                     msg += string.Format("Reformat apply quotes: {0}\r\n", quotetxt);
-                //};
+                    //};
 
-                if (trimAllValues)
-                {
-                    msg += "Trim all values\r\n";
+                    if (trimAllValues)
+                    {
+                        msg += "Trim all values\r\n";
+                    }
+
+                    // display process message
+                    msg += string.Format("Reformat data is ready, time elapsed {0}\r\n", dtElapsed);
+                    txtOutput.Text = msg;
+
+                    // refresh datadefinition
+                    txtSchemaIni.Text = csvdef.GetIniLines();
+                    btnApply.Enabled = true;
+                    //btnApply.Enabled = true;
                 }
-
-                // display process message
-                msg += string.Format("Reformat data is ready, time elapsed {0}\r\n", dtElapsed);
-                txtOutput.Text = msg;
-
-                // refresh datadefinition
-                txtSchemaIni.Text = csvdef.GetIniLines();
-                btnApply.Enabled = true;
-                //btnApply.Enabled = true;
             }
         }
 
@@ -279,11 +283,15 @@ namespace Kbg.NppPluginNET
             txtSchemaIni.Modified = false;
             CsvDefinition csvdef = new CsvDefinition(txtSchemaIni.Text);
 
-            // update the master list of csv definitions
-            Main.UpdateCSVChanges(csvdef, true);
+            // check if valid dictionary
+            if (csvdef.Fields.Count > 0)
+            {
+                // update the master list of csv definitions
+                Main.UpdateCSVChanges(csvdef, true);
 
-            // update screen, to smooth out any user input errors
-            SetCsvDefinition(csvdef);
+                // update screen, to smooth out any user input errors
+                SetCsvDefinition(csvdef);
+            }
         }
 
         private void btnSplit_Click(object sender, EventArgs e)
@@ -291,50 +299,54 @@ namespace Kbg.NppPluginNET
             // get csv definition
             CsvDefinition csvdef = new CsvDefinition(txtSchemaIni.Text);
 
-            // show split column dialog
-            var frmsplit = new ColumnSplitForm();
-            frmsplit.InitialiseSetting(csvdef);
-            DialogResult r = frmsplit.ShowDialog();
-
-            // user clicked OK or Cancel
-            int cod = frmsplit.SplitCode;
-            int idx = frmsplit.SplitColumn;
-            string par1 = frmsplit.SplitParam1;
-            string par2 = frmsplit.SplitParam2;
-            bool rem = frmsplit.SplitRemove;
-
-            // clear up
-            frmsplit.Dispose();
-
-            // return true (OK) or false (Cancel)
-            if (r == DialogResult.OK)
+            // check if valid dictionary
+            if (csvdef.Fields.Count > 0)
             {
-                // clear any previous output
-                txtOutput.Clear();
-                txtOutput.Update();
+                // show split column dialog
+                var frmsplit = new ColumnSplitForm();
+                frmsplit.InitialiseSetting(csvdef);
+                DialogResult r = frmsplit.ShowDialog();
 
-                var dtStart = DateTime.Now;
+                // user clicked OK or Cancel
+                int cod = frmsplit.SplitCode;
+                int idx = frmsplit.SplitColumn;
+                string par1 = frmsplit.SplitParam1;
+                string par2 = frmsplit.SplitParam2;
+                bool rem = frmsplit.SplitRemove;
 
-                // split column
-                CsvEdit.ColumnSplit(csvdef, idx, cod, par1, par2, rem);
+                // clear up
+                frmsplit.Dispose();
 
-                var dtElapsed = (DateTime.Now - dtStart).ToString(@"hh\:mm\:ss\.fff");
+                // return true (OK) or false (Cancel)
+                if (r == DialogResult.OK)
+                {
+                    // clear any previous output
+                    txtOutput.Clear();
+                    txtOutput.Update();
 
-                // ready message
-                string msg = "";
-                if (cod == 1) msg = "invalid values";
-                if (cod == 2) msg = "character " + par1;
-                if (cod == 3) msg = "position " + par1;
-                if (cod == 4) msg = "when contains " + par1;
-                if (cod == 5) msg = "decode multiple value " + par1;
-                msg = string.Format("Column \"{0}\" was split on \"{1}\"\r\n", csvdef.Fields[idx].Name, msg);
+                    var dtStart = DateTime.Now;
 
-                // display process message
-                msg += string.Format("Split column is ready, time elapsed {0}\r\n", dtElapsed);
-                txtOutput.Text = msg;
+                    // split column
+                    CsvEdit.ColumnSplit(csvdef, idx, cod, par1, par2, rem);
 
-                // refresh datadefinition
-                OnBtnDetectColumns_Click(sender, e);
+                    var dtElapsed = (DateTime.Now - dtStart).ToString(@"hh\:mm\:ss\.fff");
+
+                    // ready message
+                    string msg = "";
+                    if (cod == 1) msg = "invalid values";
+                    if (cod == 2) msg = "character " + par1;
+                    if (cod == 3) msg = "position " + par1;
+                    if (cod == 4) msg = "when contains " + par1;
+                    if (cod == 5) msg = "decode multiple value " + par1;
+                    msg = string.Format("Column \"{0}\" was split on \"{1}\"\r\n", csvdef.Fields[idx].Name, msg);
+
+                    // display process message
+                    msg += string.Format("Split column is ready, time elapsed {0}\r\n", dtElapsed);
+                    txtOutput.Text = msg;
+
+                    // refresh datadefinition
+                    OnBtnDetectColumns_Click(sender, e);
+                }
             }
         }
 
