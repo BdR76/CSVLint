@@ -30,6 +30,24 @@ namespace Kbg.NppPluginNET
             Category("Analyze"), DefaultValue(true)]
         public bool DecimalLeadingZero { get; set; }
 
+        private int _ErrorTolerance;
+        public float _ErrorTolerancePerc;
+
+        [Description("Error tolerance percentage, when analyzing allow X % errors. For example when a column has 991 integers and 9 decimals it's interpreted as an integer column."), Category("Analyze"), DefaultValue(1)]
+        public int ErrorTolerance
+        {
+            get
+            {
+                return this._ErrorTolerance;
+            }
+            set
+            {
+                // set string representation, may include "SysYear"
+                this._ErrorTolerance = value;
+                this._ErrorTolerancePerc = (float)0.01 * value;
+            }
+        }
+
         [Description("When detecting or validating date or datetime values, years smaller than this value will be considered as out-of-range."),
             Category("Analyze"), DefaultValue(1900)]
         public int YearMinimum { get; set; }

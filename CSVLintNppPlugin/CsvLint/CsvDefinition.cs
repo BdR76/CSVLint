@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Windows.Forms;
 
 namespace CSVLint
 {
@@ -163,7 +164,7 @@ namespace CSVLint
         public List<int> FieldWidths { get; set; }
 
         /// field definitions
-        public List<CsvColumn> Fields { get; set; }
+        public List<CsvColumn> Fields { get; set; } = new List<CsvColumn>(); // always create
 
         /// first line contains column names
         public bool ColNameHeader { get; set; } = true;
@@ -177,14 +178,11 @@ namespace CSVLint
 
         public CsvDefinition()
         {
-            Fields = new List<CsvColumn>();
         }
 
         public CsvDefinition(char separator)
         {
             this.Separator = separator;
-
-            Fields = new List<CsvColumn>();
         }
 
         public CsvDefinition(char separator, char quoteEscapeChar, char commentChar, bool colNameHeader, List<int> fieldWidths = null)
@@ -201,8 +199,6 @@ namespace CSVLint
             {
                 this.FieldWidths = new List<int>();
             }
-
-            Fields = new List<CsvColumn>();
         }
 
         public void AddColumn(string name = "Col")
@@ -371,8 +367,8 @@ namespace CSVLint
             if (dup.Count > 0)
             {
                 string errmsg = string.Format("Duplicate key(s) found ({0})", string.Join(",", dup));
-                throw new ArgumentException(errmsg);
-                //MessageBox.Show(errmsg, "Exception", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                //throw new ArgumentException(errmsg);
+                MessageBox.Show(errmsg, "Error in schema.ini", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             else
             {
@@ -392,8 +388,6 @@ namespace CSVLint
 
         private void CsvDefInitFromKeys(Dictionary<string, string> inikeys)
         {
-            Fields = new List<CsvColumn>();
-
             // TODO: really needed to also keep widths separate from Fields? because each Fields also contains a MaxWidth
             FieldWidths = new List<int>();
 

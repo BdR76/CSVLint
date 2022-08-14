@@ -113,6 +113,7 @@ namespace CSVLint
                     int other = 0;
                     char sep1 = '\0';
                     char sep2 = '\0';
+                    char seplast = '\0';
                     int ddmax1 = -1;
                     int ddmax2 = -1;
                     int ddmax3 = -1;
@@ -151,7 +152,12 @@ namespace CSVLint
                                 isNumeric = true;
                             }
                             // check if cannot be a datetime
-                            if ((!isNumeric) || (digitpart.Length == 3) || (digitpart.Length > 4))
+                            if (   (!isNumeric)               // not numeric
+                                || (digitpart.Length > 4)     // part too wide
+                                || ( (digitpart.Length == 3)  // 3 digits, but exception for milliseconds
+                                      && ( (seplast != '.') || (digitpartcount <= 2) )
+                                   )
+                                )
                             {
                                 ddmax1 = -1; // force the most likely datatype to not be non-datetime
                             }
@@ -165,6 +171,7 @@ namespace CSVLint
                             {
                                 other++;
                                 datesep++;
+                                seplast = ch;
                                 if ((sep1 == '\0') && (datesep == 1)) sep1 = ch;
                                 else if ((sep2 == '\0') && (datesep == 2)) sep2 = ch;
                             }
@@ -217,7 +224,7 @@ namespace CSVLint
                     // determine most likely datatype based on characters in string
 
                     // date, examples "31-12-2019", "1/1/2019", "2019-12-31", "1-1-99" etc.
-                    if ((length >= 6) && (length <= 10) && (datesep == 2) && (sep1 != ':') && (digits >= 4) && (digits <= 8) && (ddmax1 > 0) && ((ddmax1 <= 31) || (ddmax1 >= 1900)))
+                    if ((length >= 6) && (length <= 10) && (datesep == 2) && (sep1 != ':') && (sep1 == sep2) && (digits >= 4) && (digits <= 8) && (ddmax1 > 0) && ((ddmax1 <= 31) || (ddmax1 >= 1900)))
                     {
                         this.CountDateTime++;
                         if (this.DateSep == '\0') this.DateSep = sep1;
@@ -226,7 +233,7 @@ namespace CSVLint
                         if (this.DateMax3 < ddmax3) this.DateMax3 = ddmax3;
 
                         // keep full statistics
-                        if (fullstats) KeepMinMaxDateTime(data, ddmax1, ddmax2, 1);
+                        if (fullstats) KeepMinMaxDateTime(data, ddmax1, ddmax2, ddmax3, 1);
                     }
                     // or datetime, examples "31-12-2019 23:59:00", "1/1/2019 12:00", "2019-12-31 23:59:59.000", "1-1-99 9:00" etc.
                     else if ((length >= 13) && (length <= 23) && (datesep > 2) && (datesep <= 6) && (digits >= 7) && (digits <= 17) && (ddmax1 > 0) && ((ddmax1 <= 31) || (ddmax1 >= 1900)))
@@ -238,10 +245,10 @@ namespace CSVLint
                         if (this.DateMax3 < ddmax3) this.DateMax3 = ddmax3;
 
                         // keep full statistics
-                        if (fullstats) KeepMinMaxDateTime(data, ddmax1, ddmax2, 3);
+                        if (fullstats) KeepMinMaxDateTime(data, ddmax1, ddmax2, ddmax3, 3);
                     }
                     // or time, examples "9:00", "23:59:59", "23:59:59.000" etc.
-                    else if ((length >= 4) && (length <= 12) && (sep1 == ':') && (datesep >= 1) && (datesep <= 3) && (digits >= 3) && (digits <= 9) && (ddmax1 > 0) && (ddmax1 <= 23) && (ddmax2 <= 59))
+                    else if ((length >= 4) && (length <= 12) && (sep1 == ':') && (datesep >= 1) && (datesep <= 3) && (digits >= 3) && (digits <= 9) && (ddmax1 >= 0) && (ddmax1 <= 23) && (ddmax2 <= 59))
                     {
                         this.CountDateTime++;
                         if (this.DateSep == '\0') this.DateSep = sep1;
@@ -250,7 +257,7 @@ namespace CSVLint
                         if (this.DateMax3 < ddmax3) this.DateMax3 = ddmax3;
 
                         // keep full statistics
-                        if (fullstats) KeepMinMaxDateTime(data, ddmax1, ddmax2, 2);
+                        if (fullstats) KeepMinMaxDateTime(data, ddmax1, ddmax2, ddmax3, 2);
                     }
                     else if ((digits > 0) && (point == 0) && (comma == 0) && (sign <= 1) && (signpos == 0) && (other == 0) && (length <= Main.Settings.IntegerDigitsMax))
                     {
@@ -266,7 +273,7 @@ namespace CSVLint
                             if (fullstats) KeepMinMaxInteger(data);
                         }
                     }
-                    else if ((digits > 0) && ((point == 1) || (comma == 1)) && (sign <= 1) && (other == 0) && (datesep <= 2) ) // datesep <= 2 for example "-12.34" a dot and a minus
+                    else if ((digits > 0) && ((point == 1) || (comma == 1)) && (sign <= 1) && (signpos == 0) && (other == 0) && (datesep <= 2) ) // datesep <= 2 for example "-12.34" a dot and a minus
                     {
                         // numeric integer, examples "12.3", "-99,9" etc.
                         this.CountDecimal++;
@@ -342,7 +349,7 @@ namespace CSVLint
             }
         }
 
-        public void KeepMinMaxDateTime(string value, int ddmax1, int ddmax2, int datatype)
+        public void KeepMinMaxDateTime(string value, int ddmax1, int ddmax2, int ddmax3, int datatype)
         {
             // TODO: this is not optimal, could still miss some minimum/maximum dates when initially assuming incorrect format
 
@@ -355,26 +362,29 @@ namespace CSVLint
                 if ((datatype == 1) || (datatype == 3))
                 {
                     // YMD = 1
-                    if (ddmax1 > 1000)
+                    if ((ddmax1 > 31) && (ddmax3 > 12) && (ddmax3 <= 31))
                     {
                         stat_dat_dmy = 1;
-                        stat_dat_format = string.Format("yyyy{0}M{0}d", this.DateSep == '\0' ? "" : this.DateSep.ToString());
+                        var yearmask = (ddmax1 >= 1000 ? "yyyy" : "yy");
+                        stat_dat_format = string.Format("{0}{1}M{1}d", yearmask, this.DateSep == '\0' ? "" : this.DateSep.ToString());
                         newformat = true;
                     }
 
                     // DMY = 2
-                    if ((ddmax1 > 12) && (ddmax1 <= 31))
+                    if ((ddmax1 > 12) && (ddmax1 <= 31) && (ddmax3 > 31))
                     {
                         stat_dat_dmy = 2;
-                        stat_dat_format = string.Format("d{0}M{0}yyyy", this.DateSep == '\0' ? "" : this.DateSep.ToString());
+                        var yearmask = (ddmax3 >= 1000 ? "yyyy" : "yy");
+                        stat_dat_format = string.Format("d{1}M{1}{0}", yearmask, this.DateSep == '\0' ? "" : this.DateSep.ToString());
                         newformat = true;
                     }
 
                     // MDY = 3
-                    if ((ddmax2 > 12) && (ddmax2 <= 31))
+                    if ((ddmax2 > 12) && (ddmax2 <= 31) && (ddmax3 > 31))
                     {
                         stat_dat_dmy = 3;
-                        stat_dat_format = string.Format("M{0}d{0}yyyy", this.DateSep == '\0' ? "" : this.DateSep.ToString());
+                        var yearmask = (ddmax3 >= 1000 ? "yyyy" : "yy");
+                        stat_dat_format = string.Format("M{1}d{1}{0}", yearmask, this.DateSep == '\0' ? "" : this.DateSep.ToString());
                         newformat = true;
                     }
 
@@ -383,11 +393,13 @@ namespace CSVLint
                     {
                         if (ddmax1 > 31)
                         {
-                            stat_dat_format = string.Format("yyyy{0}M{0}d", this.DateSep == '\0' ? "" : this.DateSep.ToString());
+                            var yearmask = (ddmax1 >= 1000 ? "yyyy" : "yy");
+                            stat_dat_format = string.Format("{0}{1}M{1}d", yearmask, this.DateSep == '\0' ? "" : this.DateSep.ToString());
                         }
                         else
                         {
-                            stat_dat_format = string.Format("d{0}M{0}yyyy", this.DateSep == '\0' ? "" : this.DateSep.ToString());
+                            var yearmask = (ddmax3 >= 1000 ? "yyyy" : "yy");
+                            stat_dat_format = string.Format("d{1}M{1}{0}", yearmask, this.DateSep == '\0' ? "" : this.DateSep.ToString());
                         }
                     }
                 }
@@ -446,6 +458,25 @@ namespace CSVLint
             }
         }
 
+        private bool CountDataTypeSignificant(int count1, int count2, int count3, int count4)
+        {
+            // check if <count1> datatype, is the most significant
+
+            // cannot divide by zero
+            if ((count1 + count2 + count3 + count4) == 0)
+            {
+                return false;
+            }
+            else
+            {
+                // check ratio of other datatypes
+                var errorrratio = (1.0 * (count2 + count3 + count4)) / (count1 + count2 + count3 + count4);
+
+                // ratio of datatypes other than <count1>, check if less than significant 
+                return (errorrratio < Main.Settings._ErrorTolerancePerc);
+            }
+        }
+
         public CsvColumn InferDatatype()
         {
             // determine most likely datatype based on data
@@ -464,10 +495,7 @@ namespace CSVLint
             if ((this.CountInteger > 0) && (this.CountDecimal > 0))
             {
                 // decimal values ratio to integer values
-                var decratio = 1.0 * this.CountDecimal / (this.CountInteger + this.CountDecimal);
-
-                // if larger than 1 percent, example 10 decimal values and 990 integers
-                if (decratio > 0.01)
+                if (!CountDataTypeSignificant(this.CountInteger, this.CountDecimal, 0, 0))
                 {
                     // consider it to be a decimal column
                     this.CountDecimal += this.CountInteger;
@@ -477,12 +505,12 @@ namespace CSVLint
             }
 
             // check if whole number integers (no decimals)
-            if ((this.CountInteger > this.CountString) && (this.CountInteger > this.CountDecimal) && (this.CountInteger > this.CountDateTime))
+            if (CountDataTypeSignificant(this.CountInteger, this.CountString, this.CountDecimal, this.CountDateTime))
             {
                 result.DataType = ColumnType.Integer;
             }
             // check decimals/numeric
-            else if ((this.CountDecimal > this.CountString) && (this.CountDecimal > this.CountInteger) && (this.CountDecimal > this.CountDateTime))
+            else if (CountDataTypeSignificant(this.CountDecimal, this.CountString, this.CountInteger, this.CountDateTime))
             {
                 result.DataType = ColumnType.Decimal;
                 char dec = this.CountDecimalPoint > this.CountDecimalComma ? '.' : ',';
@@ -503,7 +531,7 @@ namespace CSVLint
                 result.DecimalSymbol = dec;
             }
             // check date or datetime
-            else if ((this.CountDateTime > this.CountString) && (this.CountDateTime > this.CountInteger) && (this.CountDateTime > this.CountDecimal))
+            else if (CountDataTypeSignificant(this.CountDateTime, this.CountString, this.CountInteger, this.CountDecimal))
             {
                 result.DataType = ColumnType.DateTime;
                 // dateformat order, assume normal format (TODO: get system default here, how?)
