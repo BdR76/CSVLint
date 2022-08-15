@@ -61,9 +61,17 @@ When a file is opened the plug-in will:
 2) check if the `schema.ini` contains a section for the filename
 2) if no `schema.ini` or section found, then try to auto-detect metadata
 
-Note; if "Detect columns" cannot automatically detected any columns, then
-the metadata definition will default to a "TextFile" with one column of
-width 9999 characters, i.e. no columns found.
+Note; if "Detect columns" cannot automatically detect any columns, then
+the metadata definition will look like this:
+
+    Format=FixedLength
+    ColNameHeader=False
+    Col1=Textfile Text Width 9999
+
+In order for automatic column detection to work, the data should have
+the same amount of separator characters on each line, and the separator
+should be one of the characters specified in the `Separators` setting,
+see the [Settings screen](#Settings).
 
 You can manually override the auto-detection by unchecking the auto-detect
 checkbox. When the auto-detect is not checked and you press "Detect columns",
@@ -397,9 +405,9 @@ See below for an example of an SQL insert script the plugin will generate:
         `visitdat`,
         `labpth`
     ) values
-    (1, '2021-08-21', 10.8),
-    (2, '2021-09-05', 143.5),
-    (3, '2021-09-24', 76.4),
+    (1001, '2021-08-21', 10.8),
+    (2002, '2021-09-05', 143.5),
+    (3003, '2021-09-24', 76.4),
     -- etc.
 
 Select XML or JSON to convert the data to an XML or JSON dataset.
@@ -497,6 +505,8 @@ An about window
 Disclaimer
 ----------
 This software is free-to-use and it is provided as-is without warranty of any kind,
-always back-up your data files to prevent data loss.
+always back-up your data files to prevent data loss.  
+The [test data](../testdata/), examples and screenshots provided in this github repository do not contain real data, it
+is [randomly generated](https://github.com/BdR76/RandomValuesNPP) test data.
 
 BdR©2022 Free to use - send questions or comments: Bas de Reuver - bdr1976@gmail.com
