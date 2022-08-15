@@ -18,7 +18,7 @@ testdate = datetime.datetime.now()
 curryear = testdate.year
 
 # random digits as string
-def random_digits_string(c_min, c_max=None):
+def random_digits_string(c_min, c_max=None, c_thou=None):
     # how many digits
     howmany = c_min
     if c_max != None:
@@ -28,6 +28,13 @@ def random_digits_string(c_min, c_max=None):
     retval = ""
     for i in range(1, howmany+1):
         retval += str(random.randint(0, 9))
+
+    # add thousand separators
+    if c_thou != None:
+        retval = retval.lstrip("0")
+        # insert thousand separators
+        for i in range(len(retval)-3, 0, -3): # reversed, step -1
+            retval = retval[:i] + c_thou + retval[i:]
     return retval
 
 # random date as string
@@ -61,11 +68,11 @@ def random_datetime_string(mask, yr_min=None, yr_max=None):
 df = pd.DataFrame()
 
 for i in range(1, 10+1):
-    print(random_datetime_string("%#d-%#m-%Y %H:%M:%S"))
+    print(random_digits_string(3, 12, "."))
 
 #quit() # quit at this point
 
-for col in range(1, 100):
+for col in range(51, 60):
     print(col)
     tmpval = []
     for row in range(1, 100):
@@ -178,6 +185,27 @@ for col in range(1, 100):
             val = ("%d.%s" % ( random.randint(10, 15), random_digits_string(12)))
         elif col == 50:
             val = ("%d,%s" % ( random.randint(-20, 20), random_digits_string(16)))
+        # currency
+        elif col == 51:
+           val = ("%s%s" % (random.choice(["", "-"]), random_digits_string(5, 7, ".")))
+        elif col == 52:
+            val = ("%s%s" % (random.choice(["", "-"]), random_digits_string(8, 9, ",")))
+        elif col == 53:
+            val = ("%s,%02d" % ( random_digits_string(3, 5, "."), (random.randint(1, 19)*5)))
+        elif col == 54:
+            val = ("%s.%02d" % ( random_digits_string(3, 5, ","), (random.randint(1, 19)*5)))
+        elif col == 55:
+            val = ("€ %s,00" % (random_digits_string(4, 5, ".")))
+        elif col == 56:
+            val = ("USD %s.00" % (random_digits_string(4, 5, ",")))
+        elif col == 57:
+            val = ("€ %s%s,00" % (random.choice(["", "-"]), random_digits_string(4, 5, ",")))
+        elif col == 58:
+            val = ("%s$ %s.00" % (random.choice(["", "-"]), random_digits_string(4, 5, ",")))
+        elif col == 59:
+            val = random_digits_string(4, 4, ".") + ",00"
+        elif col == 60:
+            val = random_digits_string(4, 4, ".") + ",00"
         # other
         else:
             val = "other"

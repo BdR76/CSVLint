@@ -662,6 +662,15 @@ namespace CSVLint
         {
             string res = "";
 
+            // clear message to user when no columns found
+            if ((this.Fields.Count == 1) && (this.Fields[0].DataType == ColumnType.String) && (this.Fields[0].MaxWidth >= 9999))
+            {
+                // give a clear message
+                res += "; *********************************\r\n";
+                res += "; Unable to detect column separator\r\n";
+                res += "; *********************************\r\n";
+            }
+
             // defaults
             if (this.Separator == '\t') res += "Format=TabDelimited\r\n";
             if (this.Separator == ',') res += "Format=CSVDelimited\r\n";

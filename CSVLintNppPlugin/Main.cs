@@ -539,7 +539,7 @@ namespace Kbg.NppPluginNET
                 switch (Main.Settings.MetadataType)
                 {
                     case 1: // schema JSON
-                        CsvGenerateCode.GenerateJSONmetadata(csvdef);
+                        CsvGenerateCode.GenerateSchemaJSON(csvdef);
                         break;
                     case 2: // R - script
                         CsvGenerateCode.GenerateRScript(csvdef);

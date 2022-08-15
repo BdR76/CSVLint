@@ -45,12 +45,13 @@ The CSV Lint plugin is available in the Plugins Admin in Notepad++ v8.1.9.1 or n
 * Click `Yes` to quit Notepad++ and "continue the operations"
 * Click `Yes` on the Windows notification "Allow app to make changes"
 
-If you have a Notepad++ version older than v8.1.9.1 or want to install it manually:
+If you have a Notepad++ version older than v8.1.9.1 or want to install the plug-in manually:
 
 * Go to the [releases page](https://github.com/BdR76/CSVLint/releases)
 * Find the latest release
 * 32bit version; unzip [CSVLint.dll (32bit)](../../releases/download/0.4.5.4/CSVLint_x86.zip/) to folder `.\Program Files (x86)\Notepad++\plugins\CSVLint\CSVLint.dll`.
 * 64bit version; unzip [CSVLint.dll (64bit)](../../releases/download/0.4.5.4/CSVLint_x64.zip/) to folder `.\Program Files\Notepad++\plugins\CSVLint\CSVLint.dll`.
+* restart Notepad++
 
 How to use it
 -------------
@@ -117,27 +118,27 @@ Roadmap/goals
 -------------
 The CSV Lint plugin is work-in-progress, here is list of features I want to add (~~strikethrough~~ is done)
 
-* ~~Convert datetime values to different formats~~
-* ~~Convert decimal symbol to point/comma~~
-* ~~Toggle between comma, semicolon, tab separated formats~~
-* ~~Improve file reading, to process/edit large files (>1MB)~~
-* ~~Count unique values based on column(s)~~
-* ~~Allow format masks per individual column~~
-* ~~Support quoted strings~~
-* ~~Support two-digit year date values~~
-* Support for currency/thousand separator "12.345,00" or "1,250,000.00" etc.
-* ~~Load/save schema.ini~~
-* ~~Improve automatic datatype detection~~
-* ~~Add feature GUI click to jump to error line~~
-* Support code=label values (in schema.json?) + error check + replace-code-with-label
-* Support FrictionlessData schema.json format
-* Improve GUI instead of plain text
-* Add feature generate ~~scripts (SQL,~~ SPSS, Python(?), XML+column=xpath?)
-* ~~Syntax highlighting, display columns as [colors](https://community.notepad-plus-plus.org/topic/21124/c-adding-a-custom-styler-or-lexer-in-c-for-scintilla-notepad/)~~
-* Search for value in column, search next empty/non-empty in column
-* Search/replace in single column, multiple columns (option only replace n-th occurance? example "datetime(2008, 1, 1, 12, 59, 00)" replace ', ' with '-' or ':')
-* Search/replace only n-th occurance? Or only empty occurance?
-* ~~Split column into new column ("123/456" -> "123", "456")~~
+- [x] ~~Convert datetime values to different formats~~
+- [x] ~~Convert decimal symbol to point/comma~~
+- [x] ~~Toggle between comma, semicolon, tab separated formats~~
+- [x] ~~Improve file reading, to process/edit large files (>1MB)~~
+- [x] ~~Count unique values based on column(s)~~
+- [x] ~~Allow format masks per individual column~~
+- [x] ~~Support quoted strings~~
+- [x] ~~Support two-digit year date values~~
+- [ ] Support for currency/thousand separator "12.345,00" or "1,250,000.00" etc.
+- [x] ~~Load/save schema.ini~~
+- [x] ~~Improve automatic datatype detection~~
+- [x] ~~Add feature GUI click to jump to error line~~
+- [ ] Support code=label values (in schema.json?) + error check + replace-code-with-label
+- [ ] Support FrictionlessData schema.json format
+- [ ] Improve GUI instead of plain text
+- [x] ~~Add feature generate scripts (SQL, Python, R)~~
+- [x] ~~Syntax highlighting, display columns as [colors](https://community.notepad-plus-plus.org/topic/21124/c-adding-a-custom-styler-or-lexer-in-c-for-scintilla-notepad/)~~
+- [ ] Search for value in column, search next empty/non-empty in column
+- [ ] Search/replace in single column, multiple columns (option only replace n-th occurance? example "datetime(2008, 1, 1, 12, 59, 00)" replace ', ' with '-' or ':')
+- [ ] Search/replace only n-th occurance? Or only empty occurance?
+- [x] ~~Split column into new column ("123/456" -> "123", "456")~~
 
 Trouble shooting / Known issues
 -------------------------------
@@ -186,6 +187,6 @@ History
 25-jul-2022 - v0.4.5.3 Manually detect columns, improved fixed width support  
 14-aug-2022 - v0.4.5.4 Improved datatype and datetime mask detection, various bugfixes  
 
-Total downloads v0.4.1 `4.1k`, v0.4.2 `98`, v0.4.3 `11k`, v0.4.4 `13k`, v0.4.5 `13k`, v0.4.5.1 `2.2k`
+Total downloads v0.4.1 `4.2k`, v0.4.2 `101`, v0.4.3 `12k`, v0.4.4 `14k`, v0.4.5 `16k`, v0.4.5.1 `11k`, v0.4.5.2 `5k`, v0.4.5.3 `344`
 
 BdR©2021 Free to use - send questions or comments: Bas de Reuver - bdr1976@gmail.com
