@@ -5,9 +5,8 @@
 # BdR 2022 - bdr1976@gmail.com
 
 import pandas as pd
-import math
 import random
-import array as arr
+import math
 import datetime
 from datetime import timedelta
 
@@ -72,7 +71,7 @@ for i in range(1, 10+1):
 
 #quit() # quit at this point
 
-for col in range(51, 60):
+for col in range(1, 100):
     print(col)
     tmpval = []
     for row in range(1, 100):

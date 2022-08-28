@@ -36,15 +36,16 @@ CSVLint is based on a prototype project [Dataset MultiTool](https://github.com/B
 How to install
 --------------
 
-The CSV Lint plugin is available in the Plugins Admin in Notepad++ v8.1.9.1 or newer.
+The CSV Lint plugin is available in Notepad++ in the Plugins Admin menu.
 
-* Install [Notepad++](https://notepad-plus-plus.org/) v8.1.9.1 or newer
+* Install [Notepad++](https://notepad-plus-plus.org/)
 * In Notepad++ go to menu item `Plugins > Plugins Admin...`
 * On tab `Available` search for `csv lint`
 * Check the checkbox and press `Install` button
 * Click `Yes` to quit Notepad++ and "continue the operations"
 * Click `Yes` on the Windows notification "Allow app to make changes"
 
+Note: the plug-in is available in the Plugins Admin menu starting with Notepad++ v8.1.9.1.
 If you have a Notepad++ version older than v8.1.9.1 or want to install the plug-in manually:
 
 * Go to the [releases page](https://github.com/BdR76/CSVLint/releases)
@@ -169,7 +170,9 @@ The CSV Lint plug-in couldn't have been created without their source examples, s
 Disclaimer
 ----------
 This software is free-to-use and it is provided as-is without warranty of any kind,
-always back-up your data files to prevent data loss.
+always back-up your data files to prevent data loss.  
+The [test data](./testdata/), examples and screenshots provided in this github repository do not contain real data, it
+is [randomly generated](https://github.com/BdR76/RandomValuesNPP) test data.
 
 History
 -------

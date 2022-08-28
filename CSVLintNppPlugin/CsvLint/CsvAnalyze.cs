@@ -356,6 +356,10 @@ namespace CSVLint
                     // if value in first row (=Names) is empty then probably not header names
                     if (namcol.Name == "") emptyname = true;
                 }
+
+                // TODO: carriage returns in header name not supported
+                // replace with space so that schema.ini can at least be validated
+                namcol.Name = namcol.Name.Replace("\r\n", " ").Replace('\r', ' ').Replace('\n', ' ');
             }
 
             // if all header Names (=frst row) comply with the column datatype, then there is no column names

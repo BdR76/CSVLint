@@ -15,11 +15,20 @@ namespace Kbg.NppPluginNET
             chkAutoDetect.Checked = Main.Settings.AutoDetectColumns;
         }
 
-        public void SetCsvDefinition(CsvDefinition csvdef)
+        public void SetCsvDefinition(CsvDefinition csvdef, bool applybtn)
         {
+            // clear message to user when no columns found
+            var msg = "";
+            if ((csvdef.Fields.Count == 1) && (csvdef.Fields[0].DataType == ColumnType.String) && (csvdef.Fields[0].MaxWidth >= 9999))
+            {
+                // give a clear message
+                msg += "; *********************************\r\n";
+                msg += "; Unable to detect column separator\r\n";
+                msg += "; *********************************\r\n";
+            }
             // display csv definition
-            txtSchemaIni.Text = csvdef.GetIniLines();
-            btnApply.Enabled = false;
+            txtSchemaIni.Text = msg + csvdef.GetIniLines();
+            btnApply.Enabled = applybtn;
         }
 
         private void OnBtnDetectColumns_Click(object sender, EventArgs e)
@@ -50,8 +59,7 @@ namespace Kbg.NppPluginNET
                 var dtElapsed = (DateTime.Now - dtStart).ToString(@"hh\:mm\:ss\.fff");
 
                 // display csv definition
-                txtSchemaIni.Text = csvdef.GetIniLines();
-                btnApply.Enabled = true;
+                SetCsvDefinition(csvdef, true);
 
                 txtOutput.Clear();
                 txtOutput.Text = string.Format("Detecting columns from data is ready, time elapsed {0}", dtElapsed);
@@ -264,8 +272,7 @@ namespace Kbg.NppPluginNET
                     txtOutput.Text = msg;
 
                     // refresh datadefinition
-                    txtSchemaIni.Text = csvdef.GetIniLines();
-                    btnApply.Enabled = true;
+                    SetCsvDefinition(csvdef, true);
                     //btnApply.Enabled = true;
                 }
             }
@@ -290,7 +297,7 @@ namespace Kbg.NppPluginNET
                 Main.UpdateCSVChanges(csvdef, true);
 
                 // update screen, to smooth out any user input errors
-                SetCsvDefinition(csvdef);
+                SetCsvDefinition(csvdef, false);
             }
         }
 

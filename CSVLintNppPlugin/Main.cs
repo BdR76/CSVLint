@@ -371,7 +371,7 @@ namespace Kbg.NppPluginNET
 
             if (frmCsvLintDlg != null)
             {
-                frmCsvLintDlg.SetCsvDefinition(csvdef);
+                frmCsvLintDlg.SetCsvDefinition(csvdef, false);
             }
         }
 
@@ -538,17 +538,17 @@ namespace Kbg.NppPluginNET
             {
                 switch (Main.Settings.MetadataType)
                 {
-                    case 1: // schema JSON
-                        CsvGenerateCode.GenerateSchemaJSON(csvdef);
+                    case 1: // R - script
+                        CsvGenerateCode.GenerateRScript(csvdef); 
                         break;
-                    case 2: // R - script
-                        CsvGenerateCode.GenerateRScript(csvdef);
-                        break;
-                    case 3: // Python
-                        CsvGenerateCode.GeneratePythonPanda(csvdef);
-                        break;
-                    default: // case 0: schema ini
+                    case 2: // schema ini
                         CsvGenerateCode.GenerateSchemaIni(csvdef);
+                        break;
+                    case 3: // schema JSON
+                        CsvGenerateCode.GenerateSchemaJSON(csvdef); 
+                        break;
+                    default: // case 0: Python
+                        CsvGenerateCode.GeneratePythonPanda(csvdef); 
                         break;
                 }
             }

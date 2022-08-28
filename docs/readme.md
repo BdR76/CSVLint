@@ -71,7 +71,9 @@ the metadata definition will look like this:
 In order for automatic column detection to work, the data should have
 the same amount of separator characters on each line, and the separator
 should be one of the characters specified in the `Separators` setting,
-see the [Settings screen](#Settings).
+see the [Settings screen](#Settings). For fixed width data files, each
+line should have the same length, and columns are detected by looking where
+numeric, non-numeric and space characters start or end.
 
 You can manually override the auto-detection by unchecking the auto-detect
 checkbox. When the auto-detect is not checked and you press "Detect columns",
@@ -133,7 +135,7 @@ Reformat data dialog has several options to reformat the entire data file.
 
 ### Datetime reformat ###
 
-Datetime format, reformat all datatime values in the file uniformly. Note that
+Datetime format, reformat all datetime values in the file uniformly. Note that
 both date and datetime values will get the same format. This means that it
 can potentially remove the time-part of datetime values, or add `00:00:00` as
 a time part to all values.
@@ -324,7 +326,7 @@ The output will contain the following information for each column.
 
 * DataTypes - the amount of values (and percentages) of each datatype value found in this column
 * Width range - the minimum and maximum length of all values
-* DateTime range - the minimum and maximum datatime value, if any datetime values found
+* DateTime range - the minimum and maximum datetime value, if any datetime values found
 * Integer range - the minimum and maximum integer value, if any integer values found
 * Decimal range - the minimum and maximum decimal value, if any decimal values found
 * Unique values - list of unique values, not shown when there are more than `UniqueValuesMax` unique values found (see settings)
@@ -422,14 +424,11 @@ Generate metadata in different formats to make it easier to process your csv fil
 
 ![CSV Lint Generate metadata dialog](/docs/csvlint_generate_metadata.png?raw=true "CSV Lint plug-in Generate metadata dialog")
 
-### schema ini ###
+### Python ###
 
-File and column metadata in [schema.ini](https://docs.microsoft.com/en-us/sql/odbc/microsoft/schema-ini-file-text-file-driver?view=sql-server-ver15)
-format for the Microsoft Jet OLE DB, also known as the ODBC text driver.
-
-### schema JSON ###
-
-File and column metadata in W3 schema JSON format (preliminary support).
+Generates a [Python](https://www.python.org/) script to read the csv data file
+as a dataframe. It contains the required scripting for the appropriate
+datatypes, and it is meant as just a starting point for further script development.
 
 ### R-script ###
 
@@ -438,14 +437,17 @@ as a dataframe. It contains the required scripting for the appropriate
 datatypes, and it is meant as a starting point for further processing in
 [R-Studio](https://www.rstudio.com/products/rstudio/).
 
-### Python ###
-
-Generates a [Python](https://www.python.org/) script to read the csv data file
-as a dataframe. It contains the required scripting for the appropriate
-datatypes, and it is meant as just a starting point for further script development.
-
-Note that the generated scripts doesn't handle all possible data errors,
+Note that the generated scripts don't handle all possible data errors,
 you'll need to write additional code to suit your data processing needs.
+
+### schema ini ###
+
+File and column metadata in [schema.ini](https://docs.microsoft.com/en-us/sql/odbc/microsoft/schema-ini-file-text-file-driver?view=sql-server-ver15)
+format for the Microsoft Jet OLE DB, also known as the ODBC text driver.
+
+### schema JSON ###
+
+File and column metadata in W3 schema JSON format (preliminary support).
 
 Settings
 --------
@@ -467,7 +469,7 @@ and they are stored in a settings file `%USERPROFILE%\AppData\Roaming\Notepad++\
 | DefaultQuoteChar | Default quote escape character when quotes exists inside text                                                   | "       |
 | NullValue        | Keyword for empty values or null values in the csv data, case-sensitive.                                        | NaN     |
 | SeparatorColor   | Include separator in syntax highlighting colors. Set to false and the separator characters are always white.    | false   |
-| Separators       | Preferred characters when automatically detecting the separator character. For special characters like tab, use \\t or \\u0009. | ,;\t| |
+| Separators       | Preferred characters when automatically detecting the separator character. For special characters like tab, use \\t or \\u0009. | ,;\t&#124; |
 | TransparentCursor| Transparent cursor line, changing this setting will require a restart of Notepad++                              | true    |
 | TrimValues       | Trim values before analyzing or editing (recommended).                                                          | true    |
 | UserPref section | Various input settings for the CSV Lint dialogs for Convert Data, Reformat, Split Column etc.                   |         |

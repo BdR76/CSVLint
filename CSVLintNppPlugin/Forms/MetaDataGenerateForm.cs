@@ -14,19 +14,19 @@ namespace CSVLintNppPlugin.Forms
         public void InitialiseSetting()
         {
             // save user preferences
-            rdbtnSchemaIni.Checked    = (Main.Settings.MetadataType == 0); // schema ini
-            rdbtnSchemaJSON.Checked   = (Main.Settings.MetadataType == 1); // schema JSON
-            rdbtnRScript.Checked      = (Main.Settings.MetadataType == 2); // R - script
-            rdbtnPython.Checked       = (Main.Settings.MetadataType == 3); // Python
+            rdbtnPython.Checked     = (Main.Settings.MetadataType == 0); // Python
+            rdbtnRScript.Checked    = (Main.Settings.MetadataType == 1); // R - script
+            rdbtnSchemaIni.Checked  = (Main.Settings.MetadataType == 2); // schema ini
+            rdbtnSchemaJSON.Checked = (Main.Settings.MetadataType == 3); // schema JSON
         }
 
         private void btnOk_Click(object sender, EventArgs e)
         {
             // save user preferences
-            int idx = 0; // schema ini
-            if (rdbtnSchemaJSON.Checked)   idx = 1; // schema JSON
-            if (rdbtnRScript.Checked)      idx = 2; // R - script
-            if (rdbtnPython.Checked)       idx = 3; // Python
+            int idx = 0; // Python
+            if (rdbtnPython.Checked)     idx = 1; // R - script
+            if (rdbtnRScript.Checked)    idx = 2; // schema ini
+            if (rdbtnSchemaJSON.Checked) idx = 3; // schema JSON
 
             Main.Settings.MetadataType = idx;
 
