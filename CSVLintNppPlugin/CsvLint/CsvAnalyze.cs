@@ -68,88 +68,91 @@ namespace CSVLint
             // analyse individual character frequencies
             while ((line = strfreq.ReadLine()) != null)
             {
-                // letter freq per line
-                var letterFrequency = new Dictionary<char, int>();
+                // ignore empty lines
+                if (line.Trim() != "") { 
+                    // letter freq per line
+                    var letterFrequency = new Dictionary<char, int>();
 
-                // line length
-                lineLengths.Increase(line.Length);
+                    // line length
+                    lineLengths.Increase(line.Length);
 
-                // end-of-line also technically counts as a column start/end, else the last columns width determined incorrectly
-                wordStarts.Increase(line.Length);
+                    // end-of-line also technically counts as a column start/end, else the last columns width determined incorrectly
+                    wordStarts.Increase(line.Length);
 
-                // process characters in this line
-                int spaces = 0, pos = 0, num = -1; // num  0 = text value  1 = numeric value  -1 = currently unknown
-                foreach (var chr in line)
-                {
-                    // check for separators
-                    letterFrequency.Increase(chr);
-                    occurrences.Increase(chr);
-
-                    // string value in quotes, treat as one continuous value, i.e. do not check content for column breaks
-                    if (chr == Main.Settings.DefaultQuoteChar) inQuotes = !inQuotes;
-                    else if (!inQuotes)
+                    // process characters in this line
+                    int spaces = 0, pos = 0, num = -1; // num  0 = text value  1 = numeric value  -1 = currently unknown
+                    foreach (var chr in line)
                     {
-                        letterFrequencyQuoted.Increase(chr);
-                        occurrencesQuoted.Increase(chr);
+                        // check for separators
+                        letterFrequency.Increase(chr);
+                        occurrences.Increase(chr);
 
-                        // check fixed columns
-                        int newcol = 0;
-                        if (chr == ' ')
+                        // string value in quotes, treat as one continuous value, i.e. do not check content for column breaks
+                        if (chr == Main.Settings.DefaultQuoteChar) inQuotes = !inQuotes;
+                        else if (!inQuotes)
                         {
-                            // a space after a numeric value
-                            if (num == 1)
-                            {
-                                num = -1; // reset text/numeric indicator because probably a new column
-                                spaces++; // count single space as "big space" i.e. 2 spaces or more
-                            }
+                            letterFrequencyQuoted.Increase(chr);
+                            occurrencesQuoted.Increase(chr);
 
-                            // 2 spaces or more could indicate new column
-                            if (++spaces > 1) bigSpaces.Increase(pos + 1);
-                        }
-                        else
-                        {
-                            // 2 spaces or more could indicate new column
-                            if (spaces > 1) newcol = 1;
-                            spaces = 0;
-
-                            // switch between alpha and numeric characters could indicate new column
-                            int isdigit = "0123456789".IndexOf(chr);
-                            // ignore characters that can be both numeric or alpha values example "A.B." or "Smith-Johnson"
-                            // Digits connected by certain characters can be one single column, not multiple,
-                            // For example date, time, telephonenr "12:34","555-890-4327" etc.
-                            int ignore = ",.-+:/\\".IndexOf(chr);
-                            if (ignore < 0)
+                            // check fixed columns
+                            int newcol = 0;
+                            if (chr == ' ')
                             {
-                                if (isdigit < 0)
+                                // a space after a numeric value
+                                if (num == 1)
                                 {
-                                    if (num == 1) newcol = 1;
-                                    num = 0; // currently in text value
+                                    num = -1; // reset text/numeric indicator because probably a new column
+                                    spaces++; // count single space as "big space" i.e. 2 spaces or more
                                 }
-                                else
+
+                                // 2 spaces or more could indicate new column
+                                if (++spaces > 1) bigSpaces.Increase(pos + 1);
+                            }
+                            else
+                            {
+                                // 2 spaces or more could indicate new column
+                                if (spaces > 1) newcol = 1;
+                                spaces = 0;
+
+                                // switch between alpha and numeric characters could indicate new column
+                                int isdigit = "0123456789".IndexOf(chr);
+                                // ignore characters that can be both numeric or alpha values example "A.B." or "Smith-Johnson"
+                                // Digits connected by certain characters can be one single column, not multiple,
+                                // For example date, time, telephonenr "12:34","555-890-4327" etc.
+                                int ignore = ",.-+:/\\".IndexOf(chr);
+                                if (ignore < 0)
                                 {
-                                    if (num == 0) newcol = 1;
-                                    num = 1; // currently in numeric value
+                                    if (isdigit < 0)
+                                    {
+                                        if (num == 1) newcol = 1;
+                                        num = 0; // currently in text value
+                                    }
+                                    else
+                                    {
+                                        if (num == 0) newcol = 1;
+                                        num = 1; // currently in numeric value
+                                    };
                                 };
-                            };
-                            // new column found
-                            if (newcol == 1) wordStarts.Increase(pos);
+                                // new column found
+                                if (newcol == 1) wordStarts.Increase(pos);
+                            }
                         }
+
+                        // next character position
+                        pos++;
                     }
 
-                    // next character position
-                    pos++;
-                }
+                    frequencies.Add(letterFrequency);
+                    if (!inQuotes)
+                    {
+                        frequenciesQuoted.Add(letterFrequencyQuoted);
+                        letterFrequencyQuoted = new Dictionary<char, int>();
+                        linesQuoted++;
+                    }
 
-                frequencies.Add(letterFrequency);
-                if (!inQuotes)
-                {
-                    frequenciesQuoted.Add(letterFrequencyQuoted);
-                    letterFrequencyQuoted = new Dictionary<char, int>();
-                    linesQuoted++;
+                    // stop after 20 lines
+                    if (lineCount++ > 20) break;
                 }
-
-                // stop after 20 lines
-                if (lineCount++ > 20) break;
             }
 
             strfreq.Dispose();
