@@ -1,7 +1,9 @@
 CSV Lint plug-in documentation
 ==============================
 
-**CSV Lint** is a plug-in for Notepad++ to work with csv and fixed width data files.
+**CSV Lint** is a plug-in for Notepad++ to work with [comma-separated values](https://en.wikipedia.org/wiki/Comma-separated_values)
+(csv) and fixed width data files.
+
 
 * [CSV Lint plug-in](https://github.com/BdR76/CSVLint/)
 * [Notepad++ homepage](http://notepad-plus-plus.org/)

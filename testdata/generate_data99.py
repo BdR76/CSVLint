@@ -9,9 +9,14 @@ import random
 import math
 import datetime
 from datetime import timedelta
+import string
 
 # constants
 FILE_NAME = "columns_99.txt"
+
+lorem_arr = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.".split(' ')
+fiction_arr = "Blank Doesnotexist Dreamedup Example Fabricated Fakery Fantasized Fantasy Feigned Fictional Fictitious Fictive Forinstance Imaginary Imagined Invented Madeup Makebelieve Mockup Nonexistent Notreal Phoney Placeholder Pretended Simulated Specimen Standin Testcase Unreal".split(' ')
+alpha_arr = "Alfa Bravo Charlie Delta Echo Foxtrot Golf Hotel India Juliet Kilo Lima Mike November Oscar Papa Quebec Romeo Sierra Tango Uniform Victor Whiskey Xray Yankee Zulu".split(' ')
 
 testdate = datetime.datetime.now()
 curryear = testdate.year
@@ -63,16 +68,35 @@ def random_datetime_string(mask, yr_min=None, yr_max=None):
 
     return rnddate.strftime(mask)
 
+# random lorem ipsum text
+def random_lorem_string(c_min, c_max=None):
+    # text how long
+    howlong = c_min
+    if c_max != None:
+        howlong = random.randint(c_min, c_max)
+
+    # built random lorem string
+    idx = random.randint(0, len(lorem_arr)-1)
+    retval = ""
+    while len(retval) < howlong:
+        if len(retval + lorem_arr[idx]) > howlong:
+            break
+        retval += lorem_arr[idx] + " "
+        idx = (idx + 1) % len(lorem_arr)
+
+    return retval.strip()
+
 # create an Empty DataFrame object
 df = pd.DataFrame()
 
-for i in range(1, 10+1):
-    print(random_digits_string(3, 12, "."))
-
+#for i in range(1, 10+1):
+#    print(random_lorem_string(10))
 #quit() # quit at this point
 
+print("Generating 99 oclumns:")
+
 for col in range(1, 100):
-    print(col)
+    print(("%s.." % col), end = '')
     tmpval = []
     for row in range(1, 100):
         # differnt columns values
@@ -164,7 +188,10 @@ for col in range(1, 100):
             val = random_datetime_string("%d%m%Y %H%M", -30)
         # decimals
         elif col == 41:
-           val = ("%d.%s" % ( random.randint(0, 12), random_digits_string(2)))
+            if random.randint(1, 20) == 10:
+                val = "<0.3"
+            else:
+                val = ("%d.%s" % ( random.randint(1, 12), random_digits_string(2)))
         elif col == 42:
             val = ("%d.%s" % ( random.randint(-9, 9), random_digits_string(3))).replace("0.", ".")
         elif col == 43:
@@ -206,6 +233,108 @@ for col in range(1, 100):
         elif col == 60:
             val = random_digits_string(4, 4, ".") + ",00"
         # other
+        elif col == 61:
+            val = random.choice(["yes", "no"])
+        elif col == 62:
+            val = random.choices(["MALE", "FEMALE", "-"], weights=(49, 49, 2))[0]
+        elif col == 63:
+            val = random.choices(alpha_arr)[0] + random.choice(["street", "road", "lane", "square"]) + " " + str(random.randint(1, 300))
+            if random.randint(1, 10) == 5:
+                val = random.choices(alpha_arr)[0] + "-" + val # add extra streenname part
+            if random.randint(1, 10) == 5:
+                val = val + random.choice("ABC") # add letter to housenumber
+        elif col == 64:
+            val = str(random.randint(1000, 9999)) + random.choice(string.ascii_uppercase) + random.choice(string.ascii_uppercase)
+        elif col == 65:
+            val = (random.choices(fiction_arr)[0] + random.choice(["city", "town", "ville", "fields", "port", "ton"])).upper()
+        elif col == 66:
+            dummy = random.randint(1, 100)
+            val = (random.choices(alpha_arr)[0] if dummy >=50 else random.choices(fiction_arr)[0])
+            if dummy % 3 == 0:
+                val = val + (str(random.randint(50, 99)) if dummy >=50 else str(random.randint(1990, 2015)))
+            if dummy % 2 == 0:
+                val = (random.choices(alpha_arr)[0] if dummy >=50 else random.choices(fiction_arr)[0]) + "." + val
+            val = val + "@" + random.choices(fiction_arr)[0] + random.choice([".com", ".org", ".net", ".at", ".ch", ".cz", ".de", ".dk", ".es", ".eu", ".fi", ".fr", ".gr", ".hr", ".hu", ".is", ".it", ".ie", ".nl", ".no", ".pl", ".pt", ".se", ".sm", ".ro ", ".ua", ".uk"])
+            val = val.lower()
+        elif col == 67:
+            val = random.choices(["NEG", "POS", "readrror", "-"], weights=(30, 10, 2, 2))[0]
+        elif col == 68:
+            val = random.choices(["NEG", "POS", "readrror", "-"], weights=(30, 10, 2, 2))[0]
+        elif col == 69:
+            val = random.choice(["Hb", "LDL", "HDL"])
+        elif col == 70:
+            val = random.choices(["mmol/L", "µmol/L", "mg/mL", "g/L", "g/dL", "g/100mL", "g%"], weights=(30, 20, 20, 5, 5, 5, 2))[0]
+        # random texts
+        elif col == 71:
+            val = random_lorem_string(10)
+        elif col == 72:
+            val = random_lorem_string(20)
+        elif col == 73:
+            val = random_lorem_string(30)
+        elif col == 74:
+            val = random_lorem_string(40)
+        elif col == 75:
+            val = random_lorem_string(50)
+        elif col == 76:
+            val = random_lorem_string(0, 10)
+        elif col == 77:
+            val = random_lorem_string(0, 20)
+        elif col == 78:
+            val = random_lorem_string(0, 30)
+        elif col == 79:
+            val = random_lorem_string(0, 40)
+        elif col == 80:
+            val = random_lorem_string(0, 50)
+        # random texts
+        elif col == 81:
+            val = random_lorem_string(10)
+        elif col == 82:
+            val = random_lorem_string(10)
+        elif col == 83:
+            val = random_lorem_string(10)
+        elif col == 84:
+            val = random_lorem_string(10)
+        elif col == 85:
+            val = random_lorem_string(10)
+        elif col == 86:
+            val = random_lorem_string(10)
+        elif col == 87:
+            val = random_lorem_string(10)
+        elif col == 88:
+            val = random_lorem_string(10)
+        elif col == 89:
+            val = random_lorem_string(10)
+        # random any other column
+        elif col == 90:
+            rndcol = random.randint(0, 10-1)
+            val = df.loc[(row-1),:].values[rndcol]
+        elif col == 91:
+            rndcol = random.randint(10, 20-1)
+            val = df.loc[(row-1),:].values[rndcol]
+        elif col == 92:
+            rndcol = random.randint(20, 30-1)
+            val = df.loc[(row-1),:].values[rndcol]
+        elif col == 93:
+            rndcol = random.randint(30, 40-1)
+            val = df.loc[(row-1),:].values[rndcol]
+        elif col == 94:
+            rndcol = random.randint(40, 50-1)
+            val = df.loc[(row-1),:].values[rndcol]
+        elif col == 95:
+            rndcol = random.randint(50, 60-1)
+            val = df.loc[(row-1),:].values[rndcol]
+        elif col == 96:
+            rndcol = random.randint(60, 70-1)
+            val = df.loc[(row-1),:].values[rndcol]
+        elif col == 97:
+            rndcol = random.randint(70, 80-1)
+            val = df.loc[(row-1),:].values[rndcol]
+        elif col == 98:
+            rndcol = random.randint(80, 90-1)
+            val = df.loc[(row-1),:].values[rndcol]
+        elif col == 99:
+            rndcol = random.randint(0, 90-1)
+            val = df.loc[(row-1),:].values[rndcol]
         else:
             val = "other"
 
@@ -229,12 +358,20 @@ for col in range(1, 100):
         colprefix = "decimal"
     elif 51 <= col <= 60:
         colprefix = "currency"
+    elif 71 <= col <= 89:
+        colprefix = "text"
+    elif col >= 90:
+        colprefix = "random"
     else:
         colprefix = "other"
     colname = ('%s_%02d' % (colprefix, col))
     
     # add column to dataframe
     df[colname] = tmpval
+
+# Generating columns iss ready
+print("")
+print("ready.")
 
 # Observe the result
 print(df)

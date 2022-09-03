@@ -3,9 +3,9 @@ CSV Lint - Notepad++ plugin
 ![Release version](https://img.shields.io/github/v/release/BdR76/CSVLint) ![GitHub all releases](https://img.shields.io/github/downloads/BdR76/CSVLint/total) ![GitHub latest release](https://img.shields.io/github/downloads/BdR76/CSVLint/latest/total)  
 
 CSV Lint is a plug-in for [Notepad++](http://notepad-plus-plus.org/) which
-adds syntax highlighting to csv and fixed width data files to make them more
-readable. It can also detect technical data errors and fix datetime and
-decimal formatting errors.
+adds syntax highlighting to [comma-separated values](https://en.wikipedia.org/wiki/Comma-separated_values)
+(csv) and fixed width data files to make them more readable. It can also
+detect technical data errors and fix datetime and decimal formatting errors.
 
 Use CSV Lint for metadata discovery, technical data validation and reformatting on tabular data files.
 It is _not_ meant to be a replacement for spreadsheet programs like Excel or SPSS,  
