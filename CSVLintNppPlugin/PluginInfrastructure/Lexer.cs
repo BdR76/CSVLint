@@ -471,6 +471,13 @@ namespace NppPluginNET.PluginInfrastructure
             int idx = 1;
             bool isEOL = false;
 
+            // set nr of ColumnColors definitions
+            var IDX_MAX = 8;
+
+            //IDX_MAX = editor.GetNamedStyles();
+            //Debug.WriteLine("IDX_MAX 1) -- " + IDX_MAX.ToString());
+            //IDX_MAX = 12;
+
             int start_col = 0;
             int end_col = 0;
             int i = 0;
@@ -513,7 +520,7 @@ namespace NppPluginNET.PluginInfrastructure
 
                         // next color, cycle colors or reset at end of line
                         idx++;
-                        if ((idx > 8) || isEOL) idx = 1;
+                        if ((idx > IDX_MAX) || isEOL) idx = 1;
 
                         // next width, or take the rest after last column width 
                         if (colidx < fixedWidths.Count)
@@ -588,7 +595,7 @@ namespace NppPluginNET.PluginInfrastructure
                         // next color
                         idx++;
 
-                        if ((idx > 8) || isEOL) idx = 1; // reset end of line
+                        if ((idx > IDX_MAX) || isEOL) idx = 1; // reset end of line
 
                         bNextCol = false;
                         isEOL = false;

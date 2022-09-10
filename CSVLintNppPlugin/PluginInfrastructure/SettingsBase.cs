@@ -161,16 +161,15 @@ namespace CsvQuery.PluginInfrastructure
             string name = ((MenuItem)sender).Text;
 
             //var msg = "Change the CSVLint syntax highlighting colors?:\n" + name  + "\n\n(Note: You'll need to close and restart Notepad++ before the new colors take effect)";
-            var msg = "Change the CSV Lint syntax highlighting colors to\n" + name  + " ?\n\n(Note: You'll need to close and restart Notepad++ before the new colors take effect)";
+            var msg = "Change the CSV Lint syntax highlighting colors to\n" + name  + " ?";
             if (MessageBox.Show(msg, "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
-                //do something if YES
+                // index 0..3
                 int idx = ((MenuItem)sender).Index;
-                Main.TryCreateLexerXml(idx, true);
 
-                // message
-                msg = "CSV Lint colors have been updated. The new colors will take effect when you restart Notepad++.";
-                MessageBox.Show(msg, "CSV Lint colors changed", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                // write to XML and also set colors
+                Main.TryCreateLexerXml(idx, true);
+                Main.SetLexerColors(idx);
             }
         }
 

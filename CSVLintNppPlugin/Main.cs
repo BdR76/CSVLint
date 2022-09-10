@@ -40,6 +40,46 @@ namespace Kbg.NppPluginNET
         static readonly Colour sCaretLineColor = editor.GetCaretLineBack();
         internal static bool sShouldResetCaretBack = false;
 
+        // Note: colors are stored as #RGB int values, R=most significant, B=least significant, for easy editing #RGB values (and also smaller storage space than strings)
+        // however Kbg.NppPluginNET.PluginInfrastructure.Colour uses BGR int values, B=most significant, R=least significant
+        static readonly int[] DefaultColorsets = new int[] {
+                0x000000, 0xFFFFFF, // normal colors
+                0x000000, 0xC0EFFF,
+                0x000000, 0xFFFFC0,
+                0x000000, 0xFFE0FF,
+                0x000000, 0xA0FFDF,
+                0x000000, 0xFFCFC0,
+                0x000000, 0xD0D0FF,
+                0x000000, 0xCFFFC0,
+                0x000000, 0xFFC0DF,
+                0x000000, 0xFFFFFF, // normal colors (foreground)
+                0x1896C0, 0xFFFFFF,
+                0xA0A000, 0xFFFFFF,
+                0x9618C0, 0xFFFFFF,
+                0x00C0A0, 0xFFFFFF,
+                0xC04218, 0xFFFFFF,
+                0x1818C0, 0xFFFFFF,
+                0x42B418, 0xFFFFFF,
+                0xC0186C, 0xFFFFFF,
+                0xDCDCCC, 0x3F3F3F, // dark mode (pastel)
+                0xA0C4D0, 0x3F3F3F,
+                0xD0D0A0, 0x3F3F3F,
+                0xC4A0D0, 0x3F3F3F,
+                0xA0D0B8, 0x3F3F3F,
+                0xD0ACA0, 0x3F3F3F,
+                0xA0A0D0, 0x3F3F3F,
+                0xACD0A0, 0x3F3F3F,
+                0xD0A0B8, 0x3F3F3F,
+                0xFFFFFF, 0x3F3F3F, // dark mode (neon)
+                0x80DFFF, 0x003C50,
+                0xFFFF80, 0x505000,
+                0xFFB0FF, 0x3C0050,
+                0x80FFBF, 0x005028,
+                0xFFD040, 0x502800,
+                0xC0C0FF, 0x000050,
+                0x9FFF80, 0x145000,
+                0xFFC0C0, 0x500028
+            };
 
         // list of files and csv definition for each
         static Dictionary<string, CsvDefinition> FileCsvDef = new Dictionary<string, CsvDefinition>();
@@ -171,45 +211,6 @@ namespace Kbg.NppPluginNET
             string[] presets = new string[] { "normal mode (background colors)", "normal mode (foreground colors)", "dark mode (pastel)", "dark mode (neon)" };
             string[] tags = new string[] { "instre1", "instre2", "type1", "type2", "type3", "type4", "type5", "type6" };
 
-            string[] colors = new string[] {
-                "000000", "FFFFFF", // normal colors
-                "000000", "E0E0FF",
-                "000000", "FFFF80",
-                "000000", "FFE0FF",
-                "000000", "80FF80",
-                "000000", "FFB0FF",
-                "000000", "FFC0C0",
-                "000000", "32FFBE",
-                "000000", "FFD040",
-                "000000", "FFFFFF", // normal colors (foreground)
-                "0000FF", "FFFFFF",
-                "A0A000", "FFFFFF",
-                "FF00FF", "FFFFFF",
-                "00A000", "FFFFFF",
-                "C000C0", "FFFFFF",
-                "00C0A0", "FFFFFF",
-                "C00000", "FFFFFF",
-                "F07028", "FFFFFF",
-                "DCDCCC", "3F3F3F", // dark mode (pastel)
-                "9191D8", "3F3F3F",
-                "BEC89E", "3F3F3F",
-                "E0B8E0", "3F3F3F",
-                "91C891", "3F3F3F",
-                "C891C8", "3F3F3F",
-                "D89191", "3F3F3F",
-                "40C090", "3F3F3F",
-                "C09040", "3F3F3F",
-                "FFFFFF", "3F3F3F", // dark mode (neon)
-                "D0D0FF", "000050",
-                "FFFF80", "505000",
-                "FFE0FF", "500050",
-                "80FF80", "005000",
-                "FFB0FF", "500050",
-                "FFC0C0", "500000",
-                "32FFBE", "005028",
-                "FFD040", "502800"
-            };
-
             // Create an XmlWriterSettings object with the correct options.
             XmlWriterSettings xmlsettings = new XmlWriterSettings();
             xmlsettings.Indent = true;
@@ -271,8 +272,9 @@ namespace Kbg.NppPluginNET
                                 //writer.WriteAttributeString("fontStyle", "0");
                             //writer.WriteEndElement();
                             var name = i == 0 ? "Default" : "ColumnColor" + i.ToString();
-                            var fgcolor = colors[coloridx];
-                            var bgcolor = colors[coloridx + 1];
+                            var fgcolor = DefaultColorsets[coloridx].ToString("X6");
+                            var bgcolor = DefaultColorsets[coloridx + 1].ToString("X6");
+
                             var bold = ps == 0 || i == 0 ? "0" : "1";
                             var str = string.Format("\r\n\t\t\t<WordsStyle styleID=\"{0}\" name=\"{1}\" fgColor=\"{2}\" bgColor=\"{3}\" fontName=\"\" fontStyle=\"{4}\" />", i, name, fgcolor, bgcolor, bold);
                             writer.WriteRaw(str);
@@ -296,6 +298,31 @@ namespace Kbg.NppPluginNET
             }
 
             return true;
+        }
+
+        internal static void SetLexerColors(int presetidx)
+        {
+            var COLOR_PER_SET = 9;
+            var coloridx = 2 * presetidx * COLOR_PER_SET; // 2* = 2 colors per style item
+
+            for (int idx = 0; idx < COLOR_PER_SET; idx++)
+            {
+                // get foreground and background colors
+                var rgb_fore = DefaultColorsets[coloridx];
+                var rgb_back = DefaultColorsets[coloridx + 1];
+
+                // bold or not
+                var bold = !(presetidx == 0 || idx == 0);
+
+                // update styles immediately
+                // Note: convert RGB int values to indivisual R, G and B values
+                editor.StyleSetBack(idx, new Colour( ((rgb_back >> 16) & 0xFF), ((rgb_back >> 8) & 0xFF), (rgb_back & 0xFF) ));
+                editor.StyleSetFore(idx, new Colour( ((rgb_fore >> 16) & 0xFF), ((rgb_fore >> 8) & 0xFF), (rgb_fore & 0xFF) ));
+                editor.StyleSetBold(idx, bold);
+
+                // next color
+                coloridx += 2;
+            }
         }
 
         internal static void SetToolBarIcon()
