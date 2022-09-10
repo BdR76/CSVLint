@@ -4,7 +4,8 @@
 # Random but realistic data, incl. data entry errors
 # Structure is based on a real medical dataset
 # Change constants for file name and data size
-# BdR 2020 - bdr1976@gmail.com
+# 
+# Bas de Reuver - bdr1976@gmail.com (jan 2020)
 
 import csv
 import random

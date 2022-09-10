@@ -2,7 +2,8 @@
 # ----------------------------
 # Generate random data with all different datatypes
 # for testing automatic column detection
-# BdR 2022 - bdr1976@gmail.com
+# 
+# Bas de Reuver - bdr1976@gmail.com (aug 2022)
 
 import pandas as pd
 import random
