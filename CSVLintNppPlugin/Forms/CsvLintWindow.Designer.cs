@@ -61,6 +61,7 @@
             this.splitContainer1.Panel1.Controls.Add(this.btnReformat);
             this.splitContainer1.Panel1.Controls.Add(this.btnDetectColumns);
             this.splitContainer1.Panel1.Controls.Add(this.txtSchemaIni);
+            this.splitContainer1.Panel1MinSize = 336;
             // 
             // splitContainer1.Panel2
             // 
