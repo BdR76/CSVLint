@@ -7,6 +7,8 @@ adds syntax highlighting to [comma-separated values](https://en.wikipedia.org/wi
 (csv) and fixed width data files to make them more readable. It can also
 detect technical data errors and fix datetime and decimal formatting errors.
 
+![preview screenshot](/csvlint_preview.png?raw=true "CSVLint plug-in preview")
+
 Use CSV Lint for metadata discovery, technical data validation and reformatting on tabular data files.
 It is _not_ meant to be a replacement for spreadsheet programs like Excel or SPSS,  
 but rather it's a quality control tool to examine, verify or polish up a dataset before further processing.
@@ -21,8 +23,6 @@ With CSV Lint you can take a dataset and:
 * Split valid/invalid values into two separate columns
 * Count unique values of one or more columns
 * Convert csv data to SQL insert script
-
-![preview screenshot](/csvlint_preview.png?raw=true "CSVLint plug-in preview")
 
 CSV Lint is stable and usable for most general use-cases, but it is a work-in-progress, 
 so if you encounter any bugs or unexpected output I encourage you to [report issues here](https://github.com/BdR76/CSVLint/issues).

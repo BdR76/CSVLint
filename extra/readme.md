@@ -20,4 +20,16 @@ Used for testing the automatic column detection algorithm.
 Python script to determine the optimal colors for syntax highlighting,
 by determinging a color sequence with the most constrast between each color.
 
+### CSVLint.xml configuration ###
+
+Syntax highlighting configuration for different predefined color sets
+
+| File                  | Description                                    |
+|-----------------------|------------------------------------------------|
+| CSVLint.xml           | Old configuration, default colors              |
+| CSVLint_8_colors.xml  |  8 colors optimized                            |
+| CSVLint_12_colors.xml | 12 colors optimized                            |
+
 BdR 2022 Free to use - questions or comments: bdr1976@gmail.com
+
+

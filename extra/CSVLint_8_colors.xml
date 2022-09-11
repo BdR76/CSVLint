@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<NotepadPlus>
+    <Languages>
+        <Language name="CSVLint" ext="csv" commentLine="#" commentStart="#[" commentEnd="]#">
+            <Keywords name="instre1" />
+            <Keywords name="instre2" />
+            <Keywords name="type1" />
+            <Keywords name="type2" />
+            <Keywords name="type3" />
+            <Keywords name="type4" />
+            <Keywords name="type5" />
+            <Keywords name="type6" />
+        </Language>
+    </Languages>
+    <LexerStyles>
+        <LexerType name="CSVLint" desc="CSV Linter and validator" excluded="no">
+			<!-- normal mode (background colors) 8 colors -->
+            <WordsStyle styleID="0" name="Default" fgColor="000000" bgColor="FFFFFF" fontName="" fontStyle="0" />
+            <WordsStyle styleID="1" name="ColumnColor1" fgColor="000000" bgColor="C0EFFF" fontName="" fontStyle="0" />
+            <WordsStyle styleID="2" name="ColumnColor2" fgColor="000000" bgColor="FFFFC0" fontName="" fontStyle="0" />
+            <WordsStyle styleID="3" name="ColumnColor3" fgColor="000000" bgColor="FFE0FF" fontName="" fontStyle="0" />
+            <WordsStyle styleID="4" name="ColumnColor4" fgColor="000000" bgColor="A0FFDF" fontName="" fontStyle="0" />
+            <WordsStyle styleID="5" name="ColumnColor5" fgColor="000000" bgColor="FFCFC0" fontName="" fontStyle="0" />
+            <WordsStyle styleID="6" name="ColumnColor6" fgColor="000000" bgColor="D0D0FF" fontName="" fontStyle="0" />
+            <WordsStyle styleID="7" name="ColumnColor7" fgColor="000000" bgColor="CFFFC0" fontName="" fontStyle="0" />
+            <WordsStyle styleID="8" name="ColumnColor8" fgColor="000000" bgColor="FFC0DF" fontName="" fontStyle="0" />
+            <!-- foreground colors (normal mode) 8 colors -->
+<!--
+            <WordsStyle styleID="0" name="Default" fgColor="000000" bgColor="FFFFFF" fontName="" fontStyle="0" />
+            <WordsStyle styleID="1" name="ColumnColor1" fgColor="1896C0" bgColor="FFFFFF" fontName="" fontStyle="1" />
+            <WordsStyle styleID="2" name="ColumnColor2" fgColor="A0A000" bgColor="FFFFFF" fontName="" fontStyle="1" />
+            <WordsStyle styleID="3" name="ColumnColor3" fgColor="9618C0" bgColor="FFFFFF" fontName="" fontStyle="1" />
+            <WordsStyle styleID="4" name="ColumnColor4" fgColor="00C0A0" bgColor="FFFFFF" fontName="" fontStyle="1" />
+            <WordsStyle styleID="5" name="ColumnColor5" fgColor="C04218" bgColor="FFFFFF" fontName="" fontStyle="1" />
+            <WordsStyle styleID="6" name="ColumnColor6" fgColor="1818C0" bgColor="FFFFFF" fontName="" fontStyle="1" />
+            <WordsStyle styleID="7" name="ColumnColor7" fgColor="42B418" bgColor="FFFFFF" fontName="" fontStyle="1" />
+            <WordsStyle styleID="8" name="ColumnColor8" fgColor="C0186C" bgColor="FFFFFF" fontName="" fontStyle="1" />
+-->
+            <!-- dark mode (pastel) 8 colors -->
+<!--
+            <WordsStyle styleID="0" name="Default" fgColor="DCDCCC" bgColor="3F3F3F" fontName="" fontStyle="0" />
+            <WordsStyle styleID="1" name="ColumnColor1" fgColor="A0C4D0" bgColor="3F3F3F" fontName="" fontStyle="1" />
+            <WordsStyle styleID="2" name="ColumnColor2" fgColor="D0D0A0" bgColor="3F3F3F" fontName="" fontStyle="1" />
+            <WordsStyle styleID="3" name="ColumnColor3" fgColor="C4A0D0" bgColor="3F3F3F" fontName="" fontStyle="1" />
+            <WordsStyle styleID="4" name="ColumnColor4" fgColor="A0D0B8" bgColor="3F3F3F" fontName="" fontStyle="1" />
+            <WordsStyle styleID="5" name="ColumnColor5" fgColor="D0ACA0" bgColor="3F3F3F" fontName="" fontStyle="1" />
+            <WordsStyle styleID="6" name="ColumnColor6" fgColor="A0A0D0" bgColor="3F3F3F" fontName="" fontStyle="1" />
+            <WordsStyle styleID="7" name="ColumnColor7" fgColor="ACD0A0" bgColor="3F3F3F" fontName="" fontStyle="1" />
+            <WordsStyle styleID="8" name="ColumnColor8" fgColor="D0A0B8" bgColor="3F3F3F" fontName="" fontStyle="1" />
+-->
+            <!-- dark mode (neon) 8 colors -->
+<!--
+            <WordsStyle styleID="0" name="Default" fgColor="FFFFFF" bgColor="3F3F3F" fontName="" fontStyle="0" />
+            <WordsStyle styleID="1" name="ColumnColor1" fgColor="80DFFF" bgColor="003C50" fontName="" fontStyle="1" />
+            <WordsStyle styleID="2" name="ColumnColor2" fgColor="FFFF80" bgColor="505000" fontName="" fontStyle="1" />
+            <WordsStyle styleID="3" name="ColumnColor3" fgColor="FFB0FF" bgColor="3C0050" fontName="" fontStyle="1" />
+            <WordsStyle styleID="4" name="ColumnColor4" fgColor="80FFBF" bgColor="005028" fontName="" fontStyle="1" />
+            <WordsStyle styleID="5" name="ColumnColor5" fgColor="FFD040" bgColor="502800" fontName="" fontStyle="1" />
+            <WordsStyle styleID="6" name="ColumnColor6" fgColor="C0C0FF" bgColor="000050" fontName="" fontStyle="1" />
+            <WordsStyle styleID="7" name="ColumnColor7" fgColor="9FFF80" bgColor="145000" fontName="" fontStyle="1" />
+            <WordsStyle styleID="8" name="ColumnColor8" fgColor="FFC0C0" bgColor="500028" fontName="" fontStyle="1" />
+-->
+        </LexerType>
+    </LexerStyles>
+</NotepadPlus>

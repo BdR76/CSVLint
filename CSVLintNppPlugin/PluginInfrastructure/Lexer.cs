@@ -15,6 +15,8 @@ namespace NppPluginNET.PluginInfrastructure
         public static char separatorChar = ';';
         public static List<int> fixedWidths;
 
+        private static int LEXER_COLORS_MAX = -1;
+
         // Properties
         static readonly Dictionary<string, bool> SupportedProperties = new Dictionary<string, bool>
         {
@@ -471,8 +473,35 @@ namespace NppPluginNET.PluginInfrastructure
             int idx = 1;
             bool isEOL = false;
 
-            // set nr of ColumnColors definitions
-            var IDX_MAX = 8;
+            // Check nr of ColumnColors definitions for backwards compatibility with previous plug-in version (has 8 columns definitions) so no need to check/overwrite XML on version update
+            // This also allows for more/fewer column colors in definition file, allows user to manually edit XML and have 8 or 12 or 16 etc. colors
+            var IDX_MAX = LEXER_COLORS_MAX;
+            if (IDX_MAX < 0)
+            {
+                var tmpedit = new ScintillaGateway(PluginBase.GetCurrentScintilla());
+                var bg_prev = -1;
+                var fg_prev = -1;
+                // go through styles last to first
+                for (var stl = 32; stl > 0; stl--)
+                {
+                    // get next style
+                    var bg = tmpedit.StyleGetBack(stl).Value;
+                    var fg = tmpedit.StyleGetFore(stl).Value;
+
+                    // search for last style that that is not exactly the same as previous color
+                    // if not declared then style defaults to Notepad++ default color (black or white)
+                    if (stl != 32 && ( (bg != bg_prev) || (fg != fg_prev) ) )
+                    {
+                        LEXER_COLORS_MAX = stl;
+                        IDX_MAX = stl;
+                        break;
+                    }
+                    // remember for next step
+                    bg_prev = bg;
+                    fg_prev = fg;
+                }
+            }
+
 
             //IDX_MAX = editor.GetNamedStyles();
             //Debug.WriteLine("IDX_MAX 1) -- " + IDX_MAX.ToString());

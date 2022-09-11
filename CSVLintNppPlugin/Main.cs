@@ -42,43 +42,60 @@ namespace Kbg.NppPluginNET
 
         // Note: colors are stored as #RGB int values, R=most significant, B=least significant, for easy editing #RGB values (and also smaller storage space than strings)
         // however Kbg.NppPluginNET.PluginInfrastructure.Colour uses BGR int values, B=most significant, R=least significant
+        public static readonly int COLORS_PER_SET = 13; // 1 default + 12 colors
         static readonly int[] DefaultColorsets = new int[] {
                 0x000000, 0xFFFFFF, // normal colors
                 0x000000, 0xC0EFFF,
                 0x000000, 0xFFFFC0,
                 0x000000, 0xFFE0FF,
-                0x000000, 0xA0FFDF,
-                0x000000, 0xFFCFC0,
+                0x000000, 0xA0FFA0,
+                0x000000, 0xFFC0E0,
+                0x000000, 0xA0FFFF,
+                0x000000, 0xFFE0C0,
                 0x000000, 0xD0D0FF,
-                0x000000, 0xCFFFC0,
-                0x000000, 0xFFC0DF,
+                0x000000, 0xCFFFA0,
+                0x000000, 0xFFACFF,
+                0x000000, 0x80FFBF,
+                0x000000, 0xFFC0C0,
                 0x000000, 0xFFFFFF, // normal colors (foreground)
-                0x1896C0, 0xFFFFFF,
-                0xA0A000, 0xFFFFFF,
-                0x9618C0, 0xFFFFFF,
-                0x00C0A0, 0xFFFFFF,
-                0xC04218, 0xFFFFFF,
-                0x1818C0, 0xFFFFFF,
-                0x42B418, 0xFFFFFF,
+                0x186CC0, 0xFFFFFF,
+                0x909000, 0xFFFFFF,
+                0x6C18C0, 0xFFFFFF,
+                0x18C018, 0xFFFFFF,
                 0xC0186C, 0xFFFFFF,
+                0x00A0A0, 0xFFFFFF,
+                0xC06C18, 0xFFFFFF,
+                0x1818C0, 0xFFFFFF,
+                0x6CC018, 0xFFFFFF,
+                0xC018C0, 0xFFFFFF,
+                0x10A060, 0xFFFFFF,
+                0xC01818, 0xFFFFFF,
                 0xDCDCCC, 0x3F3F3F, // dark mode (pastel)
-                0xA0C4D0, 0x3F3F3F,
+                0xA0B8D0, 0x3F3F3F,
                 0xD0D0A0, 0x3F3F3F,
-                0xC4A0D0, 0x3F3F3F,
-                0xA0D0B8, 0x3F3F3F,
-                0xD0ACA0, 0x3F3F3F,
-                0xA0A0D0, 0x3F3F3F,
-                0xACD0A0, 0x3F3F3F,
+                0xB8A0D0, 0x3F3F3F,
+                0xA0D0A0, 0x3F3F3F,
                 0xD0A0B8, 0x3F3F3F,
+                0xA0D0D0, 0x3F3F3F,
+                0xD0B8A0, 0x3F3F3F,
+                0xA0A0D0, 0x3F3F3F,
+                0xB8D0A0, 0x3F3F3F,
+                0xD0A0D0, 0x3F3F3F,
+                0xA0D0B8, 0x3F3F3F,
+                0xD0A0A0, 0x3F3F3F,
                 0xFFFFFF, 0x3F3F3F, // dark mode (neon)
-                0x80DFFF, 0x003C50,
+                0x80BFFF, 0x002850,
                 0xFFFF80, 0x505000,
-                0xFFB0FF, 0x3C0050,
-                0x80FFBF, 0x005028,
-                0xFFD040, 0x502800,
+                0xFFB0FF, 0x280050, 
+                0x80FF80, 0x005000,
+                0xFF90CF, 0x500028,
+                0x80FFFF, 0x005050,
+                0xFFBF80, 0x502800,
                 0xC0C0FF, 0x000050,
-                0x9FFF80, 0x145000,
-                0xFFC0C0, 0x500028
+                0xBFFF80, 0x285000,
+                0xFF80FF, 0x500050,
+                0x80FFBF, 0x005028,
+                0xFF9090, 0x500000
             };
 
         // list of files and csv definition for each
@@ -261,7 +278,7 @@ namespace Kbg.NppPluginNET
 
                         if (presetidx != ps) writer.WriteRaw("\r\n<!--");
 
-                        for (int i = 0; i < 9; i++)
+                        for (int i = 0; i < COLORS_PER_SET; i++)
                         {
                             //writer.WriteStartElement("WordsStyle");
                             //writer.WriteAttributeString("styleID", i.ToString());
@@ -302,10 +319,9 @@ namespace Kbg.NppPluginNET
 
         internal static void SetLexerColors(int presetidx)
         {
-            var COLOR_PER_SET = 9;
-            var coloridx = 2 * presetidx * COLOR_PER_SET; // 2* = 2 colors per style item
+            var coloridx = 2 * presetidx * COLORS_PER_SET; // 2* = 2 colors per style item
 
-            for (int idx = 0; idx < COLOR_PER_SET; idx++)
+            for (int idx = 0; idx < COLORS_PER_SET; idx++)
             {
                 // get foreground and background colors
                 var rgb_fore = DefaultColorsets[coloridx];
