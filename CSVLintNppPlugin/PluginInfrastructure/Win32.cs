@@ -277,6 +277,9 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public const int MAX_PATH = 260;
 
         [DllImport("kernel32")]
+        public static extern uint GetACP();
+
+        [DllImport("kernel32")]
         public static extern int GetPrivateProfileInt(string lpAppName, string lpKeyName, int nDefault, string lpFileName);
 
         [DllImport("kernel32")]
