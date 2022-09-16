@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
 using Kbg.NppPluginNET;
 using Kbg.NppPluginNET.PluginInfrastructure;
 
@@ -466,8 +467,9 @@ namespace NppPluginNET.PluginInfrastructure
             // convert the buffer into a managed string
             string content = Marshal.PtrToStringAnsi(buffer_ptr, length);
 
-            // TODO: fix this; this is just a quick & dirty way to prevent index overflow when Windows = code page 65001
-            length = content.Length;
+            // iterate string as a byte array; prevents index overflow when Windows = code page 65001
+            byte[] contentBytes = ByteStream.GetBytes(content);
+            length = contentBytes.Length;
 
             // column color index
             int idx = 1;
@@ -523,7 +525,7 @@ namespace NppPluginNET.PluginInfrastructure
                 while (i < length)
                 {
                     // next character
-                    char cur = content[i];
+                    byte cur = contentBytes[i];
                     i++;
 
                     // new line
@@ -578,8 +580,8 @@ namespace NppPluginNET.PluginInfrastructure
 
                 for (i = 0; i < length - 1; i++)
                 {
-                    char cur = content[i];
-                    char next = content[i + 1];
+                    byte cur = contentBytes[i];
+                    byte next = contentBytes[i + 1];
 
                     if (!quote)
                     {
@@ -640,7 +642,7 @@ namespace NppPluginNET.PluginInfrastructure
                 vtable.StartStyling(p_access, (IntPtr)(start + start_col));
                 vtable.SetStyleFor(p_access, (IntPtr)(length - start_col), (char)idx);
                 // exception when csv AND separator character not colored AND file ends with separator so the very last value is empty
-                if ( (separatorChar != '\0') && (!sepcol) && (content[length-1] == separatorChar) )
+                if ( (separatorChar != '\0') && (!sepcol) && (contentBytes[length-1] == separatorChar) )
                 {
                     // style empty value between columns
                     vtable.StartStyling(p_access, (IntPtr)(start + i));
@@ -941,6 +943,20 @@ namespace NppPluginNET.PluginInfrastructure
                 return IntPtr.Zero;
             else
                 return Marshal.StringToHGlobalAnsi($"{value}\0"); 
+        }
+    }
+
+    internal static class ByteStream
+    {
+        /// <summary>
+        /// Converts a CLR String to a byte array.
+        /// Properly handles the UTF-8 code page, available since Windows version 1903.
+        /// </summary>
+        public static byte[] GetBytes(string clrString)
+        {
+            var byteBuf = new char[clrString.Length];
+            clrString.CopyTo(0, byteBuf, 0, clrString.Length);
+            return (Win32.GetACP() == 65001U) ? Encoding.UTF8.GetBytes(byteBuf) : Encoding.Default.GetBytes(byteBuf);
         }
     }
 }
