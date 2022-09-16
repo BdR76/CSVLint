@@ -229,6 +229,18 @@
   <ItemGroup>
     <None Include="Resources\csv_file_color.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\setcolor1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\setcolor2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\setcolor3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\setcolor4.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildProjectDirectory)\PluginInfrastructure\DllExport\NppPlugin.DllExport.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

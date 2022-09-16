@@ -151,25 +151,34 @@ namespace CsvQuery.PluginInfrastructure
         private void colorButton_Click(object sender, EventArgs e)
         {
             Button btn = (Button)sender;
-            ContextMenu cm = btn.ContextMenu;
+            //ContextMenu cm = btn.ContextMenu;
+            ContextMenuStrip cm = btn.ContextMenuStrip;
 
             cm.Show(btn, new Point(0, btn.Height)); // offset from the edge of your button
         }
 
         private void colorMenuItem_Click(object sender, EventArgs e)
         {
-            string name = ((MenuItem)sender).Text;
+            var mi = (ToolStripMenuItem)sender;
+
+            string name = mi.Text;
 
             //var msg = "Change the CSVLint syntax highlighting colors?:\n" + name  + "\n\n(Note: You'll need to close and restart Notepad++ before the new colors take effect)";
-            var msg = "Change the CSV Lint syntax highlighting colors to\n" + name  + " ?";
+
+            var msg = string.Format("Change the CSV Lint syntax highlighting colors to\n{0} ?\n\n(Note: You'll need to close and restart Notepad++ before the new colors take effect)", name);
             if (MessageBox.Show(msg, "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
                 // index 0..3
-                int idx = ((MenuItem)sender).Index;
+                var parent = (mi.Owner as ContextMenuStrip);
+                var idx = parent.Items.IndexOf(mi);
 
                 // write to XML and also set colors
                 Main.TryCreateLexerXml(idx, true);
-                Main.SetLexerColors(idx);
+                //Main.SetLexerColors(idx);
+
+                // message
+                msg = "CSV Lint colors have been updated. The new colors will take effect when you restart Notepad++.";
+                MessageBox.Show(msg, "CSV Lint colors changed", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
 
@@ -182,12 +191,24 @@ namespace CsvQuery.PluginInfrastructure
             var copy = (Settings)MemberwiseClone();
 
             // color popup menu
-            MenuItem[] mi = new MenuItem[4];
-            mi[0] = new MenuItem("Normal mode (background colors)", colorMenuItem_Click);
-            mi[1] = new MenuItem("Normal mode (foreground colors)", colorMenuItem_Click);
-            mi[2] = new MenuItem("Dark mode (pastel colors)", colorMenuItem_Click);
-            mi[3] = new MenuItem("Dark mode (neon colors)", colorMenuItem_Click);
-            ContextMenu cm = new ContextMenu(mi);
+            //MenuItem[] mi = new MenuItem[4];
+            //mi[0] = new MenuItem("Normal mode (background colors)", colorMenuItem_Click);
+            ////mi[0] = new MenuItem("Normal mode (background colors)", colorMenuItem_Click);
+            //mi[1] = new MenuItem("Normal mode (foreground colors)", colorMenuItem_Click);
+            //mi[2] = new MenuItem("Dark mode (pastel colors)", colorMenuItem_Click);
+            //mi[3] = new MenuItem("Dark mode (neon colors)", colorMenuItem_Click);
+            //ContextMenu cm = new ContextMenu(mi);
+
+            ContextMenuStrip cm = new ContextMenuStrip();
+
+            var img = CSVLintNppPlugin.Properties.Resources.clover;
+            //ContextMenuStrip cm = new ContextMenuStrip("Normal mode (background colors)", img, colorMenuItem_Click);
+            cm.Items.Add("Normal mode (background colors)", CSVLintNppPlugin.Properties.Resources.setcolor1, colorMenuItem_Click);
+            cm.Items.Add("Normal mode (foreground colors)", CSVLintNppPlugin.Properties.Resources.setcolor2, colorMenuItem_Click);
+            cm.Items.Add("Dark mode (pastel colors)", CSVLintNppPlugin.Properties.Resources.setcolor3, colorMenuItem_Click);
+            cm.Items.Add("Dark mode (neon colors)", CSVLintNppPlugin.Properties.Resources.setcolor4, colorMenuItem_Click);
+
+            //btnColors.ContextMenuStrip = cm;
 
             var dialog = new Form
             {
@@ -237,8 +258,9 @@ namespace CsvQuery.PluginInfrastructure
                         Size = new Size(75, 23),
                         Location = new Point(13, DEFAULT_HEIGHT - 23 - 13),
                         UseVisualStyleBackColor = true,
-                        ContextMenu = cm
-                    },
+                        //ContextMenu = cm
+                        ContextMenuStrip = cm
+                    }
                 }
             };
 

@@ -317,29 +317,31 @@ namespace Kbg.NppPluginNET
             return true;
         }
 
-        internal static void SetLexerColors(int presetidx)
-        {
-            var coloridx = 2 * presetidx * COLORS_PER_SET; // 2* = 2 colors per style item
-
-            for (int idx = 0; idx < COLORS_PER_SET; idx++)
-            {
-                // get foreground and background colors
-                var rgb_fore = DefaultColorsets[coloridx];
-                var rgb_back = DefaultColorsets[coloridx + 1];
-
-                // bold or not
-                var bold = !(presetidx == 0 || idx == 0);
-
-                // update styles immediately
-                // Note: convert RGB int values to indivisual R, G and B values
-                editor.StyleSetBack(idx, new Colour( ((rgb_back >> 16) & 0xFF), ((rgb_back >> 8) & 0xFF), (rgb_back & 0xFF) ));
-                editor.StyleSetFore(idx, new Colour( ((rgb_fore >> 16) & 0xFF), ((rgb_fore >> 8) & 0xFF), (rgb_fore & 0xFF) ));
-                editor.StyleSetBold(idx, bold);
-
-                // next color
-                coloridx += 2;
-            }
-        }
+        // NOTE: calling StyleSetBack/StyleSetFore does not change the style permanently
+        // i.e. when you switch tabs or open another file it reset to the original XML colors
+        //internal static void SetLexerColors(int presetidx)
+        //{
+        //    var coloridx = 2 * presetidx * COLORS_PER_SET; // 2* = 2 colors per style item
+        //
+        //    for (int idx = 0; idx < COLORS_PER_SET; idx++)
+        //    {
+        //        // get foreground and background colors
+        //        var rgb_fore = DefaultColorsets[coloridx];
+        //        var rgb_back = DefaultColorsets[coloridx + 1];
+        //
+        //        // bold or not
+        //        var bold = !(presetidx == 0 || idx == 0);
+        //
+        //        // update styles immediately
+        //        // Note: convert RGB int values to indivisual R, G and B values
+        //        editor.StyleSetBack(idx, new Colour( ((rgb_back >> 16) & 0xFF), ((rgb_back >> 8) & 0xFF), (rgb_back & 0xFF) ));
+        //        editor.StyleSetFore(idx, new Colour( ((rgb_fore >> 16) & 0xFF), ((rgb_fore >> 8) & 0xFF), (rgb_fore & 0xFF) ));
+        //        editor.StyleSetBold(idx, bold);
+        //
+        //        // next color
+        //        coloridx += 2;
+        //    }
+        //}
 
         internal static void SetToolBarIcon()
         {
