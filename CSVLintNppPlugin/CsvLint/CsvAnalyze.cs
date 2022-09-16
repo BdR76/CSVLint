@@ -491,9 +491,9 @@ namespace CSVLint
             string strhead = csvdef.ColNameHeader ? " (+1 header line)" : "";
 
             sb.Append("Analyze dataset\r\n");
-            sb.Append(string.Format("CSV Lint: v{0}\r\n", Main.GetVersion()));
             sb.Append(string.Format("File: {0}\r\n", FILE_NAME));
-            sb.Append(string.Format("Date: {0}\r\n\r\n", DateTime.Now.ToString("dd-MMM-yyyy HH:mm")));
+            sb.Append(string.Format("Date: {0}\r\n", DateTime.Now.ToString("dd-MMM-yyyy HH:mm")));
+            sb.Append(string.Format("CSV Lint: v{0}\r\n\r\n", Main.GetVersion()));
             sb.Append(string.Format("Data records: {0}{1}\r\n", lineCount, strhead));
             sb.Append(string.Format("Max.unique values: {0}\r\n", Main.Settings.UniqueValuesMax));
             sb.Append("\r\n");

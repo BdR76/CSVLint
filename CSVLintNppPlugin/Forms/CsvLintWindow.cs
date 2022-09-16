@@ -171,7 +171,7 @@ namespace Kbg.NppPluginNET
             return r == DialogResult.OK;
         }
 
-        private bool GetReformatParameters(out string dt, out string dec, out string sep, out bool updsep, out int updquote, out string replacecrlf, out bool trimall, out bool alignVert)
+        private bool GetReformatParameters(out string sep, out bool updsep, out string dt, out string dec, out int updquote, out string replacecrlf, out bool trimall, out bool alignVert)
         {
             // show reformat form
             var frmedit = new ReformatForm();
@@ -179,10 +179,10 @@ namespace Kbg.NppPluginNET
             DialogResult r = frmedit.ShowDialog();
 
             // user clicked OK or Cancel
-            dt = frmedit.NewDataTime;
-            dec = frmedit.NewDecimal;
             sep = frmedit.NewSeparator;
             updsep = frmedit.UpdateSeparator;
+            dt = frmedit.NewDataTime;
+            dec = frmedit.NewDecimal;
             updquote = frmedit.ApplyQuotes;
             replacecrlf = frmedit.ReplaceCrLf;
             trimall = frmedit.TrimAllValues;
@@ -197,7 +197,7 @@ namespace Kbg.NppPluginNET
 
         private void OnBtnReformat_Click(object sender, EventArgs e)
         {
-            bool ok = GetReformatParameters(out string editDataTime, out string editDecimal, out string editSeparator, out bool updateSeparator, out int updateQuotes, out string replaceCrLf, out bool trimAllValues, out bool alignVert);
+            bool ok = GetReformatParameters(out string editSeparator, out bool updateSeparator, out string editDataTime, out string editDecimal, out int updateQuotes, out string replaceCrLf, out bool trimAllValues, out bool alignVert);
             if (ok)
             {
                 // clear any previous output
@@ -213,12 +213,27 @@ namespace Kbg.NppPluginNET
                     var dtStart = DateTime.Now;
 
                     // analyze and determine csv definition
-                    CsvEdit.ReformatDataFile(csvdef, editDataTime, editDecimal, editSeparator, updateSeparator, updateQuotes, replaceCrLf, trimAllValues, alignVert);
+                    CsvEdit.ReformatDataFile(csvdef, editSeparator, updateSeparator, editDataTime, editDecimal, updateQuotes, replaceCrLf, trimAllValues, alignVert);
 
                     var dtElapsed = (DateTime.Now - dtStart).ToString(@"hh\:mm\:ss\.fff");
 
                     // display the reformat parameters to user
                     string msg = "";
+
+                    if (updateSeparator)
+                    {
+                        string oldsep = csvdef.Separator == '\0' ? "{Fixed width}" : (csvdef.Separator == '\t' ? "{Tab}" : csvdef.Separator.ToString());
+                        string newsep = editSeparator == "\0" ? "{Fixed width}" : (editSeparator == "\t" ? "{Tab}" : editSeparator);
+
+                        // fixed width doesn't contain header line (for example, columns can be width=1, no room in header line for column name longer than 1 character)
+                        if (editSeparator == "\0")
+                        {
+                            csvdef.ColNameHeader = false;
+                        }
+
+                        msg += string.Format("Reformat column separator from {0} to {1}\r\n", oldsep, newsep);
+                        csvdef.Separator = editSeparator[0];
+                    };
 
                     if (editDataTime != "")
                     {
@@ -234,21 +249,6 @@ namespace Kbg.NppPluginNET
                     {
                         msg += string.Format("Reformat decimal separator from {0} to {1}\r\n", csvdef.DecimalSymbol, editDecimal);
                         csvdef.DecimalSymbol = editDecimal[0];
-                    };
-
-                    if (updateSeparator)
-                    {
-                        string oldsep = csvdef.Separator == '\0' ? "{Fixed width}" : (csvdef.Separator == '\t' ? "{Tab}" : csvdef.Separator.ToString());
-                        string newsep = editSeparator == "\0" ? "{Fixed width}" : (editSeparator == "\t" ? "{Tab}" : editSeparator);
-
-                        // fixed width doesn't contain header line (for example, columns can be width=1, no room in header line for column name longer than 1 character)
-                        if (editSeparator == "\0")
-                        {
-                            csvdef.ColNameHeader = false;
-                        }
-
-                        msg += string.Format("Reformat column separator from {0} to {1}\r\n", oldsep, newsep);
-                        csvdef.Separator = editSeparator[0];
                     };
 
                     //if (updateQuotes != 0)

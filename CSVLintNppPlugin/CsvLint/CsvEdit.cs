@@ -64,7 +64,7 @@ namespace CSVLint
         /// reformat file for date, decimal and separator
         /// </summary>
         /// <param name="data"> csv data </param>
-        public static void ReformatDataFile(CsvDefinition csvdef, string reformatDatTime, string reformatDecimal, string reformatSeparator, bool updateSeparator, int ApplyQuotes, string ReplaceCrLf, bool trimAll, bool align)
+        public static void ReformatDataFile(CsvDefinition csvdef, string reformatSeparator, bool updateSeparator, string reformatDatTime, string reformatDecimal, int ApplyQuotes, string ReplaceCrLf, bool trimAll, bool align)
         {
             // TODO: nullable parameters
 
