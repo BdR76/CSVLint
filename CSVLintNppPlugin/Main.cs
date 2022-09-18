@@ -583,17 +583,17 @@ namespace Kbg.NppPluginNET
             {
                 switch (Main.Settings.MetadataType)
                 {
-                    case 1: // R - script
-                        CsvGenerateCode.GenerateRScript(csvdef); 
-                        break;
-                    case 2: // schema ini
-                        CsvGenerateCode.GenerateSchemaIni(csvdef);
-                        break;
-                    case 3: // schema JSON
+                    case 1: // schema JSON
                         CsvGenerateCode.GenerateSchemaJSON(csvdef); 
                         break;
-                    default: // case 0: Python
-                        CsvGenerateCode.GeneratePythonPanda(csvdef); 
+                    case 2: // Python
+                        CsvGenerateCode.GeneratePythonPanda(csvdef);
+                        break;
+                    case 3: // R - script
+                        CsvGenerateCode.GenerateRScript(csvdef); 
+                        break;
+                    default: // case 0: schema ini
+                        CsvGenerateCode.GenerateSchemaIni(csvdef); 
                         break;
                 }
             }

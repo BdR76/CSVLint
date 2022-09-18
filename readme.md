@@ -9,9 +9,10 @@ detect technical data errors and fix datetime and decimal formatting errors.
 
 ![preview screenshot](/csvlint_preview.png?raw=true "CSVLint plug-in preview")
 
-Use CSV Lint for metadata discovery, technical data validation and reformatting on tabular data files.
-It is _not_ meant to be a replacement for spreadsheet programs like Excel or SPSS,  
-but rather it's a quality control tool to examine, verify or polish up a dataset before further processing.
+Use CSV Lint for metadata discovery, technical data validation and
+reformatting on tabular data files. It is _not_ meant to be a replacement for
+spreadsheet programs like Excel or SPSS, but rather it's a quality control
+tool to examine, verify or polish up a dataset before further processing.
 
 With CSV Lint you can take a dataset and:
 
@@ -45,8 +46,9 @@ The CSV Lint plugin is available in Notepad++ in the Plugins Admin menu.
 * Click `Yes` to quit Notepad++ and "continue the operations"
 * Click `Yes` on the Windows notification "Allow app to make changes"
 
-Note: the plug-in is available in the Plugins Admin menu starting with Notepad++ v8.1.9.1.
-If you have a Notepad++ version older than v8.1.9.1 or want to install the plug-in manually:
+Note: the plug-in is available in the Plugins Admin menu starting with
+Notepad++ v8.1.9.1. If you have a Notepad++ version older than v8.1.9.1 or
+want to install the plug-in manually:
 
 * Go to the [releases page](https://github.com/BdR76/CSVLint/releases)
 * Find the latest release
@@ -63,8 +65,9 @@ How to use it
 4. Optionally, manually enter or adjust metadata
 5. Press "Validate data" to detect any data errors
 
-If there are no errors in the data, you can click "Reformat data" for data reformatting options,
-or select "Convert to SQL" menu item to generate an SQL insert script.
+If there are no errors in the data, you can click "Reformat data" for data
+reformatting options, or select "Convert to SQL" menu item to generate an
+SQL insert script.
 
 Also see this quick tour video, which shows how the plug-in works.
 
@@ -76,9 +79,12 @@ The metadata uses the standard schema.ini format, see documentation
 [here](https://docs.microsoft.com/en-us/sql/odbc/microsoft/schema-ini-file-text-file-driver?view=sql-server-ver15)
 
 When you open a csv file the plug-in try to determine the column meta data.
-It will first look for a `schema.ini` file in the same folder as the data file, and check to see if it contains a section with the filename.
-If the file or section doesn't exist, it will scan the data and try to infer the columns and datatypes.
-You can manually change the meta data and press the blue disk icon to save it to a `schema.ini` file in the same folder as the data file for later use.
+It will first look for a `schema.ini` file in the same folder as the data
+file, and check to see if it contains a section with the filename. If the file
+or section doesn't exist, it will scan the data and try to infer the columns
+and datatypes. You can manually change the meta data and press the blue disk
+icon to save it to a `schema.ini` file in the same folder as the data file for
+later use.
 
 See schema.ini example below:
 
@@ -96,11 +102,13 @@ Format can be `TabDelimited` for tabs, `CSVDelimited` for commas, for any other
 delimiter use for example `Format=Delimited(;)`. Use `FixedLength` for fixed
 width text files and set the `Width` for each column.
 
-DateTimeFormat is not case sensitive and uses `dd/mm/yyyy` or `yyyy-mm-dd hh:nn:ss` etc.
+DateTimeFormat is not case sensitive and uses `dd/mm/yyyy` or
+`yyyy-mm-dd hh:nn:ss` etc.
 
 DecimalSymbol can be either `.` or `,` and CSV Lint will assume the thousand
 separators symbol is the opposite of the DecimalSymbol. Define the maximum
-decimals digits for example `NumberDigits=2` for values like "1.23" or "-45.67" etc.
+decimals digits for example `NumberDigits=2` for values like "1.23" or "-45.67"
+etc.
 
 Validating 
 ----------
@@ -143,17 +151,20 @@ The CSV Lint plugin is work-in-progress, here is list of features I want to add 
 
 Trouble shooting / Known issues
 -------------------------------
-* When you press the "Validate Data" button after editing the data file, the text and metadata are not
-always synchronised immediately. if you get unexpected validation results, try saving the datafile
-or refreshing the meta data before clicking "Detect columns".
+* When you press the "Validate Data" button after editing the data file, the
+text and metadata are not always synchronised immediately. if you get
+unexpected validation results, try saving the datafile or refreshing the meta
+data before clicking "Detect columns".
 
-* When you press "Detect columns" the datetime format of the data isn't always detected correctly.
-Especially when the data contains values like `05/06/2021` the order of day and month can be incorrect.
-You can adjust it manually to match your data before pressing the "Validate data" button.
+* When you press "Detect columns" the datetime format of the data isn't always
+detected correctly. Especially when the data contains values like `05/06/2021`
+the order of day and month can be incorrect. You can adjust it manually to
+match your data before pressing the "Validate data" button.
 
-* When you select Language > CSVLint to enable the syntax highlighing colors, or change the metadata manually,
-the column colors aren't always displayed correctly immediately.
-Click inside the textfile or switch tabs to a different file and then back and it should display correctly.
+* When you select Language > CSVLint to enable the syntax highlighing colors,
+or change the metadata manually, the column colors aren't always updated
+immediately. Click inside the textfile or switch tabs to a different file and
+then back and it should display correctly.
 
 Acknowledgements
 ----------------
@@ -169,10 +180,11 @@ The CSV Lint plug-in couldn't have been created without their source examples, s
 
 Disclaimer
 ----------
-This software is free-to-use and it is provided as-is without warranty of any kind,
-always back-up your data files to prevent data loss.  
-The [test data](./testdata/), examples and screenshots provided in this github repository do not contain real data, it
-is [randomly generated](https://github.com/BdR76/RandomValuesNPP) test data.
+This software is free-to-use and it is provided as-is without warranty of any
+kind, always back-up your data files to prevent data loss.  
+The [test data](./testdata/), examples and screenshots provided in this github
+repository do not contain real data, it is
+[randomly generated](https://github.com/BdR76/RandomValuesNPP) test data.
 
 History
 -------
@@ -189,7 +201,5 @@ History
 03-jun-2022 - v0.4.5.2 Another Lexer v5 bugfix, generate Python script  
 25-jul-2022 - v0.4.5.3 Manually detect columns, improved fixed width support  
 14-aug-2022 - v0.4.5.4 Improved datatype and datetime mask detection, various bugfixes  
-
-Total downloads v0.4.1 `4.2k`, v0.4.2 `101`, v0.4.3 `12k`, v0.4.4 `14k`, v0.4.5 `16k`, v0.4.5.1 `11k`, v0.4.5.2 `5k`, v0.4.5.3 `344`
 
 BdR©2021 Free to use - send questions or comments: Bas de Reuver - bdr1976@gmail.com
