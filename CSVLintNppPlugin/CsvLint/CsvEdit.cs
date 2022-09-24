@@ -757,6 +757,7 @@ namespace CSVLint
         /// split column into new columns
         /// </summary>
         /// <param name="data">csv data</param>
+        /// <param name="SplitCode">1 = Pad, 2, Search Replace, 3 = Split valid/invalid, 4 = Split character, 5 = Split position</param>
         public static void ColumnSplit(CsvDefinition csvdef, int ColumnIndex, int SplitCode, string Parameter1, string Parameter2, bool bRemove)
         {
             // handle to editor
@@ -767,18 +768,10 @@ namespace CSVLint
 
             //var s = new StringReader(data);
             int linenr = 0;
-            int.TryParse(Parameter1, out int IntPar);
-            var IntPar2 = -1 * IntPar;
 
-            // decode
-            List<string> decodelist = new List<string>();
-            List<string> decode2 = new List<string>();
-
-            // decode
-            if (SplitCode == 5)
-            {
-                decodelist = Parameter1.Split(Parameter2[0]).Select(item => item.Trim()).ToList();
-            }
+            // parameter 2 as integer and abs(integer)
+            int.TryParse(Parameter2, out int IntPar2);
+            var IntPar2a = -1 * IntPar2;
 
             StringBuilder datanew = new StringBuilder();
 
@@ -808,11 +801,11 @@ namespace CSVLint
                         // determine new column header names, check for existing postfix
                         var newname = csvdef.GetUniqueColumnName(csvdef.Fields[head].Name, out int postfix);
 
-                        // when decoding csv values (SplitCode == 5) add more new columns, when normal split then just 2
-                        var addmax = SplitCode == 5 ? decodelist.Count + 1 : 2; // +1 = one extra column of any left-over values
+                        // when split csv values then add 2 new columns, when edit then just 1
+                        var addmax = SplitCode <= 2 ? 1 : 2; // 1 new column (edit) or 2 new colunms (split)
                         for (var cnew = 0; cnew < addmax; cnew++)
                         {
-                            datanew.Append(string.Format("{0}{1} ({2})", sep, newname, postfix + cnew));
+                            datanew.Append(string.Format("{0}{1} ({2})", (head == 0 && bRemove ? "" : sep), newname, postfix + cnew));
                         }
                     }
                 }
@@ -848,102 +841,76 @@ namespace CSVLint
 
                     if (col == ColumnIndex)
                     {
-                        // how to split value
-                        if (SplitCode == 5)
+                        // split column
+                        string val1 = val;
+                        string val2 = "";
+
+                        if (SplitCode == 1)
                         {
-                            // decode multiple values, example val = "1;2;3"
-                            decode2.Clear();
-                            decode2 = val.Split(Parameter2[0]).Select(item => item.Trim()).ToList();
-
-                            // split value into into columns
-                            foreach (var dec in decodelist)
-                            {
-                                // check if separated value in list of decode values
-                                var decidx = decode2.IndexOf(dec);
-
-                                // add value or empty if not found
-                                newcols.Add((decidx >= 0 ? dec : ""));
-
-                                // remove from original values list
-                                if (decidx >= 0) decode2.RemoveAt(decidx);
+                            // pad with character
+                            if (IntPar2 > 0) {
+                                val1 = val.PadLeft(IntPar2, Parameter1[0]); // left pad
+                            } else {
+                                val1 = val.PadRight(IntPar2a, Parameter1[0]); // right pad
                             }
-
-                            // put any left-over values in the extra column
-                            var remain = "";
-                            foreach (var dec in decode2)
-                            {
-                                remain += dec + Parameter2[0];
-                            }
-                            if (remain.Length > 0) remain = remain.Remove(remain.Length - 1); // remove last separator"; "
-                            // add left-over values in last column
-                            newcols.Add(remain);
                         }
-                        else
+                        else if (SplitCode == 2)
                         {
-                            // split column
-                            string val1 = val;
-                            string val2 = "";
-
-                            if (SplitCode == 1)
+                            // search and replace
+                            val1 = val.Replace(Parameter1, Parameter2);
+                        }
+                        else if (SplitCode == 3)
+                        {
+                            // valid/invalid
+                            var str = csvvalid.EvaluateDataValue(val, csvdef.Fields[ColumnIndex], ColumnIndex);
+                            if (str != "")
                             {
-                                // valid/invalid
-                                var str = csvvalid.EvaluateDataValue(val, csvdef.Fields[ColumnIndex], ColumnIndex);
-                                if (str != "")
-                                {
-                                    val1 = "";
-                                    val2 = val; // invalid value
-                                }
+                                val1 = "";
+                                val2 = val; // invalid value
                             }
-                            else if (SplitCode == 2)
+                        }
+                        else if (SplitCode == 4)
+                        {
+                            // split on char
+                            int pos = val.IndexOf(Parameter1);
+                            if (pos >= 0)
                             {
-                                // split on char
-                                int pos = val.IndexOf(Parameter1);
-                                if (pos >= 0)
-                                {
-                                    val1 = val.Substring(0, pos);
-                                    val2 = val.Substring(pos + Parameter1.Length, val.Length - pos - Parameter1.Length);
-                                }
+                                val1 = val.Substring(0, pos);
+                                val2 = val.Substring(pos + Parameter1.Length, val.Length - pos - Parameter1.Length);
                             }
-                            else if (SplitCode == 3)
+                        }
+                        else if (SplitCode == 5)
+                        {
+                            // split on position
+                            int pos = val.IndexOf(Parameter1);
+                            if ((IntPar2 > 0) && (IntPar2 < val.Length))
                             {
-                                // split on position
-                                int pos = val.IndexOf(Parameter1);
-                                if ((IntPar > 0) && (IntPar < val.Length))
-                                {
-                                    // positive, left string
-                                    val1 = val.Substring(0, IntPar);
-                                    val2 = val.Substring(IntPar, val.Length - IntPar);
-                                }
-                                else if (IntPar < 0)
-                                {
-                                    // negative, right string
-                                    if (IntPar2 < val.Length)
-                                    {
-                                        val1 = val.Substring(0, val.Length - IntPar2);
-                                        val2 = val.Substring(val.Length - IntPar2);
-                                    }
-                                    else
-                                    {
-                                        // take all as right string
-                                        val1 = "";
-                                        val2 = val;
-                                    }
-                                }
+                                // positive, left string
+                                val1 = val.Substring(0, IntPar2);
+                                val2 = val.Substring(IntPar2, val.Length - IntPar2);
                             }
-                            else if (SplitCode == 4)
+                            else if (IntPar2 < 0)
                             {
-                                // split when contains
-                                int pos = val.IndexOf(Parameter1);
-                                if (pos >= 0)
+                                // negative, right string
+                                if (IntPar2a < val.Length)
                                 {
+                                    val1 = val.Substring(0, val.Length - IntPar2a);
+                                    val2 = val.Substring(val.Length - IntPar2a);
+                                }
+                                else
+                                {
+                                    // take all as right string
                                     val1 = "";
                                     val2 = val;
                                 }
                             }
-                            // add split column values
-                            newcols.Add(val1);
-                            newcols.Add(val2);
                         }
+
+                        // add edit/split column values
+                        newcols.Add(val1);
+
+                        // add split column values
+                        if (SplitCode > 2) newcols.Add(val2); 
                     }
                 };
 

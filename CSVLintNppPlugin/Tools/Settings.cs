@@ -173,25 +173,26 @@ namespace Kbg.NppPluginNET
             Category("UserPref"), DefaultValue("")]
         public string SplitColName { get; set; }
 
-        [Description("Split column, selected option."),
-            Category("UserPref"), DefaultValue(0)]
+        [Description("Split column, selected option."), Category("UserPref"), DefaultValue(0)]
         public int SplitOption { get; set; }
 
-        [Description("Split column, split on character."),
-            Category("UserPref"), DefaultValue("/")]
+        [Description("Edit column, pad with character."), Category("UserPref"), DefaultValue("0")]
+        public string EditColPad { get; set; }
+
+        [Description("Edit column, pad with character count."), Category("UserPref"), DefaultValue(10)]
+        public int EditColPadLength { get; set; }
+
+        [Description("Edit column, search for value."), Category("UserPref"), DefaultValue("abc")]
+        public string EditColSearch { get; set; }
+
+        [Description("Edit colun, replace with value."), Category("UserPref"), DefaultValue("xyz")]
+        public string EditColReplace { get; set; }
+
+        [Description("Split column, split on character."), Category("UserPref"), DefaultValue("/")]
         public string SplitChar { get; set; }
 
         [Description("Split column, split on position."), Category("UserPref"), DefaultValue(3)]
         public int SplitPos { get; set; }
-
-        [Description("Split column, move if contains string."), Category("UserPref"), DefaultValue(".00")]
-        public string SplitContain { get; set; }
-
-        [Description("Split column, decode values."), Category("UserPref"), DefaultValue("1;2;3;4;5")]
-        public string SplitDecode { get; set; }
-
-        [Description("Split column, decode character."), Category("UserPref"), DefaultValue(";")]
-        public string SplitDecodeChar { get; set; }
 
         [Description("Split column, remove original column."), Category("UserPref"), DefaultValue(false)]
         public bool SplitRemoveOrg { get; set; }

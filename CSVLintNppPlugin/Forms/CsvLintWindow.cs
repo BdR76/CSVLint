@@ -340,12 +340,12 @@ namespace Kbg.NppPluginNET
 
                     // ready message
                     string msg = "";
-                    if (cod == 1) msg = "invalid values";
-                    if (cod == 2) msg = "character " + par1;
-                    if (cod == 3) msg = "position " + par1;
-                    if (cod == 4) msg = "when contains " + par1;
-                    if (cod == 5) msg = "decode multiple value " + par1;
-                    msg = string.Format("Column \"{0}\" was split on \"{1}\"\r\n", csvdef.Fields[idx].Name, msg);
+                    if (cod == 1) msg = "was padded with \"" + par1 + "\"";
+                    if (cod == 2) msg = "search \"" + par1 + "\" replace with \"" + par2 + "\"";
+                    if (cod == 3) msg = "was split on valid and invalid values";
+                    if (cod == 4) msg = "was split on character " + par1;
+                    if (cod == 5) msg = "was split on position " + par1;
+                    msg = string.Format("Column \"{0}\" {1}\r\n", csvdef.Fields[idx].Name, msg);
 
                     // display process message
                     msg += string.Format("Split column is ready, time elapsed {0}\r\n", dtElapsed);
