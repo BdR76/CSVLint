@@ -30,8 +30,8 @@
         {
             this.btnOk = new System.Windows.Forms.Button();
             this.lblTitle = new System.Windows.Forms.Label();
-            this.lblInfo = new System.Windows.Forms.Label();
-            this.lnkContact = new System.Windows.Forms.LinkLabel();
+            this.lnkInfo = new System.Windows.Forms.LinkLabel();
+            this.lnkGithub = new System.Windows.Forms.LinkLabel();
             this.picEasterEgg = new System.Windows.Forms.PictureBox();
             this.lblDisclaimer = new System.Windows.Forms.Label();
             this.lblLine = new System.Windows.Forms.Label();
@@ -43,7 +43,7 @@
             // 
             this.btnOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnOk.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.btnOk.Location = new System.Drawing.Point(45, 182);
+            this.btnOk.Location = new System.Drawing.Point(45, 189);
             this.btnOk.Name = "btnOk";
             this.btnOk.Size = new System.Drawing.Size(119, 25);
             this.btnOk.TabIndex = 0;
@@ -63,35 +63,40 @@
             this.lblTitle.Text = "CSV Lint plug-in NPP v";
             this.lblTitle.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
-            // lblInfo
+            // lnkInfo
             // 
-            this.lblInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.lnkInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblInfo.Location = new System.Drawing.Point(8, 41);
-            this.lblInfo.Name = "lblInfo";
-            this.lblInfo.Size = new System.Drawing.Size(192, 30);
-            this.lblInfo.TabIndex = 2;
-            this.lblInfo.Text = "Validate, reformat and clean up dataset textfiles, by Bas de Reuver";
-            this.lblInfo.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.lnkInfo.LinkArea = new System.Windows.Forms.LinkArea(54, 67);
+            this.lnkInfo.Location = new System.Drawing.Point(8, 41);
+            this.lnkInfo.Name = "lnkInfo";
+            this.lnkInfo.Size = new System.Drawing.Size(192, 30);
+            this.lnkInfo.TabIndex = 2;
+            this.lnkInfo.TabStop = true;
+            this.lnkInfo.Tag = "1";
+            this.lnkInfo.Text = "Validate, reformat and clean up dataset textfiles, by Bas de Reuver";
+            this.lnkInfo.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.lnkInfo.UseCompatibleTextRendering = true;
+            this.lnkInfo.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnLinkClicked);
             // 
-            // lnkContact
+            // lnkGithub
             // 
-            this.lnkContact.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.lnkGithub.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.lnkContact.Location = new System.Drawing.Point(8, 72);
-            this.lnkContact.Name = "lnkContact";
-            this.lnkContact.Size = new System.Drawing.Size(192, 13);
-            this.lnkContact.TabIndex = 4;
-            this.lnkContact.TabStop = true;
-            this.lnkContact.Tag = "1";
-            this.lnkContact.Text = "bdr1976@gmail.com";
-            this.lnkContact.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.lnkContact.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnLinkClicked);
+            this.lnkGithub.Location = new System.Drawing.Point(8, 131);
+            this.lnkGithub.Name = "lnkGithub";
+            this.lnkGithub.Size = new System.Drawing.Size(192, 13);
+            this.lnkGithub.TabIndex = 4;
+            this.lnkGithub.TabStop = true;
+            this.lnkGithub.Tag = "2";
+            this.lnkGithub.Text = "https://github.com/BdR76/CSVLint/";
+            this.lnkGithub.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.lnkGithub.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnLinkClicked);
             // 
             // picEasterEgg
             // 
             this.picEasterEgg.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.picEasterEgg.Location = new System.Drawing.Point(170, 176);
+            this.picEasterEgg.Location = new System.Drawing.Point(170, 183);
             this.picEasterEgg.Name = "picEasterEgg";
             this.picEasterEgg.Size = new System.Drawing.Size(32, 32);
             this.picEasterEgg.TabIndex = 7;
@@ -102,7 +107,7 @@
             // 
             this.lblDisclaimer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblDisclaimer.Location = new System.Drawing.Point(8, 91);
+            this.lblDisclaimer.Location = new System.Drawing.Point(8, 74);
             this.lblDisclaimer.Name = "lblDisclaimer";
             this.lblDisclaimer.Size = new System.Drawing.Size(192, 59);
             this.lblDisclaimer.TabIndex = 2;
@@ -123,7 +128,8 @@
             // 
             // btnDonate
             // 
-            this.btnDonate.Location = new System.Drawing.Point(45, 150);
+            this.btnDonate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnDonate.Location = new System.Drawing.Point(45, 157);
             this.btnDonate.Name = "btnDonate";
             this.btnDonate.Size = new System.Drawing.Size(119, 25);
             this.btnDonate.TabIndex = 8;
@@ -136,13 +142,13 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnOk;
-            this.ClientSize = new System.Drawing.Size(208, 214);
+            this.ClientSize = new System.Drawing.Size(208, 221);
             this.Controls.Add(this.btnDonate);
             this.Controls.Add(this.picEasterEgg);
-            this.Controls.Add(this.lnkContact);
+            this.Controls.Add(this.lnkGithub);
             this.Controls.Add(this.btnOk);
             this.Controls.Add(this.lblDisclaimer);
-            this.Controls.Add(this.lblInfo);
+            this.Controls.Add(this.lnkInfo);
             this.Controls.Add(this.lblLine);
             this.Controls.Add(this.lblTitle);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
@@ -160,8 +166,8 @@
 
         private System.Windows.Forms.Button btnOk;
         private System.Windows.Forms.Label lblTitle;
-        private System.Windows.Forms.Label lblInfo;
-        private System.Windows.Forms.LinkLabel lnkContact;
+        private System.Windows.Forms.LinkLabel lnkInfo;
+        private System.Windows.Forms.LinkLabel lnkGithub;
         private System.Windows.Forms.PictureBox picEasterEgg;
         private System.Windows.Forms.Label lblDisclaimer;
         private System.Windows.Forms.Label lblLine;

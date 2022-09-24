@@ -63,8 +63,8 @@ namespace CSVLintNppPlugin.Forms
             // 
             // lblTitle
             // 
-            this.lblTitle.Size = new System.Drawing.Size(142, 20);
-            this.lblTitle.Text = "Edit or split column";
+            this.lblTitle.Size = new System.Drawing.Size(144, 20);
+            this.lblTitle.Text = "Add new column(s)";
             // 
             // picHelpIcon
             // 
@@ -78,11 +78,11 @@ namespace CSVLintNppPlugin.Forms
             // lblSelectColumn
             // 
             this.lblSelectColumn.AutoSize = true;
-            this.lblSelectColumn.Location = new System.Drawing.Point(12, 52);
+            this.lblSelectColumn.Location = new System.Drawing.Point(12, 54);
             this.lblSelectColumn.Name = "lblSelectColumn";
-            this.lblSelectColumn.Size = new System.Drawing.Size(107, 13);
+            this.lblSelectColumn.Size = new System.Drawing.Size(125, 13);
             this.lblSelectColumn.TabIndex = 0;
-            this.lblSelectColumn.Text = "Select column to split";
+            this.lblSelectColumn.Text = "Based on original column";
             // 
             // cmbSelectColumn
             // 
@@ -90,7 +90,7 @@ namespace CSVLintNppPlugin.Forms
             this.cmbSelectColumn.FormattingEnabled = true;
             this.cmbSelectColumn.Items.AddRange(new object[] {
             "(select a column)"});
-            this.cmbSelectColumn.Location = new System.Drawing.Point(192, 48);
+            this.cmbSelectColumn.Location = new System.Drawing.Point(192, 50);
             this.cmbSelectColumn.Name = "cmbSelectColumn";
             this.cmbSelectColumn.Size = new System.Drawing.Size(180, 21);
             this.cmbSelectColumn.TabIndex = 1;
@@ -159,7 +159,7 @@ namespace CSVLintNppPlugin.Forms
             // txtPadChar
             // 
             this.txtPadChar.Enabled = false;
-            this.txtPadChar.Location = new System.Drawing.Point(191, 83);
+            this.txtPadChar.Location = new System.Drawing.Point(192, 83);
             this.txtPadChar.Name = "txtPadChar";
             this.txtPadChar.Size = new System.Drawing.Size(48, 20);
             this.txtPadChar.TabIndex = 7;
@@ -197,9 +197,9 @@ namespace CSVLintNppPlugin.Forms
             // txtSearch
             // 
             this.txtSearch.Enabled = false;
-            this.txtSearch.Location = new System.Drawing.Point(192, 116);
+            this.txtSearch.Location = new System.Drawing.Point(192, 115);
             this.txtSearch.Name = "txtSearch";
-            this.txtSearch.Size = new System.Drawing.Size(47, 20);
+            this.txtSearch.Size = new System.Drawing.Size(48, 20);
             this.txtSearch.TabIndex = 9;
             this.txtSearch.Tag = "2";
             this.txtSearch.Text = "abc";
@@ -216,7 +216,7 @@ namespace CSVLintNppPlugin.Forms
             // txtReplace
             // 
             this.txtReplace.Enabled = false;
-            this.txtReplace.Location = new System.Drawing.Point(306, 116);
+            this.txtReplace.Location = new System.Drawing.Point(306, 115);
             this.txtReplace.Name = "txtReplace";
             this.txtReplace.Size = new System.Drawing.Size(48, 20);
             this.txtReplace.TabIndex = 10;
@@ -226,7 +226,7 @@ namespace CSVLintNppPlugin.Forms
             // txtSplitCharacter
             // 
             this.txtSplitCharacter.Enabled = false;
-            this.txtSplitCharacter.Location = new System.Drawing.Point(191, 176);
+            this.txtSplitCharacter.Location = new System.Drawing.Point(192, 179);
             this.txtSplitCharacter.Name = "txtSplitCharacter";
             this.txtSplitCharacter.Size = new System.Drawing.Size(48, 20);
             this.txtSplitCharacter.TabIndex = 11;
@@ -236,7 +236,7 @@ namespace CSVLintNppPlugin.Forms
             // numSplitSubstring
             // 
             this.numSplitSubstring.Enabled = false;
-            this.numSplitSubstring.Location = new System.Drawing.Point(191, 208);
+            this.numSplitSubstring.Location = new System.Drawing.Point(192, 212);
             this.numSplitSubstring.Maximum = new decimal(new int[] {
             999,
             0,
@@ -285,7 +285,7 @@ namespace CSVLintNppPlugin.Forms
             this.Controls.Add(this.lblSelectColumn);
             this.Name = "ColumnSplitForm";
             this.Tag = "split-column";
-            this.Text = "Edit or split column";
+            this.Text = "Add new column(s)";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ColumnSplitForm_FormClosing);
             this.Controls.SetChildIndex(this.picHelpIcon, 0);
             this.Controls.SetChildIndex(this.lblTitle, 0);

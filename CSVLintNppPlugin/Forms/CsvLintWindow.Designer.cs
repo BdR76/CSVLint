@@ -90,7 +90,7 @@
             this.btnSplit.Name = "btnSplit";
             this.btnSplit.Size = new System.Drawing.Size(72, 32);
             this.btnSplit.TabIndex = 9;
-            this.btnSplit.Text = "Split column";
+            this.btnSplit.Text = "Add column";
             this.btnSplit.UseVisualStyleBackColor = true;
             this.btnSplit.Click += new System.EventHandler(this.btnSplit_Click);
             // 

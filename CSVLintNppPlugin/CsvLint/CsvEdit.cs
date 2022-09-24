@@ -805,7 +805,7 @@ namespace CSVLint
                         var addmax = SplitCode <= 2 ? 1 : 2; // 1 new column (edit) or 2 new colunms (split)
                         for (var cnew = 0; cnew < addmax; cnew++)
                         {
-                            datanew.Append(string.Format("{0}{1} ({2})", (head == 0 && bRemove ? "" : sep), newname, postfix + cnew));
+                            datanew.Append(string.Format("{0}{1} ({2})", ((head+cnew) == 0 && bRemove ? "" : sep), newname, postfix + cnew));
                         }
                     }
                 }

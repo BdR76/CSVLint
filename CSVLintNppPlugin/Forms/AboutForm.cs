@@ -18,7 +18,8 @@ namespace Kbg.NppPluginNET
 
             // tooltip initialization
             helperTip.SetToolTip(btnDonate, "Support this plug-in by buying me a coffee!");
-            helperTip.SetToolTip(lnkContact, "Send comments or suggestions (right-click to copy address)");
+            helperTip.SetToolTip(lnkInfo, "Send comments or suggestions (right-click to copy address)");
+            helperTip.SetToolTip(lnkGithub, "Open the CSVLint GitHub page (right-click to copy url)");
 
             DisplayEasterEgg();
         }
@@ -134,16 +135,11 @@ namespace Kbg.NppPluginNET
             LinkLabel lbl = sender as LinkLabel;
             string url = lbl.Text;
             string urlcopy = url;
-            //if ((string)lbl.Tag == "0")
-            //{
-            //    url = "https://www.buymeacoffee.com/bdr76";
-            //    urlcopy = url;
-            //}
-            //else
-            //{
+            if ((string)lbl.Tag == "1")
+            {
                 string sub = lblTitle.Text.Replace(" ", "%20");
                 url = string.Format("mailto:{0}?subject={1}", url, sub);
-            //}
+            }
 
             if (e.Button == MouseButtons.Right)
             {
