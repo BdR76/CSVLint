@@ -653,7 +653,6 @@ namespace NppPluginNET.PluginInfrastructure
 
             // free allocated buffer
             Marshal.FreeHGlobal(buffer_ptr);
-
         }
 
         // virtual void SCI_METHOD Fold(Sci_PositionU startPos, i64 lengthDoc, int initStyle, IDocument *pAccess) = 0;

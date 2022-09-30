@@ -18,7 +18,7 @@ namespace Kbg.NppPluginNET
 
             // tooltip initialization
             helperTip.SetToolTip(btnDonate, "Support this plug-in by buying me a coffee!");
-            helperTip.SetToolTip(lnkInfo, "Send comments or suggestions (right-click to copy address)");
+            helperTip.SetToolTip(lnkInfo, "Send comments or suggestions (right-click to copy e-mail address)");
             helperTip.SetToolTip(lnkGithub, "Open the CSVLint GitHub page (right-click to copy url)");
 
             DisplayEasterEgg();
@@ -138,7 +138,9 @@ namespace Kbg.NppPluginNET
             if ((string)lbl.Tag == "1")
             {
                 string sub = lblTitle.Text.Replace(" ", "%20");
-                url = string.Format("mailto:{0}?subject={1}", url, sub);
+                urlcopy = "bdr1976@gmail.com";
+                url = string.Format("mailto:{0}?subject={1}", urlcopy, sub);
+                urlcopy = string.Format("\"Bas de Reuver\" <{0}>", urlcopy);
             }
 
             if (e.Button == MouseButtons.Right)

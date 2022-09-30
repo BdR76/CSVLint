@@ -140,7 +140,6 @@ namespace Kbg.NppPluginNET
                     editor.SetCaretLineBack(sCaretLineColor);
                 }
             }
-
         }
 
         internal static void CommandMenuInit()
