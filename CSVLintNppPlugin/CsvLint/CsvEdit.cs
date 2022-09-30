@@ -13,6 +13,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 
 namespace CSVLint
 {
@@ -648,7 +649,7 @@ namespace CSVLint
                 {
                     sb.Append("");
                 }
-                    // skip header line
+                // skip header line
                 if (lineCount >= 0)
                 {
 
@@ -751,6 +752,189 @@ namespace CSVLint
             // create new file
             notepad.FileNew();
             editor.SetText(sb.ToString());
+        }
+
+
+        private static string SortableString(string val, CsvColumn csvcol)
+        {
+            if ( (csvcol.DataType == ColumnType.Integer) || (csvcol.DataType == ColumnType.Decimal)) // integer or decimal
+            {
+                // decimal, pad decimals first
+                if (csvcol.DataType == ColumnType.Decimal)
+                {
+                    // remove any thousand separators
+                    var thous = (csvcol.DecimalSymbol == '.' ? "," : ".");
+                    val = val.Replace(thous, ""); // remove thousand separators
+
+                    // determine decimal position in string value
+                    var decpos = val.IndexOf(csvcol.DecimalSymbol);
+                    if (decpos == -1)
+                    {
+                        // no decimal, add one
+                        val += csvcol.DecimalSymbol;
+                        decpos = val.Length - 1;
+                    }
+                    // right pad decimals, example csvcol.Decimals=5 val="12.34" -> val="12.34000"
+                    var paddec = csvcol.Decimals - (val.Length - decpos - 1);
+                    if (paddec > 0) val = val.PadRight((val.Length + paddec), '0');
+                }
+                // for the rest the integer and decimal are the same
+
+                // positive of negative numbers
+                if (val.IndexOf('-') < 0)
+                {
+                    // positive numbers
+                    return "9" + val.PadLeft(csvcol.MaxWidth, '0');
+                }
+                else
+                {
+                    // negative numbers, 'invert' each digit for sorting purposes
+                    var ret = "";
+                    foreach (char c in val)
+                    {
+                        var digitinvert = c;
+                        if ((c >= '0') && (c <= '9'))
+                        {
+                            // '0'..'9' = ascii 48..57, invert digits so '0'->'9', '1'->'8', '2'->'7' etc.
+                            digitinvert = (char)(48 + 57 - c);
+                        }
+                        else if (c == '-')
+                        {
+                            digitinvert = '9';
+                        }
+                        ret += digitinvert;
+                    }
+                    return "0" + ret.PadLeft(csvcol.MaxWidth, '9');
+                };
+            }
+            else if (csvcol.DataType == ColumnType.DateTime)
+            {
+                // convert datetime to iso format for sorting purposes
+                try
+                {
+                    val = DateTime.ParseExact(val, csvcol.Mask, Main.dummyCulture).ToString("yyyyMMdd HHmmss.fff", Main.dummyCulture);
+                }
+                catch
+                {
+                    val = "00000000 000000.000"; // invalid date sort to front(?)
+                }
+                return val;
+            }
+            else
+            {
+                // string or any other value
+                return val;
+            }
+        }
+
+        /// <summary>
+        /// Sort data on column ascending or descending
+        /// </summary>
+        /// <param name="data">csv data</param>
+        /// <param name="AscDesc">true = ascending, true = decending</param>
+        public static void SortData(CsvDefinition csvdef, int SortIdx, bool AscDesc)
+        {
+            // this should never happen
+            if (SortIdx > csvdef.Fields.Count - 1)
+            {
+                string errmsg = string.Format("Sort on column index out of bounds, index is {0} and column count is {1}", SortIdx, csvdef.Fields.Count);
+                //throw new ArgumentException(errmsg);
+                MessageBox.Show(errmsg, "Sort on column error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            // examine data and keep list of counters per unique values
+            // Note: can be a dictionary, not a list, because the sortable values are guaranteed to be unique
+            Dictionary<string, string> sortlines = new Dictionary<string, string>();
+            var strdata = ScintillaStreams.StreamAllText();
+
+            // variables to read original data file
+            List<string> values;
+            var linecount = 0;
+            var sep = csvdef.Separator.ToString();
+
+            // output in new sort order
+            StringBuilder sbsort = new StringBuilder();
+
+            // if first line is header column names
+            if (csvdef.ColNameHeader) {
+                // consume line and copy to output
+                values = csvdef.ParseNextLine(strdata);
+
+                // get unique value(s) from column indexes
+                for (int i = 0; i < values.Count; i++)
+                {
+                    // get value
+                    var colname = values[i];
+
+                    // add separator
+                    if (i > 0) sbsort.Append(sep);
+
+                    // reconstruct original line
+                    if (colname.IndexOf('"') >= 0) colname = colname.Replace("\"", "\"\"");
+                    if (colname.IndexOf(sep) >= 0) colname = string.Format("\"{0}\"", colname);
+
+                    // add header to output
+                    sbsort.Append(colname);
+                }
+                sbsort.Append("\n");
+            }
+
+            // sort on column, get column information
+            CsvColumn csvcol = csvdef.Fields[SortIdx];
+
+            // read all data lines
+            while (!strdata.EndOfStream)
+            {
+                // get next line of values
+                values = csvdef.ParseNextLine(strdata);
+                string sortval = "";
+                string line = "";
+
+                // get unique value(s) from column indexes
+                for (int i = 0; i < values.Count; i++)
+                {
+                    // get value
+                    var val = values[i];
+
+                    // add separator
+                    if (i > 0) line += sep;
+
+                    // reconstruct original line
+                    if (val.IndexOf('"') >= 0) val = val.Replace("\"", "\"\"");
+                    if (val.IndexOf(sep) >= 0) val = string.Format("\"{0}\"", val);
+                    line += val;
+
+                    // construct sortable value
+                    if (i == SortIdx) {
+                        sortval = SortableString(val, csvcol) + linecount.ToString("D10"); // add linecount so guaranteed unique + retain original sort order for equal values
+                    }
+                }
+
+                // add to list
+                sortlines.Add(sortval, line);
+
+                // next line
+                linecount += 1;
+            }
+            strdata.Dispose();
+
+            // apply sorting, obj.Key contains sortable value and obj.Value contains the original line of data
+            if (AscDesc == true)
+                sortlines = sortlines.OrderBy(obj => obj.Key).ToDictionary(obj => obj.Key, obj => obj.Value);
+            else
+                sortlines = sortlines.OrderByDescending(obj => obj.Key).ToDictionary(obj => obj.Key, obj => obj.Value);
+
+            // add all unique values, sort by count
+            var maxwidth = 0;
+            foreach (KeyValuePair<string, string> rec in sortlines)
+            {
+                sbsort.Append(string.Format("{0}\r\n", rec.Value));
+            }
+
+            // update text in editor
+            ScintillaGateway scintillaGateway = PluginBase.CurrentScintillaGateway;
+            scintillaGateway.SetText(sbsort.ToString());
         }
 
         /// <summary>

@@ -107,6 +107,12 @@
     <Compile Include="Forms\ReformatForm.Designer.cs">
       <DependentUpon>ReformatForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\SortForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\SortForm.Designer.cs">
+      <DependentUpon>SortForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\UniqueValuesForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -180,6 +186,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ReformatForm.resx">
       <DependentUpon>ReformatForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\SortForm.resx">
+      <DependentUpon>SortForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\UniqueValuesForm.resx">
       <DependentUpon>UniqueValuesForm.cs</DependentUpon>

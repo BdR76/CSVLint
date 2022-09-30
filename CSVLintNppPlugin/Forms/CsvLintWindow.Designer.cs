@@ -39,6 +39,7 @@
             this.btnValidate = new System.Windows.Forms.Button();
             this.txtOutput = new System.Windows.Forms.TextBox();
             this.tooltipCsvLint = new System.Windows.Forms.ToolTip(this.components);
+            this.btnSort = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -56,19 +57,20 @@
             // splitContainer1.Panel1
             // 
             this.splitContainer1.Panel1.Controls.Add(this.chkAutoDetect);
+            this.splitContainer1.Panel1.Controls.Add(this.btnSort);
             this.splitContainer1.Panel1.Controls.Add(this.btnSplit);
             this.splitContainer1.Panel1.Controls.Add(this.btnApply);
             this.splitContainer1.Panel1.Controls.Add(this.btnReformat);
             this.splitContainer1.Panel1.Controls.Add(this.btnDetectColumns);
             this.splitContainer1.Panel1.Controls.Add(this.txtSchemaIni);
-            this.splitContainer1.Panel1MinSize = 336;
+            this.splitContainer1.Panel1MinSize = 416;
             // 
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.btnValidate);
             this.splitContainer1.Panel2.Controls.Add(this.txtOutput);
             this.splitContainer1.Size = new System.Drawing.Size(1170, 352);
-            this.splitContainer1.SplitterDistance = 390;
+            this.splitContainer1.SplitterDistance = 416;
             this.splitContainer1.TabIndex = 7;
             // 
             // chkAutoDetect
@@ -86,7 +88,7 @@
             // btnSplit
             // 
             this.btnSplit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSplit.Location = new System.Drawing.Point(227, 3);
+            this.btnSplit.Location = new System.Drawing.Point(253, 3);
             this.btnSplit.Name = "btnSplit";
             this.btnSplit.Size = new System.Drawing.Size(72, 32);
             this.btnSplit.TabIndex = 9;
@@ -107,7 +109,7 @@
             // btnReformat
             // 
             this.btnReformat.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnReformat.Location = new System.Drawing.Point(305, 3);
+            this.btnReformat.Location = new System.Drawing.Point(331, 3);
             this.btnReformat.Name = "btnReformat";
             this.btnReformat.Size = new System.Drawing.Size(72, 32);
             this.btnReformat.TabIndex = 7;
@@ -136,7 +138,7 @@
             this.txtSchemaIni.Multiline = true;
             this.txtSchemaIni.Name = "txtSchemaIni";
             this.txtSchemaIni.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtSchemaIni.Size = new System.Drawing.Size(374, 300);
+            this.txtSchemaIni.Size = new System.Drawing.Size(400, 300);
             this.txtSchemaIni.TabIndex = 5;
             this.txtSchemaIni.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtSchemaIni_KeyDown);
             // 
@@ -163,9 +165,20 @@
             this.txtOutput.Name = "txtOutput";
             this.txtOutput.ReadOnly = true;
             this.txtOutput.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtOutput.Size = new System.Drawing.Size(761, 298);
+            this.txtOutput.Size = new System.Drawing.Size(735, 298);
             this.txtOutput.TabIndex = 4;
             this.txtOutput.DoubleClick += new System.EventHandler(this.OnTxtOutput_DoubleClick);
+            // 
+            // btnSort
+            // 
+            this.btnSort.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSort.Location = new System.Drawing.Point(175, 3);
+            this.btnSort.Name = "btnSort";
+            this.btnSort.Size = new System.Drawing.Size(72, 32);
+            this.btnSort.TabIndex = 9;
+            this.btnSort.Text = "Sort";
+            this.btnSort.UseVisualStyleBackColor = true;
+            this.btnSort.Click += new System.EventHandler(this.btnSort_Click);
             // 
             // CsvLintWindow
             // 
@@ -197,5 +210,6 @@
         private System.Windows.Forms.Button btnApply;
         private System.Windows.Forms.Button btnSplit;
         private System.Windows.Forms.CheckBox chkAutoDetect;
+        private System.Windows.Forms.Button btnSort;
     }
 }

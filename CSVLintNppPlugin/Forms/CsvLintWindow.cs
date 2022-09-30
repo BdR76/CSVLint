@@ -301,6 +301,50 @@ namespace Kbg.NppPluginNET
             }
         }
 
+        private void btnSort_Click(object sender, EventArgs e)
+        {
+            // get csv definition
+            CsvDefinition csvdef = new CsvDefinition(txtSchemaIni.Text);
+
+            // check if valid dictionary
+            if (csvdef.Fields.Count > 0)
+            {
+                // show split column dialog
+                var frmsort = new SortForm();
+                frmsort.InitialiseSetting(csvdef);
+                DialogResult r = frmsort.ShowDialog();
+
+                // user clicked OK or Cancel
+                int idx = frmsort.SortColumn;
+                bool asc = frmsort.SortAscending;
+
+                // clear up
+                frmsort.Dispose();
+
+                // return true (OK) or false (Cancel)
+                if (r == DialogResult.OK)
+                {
+                    // clear any previous output
+                    txtOutput.Clear();
+                    txtOutput.Update();
+
+                    var dtStart = DateTime.Now;
+
+                    // split column
+                    CsvEdit.SortData(csvdef, idx, asc);
+
+                    var dtElapsed = (DateTime.Now - dtStart).ToString(@"hh\:mm\:ss\.fff");
+
+                    // display process message
+                    var colname = "--TODO UNKNOWN--";
+                    txtOutput.Text = string.Format("Sort data on column '{0}' is ready, time elapsed {1}\r\n", colname, dtElapsed); ;
+
+                    // refresh datadefinition
+                    OnBtnDetectColumns_Click(sender, e);
+                }
+            }
+        }
+
         private void btnSplit_Click(object sender, EventArgs e)
         {
             // get csv definition

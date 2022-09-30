@@ -168,9 +168,15 @@ namespace Kbg.NppPluginNET
         //    Category("Validate"), DefaultValue("jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec")]
         //public String MonthAbbrev { get; set; }
 
+        // SORT user preferences
+        [Description("Sort data, selected column name."), Category("UserPref"), DefaultValue("")]
+        public string SortColName { get; set; }
+
+        [Description("Sort data, sort ascending."), Category("UserPref"), DefaultValue(true)]
+        public bool SortAscending { get; set; }
+
         // SPLIT COLUMN user preferences
-        [Description("Split column, selected column name."),
-            Category("UserPref"), DefaultValue("")]
+        [Description("Split column, selected column name."), Category("UserPref"), DefaultValue("")]
         public string SplitColName { get; set; }
 
         [Description("Split column, selected option."), Category("UserPref"), DefaultValue(0)]
