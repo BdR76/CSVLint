@@ -201,5 +201,6 @@ History
 03-jun-2022 - v0.4.5.2 Another Lexer v5 bugfix, generate Python script  
 25-jul-2022 - v0.4.5.3 Manually detect columns, improved fixed width support  
 14-aug-2022 - v0.4.5.4 Improved datatype and datetime mask detection, various bugfixes  
+30-sep-2022 - v0.4.6 Improved unicode support, sort data option, default color sets 12 colors, various bugfixes  
 
 BdR©2021 Free to use - send questions or comments: Bas de Reuver - bdr1976@gmail.com

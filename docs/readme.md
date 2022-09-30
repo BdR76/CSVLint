@@ -66,6 +66,9 @@ When a file is opened the plug-in will:
 Note; if "Detect columns" cannot automatically detect any columns, then
 the metadata definition will look like this:
 
+    ; *********************************
+    ; Unable to detect column separator
+    ; *********************************
     Format=FixedLength
     ColNameHeader=False
     Col1=Textfile Text Width 9999
@@ -178,6 +181,7 @@ The plug-in will only replace the new-line characters within a quoted value, not
 ### Trim all values ###
 
 Trim spaces from all values, for example trim the value `" No sample "` to just `"No sample"`.
+This option can also be used to undo vertically aligned columns.
 
 ### Align vertically ###
 
@@ -210,11 +214,66 @@ the metadata before validating. Make sure the metadata reflects the current
 data file by either pressing "Detect columns" or updating it manually and
 then saving it.
 
-Split column
-------------
-Split values into new columns.
+Sort data
+---------
+Sort data on a single column, and take into account the data type of the column.
+String text columns will be sorted alphabetically, and integer, decimal and
+datetime columns will be sorted according to their respective values.
+
+When sorting on a column that contains several of the same values, then the
+sort order for the lines with those values will not change. Meaning that lines
+with the same value will be in the same sort order as before sorting.
+
+It is not possible to sort on multiple columns, however it is possible to sort
+multiple times to get the same result. For example if you want to sort a
+dataset on visit date ascending and patient numbers descending, you can do
+this by sorting each column but in reverse order. Meaning, first sort on
+patient number descending and then sort on visit date ascending.
+
+Add new column(s)
+-----------------
+Add column(s) based on an existing column, either edit a column or or split values into new columns.
 
 ![CSV Lint split column dialog](/docs/csvlint_split_column.png?raw=true "CSV Lint plug-in split column dialog")
+
+### Pad character ###
+
+Pad character values
+
+| patnr     | patnr (2) |
+|-----------|-----------|
+| 123       | 0000123   |
+| 1234      | 0001234   |
+| -95       | 00000-9   |
+| 12345678  | 12345678  |
+| abc       | 0000abc   |
+
+You can enter a negative total width to pad characters on the right.
+, for example pad with `0` for total width of `-7` will change value `PT0123` into `PT012300`,
+see other examples below
+
+| patnr     | patnr (2) |
+|-----------|-----------|
+| 123       | 1230000   |
+| 1234      | 1234000   |
+| -95       | -900000   |
+| 12345678  | 12345678  |
+| abc       | abc0000   |
+
+### Search and replace ###
+
+Search and replace all values in a column.
+`no` with `False`
+Not in other columns
+note that it is case-sensitive.
+
+| description | description (2)  |
+|-------------|------------------|
+| no          | False            |
+| nonorganic  | FalseFalserganic |
+| technology  | techFalselogy    |
+| No          | No               |
+| ACKNOWLEDGE | ACKNOWLEDGE      |
 
 ### Split valid and invalid values ###
 
@@ -273,43 +332,6 @@ see other examples below
 | abcdefghijk    | abcdefg    | hijk       |
 | 12.345         | 12         | .345       |
 | 4015672110397  | 401567211  | 0397       |
-
-### Move value if it contains ###
-
-Move all values that contains a certain text part. For example move if it
-contains `.00` it will create two columns, one with values that do contain it
-and one column for the values without.
-
-| move     | move (2)  | move (3) |
-|----------|-----------|----------|
-| 12.0     | 12.0      |          |
-| 100.00   |           | 100.00   |
-| 123.45   | 123.45    |          |
-| Hgb      | Hgb       |          |
-| 12.00.34 |           | 12.00.34 |
-
-### Decode multiple values ###
-
-Decode multiple values is useful when a single variable contains a set of
-multiple codes separated by a character. These are typically checkbox values
-that allow multiple answers. For a checkbox question with 5 options, the
-answers are usually stored in a single value as `1;2;3` or `2;4` depending
-on which options were selected and how the answers are coded.
-
-For example use the codes `Hb;K;Nat;Lac` and character `;` to create 5 new columns,
-the 4 possible coded values `Hb`, `K`, `Nat` and `Lac` plus one for any remaining values.
-
-| labchk          | labchk (2) | labchk (3) | labchk (4) | labchk (5) | labchk (6) |
-|-----------------|------------|------------|------------|------------|------------|
-| Hb;K;Nat;Lac    | Hb         | K          | Nat        | Lac        |            |
-| K;Lac           |            | K          |            | Lac        |            |
-| Hb;Nat;Cl       | Hb         |            | Nat        |            | Cl         |
-| LDL;K;Hb;HDL    | Hb         | K          |            |            | LDL;HDL    |
-| IgM;Glu         |            |            |            |            | IgM;Glu    |
-
-Note that the order of the values within the original column does not matter.
-The new columns are always created in the order as specified by the codes-string,
-and the last new column `labchk (6)` contains any left-over unspecified codes
 
 ### Remove original column ###
 

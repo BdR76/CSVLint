@@ -137,10 +137,9 @@ namespace Kbg.NppPluginNET
             string urlcopy = url;
             if ((string)lbl.Tag == "1")
             {
-                string sub = lblTitle.Text.Replace(" ", "%20");
-                urlcopy = "bdr1976@gmail.com";
-                url = string.Format("mailto:{0}?subject={1}", urlcopy, sub);
-                urlcopy = string.Format("\"Bas de Reuver\" <{0}>", urlcopy);
+                urlcopy = "Bas de Reuver <bdr1976@gmail.com>";
+                url = string.Format("mailto:{0}?subject={1}", urlcopy, lblTitle.Text);
+                url = url.Replace(" ", "%20");
             }
 
             if (e.Button == MouseButtons.Right)
