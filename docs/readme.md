@@ -138,6 +138,14 @@ Reformat data dialog has several options to reformat the entire data file.
 
 ![CSV Lint reformat data dialog](/docs/csvlint_reformat_data.png?raw=true "CSV Lint plug-in reformat data dialog")
 
+### Column separator ###
+
+Reformat the column separator,  for example from comma separated `,` to semicolon separated `;`.
+Any values that contain the new separator character will be put in quotes, for example `"error; no read"`.
+
+When converting to fixed width format, it will use the width of each column as set in the metadata.
+Integer or decimal values will be right aligned, any other datatypes are left aligned.
+
 ### Datetime reformat ###
 
 Datetime format, reformat all datetime values in the file uniformly. Note that
@@ -148,14 +156,6 @@ a time part to all values.
 ### Decimal separator ###
 
 Set the decimal separator for all decimal/float values, select either the dot `.` or the comma `,`.
-
-### Column separator ###
-
-Reformat the column separator,  for example from comma separated `,` to semicolon separated `;`.
-Any values that contain the new separator character will be put in quotes, for example `"error; no read"`.
-
-When converting to fixed width format, it will use the width of each column as set in the metadata.
-Integer or decimal values will be right aligned, any other datatypes are left aligned.
 
 ### Re-apply quotes ###
 
@@ -217,12 +217,17 @@ then saving it.
 Sort data
 ---------
 Sort data on a single column, and take into account the data type of the column.
-String text columns will be sorted alphabetically, and integer, decimal and
+String text columns will be sorted alphabetically. Integer, decimal and
 datetime columns will be sorted according to their respective values.
+
+![CSV Lint sort data dialog](/docs/csvlint_sort_data.png?raw=true "CSV Lint plug-in sort data dialog")
+
+Sort **ascending** start with low values, end with high values `A -> Z, 0 -> 9`  
+Sort **descending** start with high values, end with low values `Z -> A, 9 -> 0`
 
 When sorting on a column that contains several of the same values, then the
 sort order for the lines with those values will not change. Meaning that lines
-with the same value will be in the same sort order as before sorting.
+with the same value will be in the sort order as they were before sorting.
 
 It is not possible to sort on multiple columns, however it is possible to sort
 multiple times to get the same result. For example if you want to sort a
@@ -234,38 +239,39 @@ Add new column(s)
 -----------------
 Add column(s) based on an existing column, either edit a column or or split values into new columns.
 
-![CSV Lint split column dialog](/docs/csvlint_split_column.png?raw=true "CSV Lint plug-in split column dialog")
+![CSV Lint add new column dialog](/docs/csvlint_add_new_column.png?raw=true "CSV Lint plug-in add new column dialog")
 
 ### Pad character ###
 
-Pad character values
+Pad all values in a column with a character to a given total length.
+For example pad with `0` for total width of `7`, see example results below:
 
 | patnr     | patnr (2) |
 |-----------|-----------|
 | 123       | 0000123   |
 | 1234      | 0001234   |
-| -95       | 00000-9   |
+| -95       | 0000-95   |
 | 12345678  | 12345678  |
 | abc       | 0000abc   |
 
-You can enter a negative total width to pad characters on the right.
-, for example pad with `0` for total width of `-7` will change value `PT0123` into `PT012300`,
-see other examples below
+You can enter a negative total length to pad characters to the right instead
+of to the left. For example pad with `0` for total width of `-8` will change
+value `PT0123` into `PT012300`, see other examples below:
 
 | patnr     | patnr (2) |
 |-----------|-----------|
 | 123       | 1230000   |
 | 1234      | 1234000   |
-| -95       | -900000   |
+| -95       | -950000   |
 | 12345678  | 12345678  |
 | abc       | abc0000   |
 
 ### Search and replace ###
 
-Search and replace all values in a column.
-`no` with `False`
-Not in other columns
-note that it is case-sensitive.
+Search and replace a string with another string for all values in a column.
+Unlike the default "Search and replace" function of Notepad++, this only affects
+the values in a single column, not the values of any other columns. Note that
+this is case-sensitive, for example search for `no` and replace with `False`:
 
 | description | description (2)  |
 |-------------|------------------|
@@ -448,6 +454,15 @@ Generate metadata in different formats to make it easier to process your csv fil
 
 ![CSV Lint Generate metadata dialog](/docs/csvlint_generate_metadata.png?raw=true "CSV Lint plug-in Generate metadata dialog")
 
+### schema ini ###
+
+File and column metadata in [schema.ini](https://docs.microsoft.com/en-us/sql/odbc/microsoft/schema-ini-file-text-file-driver?view=sql-server-ver15)
+format for the Microsoft Jet OLE DB, also known as the ODBC text driver.
+
+### schema JSON ###
+
+File and column metadata in W3 schema JSON format (preliminary support).
+
 ### Python ###
 
 Generates a [Python](https://www.python.org/) script to read the csv data file
@@ -463,15 +478,6 @@ datatypes, and it is meant as a starting point for further processing in
 
 Note that the generated scripts don't handle all possible data errors,
 you'll need to write additional code to suit your data processing needs.
-
-### schema ini ###
-
-File and column metadata in [schema.ini](https://docs.microsoft.com/en-us/sql/odbc/microsoft/schema-ini-file-text-file-driver?view=sql-server-ver15)
-format for the Microsoft Jet OLE DB, also known as the ODBC text driver.
-
-### schema JSON ###
-
-File and column metadata in W3 schema JSON format (preliminary support).
 
 Settings
 --------

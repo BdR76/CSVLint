@@ -60,15 +60,6 @@ namespace CSVLintNppPlugin.Forms
             // 
             this.lblHorizontalLine.Size = new System.Drawing.Size(376, 2);
             // 
-            // lblSelectColumn
-            // 
-            this.lblSelectColumn.AutoSize = true;
-            this.lblSelectColumn.Location = new System.Drawing.Point(12, 58);
-            this.lblSelectColumn.Name = "lblSelectColumn";
-            this.lblSelectColumn.Size = new System.Drawing.Size(125, 13);
-            this.lblSelectColumn.TabIndex = 10;
-            this.lblSelectColumn.Text = "Based on original column";
-            // 
             // cmbSelectColumn
             // 
             this.cmbSelectColumn.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -82,14 +73,23 @@ namespace CSVLintNppPlugin.Forms
             this.cmbSelectColumn.Tag = "";
             this.cmbSelectColumn.SelectedIndexChanged += new System.EventHandler(this.cmbSelectColumn_SelectedIndexChanged);
             // 
+            // lblSelectColumn
+            // 
+            this.lblSelectColumn.AutoSize = true;
+            this.lblSelectColumn.Location = new System.Drawing.Point(12, 58);
+            this.lblSelectColumn.Name = "lblSelectColumn";
+            this.lblSelectColumn.Size = new System.Drawing.Size(78, 13);
+            this.lblSelectColumn.TabIndex = 10;
+            this.lblSelectColumn.Text = "Sort on column";
+            // 
             // lblSortOrder
             // 
             this.lblSortOrder.AutoSize = true;
             this.lblSortOrder.Location = new System.Drawing.Point(13, 95);
             this.lblSortOrder.Name = "lblSortOrder";
-            this.lblSortOrder.Size = new System.Drawing.Size(127, 13);
+            this.lblSortOrder.Size = new System.Drawing.Size(148, 13);
             this.lblSortOrder.TabIndex = 12;
-            this.lblSortOrder.Text = "Ascending or descending";
+            this.lblSortOrder.Text = "Sort ascending or descending";
             // 
             // rdbtnAscending
             // 
