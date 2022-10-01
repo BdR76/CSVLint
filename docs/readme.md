@@ -98,9 +98,9 @@ The file and column metadata will be saved under a section with the filename.
 A `schema.ini` file can contain the meta data for more
 than one data file, using a separate section for each file.
 
-### Split / Reformat / Validate ###
+### Sort / Add column / Reformat / Validate ###
 
-The **Split column**, **Reformat** and **Validate** buttons are explained
+The **Sort data**, **Add column**, **Reformat** and **Validate** buttons are explained
 elsewhere in this document. See separate paragraphs for more information.
 
 Schema.ini
@@ -264,7 +264,7 @@ value `PT123` into `PT12300`, see other examples below:
 |-----------|-----------|
 | 456       | 4560000   |
 | 4567      | 4567000   |
-| -99       | -900000   |
+| -99       | -990000   |
 | 123456789 | 123456789 |
 | Glu       | Glu0000   |
 

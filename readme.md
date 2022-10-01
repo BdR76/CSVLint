@@ -52,8 +52,8 @@ want to install the plug-in manually:
 
 * Go to the [releases page](https://github.com/BdR76/CSVLint/releases)
 * Find the latest release
-* 32bit version; unzip [CSVLint.dll (32bit)](../../releases/download/0.4.5.4/CSVLint_x86.zip/) to folder `.\Program Files (x86)\Notepad++\plugins\CSVLint\CSVLint.dll`.
-* 64bit version; unzip [CSVLint.dll (64bit)](../../releases/download/0.4.5.4/CSVLint_x64.zip/) to folder `.\Program Files\Notepad++\plugins\CSVLint\CSVLint.dll`.
+* 32bit version; unzip [CSVLint.dll (32bit)](../../releases/download/0.4.6/CSVLint_x86.zip/) to folder `.\Program Files (x86)\Notepad++\plugins\CSVLint\CSVLint.dll`.
+* 64bit version; unzip [CSVLint.dll (64bit)](../../releases/download/0.4.6/CSVLint_x64.zip/) to folder `.\Program Files\Notepad++\plugins\CSVLint\CSVLint.dll`.
 * restart Notepad++
 
 How to use it
@@ -157,7 +157,7 @@ unexpected validation results, try saving the datafile or refreshing the meta
 data before clicking "Detect columns".
 
 * When you press "Detect columns" the datetime format of the data isn't always
-detected correctly. Especially when the data contains values like `05/06/2021`
+detected correctly. Especially when the data contains values like `05/06/2022`
 the order of day and month can be incorrect. You can adjust it manually to
 match your data before pressing the "Validate data" button.
 

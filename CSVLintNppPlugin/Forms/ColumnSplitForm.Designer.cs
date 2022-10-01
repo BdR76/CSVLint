@@ -69,7 +69,7 @@ namespace CSVLintNppPlugin.Forms
             // picHelpIcon
             // 
             this.picHelpIcon.Location = new System.Drawing.Point(348, 9);
-            this.picHelpIcon.Tag = "edit-or-split-column";
+            this.picHelpIcon.Tag = "add-new-columns";
             // 
             // lblHorizontalLine
             // 
