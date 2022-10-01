@@ -206,7 +206,7 @@ right. It will check the input data for the following errors:
 * Non-numeric values in numeric columns, example value "n/a" when column datatype is Integer
 * Incorrect decimal separator, example value "12.34" when DecimalSymbol is set to comma
 * Too many decimals, example value "12.345" when NumberDigits=2.
-* Incorrect date format, example value "12/31/2020" when DateTimeFormat=dd/mm/yyyy
+* Incorrect date format, example value "12/31/2022" when DateTimeFormat=dd/mm/yyyy
 
 Important note: If you've edited the data file, for example changed the column
 separator or added columns using the Split function, make sure to also update
@@ -237,39 +237,41 @@ patient number descending and then sort on visit date ascending.
 
 Add new column(s)
 -----------------
-Add column(s) based on an existing column, either edit a column or or split values into new columns.
+Add column(s) based on an existing column, either edit a column or split values into new columns.
 
 ![CSV Lint add new column dialog](/docs/csvlint_add_new_column.png?raw=true "CSV Lint plug-in add new column dialog")
 
 ### Pad character ###
 
 Pad all values in a column with a character to a given total length.
-For example pad with `0` for total width of `7`, see example results below:
+Note that if the value is longer than the total length, then it will not be
+changed. For example pad with `0` for total width of `7`, see example
+results below:
 
 | patnr     | patnr (2) |
 |-----------|-----------|
 | 123       | 0000123   |
 | 1234      | 0001234   |
 | -95       | 0000-95   |
-| 12345678  | 12345678  |
-| abc       | 0000abc   |
+| 123456789 | 123456789 |
+| HDL       | 0000HDL   |
 
 You can enter a negative total length to pad characters to the right instead
-of to the left. For example pad with `0` for total width of `-8` will change
-value `PT0123` into `PT012300`, see other examples below:
+of to the left. For example pad with `0` for total width of `-7` will change
+value `PT123` into `PT12300`, see other examples below:
 
 | patnr     | patnr (2) |
 |-----------|-----------|
-| 123       | 1230000   |
-| 1234      | 1234000   |
-| -95       | -950000   |
-| 12345678  | 12345678  |
-| abc       | abc0000   |
+| 456       | 4560000   |
+| 4567      | 4567000   |
+| -99       | -900000   |
+| 123456789 | 123456789 |
+| Glu       | Glu0000   |
 
 ### Search and replace ###
 
 Search and replace a string with another string for all values in a column.
-Unlike the default "Search and replace" function of Notepad++, this only affects
+Unlike the default "Search and replace" function of Notepad++, this only affect
 the values in a single column, not the values of any other columns. Note that
 this is case-sensitive, for example search for `no` and replace with `False`:
 
@@ -292,10 +294,10 @@ as a date value formated as `dd-mm-yyyy`, see some example results below:
 
 | visitdat   | visitdat (2) | visitdat (3) |
 |------------|--------------|--------------|
-| 15-04-2020 | 15-04-2020   |              |
+| 15-04-2021 | 15-04-2021   |              |
 | 23-05-2019 | 23-05-2019   |              |
-| 07/26/2021 |              | 07/26/2021   |
-| 18-09-2020 | 18-09-2020   |              |
+| 07/26/2022 |              | 07/26/2022   |
+| 18-09-2022 | 18-09-2022   |              |
 | No show    |              | No show      |
 
 ### Split on character ###
@@ -334,7 +336,7 @@ see other examples below
 | posneg         | posneg (2) | posneg (3) |
 |----------------|------------|------------|
 | medication.txt | medication | .txt       |
-| 31-12-2020     | 31-12-     | 2020       |
+| 31-12-2022     | 31-12-     | 2022       |
 | abcdefghijk    | abcdefg    | hijk       |
 | 12.345         | 12         | .345       |
 | 4015672110397  | 401567211  | 0397       |
@@ -437,9 +439,9 @@ See below for an example of an SQL insert script the plugin will generate:
         `visitdat`,
         `labpth`
     ) values
-    (1001, '2021-08-21', 10.8),
-    (2002, '2021-09-05', 143.5),
-    (3003, '2021-09-24', 76.4),
+    (1001, '2022-08-21', 10.8),
+    (2002, '2022-09-05', 143.5),
+    (3003, '2022-09-24', 76.4),
     -- etc.
 
 Select XML or JSON to convert the data to an XML or JSON dataset.
