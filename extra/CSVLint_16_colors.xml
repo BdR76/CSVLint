@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<NotepadPlus>
+	<Languages>
+		<Language name="CSVLint" ext="csv" commentLine="#" commentStart="#[" commentEnd="]#">
+			<Keywords name="instre1" />
+			<Keywords name="instre2" />
+			<Keywords name="type1" />
+			<Keywords name="type2" />
+			<Keywords name="type3" />
+			<Keywords name="type4" />
+			<Keywords name="type5" />
+			<Keywords name="type6" />
+		</Language>
+	</Languages>
+	<!--
+	Note: Technically the CSV Lint plugin can use max 31 different column colors.
+	However, for 16 or more colors the script starts outputting similar looking colors,
+	doesn't really work well, 12 colors is probably the optimum.
+	Just for the sake of completion, here is the 16 colors set
+	-->
+	<LexerStyles>
+		<LexerType name="CSVLint" desc="CSV Linter and validator" excluded="no">
+			<!-- normal mode (background colors) 16 colors -->
+			<WordsStyle styleID="0" name="Default" fgColor="000000" bgColor="FFFFFF" fontName="" fontStyle="0" />
+			<WordsStyle styleID="1" name="ColumnColor1" fgColor="000000" bgColor="80afff" fontName="" fontStyle="0" />
+			<WordsStyle styleID="2" name="ColumnColor2" fgColor="000000" bgColor="ffff80" fontName="" fontStyle="0" />
+			<WordsStyle styleID="3" name="ColumnColor3" fgColor="000000" bgColor="af80ff" fontName="" fontStyle="0" />
+			<WordsStyle styleID="4" name="ColumnColor4" fgColor="000000" bgColor="9fff80" fontName="" fontStyle="0" />
+			<WordsStyle styleID="5" name="ColumnColor5" fgColor="000000" bgColor="ff80ef" fontName="" fontStyle="0" />
+			<WordsStyle styleID="6" name="ColumnColor6" fgColor="000000" bgColor="80ffbf" fontName="" fontStyle="0" />
+			<WordsStyle styleID="7" name="ColumnColor7" fgColor="000000" bgColor="ff808f" fontName="" fontStyle="0" />
+			<WordsStyle styleID="8" name="ColumnColor8" fgColor="000000" bgColor="80dfff" fontName="" fontStyle="0" />
+			<WordsStyle styleID="9" name="ColumnColor9" fgColor="000000" bgColor="ffcf80" fontName="" fontStyle="0" />
+			<WordsStyle styleID="10" name="ColumnColor10" fgColor="000000" bgColor="8080ff" fontName="" fontStyle="0" />
+			<WordsStyle styleID="11" name="ColumnColor11" fgColor="000000" bgColor="cfff80" fontName="" fontStyle="0" />
+			<WordsStyle styleID="12" name="ColumnColor12" fgColor="000000" bgColor="df80ff" fontName="" fontStyle="0" />
+			<WordsStyle styleID="13" name="ColumnColor13" fgColor="000000" bgColor="80ff8f" fontName="" fontStyle="0" />
+			<WordsStyle styleID="14" name="ColumnColor14" fgColor="000000" bgColor="ff80bf" fontName="" fontStyle="0" />
+			<WordsStyle styleID="15" name="ColumnColor15" fgColor="000000" bgColor="80ffef" fontName="" fontStyle="0" />
+			<WordsStyle styleID="16" name="ColumnColor16" fgColor="000000" bgColor="ff9f80" fontName="" fontStyle="0" />
+			<!-- normal mode (foreground colors) 16 colors -->
+<!--
+			<WordsStyle styleID="0" name="Default" fgColor="000000" bgColor="FFFFFF" fontName="" fontStyle="0" />
+			<WordsStyle styleID="1" name="ColumnColor1" fgColor="1857c0" bgColor="ffffff" fontName="" fontStyle="1" />
+			<WordsStyle styleID="2" name="ColumnColor2" fgColor="c0c018" bgColor="ffffff" fontName="" fontStyle="1" />
+			<WordsStyle styleID="3" name="ColumnColor3" fgColor="5718c0" bgColor="ffffff" fontName="" fontStyle="1" />
+			<WordsStyle styleID="4" name="ColumnColor4" fgColor="42c018" bgColor="ffffff" fontName="" fontStyle="1" />
+			<WordsStyle styleID="5" name="ColumnColor5" fgColor="c018ab" bgColor="ffffff" fontName="" fontStyle="1" />
+			<WordsStyle styleID="6" name="ColumnColor6" fgColor="18c06c" bgColor="ffffff" fontName="" fontStyle="1" />
+			<WordsStyle styleID="7" name="ColumnColor7" fgColor="c0182d" bgColor="ffffff" fontName="" fontStyle="1" />
+			<WordsStyle styleID="8" name="ColumnColor8" fgColor="1896c0" bgColor="ffffff" fontName="" fontStyle="1" />
+			<WordsStyle styleID="9" name="ColumnColor9" fgColor="c08118" bgColor="ffffff" fontName="" fontStyle="1" />
+			<WordsStyle styleID="10" name="ColumnColor10" fgColor="1818c0" bgColor="ffffff" fontName="" fontStyle="1" />
+			<WordsStyle styleID="11" name="ColumnColor11" fgColor="81c018" bgColor="ffffff" fontName="" fontStyle="1" />
+			<WordsStyle styleID="12" name="ColumnColor12" fgColor="9618c0" bgColor="ffffff" fontName="" fontStyle="1" />
+			<WordsStyle styleID="13" name="ColumnColor13" fgColor="18c02d" bgColor="ffffff" fontName="" fontStyle="1" />
+			<WordsStyle styleID="14" name="ColumnColor14" fgColor="c0186c" bgColor="ffffff" fontName="" fontStyle="1" />
+			<WordsStyle styleID="15" name="ColumnColor15" fgColor="18c0ab" bgColor="ffffff" fontName="" fontStyle="1" />
+			<WordsStyle styleID="16" name="ColumnColor16" fgColor="c04218" bgColor="ffffff" fontName="" fontStyle="1" />
+-->
+			<!-- dark mode (pastel) 16 colors -->
+<!--
+			<WordsStyle styleID="0" name="Default" fgColor="DCDCCC" bgColor="3F3F3F" fontName="" fontStyle="0" />
+			<WordsStyle styleID="1" name="ColumnColor1" fgColor="a0b2d0" bgColor="3f3f3f" fontName="" fontStyle="1" />
+			<WordsStyle styleID="2" name="ColumnColor2" fgColor="d0d0a0" bgColor="3f3f3f" fontName="" fontStyle="1" />
+			<WordsStyle styleID="3" name="ColumnColor3" fgColor="b2a0d0" bgColor="3f3f3f" fontName="" fontStyle="1" />
+			<WordsStyle styleID="4" name="ColumnColor4" fgColor="acd0a0" bgColor="3f3f3f" fontName="" fontStyle="1" />
+			<WordsStyle styleID="5" name="ColumnColor5" fgColor="d0a0ca" bgColor="3f3f3f" fontName="" fontStyle="1" />
+			<WordsStyle styleID="6" name="ColumnColor6" fgColor="a0d0b8" bgColor="3f3f3f" fontName="" fontStyle="1" />
+			<WordsStyle styleID="7" name="ColumnColor7" fgColor="d0a0a6" bgColor="3f3f3f" fontName="" fontStyle="1" />
+			<WordsStyle styleID="8" name="ColumnColor8" fgColor="a0c4d0" bgColor="3f3f3f" fontName="" fontStyle="1" />
+			<WordsStyle styleID="9" name="ColumnColor9" fgColor="d0bea0" bgColor="3f3f3f" fontName="" fontStyle="1" />
+			<WordsStyle styleID="10" name="ColumnColor10" fgColor="a0a0d0" bgColor="3f3f3f" fontName="" fontStyle="1" />
+			<WordsStyle styleID="11" name="ColumnColor11" fgColor="bed0a0" bgColor="3f3f3f" fontName="" fontStyle="1" />
+			<WordsStyle styleID="12" name="ColumnColor12" fgColor="c4a0d0" bgColor="3f3f3f" fontName="" fontStyle="1" />
+			<WordsStyle styleID="13" name="ColumnColor13" fgColor="a0d0a6" bgColor="3f3f3f" fontName="" fontStyle="1" />
+			<WordsStyle styleID="14" name="ColumnColor14" fgColor="d0a0b8" bgColor="3f3f3f" fontName="" fontStyle="1" />
+			<WordsStyle styleID="15" name="ColumnColor15" fgColor="a0d0ca" bgColor="3f3f3f" fontName="" fontStyle="1" />
+			<WordsStyle styleID="16" name="ColumnColor16" fgColor="d0aca0" bgColor="3f3f3f" fontName="" fontStyle="1" />
+-->
+			<!-- dark mode (neon) 16 colors -->
+<!--
+			<WordsStyle styleID="0" name="Default" fgColor="FFFFFF" bgColor="3F3F3F" fontName="" fontStyle="0" />
+			<WordsStyle styleID="1" name="ColumnColor1" fgColor="80afff" bgColor="001e50" fontName="" fontStyle="1" />
+			<WordsStyle styleID="2" name="ColumnColor2" fgColor="ffff80" bgColor="505000" fontName="" fontStyle="1" />
+			<WordsStyle styleID="3" name="ColumnColor3" fgColor="af80ff" bgColor="1e0050" fontName="" fontStyle="1" />
+			<WordsStyle styleID="4" name="ColumnColor4" fgColor="9fff80" bgColor="145000" fontName="" fontStyle="1" />
+			<WordsStyle styleID="5" name="ColumnColor5" fgColor="ff80ef" bgColor="500046" fontName="" fontStyle="1" />
+			<WordsStyle styleID="6" name="ColumnColor6" fgColor="80ffbf" bgColor="005028" fontName="" fontStyle="1" />
+			<WordsStyle styleID="7" name="ColumnColor7" fgColor="ff808f" bgColor="50000a" fontName="" fontStyle="1" />
+			<WordsStyle styleID="8" name="ColumnColor8" fgColor="80dfff" bgColor="003c50" fontName="" fontStyle="1" />
+			<WordsStyle styleID="9" name="ColumnColor9" fgColor="ffcf80" bgColor="503200" fontName="" fontStyle="1" />
+			<WordsStyle styleID="10" name="ColumnColor10" fgColor="8080ff" bgColor="000050" fontName="" fontStyle="1" />
+			<WordsStyle styleID="11" name="ColumnColor11" fgColor="cfff80" bgColor="325000" fontName="" fontStyle="1" />
+			<WordsStyle styleID="12" name="ColumnColor12" fgColor="df80ff" bgColor="3c0050" fontName="" fontStyle="1" />
+			<WordsStyle styleID="13" name="ColumnColor13" fgColor="80ff8f" bgColor="00500a" fontName="" fontStyle="1" />
+			<WordsStyle styleID="14" name="ColumnColor14" fgColor="ff80bf" bgColor="500028" fontName="" fontStyle="1" />
+			<WordsStyle styleID="15" name="ColumnColor15" fgColor="80ffef" bgColor="005046" fontName="" fontStyle="1" />
+			<WordsStyle styleID="16" name="ColumnColor16" fgColor="ff9f80" bgColor="501400" fontName="" fontStyle="1" />
+
+-->
+		</LexerType>
+	</LexerStyles>
+</NotepadPlus>

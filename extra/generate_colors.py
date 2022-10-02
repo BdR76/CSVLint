@@ -186,7 +186,8 @@ draw.text( (0, 0), "CSV Lint\nBas de Reuver, sep 2022\nDetermine most contrastin
 # draw sample texts
 draw_color_sequence(400,      8, 135,   160,     224) #  8 colors
 draw_color_sequence(400+192, 12, 150,   160+320, 224) # 12 colors
-draw_color_sequence(400+384, 16, 157.5, 160+640, 224) # 16 colors
+draw_color_sequence(400+384, 16, 157.5, 160+640, 224) # 16 colors (pairs of 2)
+#draw_color_sequence(400+384, 16, 112.5, 160+640, 224) # 16 colors (pairs of 3)
     
 #draw.ellipse((x-r, y-r, x+r, y+r), fill=(255,0,0,0))
 
