@@ -100,7 +100,6 @@ namespace Kbg.NppPluginNET
 
         // list of files and csv definition for each
         static Dictionary<string, CsvDefinition> FileCsvDef = new Dictionary<string, CsvDefinition>();
-        static CsvDefinition _CurrnetCsvDef;
 
         public static void OnNotification(ScNotification notification)
         {

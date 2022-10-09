@@ -521,7 +521,6 @@ namespace CSVLint
                         // parse column metadata, for example Val = "Test123 Int Width 3" or Val = "Test123 DateTime Width 10 NOT NULL"
                         // assume default values
                         string name = string.Format("Column{0}", idx);
-                        string notnull = "";
                         string datatypestr = "";
                         int maxwidth = 50;
                         ColumnType datatype = ColumnType.String;
@@ -529,15 +528,6 @@ namespace CSVLint
 
                         int pos;
                         int spc;
-
-                        // NOT NULL must be at end of line
-                        pos = vallow.LastIndexOf("not null");
-                        if (pos == val.Length - 8)
-                        {
-                            notnull = vallow.Substring(pos, val.Length - pos);
-                            val = val.Substring(0, pos).Trim();
-                            vallow = val.ToLower();
-                        }
 
                         // WIDTH must be at end of line
                         spc = vallow.LastIndexOf(" ");

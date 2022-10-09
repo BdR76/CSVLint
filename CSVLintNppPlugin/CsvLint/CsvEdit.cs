@@ -853,7 +853,6 @@ namespace CSVLint
 
             // sort on column, get column information
             CsvColumn csvcol = csvdef.Fields[SortIdx];
-            ColumnType csvoldtype = ColumnType.String;
             var ApplyQuotes = Main.Settings.ReformatQuotes;
 
             // output in new sort order
