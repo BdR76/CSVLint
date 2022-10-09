@@ -476,7 +476,6 @@ namespace CSVLint
         public static void ConvertToXML(CsvDefinition csvdef)
         {
             StringBuilder sb = new StringBuilder();
-            int MAX_SQL_ROWS = Main.Settings.DataConvertBatch;
 
             // get access to Notepad++
             INotepadPPGateway notepad = new NotepadPPGateway();
@@ -615,7 +614,6 @@ namespace CSVLint
         public static void ConvertToJSON(CsvDefinition csvdef)
         {
             StringBuilder sb = new StringBuilder();
-            int MAX_SQL_ROWS = Main.Settings.DataConvertBatch;
 
             // get access to Notepad++
             INotepadPPGateway notepad = new NotepadPPGateway();
@@ -812,11 +810,11 @@ namespace CSVLint
                 // convert datetime to iso format for sorting purposes
                 try
                 {
-                    val = DateTime.ParseExact(val, csvcol.Mask, Main.dummyCulture).ToString("yyyyMMdd HHmmss.fff", Main.dummyCulture);
+                    val = DateTime.ParseExact(val, csvcol.Mask, Main.dummyCulture).ToString("yyyyMMddHHmmssfff", Main.dummyCulture);
                 }
                 catch
                 {
-                    val = "00000000 000000.000"; // invalid date sort to front(?)
+                    val = "00000000000000000"; // invalid date sort to front(?)
                 }
                 return val;
             }
@@ -866,21 +864,8 @@ namespace CSVLint
                 // consume line and copy to output
                 values = csvdef.ParseNextLine(strdata);
 
-                // get unique value(s) from column indexes
-                for (int i = 0; i < values.Count; i++)
-                {
-                    // get value
-                    var colname = values[i];
+                sbsort.Append(csvdef.ConstructLine(values));
 
-                    // add separator
-                    if (i > 0) sbsort.Append(sep);
-
-                    // reconstruct original line
-                    colname = ApplyQuotesToString(colname, ApplyQuotes, sep, csvoldtype);
-
-                    // add header to output
-                    sbsort.Append(colname);
-                }
                 sbsort.Append("\n");
             }
 
@@ -890,30 +875,17 @@ namespace CSVLint
                 // get next line of values
                 values = csvdef.ParseNextLine(strdata);
                 string sortval = "";
-                string line = "";
 
-                // get unique value(s) from column indexes
-                for (int c = 0; c < values.Count; c++)
+                // construct sortable value
+                if (SortIdx < values.Count)
                 {
                     // get value
-                    var val = values[c];
-
-                    // construct sortable value
-                    if (c == SortIdx)
-                    {
-                        sortval = SortableString(val, csvcol) + linecount.ToString("D10"); // add linecount so guaranteed unique + retain original sort order for equal values
-                    }
-
-                    // add separator
-                    if (c > 0) line += sep;
-
-                    // column datatype
-                    csvoldtype = (c < csvdef.Fields.Count ? csvdef.Fields[c].DataType : ColumnType.String);
-
-                    // reconstruct original line
-                    val = ApplyQuotesToString(val, ApplyQuotes, sep, csvoldtype);
-                    line += val;
+                    var val = values[SortIdx];
+                    sortval = SortableString(val, csvcol) + linecount.ToString("D10"); // add linecount so guaranteed unique + retain original sort order for equal values
                 }
+
+                // reconstruct original line of data
+                var line = csvdef.ConstructLine(values);
 
                 // add to list
                 sortlines.Add(sortval, line);
@@ -930,10 +902,9 @@ namespace CSVLint
                 sortlines = sortlines.OrderByDescending(obj => obj.Key).ToDictionary(obj => obj.Key, obj => obj.Value);
 
             // add all unique values, sort by count
-            var maxwidth = 0;
             foreach (KeyValuePair<string, string> rec in sortlines)
             {
-                sbsort.Append(string.Format("{0}\r\n", rec.Value));
+                sbsort.Append(string.Format("{0}\n", rec.Value));
             }
 
             // update text in editor
@@ -960,19 +931,54 @@ namespace CSVLint
             // when split csv values then add 2 new columns, when edit then just 1
             var addmax = SplitCode <= 2 ? 1 : 2; // 1 new column (edit) or 2 new colunms (split)
 
-            // data type for quotes
-            ColumnType csvoldtype = ColumnType.String;
-            var ApplyQuotes = Main.Settings.ReformatQuotes;
-
             // parameter 2 as integer and abs(integer)
             int.TryParse(Parameter2, out int IntPar2);
             var IntPar2a = -1 * IntPar2;
 
+            // variables for new output
             StringBuilder datanew = new StringBuilder();
-
             var sep = csvdef.Separator.ToString();
-
             var csvvalid = new CsvValidate();
+
+            // copy csvdefinition to add columns
+            CsvDefinition csvnew = new CsvDefinition(csvdef);
+
+            // when split csv values then add 2 new columns, when edit then just 1
+            if (ColumnIndex < csvdef.Fields.Count) {
+                // insert new columns into definition
+                for (var cnew = 0; cnew < addmax; cnew++)
+                {
+                    // get new name
+                    var newname = csvnew.GetUniqueColumnName(csvdef.Fields[ColumnIndex].Name, out int postfix);
+                    newname = string.Format("{0} ({1})", newname, postfix);
+
+                    // when splitting values, the new column width is unknown
+                    var wid = csvdef.Fields[ColumnIndex].MaxWidth;
+                    if (SplitCode == 5) { // except when split on exact position
+                        if (IntPar2 > 0)
+                        {
+                            if (cnew == 0) wid = IntPar2;
+                            if (cnew != 0) wid = csvdef.Fields[ColumnIndex].MaxWidth - IntPar2;
+                        }
+                        else //if (IntPar2 < 0)
+                        {
+                            if (cnew == 0) wid = csvdef.Fields[ColumnIndex].MaxWidth - IntPar2a;
+                            if (cnew != 0) wid = IntPar2a;
+                        }
+                    }
+
+                    //var newcol = new CsvColumn(csvdef.Fields[ColumnIndex]);
+                    var newcol = new CsvColumn(ColumnIndex, newname, wid, ColumnType.String, "");
+                    //var newcol = new CsvColumn(csvdef.Fields[ColumnIndex]);
+
+                    // insert into 
+                    csvnew.Fields.Insert(ColumnIndex + cnew + 1, newcol);
+                }
+            }
+            // remove column
+            if (bRemove) {
+                csvnew.Fields.RemoveAt(ColumnIndex);
+            }
 
             // convert from fixed width to separated values, add header line
             if (csvdef.ColNameHeader)
@@ -980,48 +986,12 @@ namespace CSVLint
                 // if first line is header column names, then consume line and ignore
                 csvdef.ParseNextLine(strdata);
 
-                // add header column names
-                for (int head = 0; head < csvdef.Fields.Count; head++)
+                // add new header column names
+                for (int colhead = 0; colhead < csvnew.Fields.Count; colhead++)
                 {
-
-                    // add column header to output, except when remove original column
-                    if ((head != ColumnIndex) || (bRemove == false))
-                    {
-                        datanew.Append((head > 0 ? sep : "") + csvdef.Fields[head].Name);
-                    }
-
-                    // add new split columns headers
-                    if (head == ColumnIndex)
-                    {
-                        // determine new column header names, check for existing postfix
-                        var newname = csvdef.GetUniqueColumnName(csvdef.Fields[head].Name, out int postfix);
-
-                        // when split csv values then add 2 new columns, when edit then just 1
-                        for (var cnew = 0; cnew < addmax; cnew++)
-                        {
-                            datanew.Append(string.Format("{0}{1} ({2})", ((head+cnew) == 0 && bRemove ? "" : sep), newname, postfix + cnew));
-                        }
-                    }
+                    datanew.Append((colhead > 0 ? sep : "") + csvnew.Fields[colhead].Name);
                 }
                 datanew.Append("\n");
-            }
-
-            // compile list of datatypes for the new columns
-            List<ColumnType> newdatatypes = new List<ColumnType>();
-            for (int head = 0; head < csvdef.Fields.Count; head++)
-            {
-                // add column header to output, except when remove original column
-                if ((head != ColumnIndex) || (bRemove == false)) newdatatypes.Add(csvdef.Fields[head].DataType);
-
-                // add new split columns headers
-                if (head == ColumnIndex)
-                {
-                    // when split csv values then add 2 new columns, when edit then just 1
-                    for (var cnew = 0; cnew < addmax; cnew++)
-                    {
-                        newdatatypes.Add(ColumnType.String);
-                    }
-                }
             }
 
             // list for building new columns
@@ -1093,7 +1063,6 @@ namespace CSVLint
                         else if (SplitCode == 5)
                         {
                             // split on position
-                            int pos = val.IndexOf(Parameter1);
                             if ((IntPar2 > 0) && (IntPar2 < val.Length))
                             {
                                 // positive, left string
@@ -1125,21 +1094,8 @@ namespace CSVLint
                     }
                 };
 
-                // if value contains separator character then put value in quotes
-                // reformat data line to new line
-                for (int c = 0; c < newcols.Count; c++)
-                {
-                    // column datatype
-                    csvoldtype = (c < newdatatypes.Count ? newdatatypes[c] : ColumnType.String);
-                    
-                    // next value
-                    string val = newcols[c];
-                    val = ApplyQuotesToString(val, ApplyQuotes, sep[0], csvoldtype);
-                    datanew.Append(val + sep);
-                }
-
-                // remove last separator
-                datanew.Length -= 1;
+                // reconstruct new line of data (with extra columns)
+                datanew.Append(csvnew.ConstructLine(newcols));
 
                 // add line break
                 datanew.Append("\n");

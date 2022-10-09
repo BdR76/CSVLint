@@ -336,11 +336,11 @@ namespace Kbg.NppPluginNET
                     var dtElapsed = (DateTime.Now - dtStart).ToString(@"hh\:mm\:ss\.fff");
 
                     // display process message
-                    var colname = "--TODO UNKNOWN--";
+                    var colname = csvdef.Fields[idx].Name;
                     txtOutput.Text = string.Format("Sort data on column '{0}' is ready, time elapsed {1}\r\n", colname, dtElapsed); ;
 
                     // refresh datadefinition
-                    OnBtnDetectColumns_Click(sender, e);
+                    //OnBtnDetectColumns_Click(sender, e);
                 }
             }
         }

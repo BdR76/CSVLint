@@ -63,6 +63,17 @@ namespace CSVLint
             this.Initialize();
         }
 
+        public CsvColumn(CsvColumn copyobj)
+        {
+            this.Index    = copyobj.Index;
+            this.Name     = copyobj.Name;
+            this.MaxWidth = copyobj.MaxWidth;
+            this.DataType = copyobj.DataType;
+            this.Mask     = copyobj.Mask;
+
+            this.Initialize();
+        }
+
         public void Initialize()
         {
             this.sTag = "";
@@ -114,9 +125,6 @@ namespace CSVLint
         /// column separator character
         public char Separator { get; set; } = '\0';
 
-        /// comment character(?)
-        public char CommentCharacter { get; set; } = '#';
-
         /// schema.ini DateTimeFormat for all columns
         public string DateTimeFormat { get; set; } = "";
 
@@ -160,21 +168,21 @@ namespace CSVLint
         /// Can be set to any single character that is used to separate the whole from the fractional part of a currency amount.
         public char CurrencyDecimalSymbol { get; set; } = '.';
 
+        /// first line contains column names
+        public bool ColNameHeader { get; set; } = true;
+
+        // This will replace TextQualifier below - only " is used anyway
+        public bool? UseQuotes { get; set; }
+        public char TextQualifier { get; set; } = '"';
+
+        /// column names
+        public string[] FieldNames { get; set; }
+
         /// field widths
         public List<int> FieldWidths { get; set; }
 
         /// field definitions
         public List<CsvColumn> Fields { get; set; } = new List<CsvColumn>(); // always create
-
-        /// first line contains column names
-        public bool ColNameHeader { get; set; } = true;
-
-        /// column names
-        public string[] FieldNames { get; set; }
-
-        // This will replace TextQualifier below - only " is used anyway
-        public bool? UseQuotes { get; set; }
-        public char TextQualifier { get; set; } = '"';
 
         public CsvDefinition()
         {
@@ -185,19 +193,34 @@ namespace CSVLint
             this.Separator = separator;
         }
 
-        public CsvDefinition(char separator, char quoteEscapeChar, char commentChar, bool colNameHeader, List<int> fieldWidths = null)
+        public CsvDefinition(CsvDefinition copyobj)
         {
-            this.Separator = separator;
-            this.TextQualifier = quoteEscapeChar;
-            this.CommentCharacter = commentChar;
-            this.FieldWidths = fieldWidths;
-            this.ColNameHeader = colNameHeader;
-            this.UseQuotes = this.TextQualifier != default(char);
+            this.Separator              = copyobj.Separator;
+            this.DateTimeFormat         = copyobj.DateTimeFormat;
+            this.DecimalSymbol          = copyobj.DecimalSymbol;
+            this.NumberDigits           = copyobj.NumberDigits;
+            this.NumberLeadingZeros     = copyobj.NumberLeadingZeros;
+            this.CurrencySymbol         = copyobj.CurrencySymbol;
+            this.CurrencyPosFormat      = copyobj.CurrencyPosFormat;
+            this.CurrencyDigits         = copyobj.CurrencyDigits;
+            this.CurrencyNegFormat      = copyobj.CurrencyNegFormat;
+            this.CurrencyThousandSymbol = copyobj.CurrencyThousandSymbol;
+            this.CurrencyDecimalSymbol  = copyobj.CurrencyDecimalSymbol;
+            this.ColNameHeader          = copyobj.ColNameHeader;
 
-            // if no given, then create now
-            if (this.FieldWidths == null)
+            this.FieldNames             = copyobj.FieldNames;
+            this.UseQuotes              = copyobj.UseQuotes;
+            this.TextQualifier          = copyobj.TextQualifier;
+
+            this.FieldWidths = new List<int>();
+            foreach (var wid in copyobj.FieldWidths)
             {
-                this.FieldWidths = new List<int>();
+                this.FieldWidths.Add(wid);
+            }
+
+            foreach (var col in copyobj.Fields)
+            {
+                this.Fields.Add(new CsvColumn(col));
             }
         }
 
@@ -970,24 +993,33 @@ namespace CSVLint
         }
 
         /// <summary>
-        /// Based on the CsvDefinition, take array of data values and constructs one line of output
+        /// Based on the CsvDefinition, take array of data values and (re)constructs one line of output
         /// </summary>
-        public string ConstructLine(string[] data)
+        public string ConstructLine(List<string> values)
         {
             string res = "";
+            var ApplyQuotes = Main.Settings.ReformatQuotes;
 
             for (int c = 0; c < this.Fields.Count; c++)
             {
+                // get value
+                var val = (c < values.Count ? values[c] : "");
+
                 if (this.Separator == '\0')
                 {
                     // fixed width
-                    int wid = this.Fields[c].MaxWidth;
-                    res += data[c].PadLeft(wid, ' ');
+                    if ( (Fields[c].DataType == ColumnType.Integer) || (Fields[c].DataType == ColumnType.Decimal) )
+                        res += val.PadLeft(Fields[c].MaxWidth, ' ');
+                    else
+                        res += val.PadRight(Fields[c].MaxWidth, ' ');
                 }
                 else
                 {
+                    // apply quotes
+                    val = CsvEdit.ApplyQuotesToString(val, ApplyQuotes, this.Separator, Fields[c].DataType);
+
                     // character separated
-                    res += data[c] + this.Separator;
+                    res += (c > 0 ? this.Separator.ToString() : "") + val;
                 }
             };
 
