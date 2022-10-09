@@ -11,10 +11,10 @@ CSV Lint plug-in documentation
 ![preview screenshot](../csvlint_preview.png?raw=true "CSVLint plug-in preview")
 
 Use the **CSV Lint** plug-in to quickly and easily inspect csv data files,
-add column syntax highlighting, detect technical errors and fix datetime and
-decimal formatting. It's not meant as a replacement for a spreadsheet program,
-but rather it's a quality control tool to examine, verify or polish up a
-dataset before further processing.
+apply syntax highlighting to columns, detect technical errors and fix datetime
+and decimal formatting. It's not meant as a replacement for a spreadsheet
+program, but rather it's a quality control tool to examine, verify or polish up
+a dataset before further processing.
 
 First install and open Notepad++, then go to the menu item `Plugins > Plugins Admin...`,
 search for "csv lint", check the checkbox and press Install. This will add
@@ -219,6 +219,8 @@ Sort data
 Sort data on a single column, and take into account the data type of the column.
 String text columns will be sorted alphabetically. Integer, decimal and
 datetime columns will be sorted according to their respective values.
+Note, that the resulting new dataset will have quotes applied according to the
+current `Apply quotes` setting in the Reformat dialog.
 
 ![CSV Lint sort data dialog](/docs/csvlint_sort_data.png?raw=true "CSV Lint plug-in sort data dialog")
 
@@ -238,6 +240,8 @@ patient number descending and then sort on visit date ascending.
 Add new column(s)
 -----------------
 Add column(s) based on an existing column, either edit a column or split values into new columns.
+Note, that the resulting new dataset will have quotes applied according to the
+current `Apply quotes` setting in the Reformat dialog.
 
 ![CSV Lint add new column dialog](/docs/csvlint_add_new_column.png?raw=true "CSV Lint plug-in add new column dialog")
 
@@ -344,7 +348,7 @@ see other examples below
 ### Remove original column ###
 
 By checking the "Remove original column" checkbox the original column will be
-removied after splitting it into new columns. Keep it unchecked to add the new
+removed after splitting it into new columns. Keep it unchecked to add the new
 columns but also keep the original values.
 
 Analyse data report
@@ -361,7 +365,8 @@ The output will contain the following information for each column.
 * DateTime range - the minimum and maximum datetime value, if any datetime values found
 * Integer range - the minimum and maximum integer value, if any integer values found
 * Decimal range - the minimum and maximum decimal value, if any decimal values found
-* Unique values - list of unique values, not shown when there are more than `UniqueValuesMax` unique values found (see settings)
+* Unique values - list of unique values, if the number of unique values in the column
+is smaller than or equal to `UniqueValuesMax`,else this list will not be shown.
 
 See report example for one single column below:
 
@@ -393,9 +398,9 @@ column participantId and select sort by `count`, to sort the result by the new
 `count_unique` column.
 
 If the data is correct, it should list all participantId with a `count_unique`
-value of 3. Because it's sorted by `count_unique` you can check the beginning
-and end of the list to see if there are any participants with fewer or more
-than 3 measurements.
+value of 3. And, because it's sorted by `count_unique`, you can check the
+beginning and end of the list to see if there are any participants with fewer
+or more than 3 measurements.
 
 When you disable sorting, the resulting list of values will be in the order as
 the values were first found in the dataset.
@@ -419,7 +424,7 @@ use the current filename as table name.
 See below for an example of an SQL insert script the plugin will generate:
 
     -- -------------------------------------
-    -- CSV Lint plug-in v0.4.5
+    -- CSV Lint plug-in v0.4.6
     -- File: cardio.txt
     -- SQL type: mySQL
     -- -------------------------------------
@@ -469,13 +474,13 @@ File and column metadata in W3 schema JSON format (preliminary support).
 
 Generates a [Python](https://www.python.org/) script to read the csv data file
 as a dataframe. It contains the required scripting for the appropriate
-datatypes, and it is meant as just a starting point for further script development.
+datatypes, and it is meant as a starting point for further script development.
 
 ### R-script ###
 
 Generates an [R-script](https://www.r-project.org/) to read the csv data file
 as a dataframe. It contains the required scripting for the appropriate
-datatypes, and it is meant as a starting point for further processing in
+datatypes, and it is meant as a starting point for further script development in
 [R-Studio](https://www.rstudio.com/products/rstudio/).
 
 Note that the generated scripts don't handle all possible data errors,
@@ -492,7 +497,7 @@ and they are stored in a settings file `%USERPROFILE%\AppData\Roaming\Notepad++\
 |------------------|-----------------------------------------------------------------------------------------------------------------|---------|
 | DecimalDigitsMax | Maximum amount of decimals for decimal values, if a value has more then it's considered a text value. Applies to both autodetecting datatypes and validating data | 20 |
 |DecimalLeadingZero| Decimal values must have leading zero, set to false to accept values like .5 or .01                             | true    |
-| ErrorTolerance   | Error tolerance percentage, when analyzing allow X % errors. For example when a column has 991 integers and 9 decimal values it's interpreted as an integer column. | 1 |
+| ErrorTolerance   | Error tolerance percentage, when analyzing allow X % errors. For example when a column with a 1000 values contains all integers except for 9 or fewer non-integer values, then it's still interpreted as an integer column. | 1 |
 | IntegerDigitsMax | Maximum amount of digits for integer values, if a value has more then it's considered a text value. Applies to both autodetecting datatypes and validating data. Useful to distinguish (bar)codes and actual numeric values  | 12 |
 | UniqueValuesMax  | Maximum unique values when reporting or detecting coded values, if column contains more than it's not reported. |   15    | 
 | YearMinimum      | When detecting date or datetime values, years smaller than this value will be considered an out-of-range date.  | 1900    |
@@ -516,13 +521,13 @@ depending on the Dark Mode setting in the Notepad++ `config.xml`.
 ![CSV Lint color styles for syntax highlighting](/docs/csvlint_color_styles.png?raw=true "CSV Lint plug-in color styles for syntax highlighting")
 
 Note that the rendering of the syntax highlighting runs on a separate thread
-in the background. This means that for larger file (~50MB or more) it can
-happen that the beginning of the file has column colors but at the end of the
+in the background. This means that for larger files (~50MB or more) it can
+happen that the beginning of the file displays column colors but at the end of the
 file it's still uncolored.
 
 The color scheme settings are stored in a file `CSVLint.xml` which is
 automatically created at first time startup or when the file is missing,
-also see an example [CSVLint.xml file here](https://github.com/BdR76/CSVLint/blob/master/config/CSVLint.xml).
+also see an example [CSVLint.xml file here](https://github.com/BdR76/CSVLint/blob/master/extra/).
 
 	%USERPROFILE%\AppData\Roaming\Notepad++\plugins\config\CSVLint.xml
 

@@ -33,7 +33,7 @@ namespace Kbg.NppPluginNET
         private int _ErrorTolerance;
         public float _ErrorTolerancePerc;
 
-        [Description("Error tolerance percentage, when analyzing allow X % errors. For example when a column has 991 integers and 9 decimals it's interpreted as an integer column."), Category("Analyze"), DefaultValue(1)]
+        [Description("Error tolerance percentage, when analyzing allow X % errors. For example when a column with a 1000 values contains all integers except for 9 or fewer non-integer values, then it's still interpreted as an integer column."), Category("Analyze"), DefaultValue(1)]
         public int ErrorTolerance
         {
             get

@@ -2,10 +2,10 @@ CSV Lint - Notepad++ plugin
 ===========================
 ![Release version](https://img.shields.io/github/v/release/BdR76/CSVLint) ![GitHub all releases](https://img.shields.io/github/downloads/BdR76/CSVLint/total) ![GitHub latest release](https://img.shields.io/github/downloads/BdR76/CSVLint/latest/total)  
 
-CSV Lint is a plug-in for [Notepad++](http://notepad-plus-plus.org/) which
-adds syntax highlighting to [comma-separated values](https://en.wikipedia.org/wiki/Comma-separated_values)
-(csv) and fixed width data files to make them more readable. It can also
-detect technical data errors and fix datetime and decimal formatting errors.
+CSV Lint plug-in for [Notepad++](http://notepad-plus-plus.org/) adds
+syntax highlighting to [comma-separated values](https://en.wikipedia.org/wiki/Comma-separated_values)
+(csv) and fixed width data files. It automatically detects column datatypes,
+can detect data formatting errors and adjust datetime and decimal formats.
 
 ![preview screenshot](/csvlint_preview.png?raw=true "CSVLint plug-in preview")
 
@@ -202,5 +202,6 @@ History
 25-jul-2022 - v0.4.5.3 Manually detect columns, improved fixed width support  
 14-aug-2022 - v0.4.5.4 Improved datatype and datetime mask detection, various bugfixes  
 30-sep-2022 - v0.4.6 Improved unicode support, sort data option, default color sets 12 colors, various bugfixes  
+09-oct-2022 - v0.4.6.1 Improved sort data and split options, various bugfixes  
 
 BdR©2021 Free to use - send questions or comments: Bas de Reuver - bdr1976@gmail.com

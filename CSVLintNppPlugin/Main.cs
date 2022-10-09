@@ -402,7 +402,6 @@ namespace Kbg.NppPluginNET
                 var strwidths = "";
                 for (var i = 0; i < csvdef.FieldWidths.Count; i++)
                 {
-                    var w1 = csvdef.FieldWidths[i];
                     strwidths += (i > 0 ? "," : "") + csvdef.FieldWidths[i].ToString();
                 }
 
@@ -440,7 +439,6 @@ namespace Kbg.NppPluginNET
                 var strwidths = "";
                 for (var i = 0; i < csvdef.FieldWidths.Count; i++)
                 {
-                    var w1 = csvdef.FieldWidths[i];
                     strwidths += (i > 0 ? "," : "") + csvdef.FieldWidths[i].ToString();
                 }
 
@@ -475,38 +473,6 @@ namespace Kbg.NppPluginNET
 
             // remove csv definition if existant
             FileCsvDef.Remove(filename);
-        }
-
-        [Obsolete("There is no reference to this in the CsvLintSolution. If used from elsewhere please add in summary.", false)]
-        public static void GetCurrentFileLexerParameters(out char sep)
-        {
-            sep = ';';
-
-            // Notepad++ switc to a different file tab
-            INotepadPPGateway notepad = new NotepadPPGateway();
-            string filename = notepad.GetCurrentFilePath();
-
-            CsvDefinition csvdef;
-
-            // check if already in list
-            if (!FileCsvDef.TryGetValue(filename, out csvdef))
-            {
-                // read schema.ini file
-                var lines = CsvSchemaIni.ReadIniSection(filename);
-                if (lines.Count > 0)
-                {
-                    // metadata from previously saved schema.ini
-                    csvdef = new CsvDefinition(lines);
-                }
-                else
-                {
-                    // analyze and determine csv definition
-                    csvdef = CsvAnalyze.InferFromData(true, '\0', false); // parameters '\0', false don't matter
-                }
-
-                FileCsvDef.Add(filename, csvdef);
-            }
-            sep = csvdef.Separator;
         }
 
         internal static void PluginCleanUp()
