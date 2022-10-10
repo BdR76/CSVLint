@@ -148,10 +148,14 @@ Integer or decimal values will be right aligned, any other datatypes are left al
 
 ### Datetime reformat ###
 
-Datetime format, reformat all datetime values in the file uniformly. Note that
-both date and datetime values will get the same format. This means that it
-can potentially remove the time-part of datetime values, or add `00:00:00` as
-a time part to all values.
+Datetime format, reformat all datetime values in the file uniformly.
+The drop-down list contains the most common datetime formats, but you can
+freely type any other datetime pattern. This includes two-digit year or
+just the time part, for example `dd/MM/yyyy`, `dd.MM.yy`, `HH:mm:ss:fff` etc.
+
+Note that both date and datetime values will get the same format. This means
+that it can potentially remove the time-part of datetime values,
+or add `00:00:00` as a time part to all values.
 
 ### Decimal separator ###
 
@@ -159,11 +163,13 @@ Set the decimal separator for all decimal/float values, select either the dot `.
 
 ### Re-apply quotes ###
 
-Apply quotes to the cell values, with the following options.
+Apply quotes will put all or just certain values in quotes. The default quote
+character is `"` but it can be adjusted typically to `'`, see `DefaultQuoteChar`
+in the settings. Select one of the following options.
 
-* None / Minimal = Do not use quotes except when a value contains the separator character (this always applies, also for the options below)
-* Values with spaces = Apply quotes to values that contain one or more spaces
-* All string values = Apply quotes to all columns with datatype Text
+* None / Minimal = Do not use quotes except when a value contains the column separator character, or a carriage return/line-feed character (this rule is always applied, also for the options below)
+* Values with spaces = Apply quotes only to values that contain one or more spaces
+* All string values = Apply quotes only to columns with datatype Text
 * All non-numeric values = Apply quotes to all columns except datatypes Integer or Float
 * All values = Apply quotes to all values in all columns
 
@@ -520,6 +526,8 @@ depending on the Dark Mode setting in the Notepad++ `config.xml`.
 
 ![CSV Lint color styles for syntax highlighting](/docs/csvlint_color_styles.png?raw=true "CSV Lint plug-in color styles for syntax highlighting")
 
+The predefined color sets have been [carefully selected](https://github.com/BdR76/CSVLint/tree/master/extra#generate_colorspy)
+so that each column color is as different as possible from the next.
 Note that the rendering of the syntax highlighting runs on a separate thread
 in the background. This means that for larger files (~50MB or more) it can
 happen that the beginning of the file displays column colors but at the end of the

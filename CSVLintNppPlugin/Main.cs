@@ -408,9 +408,6 @@ namespace Kbg.NppPluginNET
             }
             editor.SetIdleStyling(IdleStyling.ALL);
 
-            // keep current csvdef
-            _CurrnetCsvDef = FileCsvDef[filename];
-
             if (frmCsvLintDlg != null)
             {
                 frmCsvLintDlg.SetCsvDefinition(csvdef, false);

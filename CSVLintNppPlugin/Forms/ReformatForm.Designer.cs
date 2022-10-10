@@ -145,9 +145,9 @@
             "yyyy-M-d",
             "d-M-yyyy",
             "M/d/yyyy",
-            "yyyy-M-d H:mm:ss",
-            "d-M-yyyy H:mm:ss",
-            "M/d/yyyy H:mm:ss"});
+            "yyyy-M-d H:mm:ss.fff",
+            "d-M-yyyy H:mm:ss.fff",
+            "M/d/yyyy H:mm:ss.fff"});
             this.cmbDateTime.Location = new System.Drawing.Point(160, 80);
             this.cmbDateTime.Name = "cmbDateTime";
             this.cmbDateTime.Size = new System.Drawing.Size(180, 21);

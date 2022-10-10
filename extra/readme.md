@@ -18,7 +18,8 @@ Used for testing the automatic column detection algorithm.
 ### generate_colors.py ###
 
 Python script to determine the optimal colors for syntax highlighting,
-by determining a color sequence with the most contrast between each color.
+by determining a color sequence where each color is as different as possible
+from the next, see the [results here](https://github.com/BdR76/CSVLint/tree/master/extra/generate_colors.png)
 
 Note: Technically the CSV Lint plugin can use max 31 different column colors.
 However, for 16 or more colors the script starts generating very similar
@@ -37,5 +38,3 @@ Syntax highlighting configuration for different predefined color sets
 | CSVLint_16_colors.xml | 16 colors optimized                            |
 
 BdR 2022 Free to use - questions or comments: bdr1976@gmail.com
-
-
