@@ -43,7 +43,7 @@ namespace CSVLint
         /// <param name="mansep">Override automatic detection, manually provided column separator</param>
         /// <param name="manhead">Override automatic detection, manually set first header row contains columns names</param>
         /// <returns></returns>
-        public static CsvDefinition InferFromData(bool autodetect, char mansep, bool manhead)
+        public static CsvDefinition InferFromData(bool autodetect, char mansep, string manwid, bool manhead)
         {
             // First do a letter frequency analysis on each row
             var strfreq = ScintillaStreams.StreamAllText();
@@ -242,27 +242,41 @@ namespace CSVLint
                 int lastStart = 0;
                 var foundfieldWidths = new List<int>();
 
-                // Go backwards and find the end positions of "big spaces", i.e. the right-most part of consecutive spaces
-                foreach (var space in commonSpace)
+                // set widths manually
+                var manwidint = manwid.Split(',');
+                foreach (var pos in manwidint)
                 {
-                    if (space != lastvalue - 1)
+                    if (int.TryParse(pos, out int wid))
                     {
-                        foundfieldWidths.Add(space);
-                        lastStart = space;
+                        // set widths manually
+                        foundfieldWidths.Add(wid);
                     }
-                    lastvalue = space;
                 }
 
-                // new columns or numeric/alpha 
-                var commonBreaks = wordStarts.Where(x => x.Value == lineCount).Select(x => x.Key).OrderBy(x => x);
+                // detect widths automatically
+                if (autodetect || (foundfieldWidths.Count == 0))
+                {
+                    // Go backwards and find the end positions of "big spaces", i.e. the right-most part of consecutive spaces
+                    foreach (var space in commonSpace)
+                    {
+                        if (space != lastvalue - 1)
+                        {
+                            foundfieldWidths.Add(space);
+                            lastStart = space;
+                        }
+                        lastvalue = space;
+                    }
 
-                //foundfieldWidths.AddRange(commonBreaks); // AddRange simply adds duplicates
+                    // new columns or numeric/alpha 
+                    var commonBreaks = wordStarts.Where(x => x.Value == lineCount).Select(x => x.Key).OrderBy(x => x);
 
-                // only add unique breaks
-                foreach (var br in commonBreaks)
-                    if (!foundfieldWidths.Contains(br))
-                        foundfieldWidths.Add(br);
+                    //foundfieldWidths.AddRange(commonBreaks); // AddRange simply adds duplicates
 
+                    // only add unique breaks
+                    foreach (var br in commonBreaks)
+                        if (!foundfieldWidths.Contains(br))
+                            foundfieldWidths.Add(br);
+                }
                 foundfieldWidths.Sort();
                 if (foundfieldWidths.Count < 3) return result; // unlikely fixed width
 
@@ -274,7 +288,8 @@ namespace CSVLint
                     int pos2 = foundfieldWidths[i];
 
                     // positions to column widths
-                    foundfieldWidths[i] = pos2 - pos1;
+                    foundfieldWidths[i] = (pos2 - pos1);
+
                     pos1 = pos2;
                 }
 

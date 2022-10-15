@@ -226,6 +226,9 @@ namespace Kbg.NppPluginNET
         [Description("Detect columns, contains separator character."), Category("UserPref"), DefaultValue(",")]
         public string DetectColumnSep { get; set; }
 
+        [Description("Detect columns, fixed width column positions, absolute positions and comma separated."), Category("UserPref"), DefaultValue("")]
+        public string DetectColumnWidths { get; set; }
+
         [Description("Detect columns, contains header names."), Category("UserPref"), DefaultValue(false)]
         public bool DetectColumnHeader { get; set; }
 
