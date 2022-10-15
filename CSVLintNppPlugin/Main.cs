@@ -123,7 +123,7 @@ namespace Kbg.NppPluginNET
             // when closing a file
             if (code == (uint)NppMsg.NPPN_FILEBEFORECLOSE)
             {
-                Main.RemoveCSVdef();
+                Main.RemoveCSVdef(notification.Header.IdFrom);
             }
 
             if (code > int.MaxValue) // windows messages
@@ -461,14 +461,14 @@ namespace Kbg.NppPluginNET
             return FileCsvDef.TryGetValue(filename, out CsvDefinition result) ? result : null;
         }
 
-        public static void RemoveCSVdef()
+        public static void RemoveCSVdef(IntPtr buffer_id)
         {
             // Notepad++ closes a file, also remove the definition from list
             INotepadPPGateway notepad = new NotepadPPGateway();
-            string filename = notepad.GetCurrentFilePath();
+            string file_removed = notepad.GetFilePath(buffer_id);
 
             // remove csv definition if existant
-            FileCsvDef.Remove(filename);
+            FileCsvDef.Remove(file_removed);
         }
 
         internal static void PluginCleanUp()
