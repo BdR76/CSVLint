@@ -31,6 +31,7 @@
             this.components = new System.ComponentModel.Container();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.chkAutoDetect = new System.Windows.Forms.CheckBox();
+            this.btnSort = new System.Windows.Forms.Button();
             this.btnSplit = new System.Windows.Forms.Button();
             this.btnApply = new System.Windows.Forms.Button();
             this.btnReformat = new System.Windows.Forms.Button();
@@ -39,7 +40,7 @@
             this.btnValidate = new System.Windows.Forms.Button();
             this.txtOutput = new System.Windows.Forms.TextBox();
             this.tooltipCsvLint = new System.Windows.Forms.ToolTip(this.components);
-            this.btnSort = new System.Windows.Forms.Button();
+            this.btnEnableDisable = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -56,6 +57,7 @@
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.btnEnableDisable);
             this.splitContainer1.Panel1.Controls.Add(this.chkAutoDetect);
             this.splitContainer1.Panel1.Controls.Add(this.btnSort);
             this.splitContainer1.Panel1.Controls.Add(this.btnSplit);
@@ -63,14 +65,14 @@
             this.splitContainer1.Panel1.Controls.Add(this.btnReformat);
             this.splitContainer1.Panel1.Controls.Add(this.btnDetectColumns);
             this.splitContainer1.Panel1.Controls.Add(this.txtSchemaIni);
-            this.splitContainer1.Panel1MinSize = 416;
+            this.splitContainer1.Panel1MinSize = 490;
             // 
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.btnValidate);
             this.splitContainer1.Panel2.Controls.Add(this.txtOutput);
             this.splitContainer1.Size = new System.Drawing.Size(1170, 352);
-            this.splitContainer1.SplitterDistance = 416;
+            this.splitContainer1.SplitterDistance = 490;
             this.splitContainer1.TabIndex = 7;
             // 
             // chkAutoDetect
@@ -85,10 +87,21 @@
             this.chkAutoDetect.UseVisualStyleBackColor = true;
             this.chkAutoDetect.Click += new System.EventHandler(this.chkAutoDetect_Click);
             // 
+            // btnSort
+            // 
+            this.btnSort.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSort.Location = new System.Drawing.Point(249, 3);
+            this.btnSort.Name = "btnSort";
+            this.btnSort.Size = new System.Drawing.Size(72, 32);
+            this.btnSort.TabIndex = 9;
+            this.btnSort.Text = "Sort";
+            this.btnSort.UseVisualStyleBackColor = true;
+            this.btnSort.Click += new System.EventHandler(this.btnSort_Click);
+            // 
             // btnSplit
             // 
             this.btnSplit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSplit.Location = new System.Drawing.Point(253, 3);
+            this.btnSplit.Location = new System.Drawing.Point(327, 3);
             this.btnSplit.Name = "btnSplit";
             this.btnSplit.Size = new System.Drawing.Size(72, 32);
             this.btnSplit.TabIndex = 9;
@@ -109,7 +122,7 @@
             // btnReformat
             // 
             this.btnReformat.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnReformat.Location = new System.Drawing.Point(331, 3);
+            this.btnReformat.Location = new System.Drawing.Point(405, 3);
             this.btnReformat.Name = "btnReformat";
             this.btnReformat.Size = new System.Drawing.Size(72, 32);
             this.btnReformat.TabIndex = 7;
@@ -138,7 +151,7 @@
             this.txtSchemaIni.Multiline = true;
             this.txtSchemaIni.Name = "txtSchemaIni";
             this.txtSchemaIni.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtSchemaIni.Size = new System.Drawing.Size(400, 300);
+            this.txtSchemaIni.Size = new System.Drawing.Size(474, 300);
             this.txtSchemaIni.TabIndex = 5;
             this.txtSchemaIni.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtSchemaIni_KeyDown);
             // 
@@ -165,20 +178,20 @@
             this.txtOutput.Name = "txtOutput";
             this.txtOutput.ReadOnly = true;
             this.txtOutput.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtOutput.Size = new System.Drawing.Size(735, 298);
+            this.txtOutput.Size = new System.Drawing.Size(661, 298);
             this.txtOutput.TabIndex = 4;
             this.txtOutput.DoubleClick += new System.EventHandler(this.OnTxtOutput_DoubleClick);
             // 
-            // btnSort
+            // btnEnableDisable
             // 
-            this.btnSort.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSort.Location = new System.Drawing.Point(175, 3);
-            this.btnSort.Name = "btnSort";
-            this.btnSort.Size = new System.Drawing.Size(72, 32);
-            this.btnSort.TabIndex = 9;
-            this.btnSort.Text = "Sort";
-            this.btnSort.UseVisualStyleBackColor = true;
-            this.btnSort.Click += new System.EventHandler(this.btnSort_Click);
+            this.btnEnableDisable.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnEnableDisable.Location = new System.Drawing.Point(171, 3);
+            this.btnEnableDisable.Name = "btnEnableDisable";
+            this.btnEnableDisable.Size = new System.Drawing.Size(72, 32);
+            this.btnEnableDisable.TabIndex = 11;
+            this.btnEnableDisable.Text = "En-/Disable";
+            this.btnEnableDisable.UseVisualStyleBackColor = true;
+            this.btnEnableDisable.Click += new System.EventHandler(this.btnEnableDisable_Click);
             // 
             // CsvLintWindow
             // 
@@ -211,5 +224,6 @@
         private System.Windows.Forms.Button btnSplit;
         private System.Windows.Forms.CheckBox chkAutoDetect;
         private System.Windows.Forms.Button btnSort;
+        private System.Windows.Forms.Button btnEnableDisable;
     }
 }

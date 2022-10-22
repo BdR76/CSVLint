@@ -409,5 +409,10 @@ namespace Kbg.NppPluginNET
             // save to file
             Main.Settings.SaveToIniFile();
         }
+
+        private void btnEnableDisable_Click(object sender, EventArgs e)
+        {
+            Main.EnableDisableLanguage();
+        }
     }
 }

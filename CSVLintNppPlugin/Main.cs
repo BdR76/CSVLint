@@ -315,6 +315,26 @@ namespace Kbg.NppPluginNET
             return true;
         }
 
+        private static readonly Lazy<int> CsvLanguageId = new Lazy<int>(() =>
+        {
+            string lastLanguage = "";
+            for (int languageId = 0; true; languageId++)
+            {
+                StringBuilder languageSb = new StringBuilder(2000);
+                Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_GETLANGUAGENAME, languageId, languageSb);
+                string language = languageSb.ToString();
+                if (language == "CSVLint")
+                {
+                    return languageId;
+                }
+                if (language == lastLanguage)
+                {
+                    break;
+                }
+            }
+            return -1;
+        });
+
         // NOTE: calling StyleSetBack/StyleSetFore does not change the style permanently
         // i.e. when you switch tabs or open another file it reset to the original XML colors
         //internal static void SetLexerColors(int presetidx)
@@ -412,6 +432,23 @@ namespace Kbg.NppPluginNET
             {
                 frmCsvLintDlg.SetCsvDefinition(csvdef, false);
             }
+        }
+
+        public static void EnableDisableLanguage()
+        {
+            Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_GETCURRENTLANGTYPE, 0, out int currentLanguageId);
+            CsvDefinition csvdef = GetCurrentCsvDef();
+            int newLanguageId;
+            if (currentLanguageId == CsvLanguageId.Value)
+            {
+                newLanguageId = csvdef.DefaultLanguageId;
+            }
+            else
+            {
+                csvdef.DefaultLanguageId = currentLanguageId;
+                newLanguageId = CsvLanguageId.Value;
+            }
+            Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_SETCURRENTLANGTYPE, 0, newLanguageId);
         }
 
         public static void UpdateCSVChanges(CsvDefinition csvdef, bool saveini)

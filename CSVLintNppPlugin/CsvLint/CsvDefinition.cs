@@ -122,6 +122,8 @@ namespace CSVLint
     /// </summary>
     public class CsvDefinition
     {
+        public int DefaultLanguageId { get; set; } = 0;
+
         /// column separator character
         public char Separator { get; set; } = '\0';
 
@@ -195,6 +197,7 @@ namespace CSVLint
 
         public CsvDefinition(CsvDefinition copyobj)
         {
+            this.DefaultLanguageId      = copyobj.DefaultLanguageId;
             this.Separator              = copyobj.Separator;
             this.DateTimeFormat         = copyobj.DateTimeFormat;
             this.DecimalSymbol          = copyobj.DecimalSymbol;
