@@ -84,6 +84,9 @@ namespace Kbg.NppPluginNET
             Category("General"), DefaultValue('"')]
         public char DefaultQuoteChar { get; set; }
 
+        [Description("Default font for text boxes in CSV Lint docking window. Changing this requires closing and opening the CSV docked window."), Category("General"), DefaultValue("Courier, 11.25pt")]
+        public string Font { get; set; }
+
         [Description("Keyword for empty values or null values in the csv data, case-sensitive."),
             Category("General"), DefaultValue("NaN")]
         public string NullValue { get; set; }

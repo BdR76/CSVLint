@@ -3,12 +3,14 @@ using CSVLintNppPlugin.Forms;
 using CsvQuery.PluginInfrastructure;
 using Kbg.NppPluginNET.PluginInfrastructure;
 using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace Kbg.NppPluginNET
 {
     public partial class CsvLintWindow : Form
     {
+        private string CustomFont = "";
         public CsvLintWindow()
         {
             InitializeComponent();
@@ -413,6 +415,30 @@ namespace Kbg.NppPluginNET
         private void btnEnableDisable_Click(object sender, EventArgs e)
         {
             Main.EnableDisableLanguage();
+        }
+
+        private void CsvLintWindow_VisibleChanged(object sender, EventArgs e)
+        {
+            // CSV Lint window activated
+            if (Visible) {
+
+                // only create new Font when setting changed not every time form is activated, not 100% sure but that might cause memory leak(?)
+                if (CustomFont != Main.Settings.Font)
+                {
+                    // remember current font setting
+                    CustomFont = Main.Settings.Font;
+                    //var fontstr = "Courier, 11.25pt";
+                    //var fontstr = Main.Settings.Font;
+
+                    // get font from settings, for example "Courier, 11.25pt"
+                    var cvt = new FontConverter();
+                    var getfont = cvt.ConvertFromInvariantString(CustomFont) as Font;
+
+                    // set font
+                    txtSchemaIni.Font = getfont;
+                    txtOutput.Font = getfont;
+                }
+            }
         }
     }
 }

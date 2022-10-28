@@ -30,6 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.btnEnableDisable = new System.Windows.Forms.Button();
             this.chkAutoDetect = new System.Windows.Forms.CheckBox();
             this.btnSort = new System.Windows.Forms.Button();
             this.btnSplit = new System.Windows.Forms.Button();
@@ -40,7 +41,6 @@
             this.btnValidate = new System.Windows.Forms.Button();
             this.txtOutput = new System.Windows.Forms.TextBox();
             this.tooltipCsvLint = new System.Windows.Forms.ToolTip(this.components);
-            this.btnEnableDisable = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -65,15 +65,26 @@
             this.splitContainer1.Panel1.Controls.Add(this.btnReformat);
             this.splitContainer1.Panel1.Controls.Add(this.btnDetectColumns);
             this.splitContainer1.Panel1.Controls.Add(this.txtSchemaIni);
-            this.splitContainer1.Panel1MinSize = 490;
+            this.splitContainer1.Panel1MinSize = 448;
             // 
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.btnValidate);
             this.splitContainer1.Panel2.Controls.Add(this.txtOutput);
             this.splitContainer1.Size = new System.Drawing.Size(1170, 352);
-            this.splitContainer1.SplitterDistance = 490;
+            this.splitContainer1.SplitterDistance = 448;
             this.splitContainer1.TabIndex = 7;
+            // 
+            // btnEnableDisable
+            // 
+            this.btnEnableDisable.Image = global::CSVLintNppPlugin.Properties.Resources.setcolor1;
+            this.btnEnableDisable.Location = new System.Drawing.Point(171, 3);
+            this.btnEnableDisable.Name = "btnEnableDisable";
+            this.btnEnableDisable.Size = new System.Drawing.Size(32, 32);
+            this.btnEnableDisable.TabIndex = 11;
+            this.tooltipCsvLint.SetToolTip(this.btnEnableDisable, "Toggle syntax highlighting colors (Language -> CSVLint)");
+            this.btnEnableDisable.UseVisualStyleBackColor = true;
+            this.btnEnableDisable.Click += new System.EventHandler(this.btnEnableDisable_Click);
             // 
             // chkAutoDetect
             // 
@@ -90,22 +101,24 @@
             // btnSort
             // 
             this.btnSort.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSort.Location = new System.Drawing.Point(249, 3);
+            this.btnSort.Location = new System.Drawing.Point(207, 3);
             this.btnSort.Name = "btnSort";
             this.btnSort.Size = new System.Drawing.Size(72, 32);
             this.btnSort.TabIndex = 9;
             this.btnSort.Text = "Sort";
+            this.tooltipCsvLint.SetToolTip(this.btnSort, "Sort all data based on a column");
             this.btnSort.UseVisualStyleBackColor = true;
             this.btnSort.Click += new System.EventHandler(this.btnSort_Click);
             // 
             // btnSplit
             // 
             this.btnSplit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSplit.Location = new System.Drawing.Point(327, 3);
+            this.btnSplit.Location = new System.Drawing.Point(285, 3);
             this.btnSplit.Name = "btnSplit";
             this.btnSplit.Size = new System.Drawing.Size(72, 32);
             this.btnSplit.TabIndex = 9;
             this.btnSplit.Text = "Add column";
+            this.tooltipCsvLint.SetToolTip(this.btnSplit, "Add or split a column based on data from an existing column");
             this.btnSplit.UseVisualStyleBackColor = true;
             this.btnSplit.Click += new System.EventHandler(this.btnSplit_Click);
             // 
@@ -116,17 +129,19 @@
             this.btnApply.Name = "btnApply";
             this.btnApply.Size = new System.Drawing.Size(32, 32);
             this.btnApply.TabIndex = 8;
+            this.tooltipCsvLint.SetToolTip(this.btnApply, "Apply changes and save column metadata to schema.ini");
             this.btnApply.UseVisualStyleBackColor = true;
             this.btnApply.Click += new System.EventHandler(this.btnApply_Click);
             // 
             // btnReformat
             // 
             this.btnReformat.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnReformat.Location = new System.Drawing.Point(405, 3);
+            this.btnReformat.Location = new System.Drawing.Point(363, 3);
             this.btnReformat.Name = "btnReformat";
             this.btnReformat.Size = new System.Drawing.Size(72, 32);
             this.btnReformat.TabIndex = 7;
             this.btnReformat.Text = "Reformat";
+            this.tooltipCsvLint.SetToolTip(this.btnReformat, "Reformat the data file with various options");
             this.btnReformat.UseVisualStyleBackColor = true;
             this.btnReformat.Click += new System.EventHandler(this.OnBtnReformat_Click);
             // 
@@ -151,7 +166,7 @@
             this.txtSchemaIni.Multiline = true;
             this.txtSchemaIni.Name = "txtSchemaIni";
             this.txtSchemaIni.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtSchemaIni.Size = new System.Drawing.Size(474, 300);
+            this.txtSchemaIni.Size = new System.Drawing.Size(432, 300);
             this.txtSchemaIni.TabIndex = 5;
             this.txtSchemaIni.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtSchemaIni_KeyDown);
             // 
@@ -172,26 +187,19 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtOutput.BackColor = System.Drawing.SystemColors.Control;
-            this.txtOutput.Font = new System.Drawing.Font("Courier New", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtOutput.Font = new System.Drawing.Font("Consolas", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtOutput.Location = new System.Drawing.Point(3, 41);
             this.txtOutput.Multiline = true;
             this.txtOutput.Name = "txtOutput";
             this.txtOutput.ReadOnly = true;
             this.txtOutput.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtOutput.Size = new System.Drawing.Size(661, 298);
+            this.txtOutput.Size = new System.Drawing.Size(703, 298);
             this.txtOutput.TabIndex = 4;
             this.txtOutput.DoubleClick += new System.EventHandler(this.OnTxtOutput_DoubleClick);
             // 
-            // btnEnableDisable
+            // tooltipCsvLint
             // 
-            this.btnEnableDisable.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnEnableDisable.Location = new System.Drawing.Point(171, 3);
-            this.btnEnableDisable.Name = "btnEnableDisable";
-            this.btnEnableDisable.Size = new System.Drawing.Size(72, 32);
-            this.btnEnableDisable.TabIndex = 11;
-            this.btnEnableDisable.Text = "En-/Disable";
-            this.btnEnableDisable.UseVisualStyleBackColor = true;
-            this.btnEnableDisable.Click += new System.EventHandler(this.btnEnableDisable_Click);
+            this.tooltipCsvLint.ShowAlways = true;
             // 
             // CsvLintWindow
             // 
@@ -201,6 +209,8 @@
             this.Controls.Add(this.splitContainer1);
             this.Name = "CsvLintWindow";
             this.Text = "CSV Lint";
+            this.tooltipCsvLint.SetToolTip(this, "Sort all data on a column");
+            this.VisibleChanged += new System.EventHandler(this.CsvLintWindow_VisibleChanged);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel1.PerformLayout();
             this.splitContainer1.Panel2.ResumeLayout(false);
