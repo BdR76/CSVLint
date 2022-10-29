@@ -180,6 +180,7 @@ namespace CSVLint
             // create new file
             notepad.FileNew();
             editor.SetText(jsonmeta.ToString());
+            notepad.SetCurrentLanguage(LangType.L_JSON);
         }
 
         /// <summary>
@@ -361,9 +362,9 @@ namespace CSVLint
             python.Append("# date to string format MM/dd/yyyy\r\n");
             python.Append(string.Format("#df['{0}'] = df['{0}'].dt.strftime('%m/%d/%Y')\r\n\r\n", exampleDate));
 
-            python.Append("# replace codes with labels\r\n");
+            python.Append("# replace labels with codes, for example column contains 'Yes' or 'No' replace with '1' or '0'\r\n");
             python.Append("#lookuplist = {'Yes': 1, 'No': 0}\r\n");
-            python.Append("#df['fieldyesno'] = df['fieldyesno'].map(lookuplist)\r\n\r\n");
+            python.Append("#df['fieldyesno_code'] = df['fieldyesno'].map(lookuplist)\r\n\r\n");
 
             if (csvdef.Separator == '\0') separator = ",";
             python.Append("# csv write new output\r\n");
@@ -373,6 +374,7 @@ namespace CSVLint
             // create new file
             notepad.FileNew();
             editor.SetText(python.ToString());
+            notepad.SetCurrentLanguage(LangType.L_PYTHON);
         }
 
         /// <summary>
@@ -396,6 +398,7 @@ namespace CSVLint
             // create new file
             notepad.FileNew();
             editor.SetText(txt);
+            notepad.SetCurrentLanguage(LangType.L_INI);
         }
 
         /// <summary>
@@ -562,10 +565,10 @@ namespace CSVLint
             rscript.Append("# date to string format MM/dd/yyyy\r\n");
             rscript.Append(string.Format("df${0} <- format(df${0}, \"%m/%d/%Y\")\r\n\r\n", exampleDate));
 
-            rscript.Append("# replace codes with labels\r\n");
+            rscript.Append("# replace labels with codes, for example column contains 'Yes' or 'No' replace with '1' or '0'\r\n");
             rscript.Append("#lookuplist <- data.frame(\"code\" = c(\"0\", \"1\"),\r\n");
             rscript.Append("#                    \"label\" = c(\"No\", \"Yes\") )\r\n");
-            rscript.Append("#df$fieldyesno <- lookuplist$label[match(df$fieldyesno, lookuplist$code)]\r\n\r\n");
+            rscript.Append("#fieldyesno_code <- lookuplist$code[match(df$fieldyesno, lookuplist$label)]\r\n\r\n");
 
             rscript.Append("# csv write new output\r\n");
             rscript.Append("filenew = \"output.txt\"\r\n");
@@ -574,6 +577,7 @@ namespace CSVLint
             // create new file
             notepad.FileNew();
             editor.SetText(rscript.ToString());
+            notepad.SetCurrentLanguage(LangType.L_R);
         }
     }
 }

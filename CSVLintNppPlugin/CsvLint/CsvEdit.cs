@@ -458,6 +458,7 @@ namespace CSVLint
             // create new file
             notepad.FileNew();
             editor.SetText(sb.ToString());
+            notepad.SetCurrentLanguage(LangType.L_SQL);
         }
 
         private static string XMLSafeName(string name)
@@ -606,6 +607,7 @@ namespace CSVLint
             // create new file
             notepad.FileNew();
             editor.SetText(sb.ToString());
+            notepad.SetCurrentLanguage(LangType.L_XML);
         }
 
         /// <summary>
@@ -750,6 +752,7 @@ namespace CSVLint
             // create new file
             notepad.FileNew();
             editor.SetText(sb.ToString());
+            notepad.SetCurrentLanguage(LangType.L_JSON);
         }
 
 
