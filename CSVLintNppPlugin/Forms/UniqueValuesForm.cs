@@ -105,8 +105,7 @@ namespace CSVLintNppPlugin.Forms
 
         private void mnuitmSelectNone_Click(object sender, EventArgs e)
         {
-            for (int i = 0; i < listColumns.Items.Count; i++)
-                listColumns.SetSelected(i, false);
+            listColumns.ClearSelected();
         }
 
         private void mnuitmSelectInvert_Click(object sender, EventArgs e)

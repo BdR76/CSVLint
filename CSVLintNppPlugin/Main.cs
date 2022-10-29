@@ -27,12 +27,10 @@ namespace Kbg.NppPluginNET
         static int idMyDlg = -1;
 
         // toolbar icons
-        static Bitmap tbBmp = CSVLintNppPlugin.Properties.Resources.csvlint;
-        static Icon tbIco = CSVLintNppPlugin.Properties.Resources.csvlint_black_32;
-        static Icon tbIcoDM = CSVLintNppPlugin.Properties.Resources.csvlint_white_32;
+        static Bitmap tbBmp_color = CSVLintNppPlugin.Properties.Resources.csvlint;        // standard icon small color
+        static Icon tbIco_black = CSVLintNppPlugin.Properties.Resources.csvlint_black_32; // Fluent UI icon black
+        static Icon tbIco_white = CSVLintNppPlugin.Properties.Resources.csvlint_white_32; // Fluent UI icon white
 
-
-        static Bitmap tbBmp_tbTab = CSVLintNppPlugin.Properties.Resources.csvlint;
         static IScintillaGateway editor = new ScintillaGateway(PluginBase.GetCurrentScintilla());
         static Icon tbIcon = null;
 
@@ -367,9 +365,9 @@ namespace Kbg.NppPluginNET
             toolbarIcons tbIcons = new toolbarIcons();
 
             // add bmp icon
-            tbIcons.hToolbarBmp = tbBmp.GetHbitmap();
-            tbIcons.hToolbarIcon = tbIco.Handle;            // icon with black lines
-            tbIcons.hToolbarIconDarkMode = tbIcoDM.Handle;  // icon with light grey lines
+            tbIcons.hToolbarBmp = tbBmp_color.GetHbitmap();
+            tbIcons.hToolbarIcon = tbIco_black.Handle;            // icon with black lines
+            tbIcons.hToolbarIconDarkMode = tbIco_white.Handle;  // icon with light grey lines
 
             // convert to c++ pointer
             IntPtr pTbIcons = Marshal.AllocHGlobal(Marshal.SizeOf(tbIcons));
@@ -658,7 +656,7 @@ namespace Kbg.NppPluginNET
                     colorMap[0].NewColor = Color.FromKnownColor(KnownColor.ButtonFace);
                     ImageAttributes attr = new ImageAttributes();
                     attr.SetRemapTable(colorMap);
-                    g.DrawImage(tbBmp_tbTab, new Rectangle(0, 0, 16, 16), 0, 0, 16, 16, GraphicsUnit.Pixel, attr);
+                    g.DrawImage(tbBmp_color, new Rectangle(0, 0, 16, 16), 0, 0, 16, 16, GraphicsUnit.Pixel, attr);
                     tbIcon = Icon.FromHandle(newBmp.GetHicon());
                 }
 

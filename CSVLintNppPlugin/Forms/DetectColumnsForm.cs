@@ -32,7 +32,7 @@ namespace CSVLintNppPlugin.Forms
         {
             // pass new values to previous form
             Separator = (cmbColumnSeparator.Text.Length > 0 ? cmbColumnSeparator.Text[0] : '\0');
-            ManWidths = txtFixedWidthPos.Text.Replace(' ', ',').Replace(",,", ","); // Replace = allow both comma separated "10 12 15 20" and space separated "10, 12, 15, 20"
+            ManWidths = txtFixedWidthPos.Text.Replace(' ', ',').Replace(",,", ","); // Replace = allow both comma separated "10, 12, 15, 20" and space separated "10 12 15 20"
             HeaderNames = chkHeaderNames.Checked;
 
             // exception
@@ -44,7 +44,7 @@ namespace CSVLintNppPlugin.Forms
         {
             // save user preferences
             Main.Settings.DetectColumnSep = cmbColumnSeparator.Text;
-            Main.Settings.DetectColumnWidths = txtFixedWidthPos.Text.Replace(' ', ',').Replace(",,", ","); // Replace = allow both comma separated "10 12 15 20" and space separated "10, 12, 15, 20"
+            Main.Settings.DetectColumnWidths = txtFixedWidthPos.Text.Replace(' ', ',').Replace(",,", ","); // Replace = allow both comma separated "10, 12, 15, 20" and space separated "10 12 15 20"
             Main.Settings.DetectColumnHeader = chkHeaderNames.Checked;
 
             // save to file
