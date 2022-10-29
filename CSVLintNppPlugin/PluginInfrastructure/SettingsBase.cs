@@ -94,7 +94,7 @@ namespace CsvQuery.PluginInfrastructure
                     var converter = TypeDescriptor.GetConverter(propertyInfo.PropertyType);
                     if (converter.IsValid(rawString))
                     {
-                        propertyInfo.SetValue(this, converter.ConvertFromString(rawString), null);
+                        propertyInfo.SetValue(this, converter.ConvertFromInvariantString(rawString), null);
                     }
                 }
             }
@@ -201,7 +201,7 @@ namespace CsvQuery.PluginInfrastructure
 
             ContextMenuStrip cm = new ContextMenuStrip();
 
-            var img = CSVLintNppPlugin.Properties.Resources.clover;
+            //var img = CSVLintNppPlugin.Properties.Resources.clover;
             //ContextMenuStrip cm = new ContextMenuStrip("Normal mode (background colors)", img, colorMenuItem_Click);
             cm.Items.Add("Normal mode (background colors)", CSVLintNppPlugin.Properties.Resources.setcolor1, colorMenuItem_Click);
             cm.Items.Add("Normal mode (foreground colors)", CSVLintNppPlugin.Properties.Resources.setcolor2, colorMenuItem_Click);
