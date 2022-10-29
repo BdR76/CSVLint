@@ -203,5 +203,6 @@ History
 14-aug-2022 - v0.4.5.4 Improved datatype and datetime mask detection, various bugfixes  
 30-sep-2022 - v0.4.6 Improved unicode support, sort data option, default color sets 12 colors, various bugfixes  
 09-oct-2022 - v0.4.6.1 Improved sort data and split options, various bugfixes  
+29-oct-2022 - v0.4.6.2 Fixed width positions parameter, docked window font, syntax highlighting toggle button  
 
 BdR©2021 Free to use - send questions or comments: Bas de Reuver - bdr1976@gmail.com

@@ -80,10 +80,18 @@ see the [Settings screen](#Settings). For fixed width data files, each
 line should have the same length, and columns are detected by looking where
 numeric, non-numeric and space characters start or end.
 
+### Detect columns manually ###
+
 You can manually override the auto-detection by unchecking the auto-detect
 checkbox. When the auto-detect is not checked and you press "Detect columns",
 a dialog will appear where you can manually enter the column separator and
 indicate whether or not the first line contains the column names.
+
+When selecting "Fixed Widths" you can optionally provide a comma separated
+list of the column ending positions in "Fixed positions". For example
+the text data `2022-10-15HbA1c 123.5` has column end positions `10, 16, 21`.
+Leave "Fixed positions" empty and the plug-in will try to detect fixed width
+columns same as auto-detect.
 
 ![CSV Lint detect columns manually dialog](/docs/csvlint_detect_columns.png?raw=true "CSV Lint plug-in detect columns manually dialog")
 
@@ -520,19 +528,19 @@ and they are stored in a settings file `%USERPROFILE%\AppData\Roaming\Notepad++\
 Syntax highlighting colors
 --------------------------
 Syntax highlighting will make it easier to see columns in the data files.
+Note that the rendering of the syntax highlighting runs on a separate thread
+in the background. This means that for larger files (~50MB or more) it can
+happen that the beginning of the file displays column colors but at the end of the
+file it's still uncolored.
+
 There are four pre-defined color schemes you can select in the `Setttings` dialog.
 At first time startup, the plug-in will select normal or darkmode color scheme,
 depending on the Dark Mode setting in the Notepad++ `config.xml`.
 
 ![CSV Lint color styles for syntax highlighting](/docs/csvlint_color_styles.png?raw=true "CSV Lint plug-in color styles for syntax highlighting")
 
-The predefined color sets have been [carefully selected](https://github.com/BdR76/CSVLint/tree/master/extra#generate_colorspy)
+These predefined color sets have been [carefully selected](https://github.com/BdR76/CSVLint/tree/master/extra#generate_colorspy)
 so that each column color is as different as possible from the next.
-Note that the rendering of the syntax highlighting runs on a separate thread
-in the background. This means that for larger files (~50MB or more) it can
-happen that the beginning of the file displays column colors but at the end of the
-file it's still uncolored.
-
 The color scheme settings are stored in a file `CSVLint.xml` which is
 automatically created at first time startup or when the file is missing,
 also see an example [CSVLint.xml file here](https://github.com/BdR76/CSVLint/blob/master/extra/).
