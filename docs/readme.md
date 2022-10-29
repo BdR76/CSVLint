@@ -106,6 +106,12 @@ The file and column metadata will be saved under a section with the filename.
 A `schema.ini` file can contain the meta data for more
 than one data file, using a separate section for each file.
 
+### Toggle syntax highlighting ###
+
+Click the colored "Aa" button to toggle syntax highlighting on and off.
+This does the same as selecting the menu items `Language > CSVLint` and
+`Language > None (Normal Text)`.
+
 ### Sort / Add column / Reformat / Validate ###
 
 The **Sort data**, **Add column**, **Reformat** and **Validate** buttons are explained
@@ -471,7 +477,10 @@ or leave it empty to use the current filename.
 
 Generate metadata
 -----------------
-Generate metadata in different formats to make it easier to process your csv files.
+Generate metadata in different formats based on the column separator,
+column datatypes, date format etc. Note that the generated scripts are meant
+as a starting point for further script development, they don't handle all
+possible data errors and you'll need to write additional code.
 
 ![CSV Lint Generate metadata dialog](/docs/csvlint_generate_metadata.png?raw=true "CSV Lint plug-in Generate metadata dialog")
 
@@ -497,9 +506,6 @@ as a dataframe. It contains the required scripting for the appropriate
 datatypes, and it is meant as a starting point for further script development in
 [R-Studio](https://www.rstudio.com/products/rstudio/).
 
-Note that the generated scripts don't handle all possible data errors,
-you'll need to write additional code to suit your data processing needs.
-
 Settings
 --------
 Some plug-in settings can be changed in the menu item `Plugins > CSVLint > settings`
@@ -518,6 +524,7 @@ and they are stored in a settings file `%USERPROFILE%\AppData\Roaming\Notepad++\
 | YearMaximum      | When detecting date or datetime values, years larger than this value will be considered an out-of-range date.   | 2050    |
 | TwoDigitYearMax  | Maximum year for two digit year date values. For example, when set to 2024 the year values 24 and 25 will be interpreted as 2024 and 1925. Set as SysYear for current year. | SysYear |
 | DefaultQuoteChar | Default quote escape character when quotes exists inside text                                                   | "       |
+| FontDock         | Default font for text boxes in CSV Lint docking window. Changing the font requires closing and opening the CSV docked window.  | Courier New, 11.25pt  |
 | NullValue        | Keyword for empty values or null values in the csv data, case-sensitive.                                        | NaN     |
 | SeparatorColor   | Include separator in syntax highlighting colors. Set to false and the separator characters are always white.    | false   |
 | Separators       | Preferred characters when automatically detecting the separator character. For special characters like tab, use \\t or \\u0009. | ,;\t&#124; |
@@ -548,10 +555,10 @@ also see an example [CSVLint.xml file here](https://github.com/BdR76/CSVLint/blo
 	%USERPROFILE%\AppData\Roaming\Notepad++\plugins\config\CSVLint.xml
 
 You can also change the colors in the "Style Configurator dialog", see menu item
-`Settings > Style configurator... > Language: CSV Lint`. The "CSV Lint" should
-be near bottom of list. If you have a CSV file open you'll immediately see the
-changes as you edit them. Note that selecting a default color scheme in `Setttings`
-will overwrite any changes made in the Style Configurator dialog.
+`Settings > Style configurator... > Language: CSV Lint`. If you have a CSV file
+open you'll immediately see the changes as you edit them. Note that selecting a
+default color scheme in `Setttings` will overwrite any changes made in
+the Style Configurator dialog.
 
 About
 -----

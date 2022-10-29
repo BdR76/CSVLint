@@ -52,8 +52,8 @@ want to install the plug-in manually:
 
 * Go to the [releases page](https://github.com/BdR76/CSVLint/releases)
 * Find the latest release
-* 32bit version; unzip [CSVLint.dll (32bit)](../../releases/download/0.4.6.1/CSVLint_x86.zip/) to folder `.\Program Files (x86)\Notepad++\plugins\CSVLint\CSVLint.dll`.
-* 64bit version; unzip [CSVLint.dll (64bit)](../../releases/download/0.4.6.1/CSVLint_x64.zip/) to folder `.\Program Files\Notepad++\plugins\CSVLint\CSVLint.dll`.
+* 32bit version; unzip [CSVLint.dll (32bit)](../../releases/download/0.4.6.2/CSVLint_x86.zip/) to folder `.\Program Files (x86)\Notepad++\plugins\CSVLint\CSVLint.dll`.
+* 64bit version; unzip [CSVLint.dll (64bit)](../../releases/download/0.4.6.2/CSVLint_x64.zip/) to folder `.\Program Files\Notepad++\plugins\CSVLint\CSVLint.dll`.
 * restart Notepad++
 
 How to use it
