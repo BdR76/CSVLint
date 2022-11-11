@@ -71,7 +71,8 @@ SQL insert script.
 
 Also see this quick tour video, which shows how the plug-in works.
 
-[![Watch video, CSV Lint plug-in features oveview](http://img.youtube.com/vi/_Me-ICCBu60/mqdefault.jpg)](http://www.youtube.com/watch?v=_Me-ICCBu60 "CSV Lint plug-in Notepad++")
+[![Watch video, CSV Lint plug-in features oveview](http://img.youtube.com/vi/_Me-ICCBu60/mqdefault.jpg)](http://www.youtube.com/watch?v=_Me-ICCBu60 "CSV Lint plug-in Notepad++") [![Watch video, CSV File: View, Add Column Colors and Sort Data using Notepad++](http://img.youtube.com/vi/k6w5BcaSqHc/mqdefault.jpg)](http://www.youtube.com/watch?v=k6w5BcaSqHc "CSV File: View, Add Column Colors and Sort Data using Notepad++")
+
 
 Schema.ini
 ----------
