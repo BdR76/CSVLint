@@ -178,6 +178,7 @@ With thanks to:
 * Anyone who shared their [plug-in on GitHub](https://github.com/search?l=C%23&q=notepad%2B%2B+plugin&type=Repositories)
 
 The CSV Lint plug-in couldn't have been created without their source examples, suggestions and valuable feedback.
+For a similar plug-in for Visual Studio Code check out [Rainbow CSV](https://github.com/mechatroner/vscode_rainbow_csv).
 
 Disclaimer
 ----------
