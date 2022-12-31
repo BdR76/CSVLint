@@ -78,6 +78,9 @@ namespace Kbg.NppPluginNET
         public int intTwoDigitYearMax;
         private string _strTwoDigitYearMax;
 
+        [Description("Comment character, the first lines starting with this character will be skipped"), Category("General"), DefaultValue('#')]
+        public char CommentCharacter { get; set; }
+
         //[Description("Decimal values remove leading zero, for example output 0.5 as .5"), Category("Edit"), DefaultValue(false)]
         //public bool DecimalLeadingZeroOut { get; set; }
 
@@ -240,6 +243,9 @@ namespace Kbg.NppPluginNET
 
         [Description("Detect columns, contains header names."), Category("UserPref"), DefaultValue(false)]
         public bool DetectColumnHeader { get; set; }
+
+        [Description("Detect columns, skip lines."), Category("UserPref"), DefaultValue(0)]
+        public int DetectSkipLines { get; set; }
 
         // COUNT UNIQUE user preferences
         [Description("Count unique values, list of selected columns."), Category("UserPref"), DefaultValue("")]

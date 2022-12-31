@@ -59,7 +59,6 @@ namespace CSVLint
             // start line reader
             int counterr = 0;
             var dtStart = DateTime.Now;
-
             var lineCount = 0;
 
             // if fixed length what is max line length
@@ -71,6 +70,9 @@ namespace CSVLint
                     fixedlength += fld.MaxWidth;
                 }
             }
+
+            // skip any comment lines
+            csvdef.SkipCommentLines(strdata);
 
             // read all lines
             while (!strdata.EndOfStream)
@@ -147,7 +149,7 @@ namespace CSVLint
                 if (err != "")
                 {
                     err = err.Remove(err.Length - 2); // remove last comma ", "
-                    this.log.Add(new LogLine(err, lineCount, 1));
+                    this.log.Add(new LogLine(err, (lineCount+csvdef.SkipLines), 1));
                 }
             }
 

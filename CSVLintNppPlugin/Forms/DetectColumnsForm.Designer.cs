@@ -35,19 +35,22 @@ namespace CSVLintNppPlugin.Forms
             this.txtFixedWidthPos = new System.Windows.Forms.TextBox();
             this.lblHeaderNames = new System.Windows.Forms.Label();
             this.chkHeaderNames = new System.Windows.Forms.CheckBox();
+            this.lblSkipLines = new System.Windows.Forms.Label();
+            this.numSkipLines = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.picHelpIcon)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numSkipLines)).BeginInit();
             this.SuspendLayout();
             // 
             // btnOk
             // 
-            this.btnOk.Location = new System.Drawing.Point(102, 157);
-            this.btnOk.TabIndex = 4;
+            this.btnOk.Location = new System.Drawing.Point(102, 186);
+            this.btnOk.TabIndex = 5;
             this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(221, 157);
-            this.btnCancel.TabIndex = 5;
+            this.btnCancel.Location = new System.Drawing.Point(221, 186);
+            this.btnCancel.TabIndex = 6;
             // 
             // lblTitle
             // 
@@ -126,13 +129,47 @@ namespace CSVLintNppPlugin.Forms
             this.chkHeaderNames.Text = "First line contains column names";
             this.chkHeaderNames.UseVisualStyleBackColor = true;
             // 
+            // lblSkipLines
+            // 
+            this.lblSkipLines.AutoSize = true;
+            this.lblSkipLines.Location = new System.Drawing.Point(13, 144);
+            this.lblSkipLines.Name = "lblSkipLines";
+            this.lblSkipLines.Size = new System.Drawing.Size(52, 13);
+            this.lblSkipLines.TabIndex = 0;
+            this.lblSkipLines.Text = "Skip lines";
+            // 
+            // numSkipLines
+            // 
+            this.numSkipLines.Location = new System.Drawing.Point(142, 141);
+            this.numSkipLines.Maximum = new decimal(new int[] {
+            9999,
+            0,
+            0,
+            0});
+            this.numSkipLines.Minimum = new decimal(new int[] {
+            9999,
+            0,
+            0,
+            -2147483648});
+            this.numSkipLines.Name = "numSkipLines";
+            this.numSkipLines.Size = new System.Drawing.Size(83, 20);
+            this.numSkipLines.TabIndex = 4;
+            this.numSkipLines.Tag = "";
+            this.numSkipLines.Value = new decimal(new int[] {
+            9999,
+            0,
+            0,
+            0});
+            // 
             // DetectColumnsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.ClientSize = new System.Drawing.Size(333, 199);
+            this.ClientSize = new System.Drawing.Size(333, 228);
+            this.Controls.Add(this.numSkipLines);
             this.Controls.Add(this.chkHeaderNames);
             this.Controls.Add(this.txtFixedWidthPos);
             this.Controls.Add(this.cmbColumnSeparator);
+            this.Controls.Add(this.lblSkipLines);
             this.Controls.Add(this.lblHeaderNames);
             this.Controls.Add(this.lblFixedWidthPos);
             this.Controls.Add(this.lblColumnSeparator);
@@ -142,6 +179,7 @@ namespace CSVLintNppPlugin.Forms
             this.Controls.SetChildIndex(this.lblColumnSeparator, 0);
             this.Controls.SetChildIndex(this.lblFixedWidthPos, 0);
             this.Controls.SetChildIndex(this.lblHeaderNames, 0);
+            this.Controls.SetChildIndex(this.lblSkipLines, 0);
             this.Controls.SetChildIndex(this.cmbColumnSeparator, 0);
             this.Controls.SetChildIndex(this.txtFixedWidthPos, 0);
             this.Controls.SetChildIndex(this.chkHeaderNames, 0);
@@ -150,7 +188,9 @@ namespace CSVLintNppPlugin.Forms
             this.Controls.SetChildIndex(this.lblHorizontalLine, 0);
             this.Controls.SetChildIndex(this.picHelpIcon, 0);
             this.Controls.SetChildIndex(this.lblTitle, 0);
+            this.Controls.SetChildIndex(this.numSkipLines, 0);
             ((System.ComponentModel.ISupportInitialize)(this.picHelpIcon)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numSkipLines)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -163,5 +203,7 @@ namespace CSVLintNppPlugin.Forms
         private System.Windows.Forms.TextBox txtFixedWidthPos;
         private System.Windows.Forms.Label lblHeaderNames;
         private System.Windows.Forms.CheckBox chkHeaderNames;
+        private System.Windows.Forms.Label lblSkipLines;
+        private System.Windows.Forms.NumericUpDown numSkipLines;
     }
 }

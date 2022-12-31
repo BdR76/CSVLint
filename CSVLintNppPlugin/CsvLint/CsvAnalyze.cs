@@ -43,12 +43,15 @@ namespace CSVLint
         /// <param name="mansep">Override automatic detection, manually provided column separator</param>
         /// <param name="manhead">Override automatic detection, manually set first header row contains columns names</param>
         /// <returns></returns>
-        public static CsvDefinition InferFromData(bool autodetect, char mansep, string manwid, bool manhead)
+        public static CsvDefinition InferFromData(bool autodetect, char mansep, string manwid, bool manhead, int manskip)
         {
             // First do a letter frequency analysis on each row
             var strfreq = ScintillaStreams.StreamAllText();
             string line;
-            int lineCount = 0, linesQuoted = 0;
+            int lineCount = 0, linesQuoted = 0, lineContent = 0;
+
+            // manual skip lines parameter
+            int skipdetect = 0;
 
             // -----------------------------------------------------------------------------
             // determine separator character or fixed length
@@ -68,6 +71,29 @@ namespace CSVLint
             // analyse individual character frequencies
             while ((line = strfreq.ReadLine()) != null)
             {
+                // count all lines, empty or not
+                lineCount++;
+
+                // automatically detect comment lines
+                if (autodetect)
+                {
+                    var firstchar = (!string.IsNullOrEmpty(line) ? line[0] : '\0');
+                    // Comment lines must be consecutive lines at start of file, not some empty line in the middle of the data.
+                    // check for empty lines or lines that start with the skip character
+                    if ((skipdetect == lineCount - 1)                                              // consecutive lines
+                        && ((line.Trim() == "") || (firstchar == Main.Settings.CommentCharacter)) // empty or skip char
+                        )
+                    {
+                        line = "";
+                        skipdetect++;
+                    }
+                }
+                else
+                {
+                    // manually skip first X lines
+                    if (lineCount <= manskip) line = "";
+                }
+
                 // ignore empty lines
                 if (line.Trim() != "") { 
                     // letter freq per line
@@ -151,7 +177,7 @@ namespace CSVLint
                     }
 
                     // stop after 20 lines
-                    if (lineCount++ > 20) break;
+                    if (lineContent++ > 20) break;
                 }
             }
 
@@ -161,7 +187,7 @@ namespace CSVLint
             var variances = new Dictionary<char, float>();
             foreach (var key in occurrences.Keys)
             {
-                var mean = (float)occurrences[key] / lineCount;
+                var mean = (float)occurrences[key] / lineContent;
                 float variance = 0;
                 foreach (var frequency in frequencies)
                 {
@@ -169,7 +195,7 @@ namespace CSVLint
                     if (frequency.ContainsKey(key)) f = frequency[key];
                     variance += (f - mean) * (f - mean);
                 }
-                variance /= lineCount;
+                variance /= lineContent;
                 variances.Add(key, variance);
             }
 
@@ -185,12 +211,12 @@ namespace CSVLint
                     if (frequency.ContainsKey(key)) f = frequency[key];
                     variance += (f - mean) * (f - mean);
                 }
-                variance /= lineCount;
+                variance /= lineContent;
                 variancesQuoted.Add(key, variance);
             }
 
             // get separator
-            char Separator = GetSeparatorFromVariance(variances, occurrences, lineCount, out var uncertancy);
+            char Separator = GetSeparatorFromVariance(variances, occurrences, lineContent, out var uncertancy);
 
             // The char with lowest variance is most likely the separator
             CsvDefinition result = new CsvDefinition(Separator);
@@ -199,7 +225,7 @@ namespace CSVLint
             var separatorQuoted = GetSeparatorFromVariance(variancesQuoted, occurrencesQuoted, linesQuoted, out var uncertancyQuoted);
             if (uncertancyQuoted < uncertancy)
                 result.Separator = separatorQuoted;
-            else if (uncertancy < uncertancyQuoted || (uncertancy == uncertancyQuoted && lineCount > linesQuoted)) // It was better ignoring quotes!
+            else if (uncertancy < uncertancyQuoted || (uncertancy == uncertancyQuoted && lineContent > linesQuoted)) // It was better ignoring quotes!
                 result.TextQualifier = '\0';
 
             // Override auto-detection, user sets column separator manually
@@ -209,10 +235,18 @@ namespace CSVLint
             result.ColNameHeader = result.Separator != '\0';
 
             // Override auto-detection, user sets column header names manually
-            if (!autodetect) result.ColNameHeader = manhead;
+            if (!autodetect)
+            {
+                result.ColNameHeader = manhead;
+                result.SkipLines = manskip;
+            }
+            else
+            {
+                result.SkipLines = skipdetect;
+            }
 
             // Exception, probably not tabular data file
-            if ( (result.Separator == '\0') && ( (lineLengths.Count > 1) || (lineCount <= 1) ) )
+            if ( (result.Separator == '\0') && ( (lineLengths.Count > 1) || (lineContent <= 1) ) )
             {
                 // check for typical XML characters
                 var xml1 = occurrences.ContainsKey('>') ? occurrences['>'] : 0;
@@ -237,7 +271,7 @@ namespace CSVLint
             if (result.Separator == '\0')
             {
                 // Sort big spaces descending, i.e. go from end of the line to the beginning
-                var commonSpace = bigSpaces.Where(x => x.Value >= lineCount-1).Select(x => x.Key).OrderByDescending(x => x);
+                var commonSpace = bigSpaces.Where(x => x.Value >= lineContent-1).Select(x => x.Key).OrderByDescending(x => x);
                 var lastvalue = 0;
                 int lastStart = 0;
                 var foundfieldWidths = new List<int>();
@@ -268,7 +302,7 @@ namespace CSVLint
                     }
 
                     // new columns or numeric/alpha 
-                    var commonBreaks = wordStarts.Where(x => x.Value == lineCount).Select(x => x.Key).OrderBy(x => x);
+                    var commonBreaks = wordStarts.Where(x => x.Value == lineContent).Select(x => x.Key).OrderBy(x => x);
 
                     //foundfieldWidths.AddRange(commonBreaks); // AddRange simply adds duplicates
 
@@ -308,12 +342,15 @@ namespace CSVLint
             // examine data and keep statistics for each column
             List<CsvAnalyzeColumn> colstats = new List<CsvAnalyzeColumn>();
             //List<CsvColumStats> colstats = new List<CsvColumStats>();
-            lineCount = 0;
+            lineContent = 0;
+
+            // skip any comment lines
+            result.SkipCommentLines(strdata);
 
             while (!strdata.EndOfStream)
             {
                 // keep track of how many lines
-                lineCount++;
+                lineContent++;
 
                 List<string> values = result.ParseNextLine(strdata);
 
@@ -321,7 +358,7 @@ namespace CSVLint
                 for (int i = 0; i < values.Count; i++)
                 {
                     // add columnstats if needed, assume first row contains the correct number of columns, i.e. do not add columns due to errors in data
-                    if (lineCount == 1 && (i > colstats.Count - 1))
+                    if (lineContent == 1 && (i > colstats.Count - 1))
                     {
                         colstats.Add(new CsvAnalyzeColumn(i));
                     }
@@ -468,6 +505,9 @@ namespace CSVLint
 
             var strdata = ScintillaStreams.StreamAllText();
 
+            // skip any comment lines
+            csvdef.SkipCommentLines(strdata);
+
             List<string> values;
 
             while (!strdata.EndOfStream)
@@ -602,6 +642,9 @@ namespace CSVLint
             Dictionary<string, int> uniquecount = new Dictionary<string, int>();
             var strdata = ScintillaStreams.StreamAllText();
             List<string> values;
+
+            // skip any comment lines
+            csvdef.SkipCommentLines(strdata);
 
             // if first line is header column names, then consume line and ignore
             if (csvdef.ColNameHeader) csvdef.ParseNextLine(strdata);

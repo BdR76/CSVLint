@@ -115,6 +115,8 @@ namespace CSVLint
                 datanew.Append("\n");
             }
 
+            // copy any comment lines
+            csvdef.CopyCommentLines(strdata, datanew, "");
 
             // read all lines
             while (!strdata.EndOfStream)
@@ -294,14 +296,14 @@ namespace CSVLint
 
             for (var r = 0; r < csvdef.Fields.Count; r++)
             {
-                // determine sql column name -> mySQL = `colname`, MS-SQL = [colname]
+                // determine sql column name -> mySQL = `colname`, MS-SQL = [colname], PostgreSQL = "colname"
                 string sqlname = string.Format((Main.Settings.DataConvertSQL <= 1 ? (Main.Settings.DataConvertSQL == 0 ? "`{0}`" : "[{0}]") : "\"{0}\""), csvdef.Fields[r].Name);
 
                 // determine sql datatype
                 var sqltype = "varchar";
                 var comment = "";
                 if (csvdef.Fields[r].DataType == ColumnType.Integer) sqltype = "integer";
-                if (csvdef.Fields[r].DataType == ColumnType.DateTime) sqltype = (Main.Settings.DataConvertSQL < 2 ? "datetime" : "timestamp");
+                if (csvdef.Fields[r].DataType == ColumnType.DateTime) sqltype = (Main.Settings.DataConvertSQL < 2 ? "datetime" : "timestamp"); // mySQL/MS-SQL = datetime, Postgress=timestamp
                 //if (csvdef.Fields[r].DataType == ColumnType.Guid) sqltype = "varchar(36)";
                 if (csvdef.Fields[r].DataType == ColumnType.Decimal)
                 {
@@ -345,7 +347,7 @@ namespace CSVLint
             // primary key definition for mySQL
             if (Main.Settings.DataConvertSQL == 0) sb.Append(string.Format("\r\n\tprimary key(`{0}`)", recidname));
 
-            sb.Append("\r\n)");
+            sb.Append("\r\n);\r\n\r\n");
 
             // use stringreader to go line by line
             var strdata = ScintillaStreams.StreamAllText();
@@ -353,6 +355,9 @@ namespace CSVLint
             int lineCount = csvdef.ColNameHeader ? -1 : 0;
             int batchcomm = -1;  // batch comment line
             int batchstart = -1; // batch starting line
+
+            // copy any comment lines
+            csvdef.CopyCommentLines(strdata, sb, "-- ");
 
             while (!strdata.EndOfStream)
             {
@@ -366,7 +371,7 @@ namespace CSVLint
                     // remember next batch
                     batchstart = lineCount + 1;
 
-                    sb.Append(";\r\n\r\n");
+                    if (lineCount > 0) sb.Append(";\r\n\r\n");
                     sb.Append("-- -------------------------------------\r\n");
                     sb.Append("-- insert records \r\n");
                     batchcomm = sb.Length - 2; // -2 because of the 2 characters \r\n
@@ -512,6 +517,13 @@ namespace CSVLint
 
             int lineCount = (csvdef.ColNameHeader ? -1 : 0);
 
+            // copy any comment lines
+            if (csvdef.SkipLines > 0) {
+                sb.Append("\t<!--\n");
+                csvdef.CopyCommentLines(strdata, sb, "\t");
+                sb.Append("\t-->\n");
+            }
+
             while (!strdata.EndOfStream)
             {
                 // get next 'record' from csv data
@@ -639,6 +651,9 @@ namespace CSVLint
             var strdata = ScintillaStreams.StreamAllText();
 
             int lineCount = (csvdef.ColNameHeader ? -1 : 0);
+
+            // skip any comment lines
+            csvdef.SkipCommentLines(strdata);
 
             while (!strdata.EndOfStream)
             {
@@ -861,6 +876,9 @@ namespace CSVLint
             // output in new sort order
             StringBuilder sbsort = new StringBuilder();
 
+            // copy any comment lines
+            csvdef.CopyCommentLines(strdata, sbsort, "");
+
             // if first line is header column names
             if (csvdef.ColNameHeader) {
                 // consume line and copy to output
@@ -981,6 +999,9 @@ namespace CSVLint
             if (bRemove) {
                 csvnew.Fields.RemoveAt(ColumnIndex);
             }
+
+            // copy any comment lines
+            csvdef.CopyCommentLines(strdata, datanew, "");
 
             // convert from fixed width to separated values, add header line
             if (csvdef.ColNameHeader)

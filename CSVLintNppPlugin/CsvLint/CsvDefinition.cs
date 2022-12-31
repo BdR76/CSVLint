@@ -177,6 +177,9 @@ namespace CSVLint
         public bool? UseQuotes { get; set; }
         public char TextQualifier { get; set; } = '"';
 
+        /// SkipLines, skip first X lines of data file (Note: SkipLines is not formally of schema.ini standard)
+        public int SkipLines { get; set; } = 0;
+
         /// column names
         public string[] FieldNames { get; set; }
 
@@ -214,6 +217,7 @@ namespace CSVLint
             this.FieldNames             = copyobj.FieldNames;
             this.UseQuotes              = copyobj.UseQuotes;
             this.TextQualifier          = copyobj.TextQualifier;
+            this.SkipLines              = copyobj.SkipLines;
 
             this.FieldWidths = new List<int>();
             foreach (var wid in copyobj.FieldWidths)
@@ -502,6 +506,10 @@ namespace CSVLint
                     // Can be set to any single character that is used to separate the whole from the fractional part of a currency amount.
                     if (k == "currencydecimalsymbol") this.CurrencyDecimalSymbol = val[0];
 
+                    // schema.ini SkipLines
+                    // How many lines to skip at start of data file
+                    if (k == ";skiplines") this.SkipLines = vint;
+
                     // schema.ini DecimalSymbol, typically ',' or '.' but can be set to any single character that is used to separate the integer from the fractional part of a number.
                     if (k == "colnameheader")
                     {
@@ -550,7 +558,7 @@ namespace CSVLint
 
                         // valid datatype must be at end of line
                         spc = vallow.LastIndexOf(" ");
-                        pos = vallow.IndexOf("text", (spc >= 0 ? spc : 0) );
+                        pos = vallow.IndexOf("text", (spc >= 0 ? spc : 0));
                         if (pos == -1) pos = vallow.LastIndexOf("datetime");
                         if (pos == -1) pos = vallow.LastIndexOf("float");
                         if (pos == -1) pos = vallow.LastIndexOf("int");
@@ -561,6 +569,7 @@ namespace CSVLint
                         }
                         // schema.ini datatype, string to ColumnType
                         if (datatypestr == "bit")      datatype = ColumnType.Integer;
+                        if (datatypestr == "bit")      datatype = ColumnType.Integer;
                         if (datatypestr == "byte")     datatype = ColumnType.Integer;
                         if (datatypestr == "short")    datatype = ColumnType.Integer;
                         if (datatypestr == "long")     datatype = ColumnType.Integer;
@@ -569,11 +578,11 @@ namespace CSVLint
                         if (datatypestr == "double")   datatype = ColumnType.Decimal;
                         if (datatypestr == "datetime") datatype = ColumnType.DateTime;
                         if (datatypestr == "text")     datatype = ColumnType.String;
-                        if (datatypestr == "memo") datatype = ColumnType.String;
+                        if (datatypestr == "memo")     datatype = ColumnType.String;
                         if (datatypestr == "float")    datatype = ColumnType.Decimal; // Float same as Double
                         if (datatypestr == "integer")  datatype = ColumnType.Integer; // Integer same as Short
                         if (datatypestr == "longchar") datatype = ColumnType.String; // LongChar same as Memo
-                        if (datatypestr == "date") datatype = ColumnType.DateTime;
+                        if (datatypestr == "date")     datatype = ColumnType.DateTime;
 
                         // mask for datetime
                         if (datatype == ColumnType.DateTime)
@@ -763,6 +772,10 @@ namespace CSVLint
             // Can be set to any single character that is used to separate the whole from the fractional part of a currency amount.
             //if (this.CurrencyDecimalSymbol != '\0') res += "CurrencyDecimalSymbol=" + this.CurrencyDecimalSymbol + "\r\n";
 
+            // schema.ini SkipLines (Not part of official schema.ini format)
+            // How many lines to skip at start of data file
+            if (this.SkipLines > 0) res += ";SkipLines=" + this.SkipLines + "\r\n";
+
             // either all column names are in quotes or none, not mixed
             bool quotename = false;
             foreach (var fld in this.Fields)
@@ -867,6 +880,46 @@ namespace CSVLint
             }
 
             return res;
+        }
+
+        /// <summary>
+        /// when reading a data file, skip first comment lines
+        /// </summary>
+        /// <param name="data"> csv data </param>
+        public void SkipCommentLines(StreamReader strdata)
+        {
+            // how many lines of commet to skip
+            int skip = (this.SkipLines >= 0 ? this.SkipLines : 0);
+
+            while ( (skip > 0) && (!strdata.EndOfStream) )
+            {
+                // consume and ignore lines
+                String line = strdata.ReadLine();
+                skip--;
+            }
+        }
+
+        /// <summary>
+        /// when editing, sorting or copying a data file, also copy the first comment lines
+        /// </summary>
+        /// <param name="data"> csv data </param>
+        public void CopyCommentLines(StreamReader strdata, StringBuilder sb, string prefix)
+        {
+            // how many lines of commet to skip
+            int skip = (this.SkipLines >= 0 ? this.SkipLines : 0);
+
+            while ((skip > 0) && (!strdata.EndOfStream))
+            {
+                // consume and ignore lines
+                String line = strdata.ReadLine();
+
+                // copy and add prefix and line feed
+                sb.Append(prefix);
+                sb.Append(line);
+                sb.Append("\n");
+
+                skip--;
+            }
         }
 
         /// <summary>

@@ -109,6 +109,9 @@ namespace CSVLint
             if (csvdef.Separator == '\0')
                 jsonmeta.Append(string.Format("\t\"columnpositions\": [{0}],\r\n", GetColumnWidths(csvdef, true)));
 
+            if (csvdef.SkipLines > 0)
+                jsonmeta.Append(string.Format("\t\"skiplines\": {0},\r\n", csvdef.SkipLines));
+
             jsonmeta.Append("\t\"tableSchema\": {\r\n");
             jsonmeta.Append("\t\t\"columns\": [");
 
@@ -295,6 +298,9 @@ namespace CSVLint
                 python.Append(string.Format("col_names = [\r\n{0}]\r\n", col_names));
                 nameparam = ", names=col_names, header=None";
             }
+
+            // Python skip comment lines
+            if (csvdef.SkipLines > 0) nameparam += string.Format(", skiprows={0}", csvdef.SkipLines);
 
             // column types
             python.Append(string.Format("col_types = {{\r\n{0}}}\r\n", col_types));
@@ -513,6 +519,9 @@ namespace CSVLint
                 rscript.Append(string.Format("colNames <- {0}\r\n", col_names));
                 nameparam = "col.name=colNames, ";
             }
+
+            // R-script skip comment lines
+            if (csvdef.SkipLines > 0) nameparam += string.Format(", skip={0}", csvdef.SkipLines);
 
             // column types
             rscript.Append(string.Format("colTypes <- {0}\r\n", col_types));

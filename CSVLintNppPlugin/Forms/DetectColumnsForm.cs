@@ -19,6 +19,7 @@ namespace CSVLintNppPlugin.Forms
         public char Separator { get; set; }
         public string ManWidths { get; set; }
         public bool HeaderNames { get; set; }
+        public int SkipLines { get; set; }
 
         public void InitialiseSetting()
         {
@@ -26,6 +27,7 @@ namespace CSVLintNppPlugin.Forms
             cmbColumnSeparator.Text = Main.Settings.DetectColumnSep;
             txtFixedWidthPos.Text = Main.Settings.DetectColumnWidths;
             chkHeaderNames.Checked = Main.Settings.DetectColumnHeader;
+            numSkipLines.Value = Main.Settings.DetectSkipLines;
         }
 
         private void DetectColumnsForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -34,6 +36,7 @@ namespace CSVLintNppPlugin.Forms
             Separator = (cmbColumnSeparator.Text.Length > 0 ? cmbColumnSeparator.Text[0] : '\0');
             ManWidths = txtFixedWidthPos.Text.Replace(' ', ',').Replace(",,", ","); // Replace = allow both comma separated "10, 12, 15, 20" and space separated "10 12 15 20"
             HeaderNames = chkHeaderNames.Checked;
+            SkipLines = Convert.ToInt32(numSkipLines.Value);
 
             // exception
             if (cmbColumnSeparator.Text == "{Tab}")         Separator = '\t';
@@ -46,6 +49,7 @@ namespace CSVLintNppPlugin.Forms
             Main.Settings.DetectColumnSep = cmbColumnSeparator.Text;
             Main.Settings.DetectColumnWidths = txtFixedWidthPos.Text.Replace(' ', ',').Replace(",,", ","); // Replace = allow both comma separated "10, 12, 15, 20" and space separated "10 12 15 20"
             Main.Settings.DetectColumnHeader = chkHeaderNames.Checked;
+            Main.Settings.DetectSkipLines = Convert.ToInt32(numSkipLines.Value);
 
             // save to file
             Main.Settings.SaveToIniFile();

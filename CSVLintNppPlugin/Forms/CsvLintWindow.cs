@@ -38,10 +38,11 @@ namespace Kbg.NppPluginNET
             char sep = '\0';
             string widths = "";
             bool header = false;
+            int skip = 0;
 
             // manual override auto-detect
             if (!chkAutoDetect.Checked) {
-                bool ok = GetDetectColumnsParameters(out sep, out widths, out header);
+                bool ok = GetDetectColumnsParameters(out sep, out widths, out header, out skip);
                 usercancel = !ok;
             }
 
@@ -54,7 +55,7 @@ namespace Kbg.NppPluginNET
                 var dtStart = DateTime.Now;
 
                 // analyze and determine csv definition
-                CsvDefinition csvdef = CsvAnalyze.InferFromData(chkAutoDetect.Checked, sep, widths, header);
+                CsvDefinition csvdef = CsvAnalyze.InferFromData(chkAutoDetect.Checked, sep, widths, header, skip);
 
                 Main.UpdateCSVChanges(csvdef, false);
 
@@ -155,7 +156,7 @@ namespace Kbg.NppPluginNET
             }
         }
 
-        private bool GetDetectColumnsParameters(out char sep, out string widths, out bool header)
+        private bool GetDetectColumnsParameters(out char sep, out string widths, out bool header, out int skip)
         {
             // show manually detect columns parameters form
             var frmdetect = new DetectColumnsForm();
@@ -166,6 +167,7 @@ namespace Kbg.NppPluginNET
             sep = frmdetect.Separator;
             widths = frmdetect.ManWidths;
             header = frmdetect.HeaderNames;
+            skip = frmdetect.SkipLines;
 
             // clear up
             frmdetect.Dispose();
