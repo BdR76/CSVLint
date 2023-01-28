@@ -11,6 +11,9 @@ namespace Kbg.NppPluginNET
     /// </summary>
     public class Settings : SettingsBase
     {
+        [Description("Comment character, the first lines starting with this character will be skipped"), Category("Analyze"), DefaultValue('#')]
+        public char CommentCharacter { get; set; }
+
         [Description("Maximum unique values when reporting or detecting coded values, if column contains more than it's not reported."),
             Category("Analyze"), DefaultValue(15)]
         public int UniqueValuesMax { get; set; }
@@ -77,9 +80,6 @@ namespace Kbg.NppPluginNET
         // actual year value as int
         public int intTwoDigitYearMax;
         private string _strTwoDigitYearMax;
-
-        [Description("Comment character, the first lines starting with this character will be skipped"), Category("General"), DefaultValue('#')]
-        public char CommentCharacter { get; set; }
 
         //[Description("Decimal values remove leading zero, for example output 0.5 as .5"), Category("Edit"), DefaultValue(false)]
         //public bool DecimalLeadingZeroOut { get; set; }
@@ -169,9 +169,6 @@ namespace Kbg.NppPluginNET
             Category("General"), DefaultValue(true)]
         public bool TrimValues { get; set; }
 
-        [Description("Detect columns automatically, uncheck this option to manually set the column separator and header names parameters before detecting column datatypes."), Category("General"), DefaultValue(true)]
-        public bool AutoDetectColumns { get; set; }
-
         //[Description("Maximum errors output, limit errors logging, or 0 for no limit."),
         //    Category("Validate"), DefaultValue(0)]
         //public int MaxErrors { get; set; }
@@ -179,6 +176,9 @@ namespace Kbg.NppPluginNET
         //[Description("Month abbreviations for detecting or generating date format 'mmmm', comma separated list of 12 names."),
         //    Category("Validate"), DefaultValue("jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec")]
         //public String MonthAbbrev { get; set; }
+
+        [Description("Detect columns automatically, uncheck this option to manually set the column separator and header names parameters before detecting column datatypes."), Category("UserPref"), DefaultValue(true)]
+        public bool AutoDetectColumns { get; set; }
 
         // SORT user preferences
         [Description("Sort data, selected column name."), Category("UserPref"), DefaultValue("")]

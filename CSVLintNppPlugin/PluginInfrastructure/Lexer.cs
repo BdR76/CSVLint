@@ -15,6 +15,7 @@ namespace NppPluginNET.PluginInfrastructure
 
         public static char separatorChar = ';';
         public static List<int> fixedWidths;
+        public static int skipLines = 0;
 
         private static int LEXER_COLORS_MAX = -1;
 
@@ -398,6 +399,13 @@ namespace NppPluginNET.PluginInfrastructure
                 fixedWidths = value.Split(',').Select(int.Parse).ToList();
                 separatorChar = '\0';
             }
+            else if (name == "skiplines")
+            {
+                if (int.TryParse(value, out int intres))
+                    skipLines = intres;
+                else
+                    skipLines = 0;
+            }
             else
             {
                 SupportedProperties[name] = value == "0" ? false : true;
@@ -473,6 +481,7 @@ namespace NppPluginNET.PluginInfrastructure
 
             // column color index
             int idx = 1;
+            int i = 0;
             bool isEOL = false;
 
             // Check nr of ColumnColors definitions for backwards compatibility with previous plug-in version (has 8 columns definitions) so no need to check/overwrite XML on version update
@@ -504,14 +513,46 @@ namespace NppPluginNET.PluginInfrastructure
                 }
             }
 
+            // todo skip lines syntax highlighting
+            if ((skipLines > 0) && (start == 0) )
+            {
+                var skipcount = skipLines;
+                i = start;
+                isEOL = false;
+
+                // skip the first X lines
+                while ((skipcount > 0) && (i < length))
+                {
+                    // next character
+                    byte cur = contentBytes[i];
+                    i++;
+
+                    // new line can be single character \r or \n or two characters \r\n
+                    if ((cur == '\n') || (cur == '\r'))
+                    {
+                        if (!isEOL) skipcount--;
+                        isEOL = true;
+                    }
+                    else
+                    {
+                        isEOL = false;
+                    }
+                }
+
+                // set no color
+                vtable.StartStyling(p_access, (IntPtr)(start));
+                vtable.SetStyleFor(p_access, (IntPtr)(i), (char)0);
+            }
+
 
             //IDX_MAX = editor.GetNamedStyles();
             //Debug.WriteLine("IDX_MAX 1) -- " + IDX_MAX.ToString());
             //IDX_MAX = 12;
 
-            int start_col = 0;
+            isEOL = false;
+
+            int start_col = i;
             int end_col = 0;
-            int i = 0;
             bool bNextCol = false;
             bool sepcol = SupportedProperties["separatorcolor"];
 
@@ -578,7 +619,8 @@ namespace NppPluginNET.PluginInfrastructure
                 char quote_char = Main.Settings.DefaultQuoteChar;
                 bool whitespace = true; // to catch where value is just two quotes "" right at start of line
 
-                for (i = 0; i < length - 1; i++)
+                // fixed widths
+                while (i < length-1)
                 {
                     byte cur = contentBytes[i];
                     byte next = contentBytes[i + 1];
@@ -633,6 +675,9 @@ namespace NppPluginNET.PluginInfrastructure
                         start_col = i + 1;
                         whitespace = true;
                     }
+
+                    // next character
+                    i++;
                 }
             }
 

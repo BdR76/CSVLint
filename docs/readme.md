@@ -162,8 +162,9 @@ Integer or decimal values will be right aligned, any other datatypes are left al
 
 ### Datetime reformat ###
 
-Datetime format, reformat all datetime values in the file uniformly.
-The drop-down list contains the most common datetime formats, but you can
+Datetime format, reformat all datetime values in the file uniformly
+(preferably to [ISO format](https://xkcd.com/1179/)).
+The drop-down list contains the most common datetime formats, or you can
 freely type any other datetime pattern. This includes two-digit year or
 just the time part, for example `dd/MM/yyyy`, `dd.MM.yy`, `HH:mm:ss:fff` etc.
 
@@ -407,7 +408,7 @@ Count unique values
 Count unique values, this will list all unique values in a column, or
 combination of columns, and count how often that unique value or combination
 of values was found. This can be useful to check if the dataset contains the
-expected amount of unique records.
+expected amount of unique names, patients, product codes, barcodes etc.
 
 ![CSV Lint unique values dialog](/docs/csvlint_unique_values.png?raw=true "CSV Lint plug-in unique values dialog")
 
@@ -433,8 +434,8 @@ Convert the currently selected CSV file to SQL, XML or JSON format.
 
 Select SQL to convert the data to an SQL script to create a database
 table and inserts all records from the csv datafile into that table.
-The insert statement will be grouped in
-batches of X lines of csv data, as set by the Batch size number.
+The insert statement will be grouped in batches of X lines of csv data,
+as set by the Batch size number in the plug-in Settings.
 
 Selected the database type MySQL, MS-SQL or PostgreSQL, and the create table
 part and the autonumber field `_record_number` will be slightly different

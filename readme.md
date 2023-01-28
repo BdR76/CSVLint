@@ -174,7 +174,7 @@ With thanks to:
 * kbilsted for providing the excellent
 [NotepadPlusPlusPluginPack.Net](https://github.com/kbilsted/NotepadPlusPlusPluginPack.Net)
 * jokedst, [CsvQuery](https://github.com/jokedst/CsvQuery) was the inspiration for converting [datasetmultitool](https://github.com/BdR76/datasetmultitool) to a Notepad++ plug-in
-* [DonHo](https://github.com/donho) for creating Notepad++ and everyone at the [Notepad++ Community forum](https://community.notepad-plus-plus.org/) for providing feedback
+* [DonHo](https://github.com/donho) for creating Notepad++ and everyone at the [Notepad++ Community forum](https://community.notepad-plus-plus.org/topic/21124/c-adding-a-custom-styler-or-lexer-in-c-for-scintilla-notepad?_=1669066219457) for providing feedback
 * Anyone who shared their [plug-in on GitHub](https://github.com/search?l=C%23&q=notepad%2B%2B+plugin&type=Repositories)
 
 The CSV Lint plug-in couldn't have been created without their source examples, suggestions and valuable feedback.
@@ -207,4 +207,4 @@ History
 09-oct-2022 - v0.4.6.1 Improved sort data and split options, various bugfixes  
 29-oct-2022 - v0.4.6.2 Fixed width positions parameter, docked window font, syntax highlighting toggle button  
 
-BdR©2021 Free to use - send questions or comments: Bas de Reuver - bdr1976@gmail.com
+BdR©2023 Free to use - send questions or comments: Bas de Reuver - bdr1976@gmail.com

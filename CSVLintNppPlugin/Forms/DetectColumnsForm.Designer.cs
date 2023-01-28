@@ -155,11 +155,6 @@ namespace CSVLintNppPlugin.Forms
             this.numSkipLines.Size = new System.Drawing.Size(83, 20);
             this.numSkipLines.TabIndex = 4;
             this.numSkipLines.Tag = "";
-            this.numSkipLines.Value = new decimal(new int[] {
-            9999,
-            0,
-            0,
-            0});
             // 
             // DetectColumnsForm
             // 
