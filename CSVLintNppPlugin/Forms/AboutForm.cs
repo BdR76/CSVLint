@@ -14,7 +14,8 @@ namespace Kbg.NppPluginNET
             InitializeComponent();
 
             string ver = Main.GetVersion();
-            lblTitle.Text += ver;
+            string suffix = string.Format("{0} ({1}bit)", ver, (IntPtr.Size * 8));
+            lblTitle.Text += suffix;
 
             // tooltip initialization
             helperTip.SetToolTip(btnDonate, "Support this plug-in by buying me a coffee!");
@@ -58,6 +59,7 @@ namespace Kbg.NppPluginNET
         {
             // display easter egg icon on certain dates
             DateTime today = DateTime.Now.AddHours(-3); // day 'starts' in the morning and lasts after midnight (especially for new years eve etc.)
+            //DateTime today = new DateTime(2021, 12, 31); // testing
 
             string msg = "";
             string obj = "";
@@ -67,7 +69,7 @@ namespace Kbg.NppPluginNET
             if (easter > 0)
             {
                 // March/April ?th, varies
-                msg = string.Format("Easter {0}day", easter == 1 ? "Sun" : "Mon");
+                msg = string.Format("Easter {0}day", (easter == 1 ? "Sun" : "Mon"));
                 obj = "an Easter egg";
                 img = CSVLintNppPlugin.Properties.Resources.easteregg;
             }

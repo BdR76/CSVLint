@@ -60,7 +60,7 @@
             this.lblTitle.Name = "lblTitle";
             this.lblTitle.Size = new System.Drawing.Size(228, 20);
             this.lblTitle.TabIndex = 1;
-            this.lblTitle.Text = "CSV Lint plug-in NPP v";
+            this.lblTitle.Text = "CSV Lint plug-in v";
             this.lblTitle.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // lnkInfo
