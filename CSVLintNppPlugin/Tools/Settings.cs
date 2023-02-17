@@ -114,9 +114,18 @@ namespace Kbg.NppPluginNET
             }
             set
             {
-                // set string representation, may include "SysYear"
-                this._strSeparators = value;
-                if (this._strSeparators.Trim() == "") this._strSeparators = ",;\\t|"; // default
+                // set string representation of separator characters
+                this._strSeparators = "";
+                if (value.Trim() == "") value = ",;\\t|"; // default
+
+                // convert control characters to escaped hex format, example DC4 -> "\x14", ESC -> "\x1b" etc.
+                foreach (var ch in value) {
+                    if (ch < 32) {
+                        this._strSeparators += string.Format("\\x{0:x2}", (ushort)ch); // control characters
+                    } else {
+                        this._strSeparators += ch;
+                    };
+                }
 
                 // clear characters list
                 this._charSeparators = "";
