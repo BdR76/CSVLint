@@ -362,7 +362,7 @@ namespace CSVLint
             python.Append("# --------------------------------------\r\n\r\n");
 
             python.Append("# reorder or remove columns\r\n");
-            python.Append(string.Format("df = df[[\r\n{0}]]\r\n", col_names));
+            python.Append(string.Format("df = df[[\r\n{0}]]\r\n\r\n", col_names));
 
             if (exampleDate == "") exampleDate = "myDateField";
             python.Append("# date to string format MM/dd/yyyy\r\n");
@@ -371,6 +371,10 @@ namespace CSVLint
             python.Append("# replace labels with codes, for example column contains 'Yes' or 'No' replace with '1' or '0'\r\n");
             python.Append("#lookuplist = {'Yes': 1, 'No': 0}\r\n");
             python.Append("#df['fieldyesno_code'] = df['fieldyesno'].map(lookuplist)\r\n\r\n");
+
+            python.Append("# calculate new values\r\n");
+            python.Append("#df['bmi_calc'] = round(df['weight'] / (df['height'] / 100) ** 2, 1)\r\n");
+            python.Append("#df['center_patient'] = df['centercode'].str.slice(0, 2) + '-' + df['patientcode'].map(str) # '01-123' etc\r\n\r\n");
 
             if (csvdef.Separator == '\0') separator = ",";
             python.Append("# csv write new output\r\n");
@@ -467,7 +471,7 @@ namespace CSVLint
 
                 // R-script safe tag, replace .
                 var colname = coldef.Name;
-                colname = Regex.Replace(colname, "[^a-zA-Z0-9]", "_"); // not letter or digit
+                colname = Regex.Replace(colname, "[^a-zA-Z0-9]", "."); // not letter or digit
 
                 var comma = (c < csvdef.Fields.Count - 1 ? "," : ")");
 
@@ -567,17 +571,21 @@ namespace CSVLint
             rscript.Append("# Data transformation suggestions\r\n");
             rscript.Append("# --------------------------------------\r\n\r\n");
 
-            rscript.Append("# reorder columns\r\n");
+            rscript.Append("# reorder or remove columns\r\n");
             rscript.Append(string.Format("colOrder <- {0}", col_names));
             rscript.Append("df <- df[, colOrder]\r\n\r\n");
 
             rscript.Append("# date to string format MM/dd/yyyy\r\n");
-            rscript.Append(string.Format("df${0} <- format(df${0}, \"%m/%d/%Y\")\r\n\r\n", exampleDate));
+            rscript.Append(string.Format("#df${0} <- format(df${0}, \"%m/%d/%Y\")\r\n\r\n", exampleDate));
 
             rscript.Append("# replace labels with codes, for example column contains 'Yes' or 'No' replace with '1' or '0'\r\n");
             rscript.Append("#lookuplist <- data.frame(\"code\" = c(\"0\", \"1\"),\r\n");
             rscript.Append("#                    \"label\" = c(\"No\", \"Yes\") )\r\n");
-            rscript.Append("#fieldyesno_code <- lookuplist$code[match(df$fieldyesno, lookuplist$label)]\r\n\r\n");
+            rscript.Append("df$fieldyesno_code <- lookuplist$code[match(df$fieldyesno, lookuplist$label)]\r\n\r\n");
+            
+            rscript.Append("# calculate new values\r\n");
+            rscript.Append("#df$bmi_calc <- df$weight / (df$height / 100) ^ 2\r\n");
+            rscript.Append("#df$center_patient <- paste(substr(df$centercode, 1, 2), '-', df$patientcode) # '01-123' etc.\r\n\r\n");
 
             rscript.Append("# csv write new output\r\n");
             rscript.Append("filenew = \"output.txt\"\r\n");
