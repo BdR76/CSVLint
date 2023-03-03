@@ -176,8 +176,9 @@ namespace CSVLint
                         linesQuoted++;
                     }
 
-                    // stop after 20 lines
-                    if (lineContent++ > 20) break;
+                    // stop after 20 lines. Exception; quoted string values can also contain newline char,
+                    // do not stop inspecting halfway through a quoted string because that would mis-count frequency of separator characters
+                    if ( (++lineContent > 20 - 1) && (!inQuotes) ) break;
                 }
             }
 
