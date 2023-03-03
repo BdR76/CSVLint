@@ -842,47 +842,6 @@ namespace CSVLint
         }
 
         /// <summary>
-        /// Parse one line of input data based on the CsvDefinition
-        /// </summary>
-        public string[] ParseData(string line)
-        {
-            string[] res;
-
-            if (this.Separator == '\0')
-            {
-                // fixed width
-                int pos = 0;
-
-                // use list because you can't add items to an array
-                List<string> reslist = new List<string>();
-
-                // cut line into column values based on column widths
-                for (int c = 0; c < this.Fields.Count; c++)
-                {
-                    // next column width, check if within line length boundary
-                    int wid = this.Fields[c].MaxWidth;
-                    if (pos + wid > line.Length) wid = line.Length - pos;
-
-                    // get next value
-                    string val = line.Substring(pos, wid).Trim(); // fixed length columns, so always trim to remove extra spaces
-                    reslist.Add(val);
-
-                    pos += wid;
-                }
-
-                // convert to array
-                res = reslist.ToArray();
-            }
-            else
-            {
-                // character separated
-                res = line.Split(Separator);
-            }
-
-            return res;
-        }
-
-        /// <summary>
         /// when reading a data file, skip first comment lines
         /// </summary>
         /// <param name="data"> csv data </param>

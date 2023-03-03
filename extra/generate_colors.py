@@ -98,7 +98,7 @@ def draw_text_tester(x, y, clr1, clr2):
     draw.rectangle( ( (x, y), ( x + 64-4, y+30)), fill=clr1)
     draw.text((x, y), "test♥☻", font=myfont, fill=clr2, align ="left") # other "filled-in" character are ♥█►☻♥■
 
-def draw_color_sequence(y, nr, dgrstep, xcirc, ycirc):
+def draw_color_sequence(y, nr, dgrstep, xcirc, ycirc, degrlabel):
     # first/second color always blue/yellow
     dgrline = 60 + (2 * dgrstep)
     testwidth = 64
@@ -119,7 +119,10 @@ def draw_color_sequence(y, nr, dgrstep, xcirc, ycirc):
         (xpos, ypos) = position_from_degree(dgrline, xcirc, ycirc, wheelradius)
         if i > 0:
             draw.line( (xprev, yprev, xpos, ypos), fill=0)
+        if degrlabel:
+            draw.text((xpos, ypos), ("%d°" % (dgrline % 360)), font=myfont, fill=0, align ="center") # other "filled-in" character are ♥█►☻♥■
         #draw.text((i * 32, 640-64), "test", font=font, align ="left")
+
             
         # get colors
         clr_bright = color_from_degree(dgrline, 128, 255) # normal background
@@ -173,21 +176,14 @@ draw_color_circle(160+320, 224, wheelradius,  24, 192) # normal foreground
 draw_color_circle(160+640, 224, wheelradius, 160, 208) # dark mode pastel
 draw_color_circle(160+960, 224, wheelradius,   0,  80) # dark mode neon (background)
 
-# draw degree marks
-for dgr in range(60+135, -885, -135):
-    print ("test 123 -- %d ---------------" % (dgr % 360))
-    (xpos, ypos) = position_from_degree(dgr, 160, 208, wheelradius-32)
-    draw.text((xpos, ypos), ("%d°" % (dgr % 360)), font=myfont, fill=0, align ="center") # other "filled-in" character are ♥█►☻♥■
-
-
 # draw title
 draw.text( (0, 0), "CSV Lint\nBas de Reuver, sep 2022\nDetermine most contrasting color sequences", font=myfont, fill=0, align ="left")
 
 # draw sample texts
-draw_color_sequence(400,      8, 135,   160,     224) #  8 colors
-draw_color_sequence(400+192, 12, 150,   160+320, 224) # 12 colors
-draw_color_sequence(400+384, 16, 157.5, 160+640, 224) # 16 colors (pairs of 2)
-#draw_color_sequence(400+384, 16, 112.5, 160+640, 224) # 16 colors (pairs of 3)
+draw_color_sequence(400,      8, 135,   160,     224, True) #  8 colors
+draw_color_sequence(400+192, 12, 150,   160+320, 224, False) # 12 colors
+draw_color_sequence(400+384, 16, 157.5, 160+640, 224, False) # 16 colors (pairs of 2)
+#draw_color_sequence(400+384, 16, 112.5, 160+640, 224, False) # 16 colors (pairs of 3)
     
 #draw.ellipse((x-r, y-r, x+r, y+r), fill=(255,0,0,0))
 

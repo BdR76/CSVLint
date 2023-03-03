@@ -59,10 +59,6 @@ namespace CSVLintNppPlugin.Forms
             // 
             this.btnCancel.Location = new System.Drawing.Point(180, 345);
             // 
-            // lblHorizontalLine
-            // 
-            this.lblHorizontalLine.Size = new System.Drawing.Size(285, 2);
-            // 
             // lblTitle
             // 
             this.lblTitle.Size = new System.Drawing.Size(153, 20);
@@ -73,13 +69,17 @@ namespace CSVLintNppPlugin.Forms
             this.picHelpIcon.Location = new System.Drawing.Point(261, 8);
             this.picHelpIcon.Tag = "count-unique-values";
             // 
+            // lblHorizontalLine
+            // 
+            this.lblHorizontalLine.Size = new System.Drawing.Size(285, 2);
+            // 
             // listColumns
             // 
             this.listColumns.ContextMenuStrip = this.ctxmnuColumns;
             this.listColumns.FormattingEnabled = true;
             this.listColumns.Location = new System.Drawing.Point(16, 85);
             this.listColumns.Name = "listColumns";
-            this.listColumns.SelectionMode = System.Windows.Forms.SelectionMode.MultiSimple;
+            this.listColumns.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
             this.listColumns.Size = new System.Drawing.Size(260, 199);
             this.listColumns.TabIndex = 3;
             this.listColumns.SelectedIndexChanged += new System.EventHandler(this.listColumns_SelectedIndexChanged);

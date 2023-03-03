@@ -104,7 +104,7 @@ namespace Kbg.NppPluginNET
             Category("General"), DefaultValue(false)]
         public bool SeparatorColor { get; set; }
 
-        [Description("Preferred characters when automatically detecting the separator character. For special characters like tab, use \\t or \\u0009."),
+        [Description("Preferred characters when automatically detecting the separator character. For special characters like tab, use \\t or hexadecimal escape sequence \\u0009 or \\x09."),
             Category("General"), DefaultValue(",;\\t|")]
         public string Separators
         {
