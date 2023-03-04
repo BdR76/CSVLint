@@ -84,8 +84,14 @@ namespace Kbg.NppPluginNET
         //[Description("Decimal values remove leading zero, for example output 0.5 as .5"), Category("Edit"), DefaultValue(false)]
         //public bool DecimalLeadingZeroOut { get; set; }
 
-        [Description("Default quote escape character when quotes exists inside text"),
-            Category("General"), DefaultValue('"')]
+        [Description("Trim values when editing, sorting or analyzing data. Recommeneded, because when disabled the column datatypes will not always be detected correctly."),
+            Category("Edit"), DefaultValue(true)]
+        public bool TrimValues { get; set; }
+
+        [Description("Reformat dataset, apply quotes option. 0 = None minimal, 1..3, 4 = Always."), Category("Edit"), DefaultValue(0)] // TODO change to proper dropdownlist (0=None minial, 1=Values with spaces, 2=All string values, 3=All non-numeric values, 4=All values)
+        public int ReformatQuotes { get; set; }
+
+        [Description("Default quote escape character when quotes exists inside text"), Category("General"), DefaultValue('"')]
         public char DefaultQuoteChar { get; set; }
 
         //[Description("Default font for text boxes in CSV Lint docking window. Changing this requires closing and opening the CSV docked window."), Category("General"), DefaultValue("Courier, 11.25pt")]
@@ -174,10 +180,6 @@ namespace Kbg.NppPluginNET
         [Description("Transparent cursor line, changing this setting will require a restart of Notepad++."), Category("General"), DefaultValue(true)]
         public bool TransparentCursor { get; set; }
 
-        [Description("Trim values before analyzing or editing, only applies to csv because for fixed width data it is always trimmed internally."),
-            Category("General"), DefaultValue(true)]
-        public bool TrimValues { get; set; }
-
         //[Description("Maximum errors output, limit errors logging, or 0 for no limit."),
         //    Category("Validate"), DefaultValue(0)]
         //public int MaxErrors { get; set; }
@@ -236,9 +238,6 @@ namespace Kbg.NppPluginNET
 
         [Description("Reformat dataset, column separator."), Category("UserPref"), DefaultValue(";")]
         public string ReformatColSep { get; set; }
-
-        [Description("Reformat dataset, apply quotes option."), Category("UserPref"), DefaultValue(0)]
-        public int ReformatQuotes { get; set; }
 
         [Description("Reformat dataset, replace carriage return line feeds with this string value."), Category("UserPref"), DefaultValue("<br>")]
         public string ReformatReplaceCrLf { get; set; }

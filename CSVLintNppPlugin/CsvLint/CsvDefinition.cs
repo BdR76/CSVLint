@@ -911,7 +911,13 @@ namespace CSVLint
                     if (pos + w > line.Length) w = line.Length - pos;
 
                     // get column value
-                    String fixval = line.Substring(pos, w).Trim(); // fixed length columns, so always trim to remove extra spaces
+                    String fixval = line.Substring(pos, w);
+                    // trim values is optional, but for fixed length columns it is recommended
+                    if (Main.Settings.TrimValues)
+                    {
+                        fixval = fixval.Trim();
+                        fixval = CsvEdit.RemoveQuotesToString(fixval);
+                    }
                     res.Add(fixval);
 
                     // start position of next column
@@ -921,7 +927,13 @@ namespace CSVLint
                     if ((i == fieldcount) && (line.Length > pos))
                     {
                         // add rest of line as one extra column
-                        fixval = line.Substring(pos, line.Length - pos).Trim(); // fixed length columns, so always trim to remove extra spaces
+                        fixval = line.Substring(pos, line.Length - pos);
+                        // trim values is optional, but for fixed length columns it is recommended
+                        if (Main.Settings.TrimValues)
+                        {
+                            fixval = fixval.Trim();
+                            fixval = CsvEdit.RemoveQuotesToString(fixval);
+                        }
                         res.Add(fixval);
                     }
                 }
@@ -944,7 +956,7 @@ namespace CSVLint
                     if (!quote)
                     {
                         // check if starting a quoted value or going next column or going to next line
-                        if ((cur == quote_char) && whitespace) { quote = true; wasquoted = true; whitespace = false; }
+                        if ((cur == quote_char) && whitespace) { quote = true; wasquoted = true; whitespace = false; value.Clear(); } // Exception for ..,  "12,3",.. and do value.Clear() -> i.e. ignore whitespace before quote
                         else if (cur == Separator) { bNextCol = true; }
                         else if ((cur == '\r') && (next == '\n')) { next = (char)strdata.Read();  bNextCol = true; isEOL = true; } // double carriage return/linefeed so also consume next character (i.e. skip it)
                         else if ((cur == '\n') || (cur == '\r')) { bNextCol = true; isEOL = true; }
@@ -969,6 +981,7 @@ namespace CSVLint
                         // check if column value is NULL value
                         var csvval = value.ToString();
                         if ((wasquoted == false) && (csvval == Main.Settings.NullValue)) csvval = "";
+                        if (Main.Settings.TrimValues) csvval = csvval.Trim();
 
                         // add column value
                         res.Add(csvval);
@@ -989,7 +1002,7 @@ namespace CSVLint
                     // check if column value is NULL value
                     var val = value.ToString();
                     if ((wasquoted == false) && (val == Main.Settings.NullValue)) val = "";
-
+                    if (Main.Settings.TrimValues) val = val.Trim();
                     res.Add(val);
                 }
             }
@@ -1003,7 +1016,6 @@ namespace CSVLint
         public string ConstructLine(List<string> values)
         {
             string res = "";
-            var ApplyQuotes = Main.Settings.ReformatQuotes;
 
             for (int c = 0; c < this.Fields.Count; c++)
             {
@@ -1021,7 +1033,7 @@ namespace CSVLint
                 else
                 {
                     // apply quotes
-                    val = CsvEdit.ApplyQuotesToString(val, ApplyQuotes, this.Separator, Fields[c].DataType);
+                    val = CsvEdit.ApplyQuotesToString(val, this.Separator, Fields[c].DataType);
 
                     // character separated
                     res += (c > 0 ? this.Separator.ToString() : "") + val;

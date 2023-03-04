@@ -176,7 +176,7 @@ namespace Kbg.NppPluginNET
             return r == DialogResult.OK;
         }
 
-        private bool GetReformatParameters(out string sep, out bool updsep, out string dt, out string dec, out int updquote, out string replacecrlf, out bool trimall, out bool alignVert)
+        private bool GetReformatParameters(out string sep, out bool updsep, out string dt, out string dec, out string replacecrlf, out bool alignVert)
         {
             // show reformat form
             var frmedit = new ReformatForm();
@@ -188,9 +188,7 @@ namespace Kbg.NppPluginNET
             updsep = frmedit.UpdateSeparator;
             dt = frmedit.NewDataTime;
             dec = frmedit.NewDecimal;
-            updquote = frmedit.ApplyQuotes;
             replacecrlf = frmedit.ReplaceCrLf;
-            trimall = frmedit.TrimAllValues;
             alignVert = frmedit.alignVertically;
 
             // clear up
@@ -202,7 +200,7 @@ namespace Kbg.NppPluginNET
 
         private void OnBtnReformat_Click(object sender, EventArgs e)
         {
-            bool ok = GetReformatParameters(out string editSeparator, out bool updateSeparator, out string editDataTime, out string editDecimal, out int updateQuotes, out string replaceCrLf, out bool trimAllValues, out bool alignVert);
+            bool ok = GetReformatParameters(out string editSeparator, out bool updateSeparator, out string editDataTime, out string editDecimal, out string replaceCrLf, out bool alignVert);
             if (ok)
             {
                 // clear any previous output
@@ -218,7 +216,7 @@ namespace Kbg.NppPluginNET
                     var dtStart = DateTime.Now;
 
                     // analyze and determine csv definition
-                    CsvEdit.ReformatDataFile(csvdef, editSeparator, updateSeparator, editDataTime, editDecimal, updateQuotes, replaceCrLf, trimAllValues, alignVert);
+                    CsvEdit.ReformatDataFile(csvdef, editSeparator, updateSeparator, editDataTime, editDecimal, replaceCrLf, alignVert);
 
                     var dtElapsed = (DateTime.Now - dtStart).ToString(@"hh\:mm\:ss\.fff");
 
@@ -256,26 +254,35 @@ namespace Kbg.NppPluginNET
                         csvdef.DecimalSymbol = editDecimal[0];
                     };
 
-                    //if (updateQuotes != 0)
-                    //{
-                    var quotetxt = "None / Minimal";
-                    if (updateQuotes == 1) quotetxt = "Values with spaces";
-                    if (updateQuotes == 2) quotetxt = "All string values";
-                    if (updateQuotes == 3) quotetxt = "All non-numeric values";
-                    if (updateQuotes == 4) quotetxt = "All values";
-
-                    msg += string.Format("Reformat apply quotes: {0}\r\n", quotetxt);
-                    //};
-
-                    if (trimAllValues)
+                    if (Main.Settings.TrimValues || (Main.Settings.ReformatQuotes > 0))
                     {
-                        msg += "Trim all values\r\n";
+                        msg += "General settings: ";
+
+                        if (Main.Settings.TrimValues)
+                        {
+                            msg += "Trim all values";
+                        }
+
+                        if (Main.Settings.ReformatQuotes > 0)
+                        {
+                            var quotetxt = "None / Minimal";
+                            if (Main.Settings.ReformatQuotes == 1) quotetxt = "Values with spaces";
+                            if (Main.Settings.ReformatQuotes == 2) quotetxt = "All string values";
+                            if (Main.Settings.ReformatQuotes == 3) quotetxt = "All non-numeric values";
+                            if (Main.Settings.ReformatQuotes == 4) quotetxt = "All values";
+
+                            if (Main.Settings.TrimValues) msg += ", ";
+                            msg += string.Format("apply quotes: {0}", quotetxt);
+                        };
+                        msg += "\r\n";
                     }
 
                     // display process message
                     msg += string.Format("Reformat data is ready, time elapsed {0}\r\n", dtElapsed);
                     txtOutput.Text = msg;
 
+                    // update the master list of csv definitions
+                    Main.UpdateCSVChanges(csvdef, false);
                     // refresh datadefinition
                     SetCsvDefinition(csvdef, true);
                     //btnApply.Enabled = true;

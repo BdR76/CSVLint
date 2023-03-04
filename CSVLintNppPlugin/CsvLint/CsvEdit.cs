@@ -31,12 +31,14 @@ namespace CSVLint
         /// <summary>
         /// apply quotes to value
         /// </summary>
-        public static string ApplyQuotesToString(string strinput, int applyCode, char separator, ColumnType dataType)
+        public static string ApplyQuotesToString(string strinput, char separator, ColumnType dataType)
         {
+            var applyCode = Main.Settings.ReformatQuotes;
+
             // default = none / minimal
             bool apl = (strinput.Contains(separator) || strinput.Contains(Main.Settings.DefaultQuoteChar) || strinput.Contains('\r') || strinput.Contains('\n'));
 
-            if ((applyCode > 0) && !apl)
+            if (!apl && (applyCode > 0))
             {
                 apl = (applyCode == 1 && strinput.IndexOf(" ") >= 0)    // space
                    || (applyCode == 2 && dataType == ColumnType.String) // string
@@ -51,8 +53,8 @@ namespace CSVLint
                 // escape any quote characters, example "Value "test" 123" -> "Value ""test"" 123"
                 if (strinput.Contains(Main.Settings.DefaultQuoteChar))
                 {
-                    var quote2 = new string(Main.Settings.DefaultQuoteChar, 2);
-                    strinput = strinput.Replace(Main.Settings.DefaultQuoteChar.ToString(), quote2);
+                    var quote2x = new string(Main.Settings.DefaultQuoteChar, 2);
+                    strinput = strinput.Replace(Main.Settings.DefaultQuoteChar.ToString(), quote2x);
                 }
                 // add quotes
                 strinput = string.Format("{0}{1}{0}", Main.Settings.DefaultQuoteChar, strinput);
@@ -62,10 +64,38 @@ namespace CSVLint
         }
 
         /// <summary>
+        /// remove quotes from value, only used for fixed width
+        /// </summary>
+        public static string RemoveQuotesToString(string strinput)
+        {
+            var res = strinput;
+
+            // only if starts with quote character
+            if (res[0] == Main.Settings.DefaultQuoteChar)
+            {
+                // and ends with quote character
+                if (res[0] == Main.Settings.DefaultQuoteChar)
+                {
+                    // remove start and end
+                    res = res.Trim(Main.Settings.DefaultQuoteChar);
+
+                    // un-escape any quote characters, example res = 28""wheel -> res = 28"wheel
+                    if (res.Contains(Main.Settings.DefaultQuoteChar))
+                    {
+                        var quote2x = new string(Main.Settings.DefaultQuoteChar, 2);
+                        res = res.Replace(quote2x, Main.Settings.DefaultQuoteChar.ToString());
+                    }
+                }
+            }
+
+            return res;
+        }
+
+        /// <summary>
         /// reformat file for date, decimal and separator
         /// </summary>
         /// <param name="data"> csv data </param>
-        public static void ReformatDataFile(CsvDefinition csvdef, string reformatSeparator, bool updateSeparator, string reformatDatTime, string reformatDecimal, int ApplyQuotes, string ReplaceCrLf, bool trimAll, bool align)
+        public static void ReformatDataFile(CsvDefinition csvdef, string reformatSeparator, bool updateSeparator, string reformatDatTime, string reformatDecimal, string ReplaceCrLf, bool align)
         {
             // TODO: nullable parameters
 
@@ -139,9 +169,6 @@ namespace CSVLint
                     int wid = val.Length;
                     bool alignleft = true;
 
-                    // trim all values
-                    if (trimAll) val = val.Trim();
-
                     // check if data contains more columns than expected in csvdef
                     if (c < csvdef.Fields.Count)
                     {
@@ -199,7 +226,7 @@ namespace CSVLint
                         }
 
                         // if value contains separator character then put value in quotes
-                        val = ApplyQuotesToString(val, ApplyQuotes, newSep, tmpColumnType);
+                        val = ApplyQuotesToString(val, newSep, tmpColumnType);
                         //if (val.IndexOf(newSep) >= 0) val = string.Format("\"{0}\"", val);
 
                         // separator

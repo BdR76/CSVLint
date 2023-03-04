@@ -6,6 +6,8 @@ namespace CSVLintNppPlugin.Forms
 {
     public partial class ReformatForm : CSVLintNppPlugin.Forms.CsvEditFormBase
     {
+        private readonly ToolTip helperTip = new ToolTip();
+
         public ReformatForm()
         {
             InitializeComponent();
@@ -14,38 +16,39 @@ namespace CSVLintNppPlugin.Forms
         public bool UpdateSeparator { get; set; }
         public string NewDataTime { get; set; }
         public string NewDecimal { get; set; }
-        public int ApplyQuotes { get; set; }
         public string ReplaceCrLf { get; set; }
-
-        public bool TrimAllValues { get; set; }
         public bool alignVertically { get; set; }
 
         public void InitialiseSetting()
         {
             // load user preferences
-            cmbSeparator.Text = Main.Settings.ReformatColSep;
+            cmbSeparator.Text   = Main.Settings.ReformatColSep;
             cmbDateTime.Text    = Main.Settings.ReformatDateFormat;
             cmbDecimal.Text     = Main.Settings.ReformatDecSep;
-            cmbQuotes.SelectedIndex = Main.Settings.ReformatQuotes >= 0 && Main.Settings.ReformatQuotes < cmbQuotes.Items.Count ? Main.Settings.ReformatQuotes : 0;
             txtReplaceCrLf.Text = Main.Settings.ReformatReplaceCrLf;
 
             // load user preferences
             chkSeparator.Checked   = Main.Settings.ReformatOptions.IndexOf("1;") >= 0;
             chkDateTime.Checked    = Main.Settings.ReformatOptions.IndexOf("2;") >= 0;
             chkDecimal.Checked     = Main.Settings.ReformatOptions.IndexOf("3;") >= 0;
-            chkApplyQuotes.Checked = Main.Settings.ReformatOptions.IndexOf("4;") >= 0;
-            chkReplaceCrLf.Checked = Main.Settings.ReformatOptions.IndexOf("5;") >= 0;
-            chkTrimAll.Checked     = Main.Settings.ReformatOptions.IndexOf("6;") >= 0;
-            chkAlignVert.Checked   = Main.Settings.ReformatOptions.IndexOf("7;") >= 0;
+            chkReplaceCrLf.Checked = Main.Settings.ReformatOptions.IndexOf("4;") >= 0;
+            chkAlignVert.Checked   = Main.Settings.ReformatOptions.IndexOf("5;") >= 0;
 
             // enable/disable all
             OnChkbx_CheckedChanged(chkSeparator, null);
             OnChkbx_CheckedChanged(chkDateTime, null);
             OnChkbx_CheckedChanged(chkDecimal, null);
-            OnChkbx_CheckedChanged(chkApplyQuotes, null);
             OnChkbx_CheckedChanged(chkReplaceCrLf, null);
-            OnChkbx_CheckedChanged(chkTrimAll, null);
+            OnChkbx_CheckedChanged(chkTrimValues, null);
             OnChkbx_CheckedChanged(chkAlignVert, null);
+
+            // general settings
+            chkTrimValues.Checked = Main.Settings.TrimValues;
+            cmbQuotes.SelectedIndex = Main.Settings.ReformatQuotes >= 0 && Main.Settings.ReformatQuotes < cmbQuotes.Items.Count ? Main.Settings.ReformatQuotes : 0;
+
+            // tooltip initialization
+            helperTip.SetToolTip(grpGeneral, "*Also applied when detecting, sorting, adding and validating data.\nAlso see menu Plugins > CSV Lint > Settings.");
+            helperTip.SetToolTip(chkTrimValues, "It is generally recommended to enable TrimValues, especially when\nreformatting datetime/decimal values or working with fixed width data.");
         }
 
         private void OnChkbx_CheckedChanged(object sender, EventArgs e)
@@ -55,7 +58,7 @@ namespace CSVLintNppPlugin.Forms
             ToggleControlBasedOnControl(sender as CheckBox, chk);
 
             // can not press OK when nothing selected
-            btnOk.Enabled = chkSeparator.Checked | chkDateTime.Checked | chkDecimal.Checked | chkApplyQuotes.Checked | chkReplaceCrLf.Checked | chkTrimAll.Checked | chkAlignVert.Checked;
+            btnOk.Enabled = chkSeparator.Checked | chkDateTime.Checked | chkDecimal.Checked | chkReplaceCrLf.Checked | chkTrimValues.Checked | chkAlignVert.Checked;
         }
 
         private void ReformatForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -65,9 +68,7 @@ namespace CSVLintNppPlugin.Forms
             NewDataTime  = chkDateTime.Checked  ? cmbDateTime.Text : "";
             NewDecimal   = chkDecimal.Checked   ? cmbDecimal.Text : "";
             UpdateSeparator = chkSeparator.Checked;
-            ApplyQuotes     = chkApplyQuotes.Checked ? cmbQuotes.SelectedIndex : 0;
             ReplaceCrLf     = chkReplaceCrLf.Checked ? txtReplaceCrLf.Text : "\r\n";
-            TrimAllValues   = chkTrimAll.Checked;
             alignVertically = chkAlignVert.Checked;
 
             // exception
@@ -81,7 +82,6 @@ namespace CSVLintNppPlugin.Forms
             Main.Settings.ReformatColSep      = cmbSeparator.Text;
             Main.Settings.ReformatDateFormat  = cmbDateTime.Text;
             Main.Settings.ReformatDecSep      = cmbDecimal.Text;
-            Main.Settings.ReformatQuotes      = cmbQuotes.SelectedIndex;
             Main.Settings.ReformatReplaceCrLf = txtReplaceCrLf.Text;
 
             // load user preferences
@@ -89,11 +89,13 @@ namespace CSVLintNppPlugin.Forms
                 (chkSeparator.Checked   ? "1;" : "") +
                 (chkDateTime.Checked    ? "2;" : "") +
                 (chkDecimal.Checked     ? "3;" : "") +
-                (chkApplyQuotes.Checked ? "4;" : "") +
-                (chkReplaceCrLf.Checked ? "5;" : "") +
-                (chkTrimAll.Checked     ? "6;" : "") +
-                (chkAlignVert.Checked   ? "7;" : "");
+                (chkReplaceCrLf.Checked ? "4;" : "") +
+                (chkAlignVert.Checked   ? "5;" : "");
             Main.Settings.ReformatOptions = opt;
+
+            // general settings
+            Main.Settings.TrimValues = chkTrimValues.Checked;
+            Main.Settings.ReformatQuotes = cmbQuotes.SelectedIndex;
 
             // save to file
             Main.Settings.SaveToIniFile();
