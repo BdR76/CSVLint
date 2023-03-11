@@ -70,11 +70,11 @@ namespace CSVLint
         {
             var res = strinput;
 
-            // only if starts with quote character
-            if (res[0] == Main.Settings.DefaultQuoteChar)
+            // only if at least 2 characters example 28"wheel, "a", "test" etc.
+            if (res.Length > 1)
             {
-                // and ends with quote character
-                if (res[0] == Main.Settings.DefaultQuoteChar)
+                // only if starts and ends with quote character
+                if ( (res[0] == Main.Settings.DefaultQuoteChar) && (res[res.Length-1] == Main.Settings.DefaultQuoteChar) )
                 {
                     // remove start and end
                     res = res.Trim(Main.Settings.DefaultQuoteChar);

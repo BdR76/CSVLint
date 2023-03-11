@@ -205,13 +205,14 @@ for col in range(1, 100):
         elif col == 46:
             val = ("%d,%s" % ( random.randint(7, 8), random_digits_string(8)))
         elif col == 47:
-            val = ("%d.%s" % ( random.randint(10, 12), random_digits_string(9)))
-        elif col == 48:
-            val = ("%d,%s" % ( random.randint(11, 13), random_digits_string(10)))
-        elif col == 49:
             val = ("%d.%s" % ( random.randint(10, 15), random_digits_string(12)))
-        elif col == 50:
+        elif col == 48:
             val = ("%d,%s" % ( random.randint(-20, 20), random_digits_string(16)))
+        elif col == 49:
+            val = ("%d.%se%d" % ( random.randint(1, 9), random_digits_string(3), random.randint(10, 12)))
+        elif col == 50:
+            r_int = random.randint(0, 1)
+            val = ("%d,%sE%s%02d" % ( random.randint(-9, 9), random_digits_string(7), ("-" if r_int==1 else ""), random.randint(7, 20)))
         # currency
         elif col == 51:
            val = ("%s%s" % (random.choice(["", "-"]), random_digits_string(5, 7, ".")))
