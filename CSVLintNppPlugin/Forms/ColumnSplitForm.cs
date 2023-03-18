@@ -32,7 +32,7 @@ namespace CSVLintNppPlugin.Forms
             cmbSelectColumn.SelectedIndex = idx;
 
             // which option selected
-            rdbtnPadChar.Checked        = (Main.Settings.SplitOption == 0);
+            rdbtnPadChar.Checked        = (Main.Settings.SplitOption <= 0); // if previously -1 (=nothing selected) then reset to default
             rdbtnSearchReplace.Checked  = (Main.Settings.SplitOption == 1);
             rdbtnSplitValid.Checked     = (Main.Settings.SplitOption == 2);
             rdbtnSplitCharacter.Checked = (Main.Settings.SplitOption == 3);
@@ -65,7 +65,14 @@ namespace CSVLintNppPlugin.Forms
         private void EvaluateOkButton()
         {
             // can not press OK when nothing selected
-            btnOk.Enabled = (cmbSelectColumn.SelectedIndex > 0);
+            btnOk.Enabled =  (   (cmbSelectColumn.SelectedIndex > 0) // column must be selected and
+                              && (   rdbtnPadChar.Checked            // either one of the radio options
+                                  || rdbtnSearchReplace.Checked
+                                  || rdbtnSplitValid.Checked
+                                  || rdbtnSplitCharacter.Checked
+                                  || rdbtnSplitSubstring.Checked
+                                  || chkDeleteOriginal.Checked)     // or remove column must be checked (else there's nothing to do)
+                                  );
         }
 
         private void ColumnSplitForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -99,8 +106,8 @@ namespace CSVLintNppPlugin.Forms
             Main.Settings.SplitColName = cmbSelectColumn.Items[cmbSelectColumn.SelectedIndex].ToString(); ;
 
             // pass split parameters to previous form
-            var opt = 0;
-            //if (rdbtnPadChar.Checked)      opt = 0;
+            var opt = -1;
+            if (rdbtnPadChar.Checked)        opt = 0;
             if (rdbtnSearchReplace.Checked)  opt = 1;
             if (rdbtnSplitValid.Checked)     opt = 2;
             if (rdbtnSplitCharacter.Checked) opt = 3;
@@ -118,6 +125,20 @@ namespace CSVLintNppPlugin.Forms
 
             // save to file
             Main.Settings.SaveToIniFile();
+        }
+
+        private void rdbtns_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                (sender as RadioButton).Checked = false;
+                EvaluateOkButton();
+            }
+        }
+
+        private void chkDeleteOriginal_CheckedChanged(object sender, EventArgs e)
+        {
+            EvaluateOkButton();
         }
     }
 }

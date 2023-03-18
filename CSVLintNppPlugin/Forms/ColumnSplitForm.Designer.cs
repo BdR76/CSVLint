@@ -108,6 +108,7 @@ namespace CSVLintNppPlugin.Forms
             this.rdbtnPadChar.Text = "Pad with string";
             this.rdbtnPadChar.UseVisualStyleBackColor = true;
             this.rdbtnPadChar.CheckedChanged += new System.EventHandler(this.OnRadioBtn_CheckedChanged);
+            this.rdbtnPadChar.MouseDown += new System.Windows.Forms.MouseEventHandler(this.rdbtns_MouseDown);
             // 
             // rdbtnSearchReplace
             // 
@@ -120,6 +121,7 @@ namespace CSVLintNppPlugin.Forms
             this.rdbtnSearchReplace.Text = "Search and replace";
             this.rdbtnSearchReplace.UseVisualStyleBackColor = true;
             this.rdbtnSearchReplace.CheckedChanged += new System.EventHandler(this.OnRadioBtn_CheckedChanged);
+            this.rdbtnSearchReplace.MouseDown += new System.Windows.Forms.MouseEventHandler(this.rdbtns_MouseDown);
             // 
             // rdbtnSplitValid
             // 
@@ -131,6 +133,7 @@ namespace CSVLintNppPlugin.Forms
             this.rdbtnSplitValid.Tag = "3";
             this.rdbtnSplitValid.Text = "Split valid and invalid values";
             this.rdbtnSplitValid.UseVisualStyleBackColor = true;
+            this.rdbtnSplitValid.MouseDown += new System.Windows.Forms.MouseEventHandler(this.rdbtns_MouseDown);
             // 
             // rdbtnSplitCharacter
             // 
@@ -143,6 +146,7 @@ namespace CSVLintNppPlugin.Forms
             this.rdbtnSplitCharacter.Text = "Split on character";
             this.rdbtnSplitCharacter.UseVisualStyleBackColor = true;
             this.rdbtnSplitCharacter.CheckedChanged += new System.EventHandler(this.OnRadioBtn_CheckedChanged);
+            this.rdbtnSplitCharacter.MouseDown += new System.Windows.Forms.MouseEventHandler(this.rdbtns_MouseDown);
             // 
             // rdbtnSplitSubstring
             // 
@@ -155,6 +159,7 @@ namespace CSVLintNppPlugin.Forms
             this.rdbtnSplitSubstring.Text = "Split on position";
             this.rdbtnSplitSubstring.UseVisualStyleBackColor = true;
             this.rdbtnSplitSubstring.CheckedChanged += new System.EventHandler(this.OnRadioBtn_CheckedChanged);
+            this.rdbtnSplitSubstring.MouseDown += new System.Windows.Forms.MouseEventHandler(this.rdbtns_MouseDown);
             // 
             // txtPadChar
             // 
@@ -262,6 +267,7 @@ namespace CSVLintNppPlugin.Forms
             this.chkDeleteOriginal.Tag = "6";
             this.chkDeleteOriginal.Text = "Remove original column";
             this.chkDeleteOriginal.UseVisualStyleBackColor = true;
+            this.chkDeleteOriginal.CheckedChanged += new System.EventHandler(this.chkDeleteOriginal_CheckedChanged);
             // 
             // ColumnSplitForm
             // 

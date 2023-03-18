@@ -49,8 +49,10 @@ namespace Kbg.NppPluginNET
             if (!usercancel)
             {
                 // clear any previous output
-                txtOutput.Clear();
-                txtOutput.Update();
+                if (sender != btnSplit) {
+                    txtOutput.Clear();
+                    txtOutput.Update();
+                }
 
                 var dtStart = DateTime.Now;
 
@@ -64,8 +66,10 @@ namespace Kbg.NppPluginNET
                 // display csv definition
                 SetCsvDefinition(csvdef, true);
 
-                txtOutput.Clear();
-                txtOutput.Text = string.Format("Detecting columns from data is ready, time elapsed {0}", dtElapsed);
+                // exception don't overwrite Split log messages
+                if (sender != btnSplit) {
+                    txtOutput.Text = string.Format("Detecting columns from data is ready, time elapsed {0}", dtElapsed);
+                }
             }
         }
 
@@ -401,10 +405,11 @@ namespace Kbg.NppPluginNET
                     if (cod == 3) msg = "was split on valid and invalid values";
                     if (cod == 4) msg = "was split on character " + par1;
                     if (cod == 5) msg = "was split on position " + par1;
+                    if (rem)      msg = msg + (msg == "" ? "" : "and original column ") + "was removed";
                     msg = string.Format("Column \"{0}\" {1}\r\n", csvdef.Fields[idx].Name, msg);
 
                     // display process message
-                    msg += string.Format("Split column is ready, time elapsed {0}\r\n", dtElapsed);
+                    msg += string.Format("Add new column is ready, time elapsed {0}\r\n", dtElapsed);
                     txtOutput.Text = msg;
 
                     // refresh datadefinition

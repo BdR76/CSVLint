@@ -976,7 +976,7 @@ namespace CSVLint
             int linenr = 0;
 
             // when split csv values then add 2 new columns, when edit then just 1
-            var addmax = SplitCode <= 2 ? 1 : 2; // 1 new column (edit) or 2 new colunms (split)
+            var addmax = (SplitCode > 0 ? (SplitCode > 2 ? 2 : 1) : 0); // 0=no new column, 1=new column (edit) or 2=new colunms (split)
 
             // parameter 2 as integer and abs(integer)
             int.TryParse(Parameter2, out int IntPar2);
@@ -1070,7 +1070,7 @@ namespace CSVLint
                         newcols.Add(val);
                     }
 
-                    if (col == ColumnIndex)
+                    if ( (col == ColumnIndex) && (SplitCode > 0) )
                     {
                         // split column
                         string val1 = val;
