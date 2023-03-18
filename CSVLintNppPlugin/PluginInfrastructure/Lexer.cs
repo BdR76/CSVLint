@@ -484,6 +484,12 @@ namespace NppPluginNET.PluginInfrastructure
             int i = 0;
             bool isEOL = false;
 
+            // when redrawing, it can be middle of a quoted text so continue with the same color from there
+            if (start > 0) {
+                idx = vtable.StyleAt(p_access, (IntPtr)(start));
+                if (idx == 0) idx = 1;
+            }
+
             // Check nr of ColumnColors definitions for backwards compatibility with previous plug-in version (has 8 columns definitions) so no need to check/overwrite XML on version update
             // This also allows for more/fewer column colors in definition file, allows user to manually edit XML and have 8 or 12 or 16 etc. colors
             var IDX_MAX = LEXER_COLORS_MAX;
