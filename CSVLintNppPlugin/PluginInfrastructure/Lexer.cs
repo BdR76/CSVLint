@@ -482,12 +482,23 @@ namespace NppPluginNET.PluginInfrastructure
             // column color index
             int idx = 1;
             int i = 0;
+            int lineCurrent = (int)vtable.LineFromPosition(p_access, (IntPtr)start);
             bool isEOL = false;
+            bool quote = false;
 
             // when redrawing, it can be middle of a quoted text so continue with the same color from there
             if (start > 0) {
                 idx = vtable.StyleAt(p_access, (IntPtr)(start));
                 if (idx == 0) idx = 1;
+            }
+
+            // check if previous line ends with an open quote
+            if (lineCurrent > 0) {
+                int lineState = (int)vtable.GetLineState(p_access, (IntPtr)(lineCurrent - 1));
+                if (lineState > 0) {
+                    quote = true;
+                    idx = lineState;
+                }
             }
 
             // Check nr of ColumnColors definitions for backwards compatibility with previous plug-in version (has 8 columns definitions) so no need to check/overwrite XML on version update
@@ -612,6 +623,7 @@ namespace NppPluginNET.PluginInfrastructure
                         }
 
                         // reset variables
+                        if (isEOL) lineCurrent++;
                         bNextCol = false;
                         isEOL = false;
                         start_col = i;
@@ -621,7 +633,6 @@ namespace NppPluginNET.PluginInfrastructure
             else
             {
                 // variables (algorithm based on JAVASCRIPT prototype)
-                bool quote = false;
                 char quote_char = Main.Settings.DefaultQuoteChar;
                 bool whitespace = true; // to catch where value is just two quotes "" right at start of line
 
@@ -636,8 +647,6 @@ namespace NppPluginNET.PluginInfrastructure
                         // check if starting a quoted value or going next column or going to next line
                         if ((cur == quote_char) && whitespace) { quote = true; whitespace = false; }
                         else if (cur == separatorChar) { bNextCol = true; end_col = i; }
-                        else if ((cur == '\r') && (next == '\n')) { isEOL = true; end_col = i; i++; }
-                        else if ((cur == '\n') || (cur == '\r')) { isEOL = true; end_col = i; }
                         //else line[line.length - 1] += cur;
 
                         // If separator directly followed by spaces then interpret spaces as empty whitespace,
@@ -652,6 +661,9 @@ namespace NppPluginNET.PluginInfrastructure
                         else if (cur == quote_char) quote = false;
                         //else line[line.length - 1] += cur;
                     }
+
+                    if ((cur == '\r') && (next == '\n')) { isEOL = true; end_col = i; i++; }
+                    else if ((cur == '\n') || (cur == '\r')) { isEOL = true; end_col = i; }
 
                     // if next col or next line
                     if (bNextCol || isEOL)
@@ -671,11 +683,19 @@ namespace NppPluginNET.PluginInfrastructure
                             vtable.SetStyleFor(p_access, (IntPtr)1, (char)0); // 0 = white
                         }
 
-                        // next color
-                        idx++;
+                        if (!quote)
+                        {
+                            // next color
+                            if ((idx++ > IDX_MAX) || isEOL) idx = 1; // reset end of line
+                        }
 
-                        if ((idx > IDX_MAX) || isEOL) idx = 1; // reset end of line
-
+                        if (isEOL)
+                        {
+                            // save current style so the next line can use it
+                            int lineState = quote ? idx : 0;
+                            vtable.SetLineState(p_access, (IntPtr)(lineCurrent), lineState);
+                            lineCurrent++;
+                        }
                         bNextCol = false;
                         isEOL = false;
                         start_col = i + 1;
