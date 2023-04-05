@@ -43,23 +43,26 @@ namespace CSVLintNppPlugin.Forms
             this.lblSearchReplace = new System.Windows.Forms.Label();
             this.txtReplace = new System.Windows.Forms.TextBox();
             this.txtSplitCharacter = new System.Windows.Forms.TextBox();
+            this.lblSplitCharacter = new System.Windows.Forms.Label();
+            this.numSplitNth = new System.Windows.Forms.NumericUpDown();
             this.numSplitSubstring = new System.Windows.Forms.NumericUpDown();
             this.chkDeleteOriginal = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.picHelpIcon)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numPadLength)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numSplitNth)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numSplitSubstring)).BeginInit();
             this.SuspendLayout();
             // 
             // btnOk
             // 
             this.btnOk.Location = new System.Drawing.Point(152, 278);
-            this.btnOk.TabIndex = 13;
+            this.btnOk.TabIndex = 14;
             this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
             // 
             // btnCancel
             // 
             this.btnCancel.Location = new System.Drawing.Point(271, 278);
-            this.btnCancel.TabIndex = 14;
+            this.btnCancel.TabIndex = 15;
             // 
             // lblTitle
             // 
@@ -238,6 +241,39 @@ namespace CSVLintNppPlugin.Forms
             this.txtSplitCharacter.Tag = "4";
             this.txtSplitCharacter.Text = "/";
             // 
+            // lblSplitCharacter
+            // 
+            this.lblSplitCharacter.AutoSize = true;
+            this.lblSplitCharacter.Location = new System.Drawing.Point(246, 183);
+            this.lblSplitCharacter.Name = "lblSplitCharacter";
+            this.lblSplitCharacter.Size = new System.Drawing.Size(55, 13);
+            this.lblSplitCharacter.TabIndex = 15;
+            this.lblSplitCharacter.Text = "nth occur.";
+            // 
+            // numSplitNth
+            // 
+            this.numSplitNth.Enabled = false;
+            this.numSplitNth.Location = new System.Drawing.Point(306, 180);
+            this.numSplitNth.Maximum = new decimal(new int[] {
+            999,
+            0,
+            0,
+            0});
+            this.numSplitNth.Minimum = new decimal(new int[] {
+            999,
+            0,
+            0,
+            -2147483648});
+            this.numSplitNth.Name = "numSplitNth";
+            this.numSplitNth.Size = new System.Drawing.Size(48, 20);
+            this.numSplitNth.TabIndex = 12;
+            this.numSplitNth.Tag = "4";
+            this.numSplitNth.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
             // numSplitSubstring
             // 
             this.numSplitSubstring.Enabled = false;
@@ -254,7 +290,7 @@ namespace CSVLintNppPlugin.Forms
             -2147483648});
             this.numSplitSubstring.Name = "numSplitSubstring";
             this.numSplitSubstring.Size = new System.Drawing.Size(48, 20);
-            this.numSplitSubstring.TabIndex = 12;
+            this.numSplitSubstring.TabIndex = 13;
             this.numSplitSubstring.Tag = "5";
             // 
             // chkDeleteOriginal
@@ -274,7 +310,9 @@ namespace CSVLintNppPlugin.Forms
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.ClientSize = new System.Drawing.Size(383, 320);
             this.Controls.Add(this.lblSearchReplace);
+            this.Controls.Add(this.lblSplitCharacter);
             this.Controls.Add(this.lblPadLength);
+            this.Controls.Add(this.numSplitNth);
             this.Controls.Add(this.numPadLength);
             this.Controls.Add(this.numSplitSubstring);
             this.Controls.Add(this.chkDeleteOriginal);
@@ -312,11 +350,14 @@ namespace CSVLintNppPlugin.Forms
             this.Controls.SetChildIndex(this.chkDeleteOriginal, 0);
             this.Controls.SetChildIndex(this.numSplitSubstring, 0);
             this.Controls.SetChildIndex(this.numPadLength, 0);
+            this.Controls.SetChildIndex(this.numSplitNth, 0);
             this.Controls.SetChildIndex(this.lblPadLength, 0);
+            this.Controls.SetChildIndex(this.lblSplitCharacter, 0);
             this.Controls.SetChildIndex(this.lblSearchReplace, 0);
             ((System.ComponentModel.ISupportInitialize)(this.picHelpIcon)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numPadLength)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numSplitSubstring)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numSplitNth)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -338,6 +379,8 @@ namespace CSVLintNppPlugin.Forms
         private System.Windows.Forms.Label lblSearchReplace;
         private System.Windows.Forms.TextBox txtReplace;
         private System.Windows.Forms.TextBox txtSplitCharacter;
+        private System.Windows.Forms.Label lblSplitCharacter;
+        private System.Windows.Forms.NumericUpDown numSplitNth;
         private System.Windows.Forms.NumericUpDown numSplitSubstring;
         private System.Windows.Forms.CheckBox chkDeleteOriginal;
     }

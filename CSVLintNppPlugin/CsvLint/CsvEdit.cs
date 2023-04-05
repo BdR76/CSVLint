@@ -1103,7 +1103,39 @@ namespace CSVLint
                         else if (SplitCode == 4)
                         {
                             // split on char
-                            int pos = val.IndexOf(Parameter1);
+                            int pos = -1;
+                            int index = 0;
+
+                            int i = 1;
+                            if (IntPar2 >= 0)
+                            {
+                                // first Nth occurance
+                                while (i <= IntPar2 && (index = val.IndexOf(Parameter1, index + 1)) != -1)
+                                {
+                                    if (i == IntPar2)
+                                    {
+                                        pos = index;
+                                        break;
+                                    }
+                                    i++;
+                                }
+                            }
+                            else
+                            {
+                                // last Nth occurance
+                                i = -1;
+                                index = val.Length;
+                                while (i >= IntPar2 && (index = val.LastIndexOf(Parameter1, index - 1)) != -1)
+                                {
+                                    if (i == IntPar2)
+                                    {
+                                        pos = index;
+                                        break;
+                                    }
+                                    i--;
+                                }
+                            }
+
                             if (pos >= 0)
                             {
                                 val1 = val.Substring(0, pos);

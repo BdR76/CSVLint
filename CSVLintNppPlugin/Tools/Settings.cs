@@ -220,6 +220,9 @@ namespace Kbg.NppPluginNET
         [Description("Split column, split on character."), Category("UserPref"), DefaultValue("/")]
         public string SplitChar { get; set; }
 
+        [Description("Split column, split on Nth occurrence of character."), Category("UserPref"), DefaultValue(1)]
+        public int SplitCharNth { get; set; }
+
         [Description("Split column, split on position."), Category("UserPref"), DefaultValue(3)]
         public int SplitPos { get; set; }
 

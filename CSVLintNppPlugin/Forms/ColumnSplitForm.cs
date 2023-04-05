@@ -44,6 +44,7 @@ namespace CSVLintNppPlugin.Forms
             txtSearch.Text            = Main.Settings.EditColSearch;
             txtReplace.Text           = Main.Settings.EditColReplace;
             txtSplitCharacter.Text    = Main.Settings.SplitChar;
+            numSplitNth.Value         = Main.Settings.SplitCharNth;
             numSplitSubstring.Value   = Main.Settings.SplitPos;
 
             chkDeleteOriginal.Checked = Main.Settings.SplitRemoveOrg;
@@ -91,10 +92,10 @@ namespace CSVLintNppPlugin.Forms
             // extra parameters
             SplitParam1 = "";
             SplitParam2 = "";
-            if (rdbtnPadChar.Checked)       { SplitParam1 = txtPadChar.Text; SplitParam2 = numPadLength.Value.ToString(); }
-            if (rdbtnSearchReplace.Checked) { SplitParam1 = txtSearch.Text; SplitParam2 = txtReplace.Text; }
-            if (rdbtnSplitCharacter.Checked)  SplitParam1 = txtSplitCharacter.Text;
-            if (rdbtnSplitSubstring.Checked)  SplitParam2 = numSplitSubstring.Value.ToString();
+            if (rdbtnPadChar.Checked)        { SplitParam1 = txtPadChar.Text;        SplitParam2 = numPadLength.Value.ToString(); }
+            if (rdbtnSearchReplace.Checked)  { SplitParam1 = txtSearch.Text;         SplitParam2 = txtReplace.Text; }
+            if (rdbtnSplitCharacter.Checked) { SplitParam1 = txtSplitCharacter.Text; SplitParam2 = numSplitNth.Value.ToString(); }
+            if (rdbtnSplitSubstring.Checked)   SplitParam2 = numSplitSubstring.Value.ToString();
 
             // remove original column
             SplitRemove = (chkDeleteOriginal.Checked);
@@ -119,6 +120,7 @@ namespace CSVLintNppPlugin.Forms
             Main.Settings.EditColSearch    = txtSearch.Text;
             Main.Settings.EditColReplace   = txtReplace.Text;
             Main.Settings.SplitChar        = txtSplitCharacter.Text;
+            Main.Settings.SplitCharNth     = Convert.ToInt32(numSplitNth.Value);
             Main.Settings.SplitPos         = Convert.ToInt32(numSplitSubstring.Value);
 
             Main.Settings.SplitRemoveOrg = chkDeleteOriginal.Checked;
