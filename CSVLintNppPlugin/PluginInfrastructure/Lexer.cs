@@ -495,6 +495,7 @@ namespace NppPluginNET.PluginInfrastructure
             // check if previous line ends with an open quote
             if (lineCurrent > 0) {
                 int lineState = (int)vtable.GetLineState(p_access, (IntPtr)(lineCurrent - 1));
+                // lineState contains 0 = no open quote or >0 = style index of quoted value
                 if (lineState > 0) {
                     quote = true;
                     idx = lineState;
@@ -530,9 +531,11 @@ namespace NppPluginNET.PluginInfrastructure
                 }
             }
 
-            // todo skip lines syntax highlighting
-            if ((skipLines > 0) && (start == 0) )
+            // skip lines syntax highlighting
+            if (lineCurrent < skipLines)
             {
+                //i = (int)vtable.PositionFromLine(p_access, (IntPtr)skipLines);
+
                 var skipcount = skipLines;
                 i = start;
                 isEOL = false;

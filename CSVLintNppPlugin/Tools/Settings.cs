@@ -46,7 +46,6 @@ namespace Kbg.NppPluginNET
             }
             set
             {
-                // set string representation, may include "SysYear"
                 this._ErrorTolerance = value;
                 this._ErrorTolerancePerc = (float)0.01 * value;
             }
@@ -60,8 +59,8 @@ namespace Kbg.NppPluginNET
             Category("Analyze"), DefaultValue(2050)]
         public int YearMaximum { get; set; }
 
-        [Description("Maximum year for two digit year date values. For example, when set to 2024 the year values 24 and 25 will be interpreted as 2024 and 1925. Set as SysYear for current year."),
-            Category("Edit"), DefaultValue("SysYear")]
+        [Description("Maximum year for two digit year date values. For example, when set to 2024 the year values 24 and 25 will be interpreted as 2024 and 1925. Set as CurrentYear for current year."),
+            Category("Edit"), DefaultValue("CurrentYear")]
         public string TwoDigitYearMax
         {
             get
@@ -70,7 +69,7 @@ namespace Kbg.NppPluginNET
             }
             set
             {
-                // set string representation, may include "SysYear"
+                // set string representation, may include "CurrentYear"
                 this._strTwoDigitYearMax = this.CheckYearString(value);
                 // set actual integer value
                 this.intTwoDigitYearMax = this.GetYearFromString(value);
@@ -296,14 +295,14 @@ namespace Kbg.NppPluginNET
         [Description("Metadata generate type."), Category("UserPref"), DefaultValue(0)]
         public int MetadataType { get; set; }
 
-        // helper function for "SysYear" as year values
+        // helper function for "CurrentYear" as year values
         private int GetYearFromString(string yr)
         {
             // test if it's a valid int
             int.TryParse(yr, out int ret);
 
-            // replace SysYear with current year, for example 2020
-            if ((ret == 0) || (yr.ToLower() == "sysyear"))
+            // check if valid year number, note "CurrentYear" results in ret=0
+            if ((ret <= 0) || (ret >= 9999))
             {
                 ret = DateTime.Now.Year;
             };
@@ -318,10 +317,10 @@ namespace Kbg.NppPluginNET
             // test if it's a valid int
             int.TryParse(ret, out int test);
 
-            // replace SysYear with current year, for example 2020
-            if ((test == 0) || (yr.ToLower() == "sysyear"))
+            // check if valid year number, note "CurrentYear" results in test=0
+            if ((test <= 0) || (test >= 9999))
             {
-                ret = "SysYear"; // default value
+                ret = "CurrentYear"; // default value
             };
         
             return ret;

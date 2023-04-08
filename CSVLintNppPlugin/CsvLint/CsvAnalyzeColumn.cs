@@ -405,7 +405,7 @@ namespace CSVLint
                 }
 
                 // add time part
-                // date or datetime
+                // time or datetime
                 if ((datatype == 2) || (datatype == 3))
                 {
                     if (newformat)

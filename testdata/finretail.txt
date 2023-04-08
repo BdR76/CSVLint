@@ -1,0 +1,30 @@
+Entry   Per. Post Date  GL Account   Description                  Srce. cflow Ref.      Post            Debit          Credit  Alloc.
+167524  01  01/31/2023  44617135     POS transact. 23.05           S1    Yes  TD428005  Yes                            957.83    Yes 
+167525  01  01/31/2023  44625889     SUP162 wk.23.05               S1    No   TF501634  Yes          2,019.51                    Yes 
+167526  01  02/01/2023  40229711     Interest payment              S1    Yes  TG885693  Yes                             12.73    Yes 
+167527  01  02/01/2023  43539684     Retail Beheer BV              S1    Yes  TH123103  Yes          1,836.00                    Yes 
+167528  01  02/02/2023  44617135     POS transact. 23.05           S1    Yes  TI839318  Yes                            888.74    Yes 
+167529  01  02/03/2023  44118563     SUP078 wk.23.05               S1    No   TJ038270  Yes          2,586.82                    Yes 
+167530  01  02/04/2023  44617135     POS transact. 23.05           S1    Yes  TJ237434  Yes                          1,071.10    Yes 
+167531  01  02/06/2023  40229711     Cash deposit                  S1    Yes  TK380532  Yes                            363.75    No  
+167532  01  02/07/2023  44617135     POS transact. 23.06           S1    Yes  TK502185  Yes                            870.37    Yes 
+167533  01  02/07/2023  44625889     SUP162 wk.23.06               S1    No   TM444067  Yes          1,934.83                    Yes 
+167534  01  02/09/2023  44617135     POS transact. 23.06           S1    Yes  TN220472  Yes                            969.84    Yes 
+167535  01  02/10/2023  44118563     SUP078 wk.23.06               S1    No   TN595250  Yes          2,419.26                    Yes 
+167536  01  02/11/2023  44617135     POS transact. 23.06           S1    Yes  TN682497  Yes                            813.17    Yes 
+167537  01  02/14/2023  44617135     POS transact. 23.07           S1    Yes  TP607202  Yes                          1,062.54    Yes 
+167538  01  02/14/2023  44625889     SUP162 wk.23.07               S1    No   TQ221329  Yes          2,058.72                    Yes 
+167539  01  02/16/2023  44617135     POS transact. 23.07           S1    Yes  TR036796  Yes                            848.93    Yes 
+167540  01  02/17/2023  44118563     SUP078 wk.23.07               S1    No   TR321543  Yes          2,750.49                    Yes 
+167541  01  02/18/2023  44617135     POS transact. 23.07           S1    Yes  TR396025  Yes                          1,163.71    Yes 
+167542  01  02/21/2023  44617135     POS transact. 23.08           S1    Yes  TU107726  Yes                           1195.70    Yes 
+167543  01  02/21/2023  44625889     SUP162 wk.23.08               S1    No   TU728950  Yes          2,531.01                    Yes 
+167544  01  02/23/2023  44617135     POS transact. 23.08           S1    Yes  TX330176  Yes                          1,021.45    Yes 
+167545  01  02/24/2023  44118563     SUP053 wk.23.08               S1    No   TX559395  Yes            972.13                    No  
+167546  01  02/25/2023  44617135     POS transact. 23.08           S1    Yes  TX746807  Yes                          1,146.41    Yes 
+167547  01  02/28/2023  44617135     POS transact. 23.09           S1    Yes  TY327267  Yes                          1,011.33    Yes 
+167548  01  02/28/2023  44625889     SUP162 wk.23.09               S1    No   TY335119  Yes          2,806.52                    Yes 
+167549  01  03/02/2023  44617135     POS transact. 23.09           S1    Yes  TY803536  Yes                            887.30    Yes 
+167550  01  03/03/2023  44118563     SUP078 wk.23.09               S1    No   TZ816159  Yes          1,314.69                    Yes 
+167551  01  03/04/2023  44617135     POS transact. 23.09           S1    Yes  UA251721  Yes                            821.21    Yes 
+167552  01  03/07/2023  44617135     POS transact. 23.10           S1    Yes  UA799787  Yes                          1,134.98    Yes 
