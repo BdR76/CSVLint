@@ -535,33 +535,11 @@ namespace NppPluginNET.PluginInfrastructure
             if (lineCurrent < skipLines)
             {
                 //i = (int)vtable.PositionFromLine(p_access, (IntPtr)skipLines);
-
-                var skipcount = skipLines;
-                i = start;
-                isEOL = false;
-
-                // skip the first X lines
-                while ((skipcount > 0) && (i < length))
-                {
-                    // next character
-                    byte cur = contentBytes[i];
-                    i++;
-
-                    // new line can be single character \r or \n or two characters \r\n
-                    if ((cur == '\n') || (cur == '\r'))
-                    {
-                        if (!isEOL) skipcount--;
-                        isEOL = true;
-                    }
-                    else
-                    {
-                        isEOL = false;
-                    }
-                }
+                i = (int)vtable.LineStart(p_access, (IntPtr)skipLines);
 
                 // set no color
                 vtable.StartStyling(p_access, (IntPtr)(start));
-                vtable.SetStyleFor(p_access, (IntPtr)(i), (char)0);
+                vtable.SetStyleFor(p_access, (IntPtr)(i-start), (char)0);
             }
 
 
@@ -640,7 +618,7 @@ namespace NppPluginNET.PluginInfrastructure
                 bool whitespace = true; // to catch where value is just two quotes "" right at start of line
 
                 // fixed widths
-                while (i < length-1)
+                while (i < length - 1)
                 {
                     byte cur = contentBytes[i];
                     byte next = contentBytes[i + 1];
@@ -689,7 +667,7 @@ namespace NppPluginNET.PluginInfrastructure
                         if (!quote)
                         {
                             // next color
-                            if ((idx++ > IDX_MAX) || isEOL) idx = 1; // reset end of line
+                            if ((++idx > IDX_MAX) || isEOL) idx = 1; // reset end of line
                         }
 
                         if (isEOL)
@@ -723,7 +701,6 @@ namespace NppPluginNET.PluginInfrastructure
                     vtable.SetStyleFor(p_access, (IntPtr)1, (char)0); // 0 = white
                 }
             }
-
 
             // free allocated buffer
             Marshal.FreeHGlobal(buffer_ptr);

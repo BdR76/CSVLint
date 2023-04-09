@@ -12,6 +12,7 @@ using System.Text;
 using CSVLint.Tools;
 using CsvQuery.PluginInfrastructure;
 using Kbg.NppPluginNET.PluginInfrastructure;
+using System.Diagnostics;
 
 namespace CSVLint
 {
@@ -315,7 +316,7 @@ namespace CSVLint
                 foundfieldWidths.Sort();
                 if (foundfieldWidths.Count < 3) return result; // unlikely fixed width
 
-                // widths contain line positions, convert to individual column widths, example pos [8, 14, 15, 22, 25] -> widths [8, 6, 1, 7, 3]
+                // widths now contain column end positions, convert to individual column widths, example pos [8, 14, 15, 22, 25] -> widths [8, 6, 1, 7, 3]
                 var pos1 = 0;
                 for (var i = 0; i < foundfieldWidths.Count; i++)
                 {
@@ -408,10 +409,10 @@ namespace CSVLint
                     // if value in first row (=Names) is not of valid datatype, then first row probably contains column names
                     var str = csvvalid.EvaluateDataValue(namcol.Name, namcol, namcol.Index);
                     if (str != "") count++;
-
-                    // if value in first row (=Names) is empty then probably not header names
-                    if (namcol.Name == "") emptyname = true;
                 }
+
+                // if value in first row (=Names) is empty then probably not header names
+                if (namcol.Name == "") emptyname = true;
 
                 // TODO: carriage returns in header name not supported
                 // replace with space so that schema.ini can at least be validated

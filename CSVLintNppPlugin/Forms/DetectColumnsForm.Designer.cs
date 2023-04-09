@@ -43,13 +43,13 @@ namespace CSVLintNppPlugin.Forms
             // 
             // btnOk
             // 
-            this.btnOk.Location = new System.Drawing.Point(102, 186);
+            this.btnOk.Location = new System.Drawing.Point(153, 183);
             this.btnOk.TabIndex = 5;
             this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(221, 186);
+            this.btnCancel.Location = new System.Drawing.Point(272, 183);
             this.btnCancel.TabIndex = 6;
             // 
             // lblTitle
@@ -59,12 +59,12 @@ namespace CSVLintNppPlugin.Forms
             // 
             // picHelpIcon
             // 
-            this.picHelpIcon.Location = new System.Drawing.Point(305, 8);
+            this.picHelpIcon.Location = new System.Drawing.Point(356, 8);
             this.picHelpIcon.Tag = "detect-columns";
             // 
             // lblHorizontalLine
             // 
-            this.lblHorizontalLine.Size = new System.Drawing.Size(325, 2);
+            this.lblHorizontalLine.Size = new System.Drawing.Size(376, 2);
             // 
             // lblColumnSeparator
             // 
@@ -84,7 +84,7 @@ namespace CSVLintNppPlugin.Forms
             ";",
             "|",
             "{Fixed width}"});
-            this.cmbColumnSeparator.Location = new System.Drawing.Point(142, 45);
+            this.cmbColumnSeparator.Location = new System.Drawing.Point(192, 45);
             this.cmbColumnSeparator.Name = "cmbColumnSeparator";
             this.cmbColumnSeparator.Size = new System.Drawing.Size(83, 21);
             this.cmbColumnSeparator.TabIndex = 1;
@@ -96,14 +96,14 @@ namespace CSVLintNppPlugin.Forms
             this.lblFixedWidthPos.AutoSize = true;
             this.lblFixedWidthPos.Location = new System.Drawing.Point(12, 80);
             this.lblFixedWidthPos.Name = "lblFixedWidthPos";
-            this.lblFixedWidthPos.Size = new System.Drawing.Size(122, 13);
+            this.lblFixedWidthPos.Size = new System.Drawing.Size(153, 13);
             this.lblFixedWidthPos.TabIndex = 0;
             this.lblFixedWidthPos.Tag = "1";
-            this.lblFixedWidthPos.Text = "Fixed positions (optional)";
+            this.lblFixedWidthPos.Text = "Column end positions (optional)";
             // 
             // txtFixedWidthPos
             // 
-            this.txtFixedWidthPos.Location = new System.Drawing.Point(142, 77);
+            this.txtFixedWidthPos.Location = new System.Drawing.Point(192, 77);
             this.txtFixedWidthPos.Name = "txtFixedWidthPos";
             this.txtFixedWidthPos.Size = new System.Drawing.Size(178, 20);
             this.txtFixedWidthPos.TabIndex = 2;
@@ -122,7 +122,7 @@ namespace CSVLintNppPlugin.Forms
             // chkHeaderNames
             // 
             this.chkHeaderNames.AutoSize = true;
-            this.chkHeaderNames.Location = new System.Drawing.Point(142, 111);
+            this.chkHeaderNames.Location = new System.Drawing.Point(192, 111);
             this.chkHeaderNames.Name = "chkHeaderNames";
             this.chkHeaderNames.Size = new System.Drawing.Size(178, 17);
             this.chkHeaderNames.TabIndex = 3;
@@ -140,7 +140,7 @@ namespace CSVLintNppPlugin.Forms
             // 
             // numSkipLines
             // 
-            this.numSkipLines.Location = new System.Drawing.Point(142, 141);
+            this.numSkipLines.Location = new System.Drawing.Point(192, 141);
             this.numSkipLines.Maximum = new decimal(new int[] {
             9999,
             0,
@@ -159,7 +159,7 @@ namespace CSVLintNppPlugin.Forms
             // DetectColumnsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.ClientSize = new System.Drawing.Size(333, 228);
+            this.ClientSize = new System.Drawing.Size(384, 225);
             this.Controls.Add(this.numSkipLines);
             this.Controls.Add(this.chkHeaderNames);
             this.Controls.Add(this.txtFixedWidthPos);
