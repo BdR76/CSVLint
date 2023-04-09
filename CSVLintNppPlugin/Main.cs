@@ -411,6 +411,8 @@ namespace Kbg.NppPluginNET
             string sepcol = Settings.SeparatorColor ? "1" : "0";
             string skip = csvdef.SkipLines.ToString();
 
+            IScintillaGateway editor = new ScintillaGateway(PluginBase.GetCurrentScintilla());
+
             editor.SetProperty("separator", sepchar);
             editor.SetProperty("separatorcolor", sepcol);
             editor.SetProperty("skiplines", skip);
@@ -465,6 +467,8 @@ namespace Kbg.NppPluginNET
             string sepchar = csvdef.Separator.ToString();
             string sepcol = Settings.SeparatorColor ? "1" : "0";
             string skip = csvdef.SkipLines.ToString();
+
+            IScintillaGateway editor = new ScintillaGateway(PluginBase.GetCurrentScintilla());
 
             editor.SetProperty("separator", sepchar);
             editor.SetProperty("separatorcolor", sepcol);
