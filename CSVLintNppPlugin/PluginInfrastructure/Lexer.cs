@@ -473,11 +473,17 @@ namespace NppPluginNET.PluginInfrastructure
             if (buffer_ptr == IntPtr.Zero) { return; }
 
             // convert the buffer into a managed string
-            string content = Marshal.PtrToStringAnsi(buffer_ptr, length);
+            //string content = Marshal.PtrToStringAnsi(buffer_ptr, length);
 
             // iterate string as a byte array; prevents index overflow when Windows = code page 65001
-            byte[] contentBytes = ByteStream.GetBytes(content);
-            length = contentBytes.Length;
+            //byte[] contentBytes = ByteStream.GetBytes(content);
+
+            // Get pointer content as byte array
+            // Note: this also works because the separator character is usually a ascii127 character anyway (, ; | {tab} etc) so always a single byte
+            var contentBytes = new byte[length];
+            Marshal.Copy(buffer_ptr, contentBytes, 0, (int)length);
+
+            //length = contentBytes.Length;
 
             // column color index
             int idx = 1;
@@ -1004,9 +1010,15 @@ namespace NppPluginNET.PluginInfrastructure
         /// </summary>
         public static byte[] GetBytes(string clrString)
         {
+            var doc = PluginBase.CurrentScintillaGateway;
+            var codepage = doc.GetCodePage();
             var byteBuf = new char[clrString.Length];
             clrString.CopyTo(0, byteBuf, 0, clrString.Length);
-            return (Win32.GetACP() == 65001U) ? Encoding.UTF8.GetBytes(byteBuf) : Encoding.Default.GetBytes(byteBuf);
+            return (codepage == (int)SciMsg.SC_CP_UTF8) ? Encoding.UTF8.GetBytes(byteBuf) : Encoding.Default.GetBytes(byteBuf);
+
+            //var byteBuf = new char[clrString.Length];
+            //clrString.CopyTo(0, byteBuf, 0, clrString.Length);
+            //return (Win32.GetACP() == 65001U) ? Encoding.UTF8.GetBytes(byteBuf) : Encoding.Default.GetBytes(byteBuf);
         }
     }
 }
