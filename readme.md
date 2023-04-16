@@ -29,10 +29,8 @@ CSV Lint is stable and usable for most general use-cases, but it is a work-in-pr
 so if you encounter any bugs or unexpected output I encourage you to [report issues here](https://github.com/BdR76/CSVLint/issues).
 CSVLint is based on a prototype project [Dataset MultiTool](https://github.com/BdR76/datasetmultitool)
 
-<p align="center">
-<b>If you like the CSV Lint plug-in you can support the project by buying me a coffee!</b><br>
-<a href="https://www.buymeacoffee.com/bdr76" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>
-</p>
+If you find the CSV Lint plug-in usefull, you show your support by buying me a coffee!  
+[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=US5SMK2DC6TXE)
 
 How to install
 --------------
