@@ -88,10 +88,21 @@ a dialog will appear where you can manually enter the column separator and
 indicate whether or not the first line contains the column names.
 
 When selecting "Fixed Widths" you can optionally provide a comma separated
-list of the column ending positions in "Fixed positions". For example
+list of the column ending positions in "Column end positions". For example
 the text data `2022-10-15HbA1c 123.5` has column end positions `10, 16, 21`.
-Leave "Fixed positions" empty and the plug-in will try to detect fixed width
-columns same as auto-detect.
+The plug-in expects the column character positions, but if you instead enter
+the individual column widths, so `10, 6, 5` in this example, that will also
+work in most cases. Leave "Fixed positions" empty and the plug-in will
+try to detect fixed width columns same as auto-detect.
+
+Some data files contain comments or documentation about the data in the first
+lines of the file. When you set the "Skip lines" option to anything other
+than `0`, the column detection process will skip the first X lines of the file.
+For example when the first line of data (including header names) starts on
+line `16` then you can set "Skip lines" to `15`.
+Note that the `SkipLines` keyword is not officially part of the schema.ini format
+(please upvote [the suggestion here](https://feedback.azure.com/d365community/search/?q=schema.ini)),
+so applications that use the ODBC Text driver will ignore this setting.
 
 ![CSV Lint detect columns manually dialog](/docs/csvlint_detect_columns.png?raw=true "CSV Lint plug-in detect columns manually dialog")
 
@@ -176,7 +187,32 @@ or add `00:00:00` as a time part to all values.
 
 Set the decimal separator for all decimal/float values, select either the dot `.` or the comma `,`.
 
-### Re-apply quotes ###
+### Replace CrLf within values ###
+
+Replace new-line characters (carriage return / line feed) within quoted values with a given string.
+New lines usually indicate the next record in a dataset. However, quoted values may also contain a new line character.
+Sometimes this can cause problems and these values aren't processed correctly.
+You can use this option to replace the new-lines with for example `<br>` or `\par` or just a space ` `.
+The plug-in will only replace the new-line characters within a quoted value, not the new-lines at the end of each record.
+
+### Align vertically ###
+
+Align vertically, will add spaces to vertically align all columns.
+The amount of white space is based on the column widths.
+Integer and decimal values will be right aligned and any other datatypes are left aligned,
+similar to reformatting as fixed-width format.
+
+This can be useful for viewing the data, but it's not recommended to store
+the data with this extra white space. The file size will become unnecessary
+large and it will be more difficult or even impossible for other
+applications to process the data correctly.
+
+### Trim all values* ###
+
+Trim spaces from all values, for example trim the value `" No sample "` to just `"No sample"`.
+This option can also be used to undo vertically aligned columns.
+
+### Re-apply quotes* ###
 
 Apply quotes will put all or just certain values in quotes. The default quote
 character is `"` but it can be adjusted typically to `'`, see `DefaultQuoteChar`
@@ -191,30 +227,11 @@ in the settings. Select one of the following options.
 Note: Any quote character in a value will be escaped using two quote characters.
 For example applying quotes to text value `CP 3/8" KAVD` will result in `"CP 3/8"" KAVD"`.
 
-### Replace CrLf within values ###
+### *General settings ###
 
-Replace new-line characters (carriage return / line feed) within quoted values with a given string.
-New lines usually indicate the next record in a dataset. However, quoted values may also contain a new line character.
-Sometimes this can cause problems and these values aren't processed correctly.
-You can use this option to replace the new-lines with for example `<br>` or `\par` or just a space ` `.
-The plug-in will only replace the new-line characters within a quoted value, not the new-lines at the end of each record.
-
-### Trim all values ###
-
-Trim spaces from all values, for example trim the value `" No sample "` to just `"No sample"`.
-This option can also be used to undo vertically aligned columns.
-
-### Align vertically ###
-
-Align vertically, will add spaces to vertically align all columns.
-The amount of white space is based on the column widths.
-Integer and decimal values will be right aligned and any other datatypes are left aligned,
-similar to reformatting as fixed-width format.
-
-This can be useful for viewing the data, but it's not recommended to store
-the data with this extra white space. The file size will become unnecessary
-large and it will be more difficult or even impossible for other
-applications to process the data correctly.
+Note that the `Trim all values` and `Re-apply quotes` options are General settings,
+meaning these settings are also applied when detecting, sorting, adding and validating data.
+Also see `Plugins > CSV Lint > Settings`.
 
 Validate data
 -------------
@@ -327,9 +344,9 @@ as a date value formated as `dd-mm-yyyy`, see some example results below:
 
 ### Split on character ###
 
-Split on a character, split the value on the first occurence of character or string.
-For example split on `/` will split the orginal value `121/84` into `121` and
-`84`, see examples below:
+Split on a character, split the value on the Nth occurrence of character or
+string. For example split on `/` with Nth occurrence `1` will split the orginal
+value `121/84` into `121` and `84`, see examples below:
 
 | bpvalue | bpvalue (2) | bpvalue (3) |
 |---------|-------------|-------------|
@@ -338,6 +355,19 @@ For example split on `/` will split the orginal value `121/84` into `121` and
 | 125     | 125         |             |
 | /85     |             | 85          |
 | 31/12/99| 31          | 12/99       |
+
+You can also enter a negative occurrence to split the value on the last Nth
+occurrence of the character. For example splitting on character `/` and
+occurrence `-1` will split `pat/01/023` into `pat/01` and `023`, see other
+examples below
+
+| stringval      | stringval (2) | stringval (3) |
+|----------------|---------------|---------------|
+| pat/med123/txt | pat/med123    | txt           |
+| 31/12/2023     | 31/12         | 2023          |
+| MED0001/3456   | MED0001       | 3456          |
+| abcdefghijk    | abcdefghijk   |               |
+| a/b/c/d/e/f    | a/b/c/d/e     | f             |
 
 ### Split on position ###
 
@@ -354,7 +384,7 @@ other examples below
 | 123.45          | 123          | .45          |
 | 12345.67        | 123          | 45.67        |
 
-You can enter a negative position to spit from the end of the value, for
+You can enter a negative position to split from the end of the value, for
 example split on position `-4` will split value `PT0123` into `PT` and `0123`,
 see other examples below
 
@@ -371,6 +401,10 @@ see other examples below
 By checking the "Remove original column" checkbox the original column will be
 removed after splitting it into new columns. Keep it unchecked to add the new
 columns but also keep the original values.
+
+Note that you can also right-click the radio buttons to deselect them.
+By not selecting any of the options and checking the "Remove original column" 
+you can press OK to simply remove the selected original column.
 
 Analyse data report
 -------------------
@@ -516,6 +550,7 @@ and they are stored in a settings file `%USERPROFILE%\AppData\Roaming\Notepad++\
 
 | setting          | description                                                                                                     | Default |
 |------------------|-----------------------------------------------------------------------------------------------------------------|---------|
+| CommentChar      | Comment character, when the first lines start with this character they will be skipped as comment lines         | #       |
 | DecimalDigitsMax | Maximum amount of decimals for decimal values, if a value has more then it's considered a text value. Applies to both autodetecting datatypes and validating data | 20 |
 |DecimalLeadingZero| Decimal values must have leading zero, set to false to accept values like .5 or .01                             | true    |
 | ErrorTolerance   | Error tolerance percentage, when analyzing allow X % errors. For example when a column with a 1000 values contains all integers except for 9 or fewer non-integer values, then it's still interpreted as an integer column. | 1 |
@@ -523,12 +558,12 @@ and they are stored in a settings file `%USERPROFILE%\AppData\Roaming\Notepad++\
 | UniqueValuesMax  | Maximum unique values when reporting or detecting coded values, if column contains more than it's not reported. |   15    | 
 | YearMinimum      | When detecting date or datetime values, years smaller than this value will be considered an out-of-range date.  | 1900    |
 | YearMaximum      | When detecting date or datetime values, years larger than this value will be considered an out-of-range date.   | 2050    |
-| TwoDigitYearMax  | Maximum year for two digit year date values. For example, when set to 2024 the year values 24 and 25 will be interpreted as 2024 and 1925. Set as SysYear for current year. | SysYear |
-| DefaultQuoteChar | Default quote escape character when quotes exists inside text                                                   | "       |
+| TwoDigitYearMax  | Maximum year for two digit year date values. For example, when set to 2024 the year values 24 and 25 will be interpreted as 2024 and 1925. Set as CurrentYear for current year. | CurrentYear |
+| DefaultQuoteChar | Default quote character, typically a double quote " or a single quote '                                         | "       |
 | FontDock         | Default font for text boxes in CSV Lint docking window. Changing the font requires closing and opening the CSV docked window.  | Courier New, 11.25pt  |
 | NullValue        | Keyword for empty values or null values in the csv data, case-sensitive.                                        | NaN     |
 | SeparatorColor   | Include separator in syntax highlighting colors. Set to false and the separator characters are always white.    | false   |
-| Separators       | Preferred characters when automatically detecting the separator character. For special characters like tab, use \\t or \\u0009. | ,;\t&#124; |
+| Separators       | Preferred characters when automatically detecting the separator character. For special characters like tab, use \\t or hexadecimal escape sequence \\u0009 or \\x09. | ,;\t&#124; |
 | TransparentCursor| Transparent cursor line, changing this setting will require a restart of Notepad++                              | true    |
 | TrimValues       | Trim values before analyzing or editing (recommended).                                                          | true    |
 | UserPref section | Various input settings for the CSV Lint dialogs for Convert Data, Reformat, Split Column etc.                   |         |

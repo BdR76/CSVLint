@@ -1,6 +1,6 @@
 CSV Lint - Notepad++ plugin
 ===========================
-![Release version](https://img.shields.io/github/v/release/BdR76/CSVLint) ![GitHub all releases](https://img.shields.io/github/downloads/BdR76/CSVLint/total) ![GitHub latest release](https://img.shields.io/github/downloads/BdR76/CSVLint/latest/total)  
+![Release version](https://img.shields.io/github/v/release/BdR76/CSVLint) ![GitHub all releases](https://img.shields.io/github/downloads/BdR76/CSVLint/total) ![GitHub latest release](https://img.shields.io/github/downloads/BdR76/CSVLint/latest/total) [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=US5SMK2DC6TXE)   
 
 CSV Lint plug-in for [Notepad++](http://notepad-plus-plus.org/) adds
 syntax highlighting to [comma-separated values](https://en.wikipedia.org/wiki/Comma-separated_values)
@@ -146,8 +146,7 @@ The CSV Lint plugin is work-in-progress, here is list of features I want to add 
 - [x] ~~Add feature generate scripts (SQL, Python, R)~~
 - [x] ~~Syntax highlighting, display columns as [colors](https://community.notepad-plus-plus.org/topic/21124/c-adding-a-custom-styler-or-lexer-in-c-for-scintilla-notepad/)~~
 - [ ] Search for value in column, search next empty/non-empty in column
-- [ ] Search/replace in single column, multiple columns (option only replace n-th occurance? example "datetime(2008, 1, 1, 12, 59, 00)" replace ', ' with '-' or ':')
-- [ ] Search/replace only n-th occurance? Or only empty occurance?
+- [x] Search/replace in single column
 - [x] ~~Split column into new column ("123/456" -> "123", "456")~~
 
 Trouble shooting / Known issues
@@ -185,7 +184,7 @@ Disclaimer
 This software is free-to-use and it is provided as-is without warranty of any
 kind, always back-up your data files to prevent data loss.  
 The [test data](./testdata/), examples and screenshots provided in this github
-repository do not contain real data, it is
+repository do not contain real data, it is all
 [randomly generated](https://github.com/BdR76/RandomValuesNPP) test data.
 
 History
@@ -206,5 +205,6 @@ History
 30-sep-2022 - v0.4.6 Improved unicode support, sort data option, default color sets 12 colors, various bugfixes  
 09-oct-2022 - v0.4.6.1 Improved sort data and split options, various bugfixes  
 29-oct-2022 - v0.4.6.2 Fixed width positions parameter, docked window font, syntax highlighting toggle button  
+16-apr-2023 - v0.4.6.3 Syntax Highlighting fix, new SkipLines feature and quoted string improvements  
 
 BdR©2023 Free to use - send questions or comments: Bas de Reuver - bdr1976@gmail.com

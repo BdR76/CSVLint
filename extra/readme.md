@@ -15,6 +15,11 @@ Python script to generate a csv data file with 99 columns,
 filled with random data and using as many different column formats as possible.
 Used for testing the automatic column detection algorithm.
 
+### generate_data_unicode.py ###
+
+Python script to generate a csv data file with random unicode characters,
+used for testing the syntax highlighting and different Windows region/code page settings.
+
 ### generate_colors.py ###
 
 Python script to determine the optimal colors for syntax highlighting,
@@ -23,7 +28,7 @@ from the next, see the [results here](https://github.com/BdR76/CSVLint/tree/mast
 
 Note: Technically the CSV Lint plugin can use max 31 different column colors.
 However, for 16 or more colors the script starts generating very similar
-looking colors, which doesn't really work well, 12 colors is probably the optimum.
+looking colors, which kind of defeats the purpose, 12 colors seems to be the optimum.
 The 16 colors xml is provided here just for the sake of completion.
 
 ### CSVLint.xml configuration ###
