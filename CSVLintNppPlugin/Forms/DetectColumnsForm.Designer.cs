@@ -146,11 +146,6 @@ namespace CSVLintNppPlugin.Forms
             0,
             0,
             0});
-            this.numSkipLines.Minimum = new decimal(new int[] {
-            9999,
-            0,
-            0,
-            -2147483648});
             this.numSkipLines.Name = "numSkipLines";
             this.numSkipLines.Size = new System.Drawing.Size(83, 20);
             this.numSkipLines.TabIndex = 4;

@@ -399,7 +399,12 @@ namespace CSVLint
                         else
                         {
                             var yearmask = (ddmax3 >= 1000 ? "yyyy" : "yy");
-                            stat_dat_format = string.Format("d{1}M{1}{0}", yearmask, this.DateSep == '\0' ? "" : this.DateSep.ToString());
+                            // when separator is '/' then assume it's US date format, example '12/31/2022' vs '31-12-2022'
+                            if (this.DateSep == '/') {
+                                stat_dat_format = string.Format("M/d/{0}", yearmask);
+                            } else {
+                                stat_dat_format = string.Format("d{1}M{1}{0}", yearmask, this.DateSep == '\0' ? "" : this.DateSep.ToString());
+                            }
                         }
                     }
                 }
