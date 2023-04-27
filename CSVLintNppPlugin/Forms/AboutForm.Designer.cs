@@ -40,7 +40,7 @@ namespace CSVLintNppPlugin.Forms
             // 
             // btnOk
             // 
-            this.btnOk.Location = new System.Drawing.Point(60, 189);
+            this.btnOk.Location = new System.Drawing.Point(60, 197);
             this.btnOk.Size = new System.Drawing.Size(119, 25);
             // 
             // picHelpIcon
@@ -52,7 +52,6 @@ namespace CSVLintNppPlugin.Forms
             this.lblTitle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lblTitle.AutoSize = false;
-            this.lblTitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
             this.lblTitle.Location = new System.Drawing.Point(8, 10);
             this.lblTitle.Size = new System.Drawing.Size(228, 20);
             this.lblTitle.Text = "CSV Lint v";
@@ -64,7 +63,7 @@ namespace CSVLintNppPlugin.Forms
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(132, 179);
+            this.btnCancel.Location = new System.Drawing.Point(132, 187);
             this.btnCancel.Visible = false;
             // 
             // lnkInfo
@@ -72,7 +71,7 @@ namespace CSVLintNppPlugin.Forms
             this.lnkInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lnkInfo.LinkArea = new System.Windows.Forms.LinkArea(54, 67);
-            this.lnkInfo.Location = new System.Drawing.Point(8, 41);
+            this.lnkInfo.Location = new System.Drawing.Point(8, 49);
             this.lnkInfo.Name = "lnkInfo";
             this.lnkInfo.Size = new System.Drawing.Size(228, 30);
             this.lnkInfo.TabIndex = 2;
@@ -87,7 +86,7 @@ namespace CSVLintNppPlugin.Forms
             // 
             this.lnkGithub.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.lnkGithub.Location = new System.Drawing.Point(8, 130);
+            this.lnkGithub.Location = new System.Drawing.Point(8, 138);
             this.lnkGithub.Name = "lnkGithub";
             this.lnkGithub.Size = new System.Drawing.Size(228, 13);
             this.lnkGithub.TabIndex = 3;
@@ -100,7 +99,7 @@ namespace CSVLintNppPlugin.Forms
             // picEasterEgg
             // 
             this.picEasterEgg.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.picEasterEgg.Location = new System.Drawing.Point(206, 183);
+            this.picEasterEgg.Location = new System.Drawing.Point(206, 191);
             this.picEasterEgg.Name = "picEasterEgg";
             this.picEasterEgg.Size = new System.Drawing.Size(32, 32);
             this.picEasterEgg.TabIndex = 7;
@@ -111,7 +110,7 @@ namespace CSVLintNppPlugin.Forms
             // 
             this.lblDisclaimer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblDisclaimer.Location = new System.Drawing.Point(8, 77);
+            this.lblDisclaimer.Location = new System.Drawing.Point(8, 85);
             this.lblDisclaimer.Name = "lblDisclaimer";
             this.lblDisclaimer.Size = new System.Drawing.Size(228, 48);
             this.lblDisclaimer.TabIndex = 2;
@@ -122,7 +121,7 @@ namespace CSVLintNppPlugin.Forms
             // btnDonate
             // 
             this.btnDonate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnDonate.Location = new System.Drawing.Point(60, 157);
+            this.btnDonate.Location = new System.Drawing.Point(60, 165);
             this.btnDonate.Name = "btnDonate";
             this.btnDonate.Size = new System.Drawing.Size(119, 25);
             this.btnDonate.TabIndex = 8;
@@ -133,7 +132,7 @@ namespace CSVLintNppPlugin.Forms
             // AboutForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.ClientSize = new System.Drawing.Size(244, 221);
+            this.ClientSize = new System.Drawing.Size(244, 229);
             this.Controls.Add(this.btnDonate);
             this.Controls.Add(this.picEasterEgg);
             this.Controls.Add(this.lnkGithub);

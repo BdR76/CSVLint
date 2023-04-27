@@ -94,7 +94,7 @@ df = pd.DataFrame()
 #    print(random_lorem_string(10))
 #quit() # quit at this point
 
-print("Generating 99 oclumns:")
+print("Generating 99 columns:")
 
 for col in range(1, 100):
     print(("%s.." % col), end = '')
@@ -131,15 +131,15 @@ for col in range(1, 100):
         elif col == 13:
             val = random_datetime_string("%#d/%#m/%Y", -1)
         elif col == 14:
-            val = "1/1/" + str(curryear - 94 + row)
+            val = "1/1/" + str(curryear - 94 + (row % 100))
         elif col == 15:
             val = random_datetime_string("%d.%m.%y", -80) # two digit year
         elif col == 16:
             val = random_datetime_string("%m/%d/%y", -80) # two digit year
         elif col == 17:
-            val = "1/1/" + str(curryear - 94 + row)[-2:]
+            val = "1/1/" + str(curryear - 94 + (row % 100))[-2:]
         elif col == 18:
-            val = str(curryear - 94 + row)[-2:] + "/1/1"
+            val = str(curryear - 94 + (row % 100))[-2:] + "/1/1"
         elif col == 19:
             val = random_datetime_string("%Y%m%d", -80)
         elif col == 20:
@@ -175,14 +175,14 @@ for col in range(1, 100):
         elif col == 34:
             val = random_datetime_string("%d.%m.%y %#H:%M", -50)
         elif col == 35:
-            val = ("1/1/%s 1:00" % str(curryear - 94 + row)[-2:])
+            val = ("1/1/%s 1:00" % str(curryear - 94 + (row % 100))[-2:])
         elif col == 36:
-            val = ("01/01/%s 12:00PM" % str(curryear - 94 + row)[-2:])
+            val = ("01/01/%s 12:00PM" % str(curryear - 94 + (row % 100))[-2:])
 
         elif col == 37:
-            val = "1/1/" + str(curryear - 94 + row)[-2:] + random_datetime_string(" %H:%M:%S.000")
+            val = "1/1/" + str(curryear - 94 + (row % 100))[-2:] + random_datetime_string(" %H:%M:%S.000")
         elif col == 38:
-            val = str(curryear - 94 + row)[-2:] + "/1/1" + random_datetime_string(" %#H:%M:%S")
+            val = str(curryear - 94 + (row % 100))[-2:] + "/1/1" + random_datetime_string(" %#H:%M:%S")
         elif col == 39:
             val = random_datetime_string("%Y%m%d%H%M%S", -10)
         elif col == 40:
@@ -201,7 +201,7 @@ for col in range(1, 100):
             val = ("%d,%s" % ( random.randint(1, 9999), random_digits_string(1)))
         elif col == 45:
             r_int = random.randint(-12, 12)
-            val = ("%d.%d%s" % ( abs(r_int), (curryear - 94 + row), ("-" if r_int<0 else "") ))
+            val = ("%d.%d%s" % ( abs(r_int), (curryear - 94 + (row % 100)), ("-" if r_int<0 else "") ))
         elif col == 46:
             val = ("%d,%s" % ( random.randint(7, 8), random_digits_string(8)))
         elif col == 47:

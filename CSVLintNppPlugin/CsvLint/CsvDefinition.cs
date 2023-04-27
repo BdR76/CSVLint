@@ -382,7 +382,7 @@ namespace CSVLint
                 var nextline = line.Trim();
                 if ( (nextline != "") && (nextline.IndexOf('=') > 0) )
                 {
-                    string[] parts = nextline.Split('=');
+                    string[] parts = nextline.Split(new[]{'='}, 2); // value can contain '=' as well, for example "Format=Separator(=)"
                     if (result.ContainsKey(parts[0]))
                     {
                         dup.Add(parts[0]);

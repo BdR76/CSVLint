@@ -14,9 +14,7 @@ namespace CSVLintNppPlugin.Forms
         {
             InitializeComponent();
 
-            string ver = Main.GetVersion();
-            string suffix = string.Format("{0} ({1}bit)", ver, (IntPtr.Size * 8));
-            lblTitle.Text += suffix;
+            lblTitle.Text += Main.GetVersion();
 
             // tooltip initialization
             helperTip.SetToolTip(btnDonate, "Support this plug-in by buying me a coffee!");
@@ -140,8 +138,9 @@ namespace CSVLintNppPlugin.Forms
             string urlcopy = url;
             if ((string)lbl.Tag == "1")
             {
+                //string suffix = string.Format("{0} ({1}bit)", ver, (IntPtr.Size * 8));
                 urlcopy = "Bas de Reuver <bdr1976@gmail.com>";
-                url = string.Format("mailto:{0}?subject={1}", urlcopy, lblTitle.Text);
+                url = string.Format("mailto:{0}?subject={1} ({2}bit)", urlcopy, lblTitle.Text, (IntPtr.Size * 8));
                 url = url.Replace(" ", "%20");
             }
 
