@@ -12,7 +12,6 @@ using System.Text;
 using CSVLint.Tools;
 using CsvQuery.PluginInfrastructure;
 using Kbg.NppPluginNET.PluginInfrastructure;
-using System.Diagnostics;
 
 namespace CSVLint
 {

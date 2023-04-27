@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Kbg.NppPluginNET;
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace Kbg.NppPluginNET
+namespace CSVLintNppPlugin.Forms
 {
-    public partial class AboutForm : Form
+    public partial class AboutForm : CSVLintNppPlugin.Forms.CsvEditFormBase
     {
         private readonly ToolTip helperTip = new ToolTip();
         private int ForceEasterEgg = 0;

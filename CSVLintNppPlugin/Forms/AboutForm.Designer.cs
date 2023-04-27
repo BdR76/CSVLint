@@ -1,4 +1,5 @@
-﻿namespace Kbg.NppPluginNET
+﻿
+namespace CSVLintNppPlugin.Forms
 {
     partial class AboutForm
     {
@@ -28,40 +29,43 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.btnOk = new System.Windows.Forms.Button();
-            this.lblTitle = new System.Windows.Forms.Label();
             this.lnkInfo = new System.Windows.Forms.LinkLabel();
             this.lnkGithub = new System.Windows.Forms.LinkLabel();
             this.picEasterEgg = new System.Windows.Forms.PictureBox();
             this.lblDisclaimer = new System.Windows.Forms.Label();
-            this.lblLine = new System.Windows.Forms.Label();
             this.btnDonate = new System.Windows.Forms.Button();
+            ((System.ComponentModel.ISupportInitialize)(this.picHelpIcon)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picEasterEgg)).BeginInit();
             this.SuspendLayout();
             // 
             // btnOk
             // 
-            this.btnOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnOk.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.btnOk.Location = new System.Drawing.Point(60, 189);
-            this.btnOk.Name = "btnOk";
             this.btnOk.Size = new System.Drawing.Size(119, 25);
-            this.btnOk.TabIndex = 0;
-            this.btnOk.Text = "Ok";
-            this.btnOk.UseVisualStyleBackColor = true;
+            // 
+            // picHelpIcon
+            // 
+            this.picHelpIcon.Location = new System.Drawing.Point(216, 8);
             // 
             // lblTitle
             // 
             this.lblTitle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblTitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblTitle.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.lblTitle.AutoSize = false;
+            this.lblTitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
             this.lblTitle.Location = new System.Drawing.Point(8, 10);
-            this.lblTitle.Name = "lblTitle";
             this.lblTitle.Size = new System.Drawing.Size(228, 20);
-            this.lblTitle.TabIndex = 1;
-            this.lblTitle.Text = "CSV Lint plug-in v";
+            this.lblTitle.Text = "CSV Lint v";
             this.lblTitle.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
+            // lblHorizontalLine
+            // 
+            this.lblHorizontalLine.Size = new System.Drawing.Size(236, 2);
+            // 
+            // btnCancel
+            // 
+            this.btnCancel.Location = new System.Drawing.Point(132, 179);
+            this.btnCancel.Visible = false;
             // 
             // lnkInfo
             // 
@@ -86,7 +90,7 @@
             this.lnkGithub.Location = new System.Drawing.Point(8, 130);
             this.lnkGithub.Name = "lnkGithub";
             this.lnkGithub.Size = new System.Drawing.Size(228, 13);
-            this.lnkGithub.TabIndex = 4;
+            this.lnkGithub.TabIndex = 3;
             this.lnkGithub.TabStop = true;
             this.lnkGithub.Tag = "2";
             this.lnkGithub.Text = "https://github.com/BdR76/CSVLint/";
@@ -115,17 +119,6 @@
     "d, always back-up your data files to prevent data loss.";
             this.lblDisclaimer.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
-            // lblLine
-            // 
-            this.lblLine.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblLine.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.lblLine.Location = new System.Drawing.Point(4, 34);
-            this.lblLine.Name = "lblLine";
-            this.lblLine.Size = new System.Drawing.Size(236, 2);
-            this.lblLine.TabIndex = 1;
-            this.lblLine.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            // 
             // btnDonate
             // 
             this.btnDonate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -140,23 +133,25 @@
             // AboutForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.CancelButton = this.btnOk;
             this.ClientSize = new System.Drawing.Size(244, 221);
             this.Controls.Add(this.btnDonate);
             this.Controls.Add(this.picEasterEgg);
             this.Controls.Add(this.lnkGithub);
-            this.Controls.Add(this.btnOk);
             this.Controls.Add(this.lblDisclaimer);
             this.Controls.Add(this.lnkInfo);
-            this.Controls.Add(this.lblLine);
-            this.Controls.Add(this.lblTitle);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
-            this.MaximizeBox = false;
             this.Name = "AboutForm";
-            this.ShowInTaskbar = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "About";
+            this.Controls.SetChildIndex(this.btnOk, 0);
+            this.Controls.SetChildIndex(this.btnCancel, 0);
+            this.Controls.SetChildIndex(this.lblHorizontalLine, 0);
+            this.Controls.SetChildIndex(this.lblTitle, 0);
+            this.Controls.SetChildIndex(this.lnkInfo, 0);
+            this.Controls.SetChildIndex(this.lblDisclaimer, 0);
+            this.Controls.SetChildIndex(this.lnkGithub, 0);
+            this.Controls.SetChildIndex(this.picEasterEgg, 0);
+            this.Controls.SetChildIndex(this.btnDonate, 0);
+            this.Controls.SetChildIndex(this.picHelpIcon, 0);
+            ((System.ComponentModel.ISupportInitialize)(this.picHelpIcon)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picEasterEgg)).EndInit();
             this.ResumeLayout(false);
 
@@ -164,13 +159,10 @@
 
         #endregion
 
-        private System.Windows.Forms.Button btnOk;
-        private System.Windows.Forms.Label lblTitle;
         private System.Windows.Forms.LinkLabel lnkInfo;
         private System.Windows.Forms.LinkLabel lnkGithub;
         private System.Windows.Forms.PictureBox picEasterEgg;
         private System.Windows.Forms.Label lblDisclaimer;
-        private System.Windows.Forms.Label lblLine;
         private System.Windows.Forms.Button btnDonate;
     }
 }

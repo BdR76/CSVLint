@@ -119,6 +119,7 @@
     <Compile Include="Forms\UniqueValuesForm.Designer.cs">
       <DependentUpon>UniqueValuesForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="PluginInfrastructure\DarkMode.cs" />
     <Compile Include="PluginInfrastructure\Lexer.cs" />
     <Compile Include="Tools\Settings.cs" />
     <Compile Include="Tools\Helper.cs" />

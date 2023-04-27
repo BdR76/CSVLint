@@ -124,6 +124,13 @@ namespace Kbg.NppPluginNET
                 Main.RemoveCSVdef(notification.Header.IdFrom);
             }
 
+            // dark mode (de-)activated
+            if (code == (uint)NppMsg.NPPN_DARKMODECHANGED)
+            {
+                INotepadPPGateway notepad = new NotepadPPGateway();
+                Main.ToggleDarkMode(notepad.IsDarkModeEnabled());
+            }
+
             if (code > int.MaxValue) // windows messages
             {
                 int wm = -(int)code;
@@ -516,6 +523,14 @@ namespace Kbg.NppPluginNET
             FileCsvDef.Remove(file_removed);
         }
 
+        static internal void ToggleDarkMode(bool isDark)
+        {
+            if (frmCsvLintDlg != null)
+            {
+                frmCsvLintDlg.ToggleDarkLightTheme(isDark);
+            }
+        }
+
         internal static void PluginCleanUp()
         {
             // any clean up code here
@@ -671,18 +686,23 @@ namespace Kbg.NppPluginNET
                 }
 
                 // dockable window struct data
-                NppTbData _nppTbData = new NppTbData();
-                _nppTbData.hClient = frmCsvLintDlg.Handle;
-                _nppTbData.pszName = "CSV Lint";
-                _nppTbData.dlgID = idMyDlg;
-                _nppTbData.uMask = NppTbMsg.DWS_DF_CONT_BOTTOM | NppTbMsg.DWS_ICONTAB | NppTbMsg.DWS_ICONBAR;
-                _nppTbData.hIconTab = (uint)tbIcon.Handle;
-                _nppTbData.pszModuleName = PluginName;
-                IntPtr _ptrNppTbData = Marshal.AllocHGlobal(Marshal.SizeOf(_nppTbData));
-                Marshal.StructureToPtr(_nppTbData, _ptrNppTbData, false);
+                var queryWindowData = new NppTbData
+                {
+                    hClient = frmCsvLintDlg.Handle,
+                    pszName = "CSV Lint",
+                    dlgID = idMyDlg,
+                    uMask = NppTbMsg.DWS_DF_CONT_BOTTOM | NppTbMsg.DWS_ICONTAB | NppTbMsg.DWS_ICONBAR,
+                    hIconTab = (uint)tbIcon.Handle,
+                    pszModuleName = PluginName
+                };
+                var queryWindowPointer = Marshal.AllocHGlobal(Marshal.SizeOf(queryWindowData));
+                Marshal.StructureToPtr(queryWindowData, queryWindowPointer, false);
 
-                // register as dockable window
-                Win32.SendMessage(PluginBase.nppData._nppHandle, (uint) NppMsg.NPPM_DMMREGASDCKDLG, 0, _ptrNppTbData);
+                Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_DMMREGASDCKDLG, 0, queryWindowPointer);
+
+                // set darkmode at first activated
+                INotepadPPGateway notepad = new NotepadPPGateway();
+                frmCsvLintDlg.ToggleDarkLightTheme(notepad.IsDarkModeEnabled());
             }
             else
             {

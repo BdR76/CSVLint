@@ -29,6 +29,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         DWS_ICONTAB = 0x00000001,            // Icon for tabs are available
         DWS_ICONBAR = 0x00000002,            // Icon for icon bar are available (currently not supported)
         DWS_ADDINFO = 0x00000004,            // Additional information are in use
+        DWS_USEOWNDARKMODE = 0x00000008,     // Use plugin's own dark mode
         DWS_PARAMSALL = (DWS_ICONTAB | DWS_ICONBAR | DWS_ADDINFO),
 
         // default docking values for first call of plugin
