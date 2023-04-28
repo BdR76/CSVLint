@@ -50,8 +50,8 @@ want to install the plug-in manually:
 
 * Go to the [releases page](https://github.com/BdR76/CSVLint/releases)
 * Find the latest release
-* 32bit version; unzip [CSVLint.dll (32bit)](../../releases/download/0.4.6.2/CSVLint_x86.zip/) to folder `.\Program Files (x86)\Notepad++\plugins\CSVLint\CSVLint.dll`.
-* 64bit version; unzip [CSVLint.dll (64bit)](../../releases/download/0.4.6.2/CSVLint_x64.zip/) to folder `.\Program Files\Notepad++\plugins\CSVLint\CSVLint.dll`.
+* 32bit version; unzip [CSVLint.dll (32bit)](../../releases/download/0.4.6.3/CSVLint_x86.zip/) to folder `.\Program Files (x86)\Notepad++\plugins\CSVLint\CSVLint.dll`.
+* 64bit version; unzip [CSVLint.dll (64bit)](../../releases/download/0.4.6.3/CSVLint_x64.zip/) to folder `.\Program Files\Notepad++\plugins\CSVLint\CSVLint.dll`.
 * restart Notepad++
 
 How to use it
@@ -111,10 +111,10 @@ etc.
 
 Validating 
 ----------
-When you press "Validate data", the input data will be checked for technical
-errors, based on the metadata in the textbox on the left. The line numbers of
-any errors will be logged in the textbox on the right. It will check the input
-data for the following errors:
+The plug-in can be used as a CSV validator, press "Validate data" to check the
+input data for technical errors, based on the metadata in the textbox on the
+left. The line numbers of any errors will be logged in the textbox on the
+right. It will check the input data for the following errors:
 
 * Values that are too long, example value "abcde" when column is "Width 4"
 * Non-numeric values in numeric columns, example value "n/a" when column datatype is Integer
