@@ -72,10 +72,12 @@ namespace CSVLintNppPlugin.Forms
             }
 
             // 3) remove 0 as start position, because it is always implicitly expected
-            if (ints[0] == 0) ints.RemoveAt(0);
-            for (int i = 0; i < ints.Count; i++)
-            {
-                ret = ret + (i > 0 ? "," : "") + ints[i].ToString();
+            if (ints.Count > 0) {
+                if (ints[0] == 0) ints.RemoveAt(0);
+                for (int i = 0; i < ints.Count; i++)
+                {
+                    ret = ret + (i > 0 ? "," : "") + ints[i].ToString();
+                }
             }
 
             return ret;
