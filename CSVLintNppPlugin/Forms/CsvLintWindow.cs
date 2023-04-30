@@ -51,19 +51,20 @@ namespace Kbg.NppPluginNET
 
         private void OnBtnDetectColumns_Click(object sender, EventArgs e)
         {
-            bool usercancel = false;
+            bool okstart = true;
             char sep = '\0';
             string widths = "";
             bool header = false;
             int skip = 0;
+            char comm = Main.Settings.CommentCharacter;
 
             // manual override auto-detect
             if (!chkAutoDetect.Checked) {
-                bool ok = GetDetectColumnsParameters(out sep, out widths, out header, out skip);
-                usercancel = !ok;
+                okstart = GetDetectColumnsParameters(out sep, out widths, out header, out skip, out comm);
             }
 
-            if (!usercancel)
+            // start auto-detect or manual-detect
+            if (okstart)
             {
                 // clear any previous output
                 if (sender != btnSplit) {
@@ -74,7 +75,7 @@ namespace Kbg.NppPluginNET
                 var dtStart = DateTime.Now;
 
                 // analyze and determine csv definition
-                CsvDefinition csvdef = CsvAnalyze.InferFromData(chkAutoDetect.Checked, sep, widths, header, skip);
+                CsvDefinition csvdef = CsvAnalyze.InferFromData(chkAutoDetect.Checked, sep, widths, header, skip, comm);
 
                 Main.UpdateCSVChanges(csvdef, false);
 
@@ -177,11 +178,10 @@ namespace Kbg.NppPluginNET
             }
         }
 
-        private bool GetDetectColumnsParameters(out char sep, out string widths, out bool header, out int skip)
+        private bool GetDetectColumnsParameters(out char sep, out string widths, out bool header, out int skip, out char comm)
         {
             // show manually detect columns parameters form
             var frmdetect = new DetectColumnsForm();
-            frmdetect.InitialiseSetting();
             DialogResult r = frmdetect.ShowDialog();
 
             // user clicked OK or Cancel
@@ -189,6 +189,7 @@ namespace Kbg.NppPluginNET
             widths = frmdetect.ManWidths;
             header = frmdetect.HeaderNames;
             skip = frmdetect.SkipLines;
+            comm = frmdetect.CommentChar;
 
             // clear up
             frmdetect.Dispose();
@@ -201,7 +202,6 @@ namespace Kbg.NppPluginNET
         {
             // show reformat form
             var frmedit = new ReformatForm();
-            frmedit.InitialiseSetting();
             DialogResult r = frmedit.ShowDialog();
 
             // user clicked OK or Cancel

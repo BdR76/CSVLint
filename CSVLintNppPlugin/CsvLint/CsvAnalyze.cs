@@ -43,7 +43,7 @@ namespace CSVLint
         /// <param name="mansep">Override automatic detection, manually provided column separator</param>
         /// <param name="manhead">Override automatic detection, manually set first header row contains columns names</param>
         /// <returns></returns>
-        public static CsvDefinition InferFromData(bool autodetect, char mansep, string manwid, bool manhead, int manskip)
+        public static CsvDefinition InferFromData(bool autodetect, char mansep, string manwid, bool manhead, int manskip, char commchar)
         {
             // First do a letter frequency analysis on each row
             var strfreq = ScintillaStreams.StreamAllText();
@@ -52,6 +52,7 @@ namespace CSVLint
 
             // manual skip lines parameter
             int skipdetect = 0;
+            char commentdetect = '\0';
 
             // -----------------------------------------------------------------------------
             // determine separator character or fixed length
@@ -74,19 +75,21 @@ namespace CSVLint
                 // count all lines, empty or not
                 lineCount++;
 
+                var firstchar = (!string.IsNullOrEmpty(line) ? line[0] : '\0');
+
+                // check for comment character
+                if (firstchar == commchar)
+                {
+                    line = "";
+                    if (commentdetect == '\0') commentdetect = firstchar;
+                }
+
                 // automatically detect comment lines
                 if (autodetect)
                 {
-                    var firstchar = (!string.IsNullOrEmpty(line) ? line[0] : '\0');
-                    // Comment lines must be consecutive lines at start of file, not some empty line in the middle of the data.
+                    // Skip lines must be consecutive lines at start of file, not some empty line in the middle of the data.
                     // check for empty lines or lines that start with the skip character
-                    if ((skipdetect == lineCount - 1)                                              // consecutive lines
-                        && ((line.Trim() == "") || (firstchar == Main.Settings.CommentCharacter)) // empty or skip char
-                        )
-                    {
-                        line = "";
-                        skipdetect++;
-                    }
+                    if ((skipdetect == lineCount - 1) && (line.Trim() == "")) skipdetect++;
                 }
                 else
                 {
@@ -235,15 +238,19 @@ namespace CSVLint
             // head column name
             result.ColNameHeader = result.Separator != '\0';
 
-            // Override auto-detection, user sets column header names manually
-            if (!autodetect)
+            // Auto-detect from data or manual override, user sets column header names manually
+            if (autodetect)
             {
-                result.ColNameHeader = manhead;
-                result.SkipLines = manskip;
+                // auto-detect
+                result.SkipLines = skipdetect;
+                result.CommentChar = commentdetect; // only if detected in data
             }
             else
             {
-                result.SkipLines = skipdetect;
+                // manual override
+                result.ColNameHeader = manhead;
+                result.SkipLines = manskip;
+                result.CommentChar = commchar; // manual, no matter if it was detected or not
             }
 
             // Exception, probably not tabular data file
@@ -346,28 +353,33 @@ namespace CSVLint
             lineContent = 0;
 
             // skip any comment lines
-            result.SkipCommentLines(strdata);
+            result.SkipCommentLinesAtStart(strdata);
 
             while (!strdata.EndOfStream)
             {
                 // keep track of how many lines
                 lineContent++;
 
-                List<string> values = result.ParseNextLine(strdata);
+                List<string> values = result.ParseNextLine(strdata, out bool iscomm);
 
-                // inspect all values
-                for (int i = 0; i < values.Count; i++)
+                // skip comment lines
+                if (!iscomm)
                 {
-                    // add columnstats if needed, assume first row contains the correct number of columns, i.e. do not add columns due to errors in data
-                    if (lineContent == 1 && (i > colstats.Count - 1))
+                    // inspect all values
+                    for (int i = 0; i < values.Count; i++)
                     {
-                        colstats.Add(new CsvAnalyzeColumn(i));
-                    }
+                        // add columnstats if needed, assume first row contains the correct number of columns, i.e. do not add columns due to errors in data
+                        if (lineContent == 1 && (i > colstats.Count - 1))
+                        {
+                            colstats.Add(new CsvAnalyzeColumn(i));
+                        }
 
-                    // value index within column indexes, i.e. don't evaluate "extra columns data" due to errors in data, for example unclosed " quotes, superfluous separator characters etc.
-                    if (i <= colstats.Count - 1) {
-                        // next value to evaluate
-                        colstats[i].InputData(values[i], false);
+                        // value index within column indexes, i.e. don't evaluate "extra columns data" due to errors in data, for example unclosed " quotes, superfluous separator characters etc.
+                        if (i <= colstats.Count - 1)
+                        {
+                            // next value to evaluate
+                            colstats[i].InputData(values[i], false);
+                        }
                     }
                 }
             }
@@ -507,7 +519,7 @@ namespace CSVLint
             var strdata = ScintillaStreams.StreamAllText();
 
             // skip any comment lines
-            csvdef.SkipCommentLines(strdata);
+            int commentCount = csvdef.SkipCommentLinesAtStart(strdata);
 
             List<string> values;
 
@@ -516,19 +528,25 @@ namespace CSVLint
                 // keep track of how many lines
                 lineCount++;
 
-                values = csvdef.ParseNextLine(strdata);
+                values = csvdef.ParseNextLine(strdata, out bool iscomm);
 
-                // inspect all values
-                for (int i = 0; i < values.Count; i++)
+                // skip comment lines
+                if (!iscomm)
+                    commentCount++;
+                else
                 {
-                    // add columnstats if needed
-                    if (i > colstats.Count - 1)
+                    // inspect all values
+                    for (int i = 0; i < values.Count; i++)
                     {
-                        colstats.Add(new CsvAnalyzeColumn(i));
-                    }
+                        // add columnstats if needed
+                        if (i > colstats.Count - 1)
+                        {
+                            colstats.Add(new CsvAnalyzeColumn(i));
+                        }
 
-                    // next value to evaluate
-                    colstats[i].InputData(values[i], true);
+                        // next value to evaluate
+                        colstats[i].InputData(values[i], true);
+                    }
                 }
             }
 
@@ -551,6 +569,7 @@ namespace CSVLint
             sb.Append(string.Format("Date: {0}\r\n", DateTime.Now.ToString("dd-MMM-yyyy HH:mm")));
             sb.Append(string.Format("CSV Lint: v{0}\r\n\r\n", Main.GetVersion()));
             sb.Append(string.Format("Data records: {0}{1}\r\n", lineCount, strhead));
+            if (commentCount > 0) sb.Append(string.Format("Comment lines total: {0}\r\n", commentCount));
             sb.Append(string.Format("Max.unique values: {0}\r\n", Main.Settings.UniqueValuesMax));
             sb.Append("\r\n");
 
@@ -644,42 +663,48 @@ namespace CSVLint
             var strdata = ScintillaStreams.StreamAllText();
             List<string> values;
 
+            bool iscomm = false;
             // skip any comment lines
-            csvdef.SkipCommentLines(strdata);
+            csvdef.SkipCommentLinesAtStart(strdata);
 
             // if first line is header column names, then consume line and ignore
-            if (csvdef.ColNameHeader) csvdef.ParseNextLine(strdata);
+            if (csvdef.ColNameHeader) csvdef.ParseNextLine(strdata, out iscomm);
 
             // read all data lines
             while (!strdata.EndOfStream)
             {
                 // get next line of values
-                values = csvdef.ParseNextLine(strdata);
-                string uniq = "";
+                values = csvdef.ParseNextLine(strdata, out iscomm);
 
-                // get unique value(s) from column indexes
-                for (int i = 0; i < colidx.Count; i++)
+                // skip comment lines
+                if (!iscomm)
                 {
-                    // get index of selected column 
-                    int col = colidx[i];
+                    string uniq = "";
 
-                    // if value contains separator character then put value in quotes
-                    var val = col < values.Count ? values[col] : "";
-                    if (val.IndexOf(csvdef.Separator) >= 0)
+                    // get unique value(s) from column indexes
+                    for (int i = 0; i < colidx.Count; i++)
                     {
-                        val = val.Replace("\"", "\"\"");
-                        val = string.Format("\"{0}\"", val);
+                        // get index of selected column 
+                        int col = colidx[i];
+
+                        // if value contains separator character then put value in quotes
+                        var val = col < values.Count ? values[col] : "";
+                        if (val.IndexOf(csvdef.Separator) >= 0)
+                        {
+                            val = val.Replace("\"", "\"\"");
+                            val = string.Format("\"{0}\"", val);
+                        }
+
+                        // concatenate selected column values as csv string, use same separator as source file
+                        uniq += (i > 0 ? csvdef.Separator.ToString() : "") + val;
                     }
 
-                    // concatenate selected column values as csv string, use same separator as source file
-                    uniq += (i > 0 ? csvdef.Separator.ToString() : "") + val;
+                    // count unique value(s)
+                    if (!uniquecount.ContainsKey(uniq))
+                        uniquecount.Add(uniq, 1);
+                    else
+                        uniquecount[uniq]++;
                 }
-
-                // count unique value(s)
-                if (!uniquecount.ContainsKey(uniq))
-                    uniquecount.Add(uniq, 1);
-                else
-                    uniquecount[uniq]++;
             }
             strdata.Dispose();
 

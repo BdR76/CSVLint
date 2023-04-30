@@ -53,24 +53,24 @@
             this.btnOk.TabIndex = 12;
             this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
             // 
-            // btnCancel
+            // picHelpIcon
             // 
-            this.btnCancel.Location = new System.Drawing.Point(236, 338);
-            this.btnCancel.TabIndex = 13;
+            this.picHelpIcon.Location = new System.Drawing.Point(316, 8);
+            this.picHelpIcon.Tag = "reformat";
             // 
             // lblTitle
             // 
             this.lblTitle.Size = new System.Drawing.Size(112, 20);
             this.lblTitle.Text = "Reformat data";
             // 
-            // picHelpIcon
-            // 
-            this.picHelpIcon.Location = new System.Drawing.Point(316, 8);
-            this.picHelpIcon.Tag = "reformat";
-            // 
             // lblHorizontalLine
             // 
             this.lblHorizontalLine.Size = new System.Drawing.Size(340, 2);
+            // 
+            // btnCancel
+            // 
+            this.btnCancel.Location = new System.Drawing.Point(236, 338);
+            this.btnCancel.TabIndex = 13;
             // 
             // chkSeparator
             // 
@@ -111,28 +111,6 @@
             this.chkDateTime.UseVisualStyleBackColor = true;
             this.chkDateTime.CheckedChanged += new System.EventHandler(this.OnChkbx_CheckedChanged);
             // 
-            // cmbDateTime
-            // 
-            this.cmbDateTime.FormattingEnabled = true;
-            this.cmbDateTime.Items.AddRange(new object[] {
-            "yyyy-MM-dd",
-            "dd-MM-yyyy",
-            "MM/dd/yyyy",
-            "yyyy-MM-dd HH:mm:ss",
-            "dd-MM-yyyy HH:mm:ss",
-            "MM/dd/yyyy HH:mm:ss",
-            "yyyy-M-d",
-            "d-M-yyyy",
-            "M/d/yyyy",
-            "yyyy-M-d H:mm:ss.fff",
-            "d-M-yyyy H:mm:ss.fff",
-            "M/d/yyyy H:mm:ss.fff"});
-            this.cmbDateTime.Location = new System.Drawing.Point(156, 80);
-            this.cmbDateTime.Name = "cmbDateTime";
-            this.cmbDateTime.Size = new System.Drawing.Size(180, 21);
-            this.cmbDateTime.TabIndex = 3;
-            this.cmbDateTime.Tag = "2";
-            // 
             // chkDecimal
             // 
             this.chkDecimal.AutoSize = true;
@@ -157,6 +135,40 @@
             this.cmbDecimal.TabIndex = 5;
             this.cmbDecimal.Tag = "3";
             // 
+            // cmbDateTime
+            // 
+            this.cmbDateTime.FormattingEnabled = true;
+            this.cmbDateTime.Items.AddRange(new object[] {
+            "yyyy-MM-dd",
+            "dd-MM-yyyy",
+            "MM/dd/yyyy",
+            "yyyy-MM-dd HH:mm:ss",
+            "dd-MM-yyyy HH:mm:ss",
+            "MM/dd/yyyy HH:mm:ss",
+            "yyyy-M-d",
+            "d-M-yyyy",
+            "M/d/yyyy",
+            "yyyy-M-d H:mm:ss.fff",
+            "d-M-yyyy H:mm:ss.fff",
+            "M/d/yyyy H:mm:ss.fff"});
+            this.cmbDateTime.Location = new System.Drawing.Point(156, 80);
+            this.cmbDateTime.Name = "cmbDateTime";
+            this.cmbDateTime.Size = new System.Drawing.Size(180, 21);
+            this.cmbDateTime.TabIndex = 3;
+            this.cmbDateTime.Tag = "2";
+            // 
+            // chkAlignVert
+            // 
+            this.chkAlignVert.AutoSize = true;
+            this.chkAlignVert.Location = new System.Drawing.Point(12, 176);
+            this.chkAlignVert.Name = "chkAlignVert";
+            this.chkAlignVert.Size = new System.Drawing.Size(93, 17);
+            this.chkAlignVert.TabIndex = 8;
+            this.chkAlignVert.Tag = "7";
+            this.chkAlignVert.Text = "Align vertically";
+            this.chkAlignVert.UseVisualStyleBackColor = true;
+            this.chkAlignVert.CheckedChanged += new System.EventHandler(this.OnChkbx_CheckedChanged);
+            // 
             // chkReplaceCrLf
             // 
             this.chkReplaceCrLf.AutoSize = true;
@@ -177,18 +189,6 @@
             this.txtReplaceCrLf.TabIndex = 7;
             this.txtReplaceCrLf.Tag = "5";
             // 
-            // chkAlignVert
-            // 
-            this.chkAlignVert.AutoSize = true;
-            this.chkAlignVert.Location = new System.Drawing.Point(12, 176);
-            this.chkAlignVert.Name = "chkAlignVert";
-            this.chkAlignVert.Size = new System.Drawing.Size(93, 17);
-            this.chkAlignVert.TabIndex = 8;
-            this.chkAlignVert.Tag = "7";
-            this.chkAlignVert.Text = "Align vertically";
-            this.chkAlignVert.UseVisualStyleBackColor = true;
-            this.chkAlignVert.CheckedChanged += new System.EventHandler(this.OnChkbx_CheckedChanged);
-            // 
             // grpGeneral
             // 
             this.grpGeneral.Controls.Add(this.lblQuotes);
@@ -201,6 +201,15 @@
             this.grpGeneral.TabIndex = 9;
             this.grpGeneral.TabStop = false;
             this.grpGeneral.Text = "General settings*";
+            // 
+            // lblQuotes
+            // 
+            this.lblQuotes.AutoSize = true;
+            this.lblQuotes.Location = new System.Drawing.Point(16, 64);
+            this.lblQuotes.Name = "lblQuotes";
+            this.lblQuotes.Size = new System.Drawing.Size(84, 13);
+            this.lblQuotes.TabIndex = 17;
+            this.lblQuotes.Text = "Re-apply quotes";
             // 
             // lblTrimValues
             // 
@@ -221,15 +230,6 @@
             this.chkTrimValues.Tag = "6";
             this.chkTrimValues.Text = "Trim values (recommended)";
             this.chkTrimValues.UseVisualStyleBackColor = true;
-            // 
-            // lblQuotes
-            // 
-            this.lblQuotes.AutoSize = true;
-            this.lblQuotes.Location = new System.Drawing.Point(16, 64);
-            this.lblQuotes.Name = "lblQuotes";
-            this.lblQuotes.Size = new System.Drawing.Size(84, 13);
-            this.lblQuotes.TabIndex = 17;
-            this.lblQuotes.Text = "Re-apply quotes";
             // 
             // cmbQuotes
             // 
@@ -281,6 +281,7 @@
             this.Name = "ReformatForm";
             this.Text = "Reformat data";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ReformatForm_FormClosing);
+            this.Load += new System.EventHandler(this.ReformatForm_Load);
             this.Controls.SetChildIndex(this.lblHorizontalLine, 0);
             this.Controls.SetChildIndex(this.lblTitle, 0);
             this.Controls.SetChildIndex(this.picHelpIcon, 0);

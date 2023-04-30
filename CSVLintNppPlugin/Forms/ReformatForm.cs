@@ -51,6 +51,11 @@ namespace CSVLintNppPlugin.Forms
             helperTip.SetToolTip(chkTrimValues, "It is generally recommended to enable TrimValues, especially when\nreformatting datetime/decimal values or working with fixed width data.");
         }
 
+        private void ReformatForm_Load(object sender, EventArgs e)
+        {
+            InitialiseSetting();
+        }
+
         private void OnChkbx_CheckedChanged(object sender, EventArgs e)
         {
             // which checkbox, see index in Tag property

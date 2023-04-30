@@ -146,96 +146,74 @@ namespace CSVLint
             }
 
             // copy any comment lines
-            csvdef.CopyCommentLines(strdata, datanew, "");
+            csvdef.CopyCommentLinesAtStart(strdata, datanew, "");
 
             // read all lines
             while (!strdata.EndOfStream)
             {
                 // get values from line
-                List<String> values = csvdef.ParseNextLine(strdata);
+                List<String> values = csvdef.ParseNextLine(strdata, out bool iscomm);
 
-                linenr++;
-
-                // skip header line in source data, no header line in Fixed Width output data
-                if ((linenr == 1) && skipheader) continue;
-
-                // reformat data line to new line
-                for (int c = 0; c < values.Count; c++)
+                if (iscomm)
                 {
-                    // next value
-                    string val = values[c];
+                    csvdef.CopyCommentLine(values, datanew, "", "");
+                }
+                else
+                {
+                    // next data line
+                    linenr++;
 
-                    // fixed width align
-                    int wid = val.Length;
-                    bool alignleft = true;
+                    // skip header line in source data, no header line in Fixed Width output data
+                    if ((linenr == 1) && skipheader) continue;
 
-                    // check if data contains more columns than expected in csvdef
-                    if (c < csvdef.Fields.Count)
+                    // reformat data line to new line
+                    for (int c = 0; c < values.Count; c++)
                     {
-                        // datetime reformat
-                        if ((csvdef.Fields[c].DataType == ColumnType.DateTime) && (reformatDatTime != ""))
+                        // next value
+                        string val = values[c];
+
+                        // fixed width align
+                        int wid = val.Length;
+                        bool alignleft = true;
+
+                        // check if data contains more columns than expected in csvdef
+                        if (c < csvdef.Fields.Count)
                         {
-                            // convert
-                            try
+                            // datetime reformat
+                            if ((csvdef.Fields[c].DataType == ColumnType.DateTime) && (reformatDatTime != ""))
                             {
-                                val = DateTime.ParseExact(val, csvdef.Fields[c].Mask, Main.dummyCulture).ToString(reformatDatTime, Main.dummyCulture);
-                            }
-                            catch
+                                // convert
+                                try
+                                {
+                                    val = DateTime.ParseExact(val, csvdef.Fields[c].Mask, Main.dummyCulture).ToString(reformatDatTime, Main.dummyCulture);
+                                }
+                                catch
+                                {
+                                }
+                            };
+
+                            // decimals reformat
+                            if ((csvdef.Fields[c].DataType == ColumnType.Decimal) && (reformatDecimal != ""))
                             {
-                            }
-                        };
-
-                        // decimals reformat
-                        if ((csvdef.Fields[c].DataType == ColumnType.Decimal) && (reformatDecimal != ""))
-                        {
-                            val = val.Replace(csvdef.DecimalSymbol, reformatDecimal[0]);
-                        };
+                                val = val.Replace(csvdef.DecimalSymbol, reformatDecimal[0]);
+                            };
 
 
-                        // remember datatype for quotes
-                        tmpColumnType = csvdef.Fields[c].DataType;
+                            // remember datatype for quotes
+                            tmpColumnType = csvdef.Fields[c].DataType;
 
-                        // align vertically OR fixed width, text align left - numeric align right
-                        wid = align ? alignwidths[c] : csvdef.Fields[c].MaxWidth;
-                        alignleft = !((tmpColumnType == ColumnType.Integer) || (tmpColumnType == ColumnType.Decimal));
+                            // align vertically OR fixed width, text align left - numeric align right
+                            wid = align ? alignwidths[c] : csvdef.Fields[c].MaxWidth;
+                            alignleft = !((tmpColumnType == ColumnType.Integer) || (tmpColumnType == ColumnType.Decimal));
 
-                        // exception for header -> always left align
-                        if ((linenr == 1) && csvdef.ColNameHeader) alignleft = true;
-                    }
-
-                    // construct new output data line
-                    if (newSep == '\0')
-                    {
-                        // fixed width
-                        if (alignleft)
-                            datanew.Append(val.PadRight(wid, ' '));
-                        else
-                            datanew.Append(val.PadLeft(wid, ' '));
-                    }
-                    else
-                    {
-                        // replace any carriage retursn/line feeds
-                        if (ReplaceCrLf != "\r\n")
-                        {
-                            if ((val.IndexOf("\r") >= 0) || (val.IndexOf("\n") >= 0))
-                            {
-                                val = val.Replace("\r\n", ReplaceCrLf); // windows
-                                val = val.Replace("\n", ReplaceCrLf); // linux
-                                val = val.Replace("\r", ReplaceCrLf); // old macos
-                            }
+                            // exception for header -> always left align
+                            if ((linenr == 1) && csvdef.ColNameHeader) alignleft = true;
                         }
 
-                        // if value contains separator character then put value in quotes
-                        val = ApplyQuotesToString(val, newSep, tmpColumnType);
-                        //if (val.IndexOf(newSep) >= 0) val = string.Format("\"{0}\"", val);
-
-                        // separator
-                        if (c > 0) datanew.Append(newSep.ToString());
-
-                        // vertically align
-                        if (align)
+                        // construct new output data line
+                        if (newSep == '\0')
                         {
-                            // align value to left (so pad right) or vice versa
+                            // fixed width
                             if (alignleft)
                                 datanew.Append(val.PadRight(wid, ' '));
                             else
@@ -243,15 +221,45 @@ namespace CSVLint
                         }
                         else
                         {
-                            // character separated
-                            datanew.Append(val);
-                        }
-                    }
-                };
+                            // replace any carriage retursn/line feeds
+                            if (ReplaceCrLf != "\r\n")
+                            {
+                                if ((val.IndexOf("\r") >= 0) || (val.IndexOf("\n") >= 0))
+                                {
+                                    val = val.Replace("\r\n", ReplaceCrLf); // windows
+                                    val = val.Replace("\n", ReplaceCrLf); // linux
+                                    val = val.Replace("\r", ReplaceCrLf); // old macos
+                                }
+                            }
 
-                // add line break
-                datanew.Append("\n");
-            };
+                            // if value contains separator character then put value in quotes
+                            val = ApplyQuotesToString(val, newSep, tmpColumnType);
+                            //if (val.IndexOf(newSep) >= 0) val = string.Format("\"{0}\"", val);
+
+                            // separator
+                            if (c > 0) datanew.Append(newSep.ToString());
+
+                            // vertically align
+                            if (align)
+                            {
+                                // align value to left (so pad right) or vice versa
+                                if (alignleft)
+                                    datanew.Append(val.PadRight(wid, ' '));
+                                else
+                                    datanew.Append(val.PadLeft(wid, ' '));
+                            }
+                            else
+                            {
+                                // character separated
+                                datanew.Append(val);
+                            }
+                        }
+                    };
+
+                    // add line break
+                    datanew.Append("\n");
+                };
+            }
 
             strdata.Dispose();
 
@@ -384,7 +392,7 @@ namespace CSVLint
             int batchstart = -1; // batch starting line
 
             // copy any comment lines
-            csvdef.CopyCommentLines(strdata, sb, "-- ");
+            csvdef.CopyCommentLinesAtStart(strdata, sb, "-- ");
 
             while (!strdata.EndOfStream)
             {
@@ -409,75 +417,83 @@ namespace CSVLint
                 }
 
                 // get next 'record' from csv data
-                List<string> list = csvdef.ParseNextLine(strdata);
+                List<string> list = csvdef.ParseNextLine(strdata, out bool iscomm);
 
-                // skip header line
-                if (lineCount >= 0)
+                // copy any comment lines
+                if (iscomm)
                 {
-                    // add comma, except on last row (of this batch)
-                    if (lineCount % MAX_SQL_ROWS != 0)
-                    {
-                        sb.Append(",");
-                    }
-                    sb.Append("\r\n(");
-
-                    for (var r = 0; r < list.Count; r++)
-                    {
-                        // format next value, quotes for varchar and datetime
-                        var str = list[r];
-
-                        // adjust for quoted values, trim first because can be a space before the first quote, example .., "BMI",..
-                        var strtrim = str.Trim();
-                        if ((strtrim.Length > 0) && (strtrim[0] == Main.Settings.DefaultQuoteChar))
-                        {
-                            str = str.Trim();
-                            str = str.Trim(Main.Settings.DefaultQuoteChar);
-                        }
-
-                        // next value to evaluate
-                        if (Main.Settings.TrimValues) str = str.Trim();
-
-                        if (str == "")
-                        {
-                            str = "NULL";
-                        }
-                        else if (csvdef.Fields[r].DataType == ColumnType.Decimal)
-                        {
-                            str = str.Replace(csvdef.Fields[r].DecimalSymbol == '.' ? "," : ".", ""); // remove thousand separator
-                            str = str.Replace(csvdef.Fields[r].DecimalSymbol, '.');
-                        }
-                        else if ((csvdef.Fields[r].DataType == ColumnType.String)
-                              || (csvdef.Fields[r].DataType == ColumnType.DateTime))
-                        //|| (csvdef.Fields[r].DataType == ColumnType.Guid))
-                        {
-                            // sql datetime format
-                            if (csvdef.Fields[r].DataType == ColumnType.DateTime)
-                            {
-                                try
-                                {
-                                    var dt = DateTime.ParseExact(str, csvdef.Fields[r].Mask, Main.dummyCulture);
-                                    str = dt.ToString("yyyy-MM-dd HH:mm:ss");
-                                }
-                                catch
-                                {
-                                    // do nothing, just keep old value if error in date value
-                                    //str = ??
-                                }
-                            }
-                            // sql single quotes
-                            str = str.Replace("'", "''");
-                            str = string.Format("'{0}'", str);
-                        }
-
-                        // add data value, preceded by a comma
-                        sb.Append((r > 0 ? ", " : "") + str);
-                    }
-
-                    sb.Append(")");
+                    csvdef.CopyCommentLine(list, sb, "-- ", "");
                 }
+                else
+                {
+                    // skip header line
+                    if (lineCount >= 0)
+                    {
+                        // add comma, except on last row (of this batch)
+                        if (lineCount % MAX_SQL_ROWS != 0)
+                        {
+                            sb.Append(",");
+                        }
+                        sb.Append("\r\n(");
 
-                // next line
-                lineCount++;
+                        for (var r = 0; r < list.Count; r++)
+                        {
+                            // format next value, quotes for varchar and datetime
+                            var str = list[r];
+
+                            // adjust for quoted values, trim first because can be a space before the first quote, example .., "BMI",..
+                            var strtrim = str.Trim();
+                            if ((strtrim.Length > 0) && (strtrim[0] == Main.Settings.DefaultQuoteChar))
+                            {
+                                str = str.Trim();
+                                str = str.Trim(Main.Settings.DefaultQuoteChar);
+                            }
+
+                            // next value to evaluate
+                            if (Main.Settings.TrimValues) str = str.Trim();
+
+                            if (str == "")
+                            {
+                                str = "NULL";
+                            }
+                            else if (csvdef.Fields[r].DataType == ColumnType.Decimal)
+                            {
+                                str = str.Replace(csvdef.Fields[r].DecimalSymbol == '.' ? "," : ".", ""); // remove thousand separator
+                                str = str.Replace(csvdef.Fields[r].DecimalSymbol, '.');
+                            }
+                            else if ((csvdef.Fields[r].DataType == ColumnType.String)
+                                  || (csvdef.Fields[r].DataType == ColumnType.DateTime))
+                            //|| (csvdef.Fields[r].DataType == ColumnType.Guid))
+                            {
+                                // sql datetime format
+                                if (csvdef.Fields[r].DataType == ColumnType.DateTime)
+                                {
+                                    try
+                                    {
+                                        var dt = DateTime.ParseExact(str, csvdef.Fields[r].Mask, Main.dummyCulture);
+                                        str = dt.ToString("yyyy-MM-dd HH:mm:ss");
+                                    }
+                                    catch
+                                    {
+                                        // do nothing, just keep old value if error in date value
+                                        //str = ??
+                                    }
+                                }
+                                // sql single quotes
+                                str = str.Replace("'", "''");
+                                str = string.Format("'{0}'", str);
+                            }
+
+                            // add data value, preceded by a comma
+                            sb.Append((r > 0 ? ", " : "") + str);
+                        }
+
+                        sb.Append(")");
+                    }
+
+                    // next line
+                    lineCount++;
+                }
             }
 
             // batch comment, insert record count
@@ -547,97 +563,105 @@ namespace CSVLint
             // copy any comment lines
             if (csvdef.SkipLines > 0) {
                 sb.Append("\t<!--\n");
-                csvdef.CopyCommentLines(strdata, sb, "\t");
+                csvdef.CopyCommentLinesAtStart(strdata, sb, "\t");
                 sb.Append("\t-->\n");
             }
 
             while (!strdata.EndOfStream)
             {
                 // get next 'record' from csv data
-                List<string> list = csvdef.ParseNextLine(strdata);
+                List<string> list = csvdef.ParseNextLine(strdata, out bool iscomm);
 
-                // skip header line
-                if (lineCount >= 0)
+                // copy any comment lines
+                if (iscomm)
                 {
-                    // next record
-                    sb.Append(string.Format("\t<{0}>\r\n", TABLE_NAME));
-
-                    for (var col = 0; col < csvdef.Fields.Count; col++)
+                    csvdef.CopyCommentLine(list, sb, "\t<!-- ", " -->");
+                }
+                else
+                {
+                    // skip header line
+                    if (lineCount >= 0)
                     {
-                        // format next value, quotes for varchar and datetime
-                        var colvalue = "";
-                        if (col < list.Count) colvalue = list[col];
+                        // next record
+                        sb.Append(string.Format("\t<{0}>\r\n", TABLE_NAME));
 
-                        //var colname = csvdef.Fields[col].Name;
-                        var colname = xmlnames[col];
-
-                        // adjust for quoted values, trim first because can be a space before the first quote, example .., "BMI",..
-                        var strtrim = colvalue.Trim();
-                        if ((strtrim.Length > 0) && (strtrim[0] == Main.Settings.DefaultQuoteChar))
+                        for (var col = 0; col < csvdef.Fields.Count; col++)
                         {
-                            colvalue = colvalue.Trim();
-                            colvalue = colvalue.Trim(Main.Settings.DefaultQuoteChar);
-                        }
+                            // format next value, quotes for varchar and datetime
+                            var colvalue = "";
+                            if (col < list.Count) colvalue = list[col];
 
-                        // next value to evaluate
-                        if (Main.Settings.TrimValues) colvalue = colvalue.Trim();
+                            //var colname = csvdef.Fields[col].Name;
+                            var colname = xmlnames[col];
 
-                        if (csvdef.Fields[col].DataType == ColumnType.Decimal)
-                        {
-                            colvalue = colvalue.Replace((csvdef.Fields[col].DecimalSymbol == '.' ? "," : "."), ""); // remove thousand separator
-                            colvalue = colvalue.Replace(csvdef.Fields[col].DecimalSymbol, '.');
-                        }
-                        else if ((csvdef.Fields[col].DataType == ColumnType.String)
-                                || (csvdef.Fields[col].DataType == ColumnType.DateTime))
-                        //|| (csvdef.Fields[col].DataType == ColumnType.Guid))
-                        {
-                            // sql datetime format
-                            if (csvdef.Fields[col].DataType == ColumnType.DateTime)
+                            // adjust for quoted values, trim first because can be a space before the first quote, example .., "BMI",..
+                            var strtrim = colvalue.Trim();
+                            if ((strtrim.Length > 0) && (strtrim[0] == Main.Settings.DefaultQuoteChar))
                             {
-                                try
-                                {
-                                    var dt = DateTime.ParseExact(colvalue, csvdef.Fields[col].Mask, Main.dummyCulture);
-                                    colvalue = dt.ToString("s");
-                                    //colvalue = dt.ToString("yyyy-MM-ddTHH\\:mm\\:ss"); // no milliseconds or timezone
-                                }
-                                catch
-                                {
-                                    // do nothing, just keep old value if error in date value
-                                    //str = ??
-                                }
+                                colvalue = colvalue.Trim();
+                                colvalue = colvalue.Trim(Main.Settings.DefaultQuoteChar);
                             }
-                            // XML escape characters
-                            colvalue = colvalue.Replace("&", "&amp;"); // ampersnd
-                            colvalue = colvalue.Replace("<", "&lt;"); // less than
-                            colvalue = colvalue.Replace(">", "&gt;"); // greater than
 
-                            colvalue = colvalue.Replace("\b", "&#09;"); // \b Backspace(ascii code 08)
-                            colvalue = colvalue.Replace("\f", "&#0C;"); // \f Form feed(ascii code 0C)
-                            colvalue = colvalue.Replace("\n", "&#10;"); // \n New line
-                            colvalue = colvalue.Replace("\r", "&#13;"); // \r Carriage return
-                            colvalue = colvalue.Replace("\t", "&#09;"); // \t Tab
-                            colvalue = colvalue.Replace("\"", "&quote;"); // quote
-                            colvalue = colvalue.Replace("'", "&apos;"); // single quote/apostrophe
+                            // next value to evaluate
+                            if (Main.Settings.TrimValues) colvalue = colvalue.Trim();
 
-                            colvalue = colvalue.Replace("'", "''");
-                            colvalue = string.Format("{0}", colvalue);
+                            if (csvdef.Fields[col].DataType == ColumnType.Decimal)
+                            {
+                                colvalue = colvalue.Replace((csvdef.Fields[col].DecimalSymbol == '.' ? "," : "."), ""); // remove thousand separator
+                                colvalue = colvalue.Replace(csvdef.Fields[col].DecimalSymbol, '.');
+                            }
+                            else if ((csvdef.Fields[col].DataType == ColumnType.String)
+                                    || (csvdef.Fields[col].DataType == ColumnType.DateTime))
+                            //|| (csvdef.Fields[col].DataType == ColumnType.Guid))
+                            {
+                                // sql datetime format
+                                if (csvdef.Fields[col].DataType == ColumnType.DateTime)
+                                {
+                                    try
+                                    {
+                                        var dt = DateTime.ParseExact(colvalue, csvdef.Fields[col].Mask, Main.dummyCulture);
+                                        colvalue = dt.ToString("s");
+                                        //colvalue = dt.ToString("yyyy-MM-ddTHH\\:mm\\:ss"); // no milliseconds or timezone
+                                    }
+                                    catch
+                                    {
+                                        // do nothing, just keep old value if error in date value
+                                        //str = ??
+                                    }
+                                }
+                                // XML escape characters
+                                colvalue = colvalue.Replace("&", "&amp;"); // ampersnd
+                                colvalue = colvalue.Replace("<", "&lt;"); // less than
+                                colvalue = colvalue.Replace(">", "&gt;"); // greater than
+
+                                colvalue = colvalue.Replace("\b", "&#09;"); // \b Backspace(ascii code 08)
+                                colvalue = colvalue.Replace("\f", "&#0C;"); // \f Form feed(ascii code 0C)
+                                colvalue = colvalue.Replace("\n", "&#10;"); // \n New line
+                                colvalue = colvalue.Replace("\r", "&#13;"); // \r Carriage return
+                                colvalue = colvalue.Replace("\t", "&#09;"); // \t Tab
+                                colvalue = colvalue.Replace("\"", "&quote;"); // quote
+                                colvalue = colvalue.Replace("'", "&apos;"); // single quote/apostrophe
+
+                                colvalue = colvalue.Replace("'", "''");
+                                colvalue = string.Format("{0}", colvalue);
+                            }
+
+                            if (colvalue == "")
+                            {
+                                sb.Append(string.Format("\t\t<{0}/>\r\n", colname));
+                            }
+                            else
+                            {
+                                sb.Append(string.Format("\t\t<{0}>{1}</{0}>\r\n", colname, colvalue));
+                            }
                         }
 
-                        if (colvalue == "")
-                        {
-                            sb.Append(string.Format("\t\t<{0}/>\r\n", colname));
-                        }
-                        else
-                        {
-                            sb.Append(string.Format("\t\t<{0}>{1}</{0}>\r\n", colname, colvalue));
-                        }
+                        sb.Append(string.Format("\t</{0}>\r\n", TABLE_NAME));
                     }
 
-                    sb.Append(string.Format("\t</{0}>\r\n", TABLE_NAME));
+                    // next line
+                    lineCount++;
                 }
-
-                // next line
-                lineCount++;
             }
 
             // finalise script
@@ -680,112 +704,111 @@ namespace CSVLint
             int lineCount = (csvdef.ColNameHeader ? -1 : 0);
 
             // skip any comment lines
-            csvdef.SkipCommentLines(strdata);
+            csvdef.SkipCommentLinesAtStart(strdata);
 
             while (!strdata.EndOfStream)
             {
                 // get next 'record' from csv data
-                List<string> list = csvdef.ParseNextLine(strdata);
+                List<string> list = csvdef.ParseNextLine(strdata, out bool iscomm);
 
-                if (lineCount >= 54)
+                if (!iscomm)
                 {
-                    sb.Append("");
-                }
-                // skip header line
-                if (lineCount >= 0)
-                {
-
-                    // close previous line with comma (not the last records)
-                    if (lineCount > 0) sb.Append(",");
-
-                    // next record
-                    sb.Append("\r\n\t\t{\r\n");
-
-                    for (var col = 0; col < csvdef.Fields.Count; col++)
+                    // skip header line
+                    if (lineCount >= 0)
                     {
-                        // format next value, quotes for varchar and datetime
-                        var colvalue = "";
-                        if (col < list.Count) colvalue = list[col];
 
-                        var colname = csvdef.Fields[col].Name;
+                        // close previous line with comma (not the last records)
+                        if (lineCount > 0) sb.Append(",");
 
-                        // adjust for quoted values, trim first because can be a space before the first quote, example .., "BMI",..
-                        var strtrim = colvalue.Trim();
-                        if ((strtrim.Length > 0) && (strtrim[0] == Main.Settings.DefaultQuoteChar))
+                        // next record
+                        sb.Append("\r\n\t\t{\r\n");
+
+                        for (var col = 0; col < csvdef.Fields.Count; col++)
                         {
-                            colvalue = colvalue.Trim();
-                            colvalue = colvalue.Trim(Main.Settings.DefaultQuoteChar);
-                        }
+                            // format next value, quotes for varchar and datetime
+                            var colvalue = "";
+                            if (col < list.Count) colvalue = list[col];
 
-                        // next value to evaluate
-                        if (Main.Settings.TrimValues) colvalue = colvalue.Trim();
+                            var colname = csvdef.Fields[col].Name;
 
-                        if (csvdef.Fields[col].DataType == ColumnType.Integer)
-                        {
-                            if (!csveval.EvaluateInteger(colvalue))
+                            // adjust for quoted values, trim first because can be a space before the first quote, example .., "BMI",..
+                            var strtrim = colvalue.Trim();
+                            if ((strtrim.Length > 0) && (strtrim[0] == Main.Settings.DefaultQuoteChar))
                             {
-                                // only put in double quotes when it's not an integer
-                                colvalue = string.Format("\"{0}\"", colvalue);
+                                colvalue = colvalue.Trim();
+                                colvalue = colvalue.Trim(Main.Settings.DefaultQuoteChar);
                             }
-                        }
-                        else if (csvdef.Fields[col].DataType == ColumnType.Decimal)
-                        {
-                            if (!csveval.EvaluateDecimal(colvalue, csvdef.Fields[col], out _))
+
+                            // next value to evaluate
+                            if (Main.Settings.TrimValues) colvalue = colvalue.Trim();
+
+                            if (csvdef.Fields[col].DataType == ColumnType.Integer)
                             {
-                                // only put in double quotes when it's not a valid decimal
-                                colvalue = string.Format("\"{0}\"", colvalue);
-                            }
-                            else
-                            {
-                                colvalue = colvalue.Replace((csvdef.Fields[col].DecimalSymbol == '.' ? "," : "."), ""); // remove thousand separator
-                                colvalue = colvalue.Replace(csvdef.Fields[col].DecimalSymbol, '.');
-                            }
-                        }
-                        else if ((csvdef.Fields[col].DataType == ColumnType.String)
-                                || (csvdef.Fields[col].DataType == ColumnType.DateTime))
-                        //|| (csvdef.Fields[col].DataType == ColumnType.Guid))
-                        {
-                            // sql datetime format
-                            if (csvdef.Fields[col].DataType == ColumnType.DateTime)
-                            {
-                                try
+                                if (!csveval.EvaluateInteger(colvalue))
                                 {
-                                    var dt = DateTime.ParseExact(colvalue, csvdef.Fields[col].Mask, Main.dummyCulture);
-                                    colvalue = dt.ToString("s");
-                                    //colvalue = dt.ToString("yyyy-MM-ddTHH\\:mm\\:ss"); // no milliseconds or timezone
-                                }
-                                catch
-                                {
-                                    // do nothing, just keep old value if error in date value
-                                    //str = ??
+                                    // only put in double quotes when it's not an integer
+                                    colvalue = string.Format("\"{0}\"", colvalue);
                                 }
                             }
-                            // JSON escape characters
-                            colvalue = colvalue.Replace("\\", "\\\\"); // \\  Backslash character
-                            colvalue = colvalue.Replace("\b", "\\b"); // \b Backspace(ascii code 08)
-                            colvalue = colvalue.Replace("\f", "\\f"); // \f Form feed(ascii code 0C)
-                            colvalue = colvalue.Replace("\n", "\\n"); // \n New line
-                            colvalue = colvalue.Replace("\r", "\\r"); // \r Carriage return
-                            colvalue = colvalue.Replace("\t", "\\t"); // \t Tab
-                            colvalue = colvalue.Replace("\"", "\\\""); // \"  Double quote
+                            else if (csvdef.Fields[col].DataType == ColumnType.Decimal)
+                            {
+                                if (!csveval.EvaluateDecimal(colvalue, csvdef.Fields[col], out _))
+                                {
+                                    // only put in double quotes when it's not a valid decimal
+                                    colvalue = string.Format("\"{0}\"", colvalue);
+                                }
+                                else
+                                {
+                                    colvalue = colvalue.Replace((csvdef.Fields[col].DecimalSymbol == '.' ? "," : "."), ""); // remove thousand separator
+                                    colvalue = colvalue.Replace(csvdef.Fields[col].DecimalSymbol, '.');
+                                }
+                            }
+                            else if ((csvdef.Fields[col].DataType == ColumnType.String)
+                                    || (csvdef.Fields[col].DataType == ColumnType.DateTime))
+                            //|| (csvdef.Fields[col].DataType == ColumnType.Guid))
+                            {
+                                // sql datetime format
+                                if (csvdef.Fields[col].DataType == ColumnType.DateTime)
+                                {
+                                    try
+                                    {
+                                        var dt = DateTime.ParseExact(colvalue, csvdef.Fields[col].Mask, Main.dummyCulture);
+                                        colvalue = dt.ToString("s");
+                                        //colvalue = dt.ToString("yyyy-MM-ddTHH\\:mm\\:ss"); // no milliseconds or timezone
+                                    }
+                                    catch
+                                    {
+                                        // do nothing, just keep old value if error in date value
+                                        //str = ??
+                                    }
+                                }
+                                // JSON escape characters
+                                colvalue = colvalue.Replace("\\", "\\\\"); // \\  Backslash character
+                                colvalue = colvalue.Replace("\b", "\\b"); // \b Backspace(ascii code 08)
+                                colvalue = colvalue.Replace("\f", "\\f"); // \f Form feed(ascii code 0C)
+                                colvalue = colvalue.Replace("\n", "\\n"); // \n New line
+                                colvalue = colvalue.Replace("\r", "\\r"); // \r Carriage return
+                                colvalue = colvalue.Replace("\t", "\\t"); // \t Tab
+                                colvalue = colvalue.Replace("\"", "\\\""); // \"  Double quote
 
-                            // put value in double quotes
-                            colvalue = string.Format("\"{0}\"", colvalue);
+                                // put value in double quotes
+                                colvalue = string.Format("\"{0}\"", colvalue);
+                            }
+
+                            var comma = (col < csvdef.Fields.Count - 1 ? "," : "");
+
+                            if (colvalue != "")
+                            {
+                                sb.Append(string.Format("\t\t\t\"{0}\": {1}{2}\r\n", colname, colvalue, comma));
+                            }
                         }
 
-                        var comma = (col < csvdef.Fields.Count - 1 ? "," : "");
-
-                        if (colvalue != "")
-                        {
-                            sb.Append(string.Format("\t\t\t\"{0}\": {1}{2}\r\n", colname, colvalue, comma));
-                        }
+                        sb.Append("\t\t}");
                     }
 
-                    sb.Append("\t\t}");
+                    // next line
+                    lineCount++;
                 }
-
-                // next line
-                lineCount++;
             }
 
             // finalise script
@@ -904,38 +927,39 @@ namespace CSVLint
             StringBuilder sbsort = new StringBuilder();
 
             // copy any comment lines
-            csvdef.CopyCommentLines(strdata, sbsort, "");
+            csvdef.CopyCommentLinesAtStart(strdata, sbsort, "");
 
             // if first line is header column names
             if (csvdef.ColNameHeader) {
                 // consume line and copy to output
-                values = csvdef.ParseNextLine(strdata);
+                values = csvdef.ParseNextLine(strdata, out bool iscomm);
 
-                sbsort.Append(csvdef.ConstructLine(values));
+                sbsort.Append(csvdef.ConstructLine(values, iscomm));
 
                 sbsort.Append("\n");
             }
+
+            string sortval = "";
 
             // read all data lines
             while (!strdata.EndOfStream)
             {
                 // get next line of values
-                values = csvdef.ParseNextLine(strdata);
-                string sortval = "";
+                values = csvdef.ParseNextLine(strdata, out bool iscomm);
 
-                // construct sortable value
-                if (SortIdx < values.Count)
+                // when comment line then keep the same sortvalue as previous line, so that comment lines stay (more or less) in the same place in the data
+                if (!iscomm)
                 {
-                    // get value
-                    var val = values[SortIdx];
-                    sortval = SortableString(val, csvcol) + linecount.ToString("D10"); // add linecount so guaranteed unique + retain original sort order for equal values
+                    // construct sortable value
+                    var val = (SortIdx < values.Count ? values[SortIdx] : "");
+                    sortval = SortableString(val, csvcol);
                 }
 
                 // reconstruct original line of data
-                var line = csvdef.ConstructLine(values);
+                var line = csvdef.ConstructLine(values, iscomm);
 
                 // add to list
-                sortlines.Add(sortval, line);
+                sortlines.Add(sortval + linecount.ToString("D10"), line); // add linecount so guaranteed unique + retain original sort order for equal values
 
                 // next line
                 linecount += 1;
@@ -1028,13 +1052,13 @@ namespace CSVLint
             }
 
             // copy any comment lines
-            csvdef.CopyCommentLines(strdata, datanew, "");
+            csvdef.CopyCommentLinesAtStart(strdata, datanew, "");
 
             // convert from fixed width to separated values, add header line
             if (csvdef.ColNameHeader)
             {
                 // if first line is header column names, then consume line and ignore
-                csvdef.ParseNextLine(strdata);
+                csvdef.ParseNextLine(strdata, out bool iscomm);
 
                 // add new header column names
                 for (int colhead = 0; colhead < csvnew.Fields.Count; colhead++)
@@ -1054,133 +1078,143 @@ namespace CSVLint
                 newcols.Clear();
 
                 // get values from line
-                List<string> values = csvdef.ParseNextLine(strdata);
+                List<string> values = csvdef.ParseNextLine(strdata, out bool iscomm);
 
-                linenr++;
-
-                // reformat data line to new line
-                for (int col = 0; col < values.Count; col++)
+                if (iscomm)
                 {
-                    // next value
-                    string val = values[col];
+                    csvdef.CopyCommentLine(values, datanew, "", "");
+                }
+                else
+                {
+                    linenr++;
 
-                    // add column to output, except when remove original column
-                    if ( (col != ColumnIndex) || (bRemove == false) )
+                    // reformat data line to new line
+                    for (int col = 0; col < values.Count; col++)
                     {
-                        newcols.Add(val);
-                    }
+                        // next value
+                        string val = values[col];
 
-                    if ( (col == ColumnIndex) && (SplitCode > 0) )
-                    {
-                        // split column
-                        string val1 = val;
-                        string val2 = "";
+                        // add column to output, except when remove original column
+                        if ((col != ColumnIndex) || (bRemove == false))
+                        {
+                            newcols.Add(val);
+                        }
 
-                        if (SplitCode == 1)
+                        if ((col == ColumnIndex) && (SplitCode > 0))
                         {
-                            // pad with character
-                            if (IntPar2 > 0) {
-                                val1 = val.PadLeft(IntPar2, Parameter1[0]); // left pad
-                            } else {
-                                val1 = val.PadRight(IntPar2a, Parameter1[0]); // right pad
-                            }
-                        }
-                        else if (SplitCode == 2)
-                        {
-                            // search and replace
-                            val1 = val.Replace(Parameter1, Parameter2);
-                        }
-                        else if (SplitCode == 3)
-                        {
-                            // valid/invalid
-                            var str = csvvalid.EvaluateDataValue(val, csvdef.Fields[ColumnIndex], ColumnIndex);
-                            if (str != "")
+                            // split column
+                            string val1 = val;
+                            string val2 = "";
+
+                            if (SplitCode == 1)
                             {
-                                val1 = "";
-                                val2 = val; // invalid value
-                            }
-                        }
-                        else if (SplitCode == 4)
-                        {
-                            // split on char
-                            int pos = -1;
-                            int index = 0;
-
-                            int i = 1;
-                            if (IntPar2 >= 0)
-                            {
-                                // first Nth occurance
-                                while (i <= IntPar2 && (index = val.IndexOf(Parameter1, index + 1)) != -1)
+                                // pad with character
+                                if (IntPar2 > 0)
                                 {
-                                    if (i == IntPar2)
-                                    {
-                                        pos = index;
-                                        break;
-                                    }
-                                    i++;
-                                }
-                            }
-                            else
-                            {
-                                // last Nth occurance
-                                i = -1;
-                                index = val.Length;
-                                while (i >= IntPar2 && (index = val.LastIndexOf(Parameter1, index - 1)) != -1)
-                                {
-                                    if (i == IntPar2)
-                                    {
-                                        pos = index;
-                                        break;
-                                    }
-                                    i--;
-                                }
-                            }
-
-                            if (pos >= 0)
-                            {
-                                val1 = val.Substring(0, pos);
-                                val2 = val.Substring(pos + Parameter1.Length, val.Length - pos - Parameter1.Length);
-                            }
-                        }
-                        else if (SplitCode == 5)
-                        {
-                            // split on position
-                            if ((IntPar2 > 0) && (IntPar2 < val.Length))
-                            {
-                                // positive, left string
-                                val1 = val.Substring(0, IntPar2);
-                                val2 = val.Substring(IntPar2, val.Length - IntPar2);
-                            }
-                            else if (IntPar2 < 0)
-                            {
-                                // negative, right string
-                                if (IntPar2a < val.Length)
-                                {
-                                    val1 = val.Substring(0, val.Length - IntPar2a);
-                                    val2 = val.Substring(val.Length - IntPar2a);
+                                    val1 = val.PadLeft(IntPar2, Parameter1[0]); // left pad
                                 }
                                 else
                                 {
-                                    // take all as right string
-                                    val1 = "";
-                                    val2 = val;
+                                    val1 = val.PadRight(IntPar2a, Parameter1[0]); // right pad
                                 }
                             }
+                            else if (SplitCode == 2)
+                            {
+                                // search and replace
+                                val1 = val.Replace(Parameter1, Parameter2);
+                            }
+                            else if (SplitCode == 3)
+                            {
+                                // valid/invalid
+                                var str = csvvalid.EvaluateDataValue(val, csvdef.Fields[ColumnIndex], ColumnIndex);
+                                if (str != "")
+                                {
+                                    val1 = "";
+                                    val2 = val; // invalid value
+                                }
+                            }
+                            else if (SplitCode == 4)
+                            {
+                                // split on char
+                                int pos = -1;
+                                int index = 0;
+
+                                int i = 1;
+                                if (IntPar2 >= 0)
+                                {
+                                    // first Nth occurance
+                                    while (i <= IntPar2 && (index = val.IndexOf(Parameter1, index + 1)) != -1)
+                                    {
+                                        if (i == IntPar2)
+                                        {
+                                            pos = index;
+                                            break;
+                                        }
+                                        i++;
+                                    }
+                                }
+                                else
+                                {
+                                    // last Nth occurance
+                                    i = -1;
+                                    index = val.Length;
+                                    while (i >= IntPar2 && (index = val.LastIndexOf(Parameter1, index - 1)) != -1)
+                                    {
+                                        if (i == IntPar2)
+                                        {
+                                            pos = index;
+                                            break;
+                                        }
+                                        i--;
+                                    }
+                                }
+
+                                if (pos >= 0)
+                                {
+                                    val1 = val.Substring(0, pos);
+                                    val2 = val.Substring(pos + Parameter1.Length, val.Length - pos - Parameter1.Length);
+                                }
+                            }
+                            else if (SplitCode == 5)
+                            {
+                                // split on position
+                                if ((IntPar2 > 0) && (IntPar2 < val.Length))
+                                {
+                                    // positive, left string
+                                    val1 = val.Substring(0, IntPar2);
+                                    val2 = val.Substring(IntPar2, val.Length - IntPar2);
+                                }
+                                else if (IntPar2 < 0)
+                                {
+                                    // negative, right string
+                                    if (IntPar2a < val.Length)
+                                    {
+                                        val1 = val.Substring(0, val.Length - IntPar2a);
+                                        val2 = val.Substring(val.Length - IntPar2a);
+                                    }
+                                    else
+                                    {
+                                        // take all as right string
+                                        val1 = "";
+                                        val2 = val;
+                                    }
+                                }
+                            }
+
+                            // add edit/split column values
+                            newcols.Add(val1);
+
+                            // add split column values
+                            if (SplitCode > 2) newcols.Add(val2);
                         }
+                    };
 
-                        // add edit/split column values
-                        newcols.Add(val1);
+                    // reconstruct new line of data (with extra columns)
+                    datanew.Append(csvnew.ConstructLine(newcols, iscomm));
 
-                        // add split column values
-                        if (SplitCode > 2) newcols.Add(val2); 
-                    }
-                };
-
-                // reconstruct new line of data (with extra columns)
-                datanew.Append(csvnew.ConstructLine(newcols));
-
-                // add line break
-                datanew.Append("\n");
+                    // add line break
+                    datanew.Append("\n");
+                }
             };
 
             strdata.Dispose();

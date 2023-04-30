@@ -16,6 +16,7 @@ namespace NppPluginNET.PluginInfrastructure
         public static char separatorChar = ';';
         public static List<int> fixedWidths;
         public static int skipLines = 0;
+        public static char commentChar = '\0';
 
         private static int LEXER_COLORS_MAX = -1;
 
@@ -406,6 +407,10 @@ namespace NppPluginNET.PluginInfrastructure
                 else
                     skipLines = 0;
             }
+            else if (name == "commentchar")
+            {
+                commentChar = (value.Length > 0 ? value[0] : '\0');
+            }
             else
             {
                 SupportedProperties[name] = value == "0" ? false : true;
@@ -622,6 +627,8 @@ namespace NppPluginNET.PluginInfrastructure
                 // variables (algorithm based on JAVASCRIPT prototype)
                 char quote_char = Main.Settings.DefaultQuoteChar;
                 bool whitespace = true; // to catch where value is just two quotes "" right at start of line
+                bool iscomment = false;
+                bool newline = true;
 
                 // fixed widths
                 while (i < length - 1)
@@ -629,7 +636,18 @@ namespace NppPluginNET.PluginInfrastructure
                     byte cur = contentBytes[i];
                     byte next = contentBytes[i + 1];
 
-                    if (!quote)
+                    // only check at start of a line
+                    if (newline) {
+                        iscomment = (cur == commentChar);
+                        newline = false;
+                        if (iscomment) idx = 0; // no colors
+                    }
+
+                    if (iscomment)
+                    {
+                        // comment do nothing and consume to end-of-line
+                    }
+                    else if (!quote)
                     {
                         // check if starting a quoted value or going next column or going to next line
                         if ((cur == quote_char) && whitespace) { quote = true; whitespace = false; }
@@ -682,6 +700,7 @@ namespace NppPluginNET.PluginInfrastructure
                             int lineState = quote ? idx : 0;
                             vtable.SetLineState(p_access, (IntPtr)(lineCurrent), lineState);
                             lineCurrent++;
+                            newline = true;
                         }
                         bNextCol = false;
                         isEOL = false;

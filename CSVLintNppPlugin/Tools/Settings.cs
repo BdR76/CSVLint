@@ -254,8 +254,14 @@ namespace Kbg.NppPluginNET
         [Description("Detect columns, contains header names."), Category("UserPref"), DefaultValue(false)]
         public bool DetectColumnHeader { get; set; }
 
+        [Description("Detect columns, skip lines."), Category("UserPref"), DefaultValue(false)]
+        public bool DetectSkipLines { get; set; }
+
         [Description("Detect columns, skip lines."), Category("UserPref"), DefaultValue(0)]
-        public int DetectSkipLines { get; set; }
+        public int DetectSkipLinesCount { get; set; }
+
+        [Description("Detect columns, comment character."), Category("UserPref"), DefaultValue(false)]
+        public bool DetectCommentChar { get; set; }
 
         // COUNT UNIQUE user preferences
         [Description("Count unique values, list of selected columns."), Category("UserPref"), DefaultValue("")]

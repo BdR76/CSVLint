@@ -250,11 +250,11 @@ namespace Kbg.NppPluginNET
                     // keywords
                     writer.WriteStartElement("Languages");
                     writer.WriteStartElement("Language");
-                        writer.WriteAttributeString("name", "CSVLint");
-                        writer.WriteAttributeString("ext", "csv");
-                        writer.WriteAttributeString("commentLine", "#");
-                        writer.WriteAttributeString("commentStart", "#[");
-                        writer.WriteAttributeString("commentEnd", "]#");
+                    writer.WriteAttributeString("name", "CSVLint");
+                    writer.WriteAttributeString("ext", "csv");
+                    writer.WriteAttributeString("commentLine", "#");
+                    writer.WriteAttributeString("commentStart", "#[");
+                    writer.WriteAttributeString("commentEnd", "]#");
 
                     for (int i = 0; i < tags.Length; i++)
                     {
@@ -269,9 +269,9 @@ namespace Kbg.NppPluginNET
                     // colors
                     writer.WriteStartElement("LexerStyles");
                     writer.WriteStartElement("LexerType");
-                        writer.WriteAttributeString("name", "CSVLint");
-                        writer.WriteAttributeString("desc", "CSV Linter and validator");
-                        writer.WriteAttributeString("excluded", "no");
+                    writer.WriteAttributeString("name", "CSVLint");
+                    writer.WriteAttributeString("desc", "CSV Linter and validator");
+                    writer.WriteAttributeString("excluded", "no");
 
                     var coloridx = 0;
                     for (int ps = 0; ps < presets.Length; ps++)
@@ -285,11 +285,11 @@ namespace Kbg.NppPluginNET
                         {
                             //writer.WriteStartElement("WordsStyle");
                             //writer.WriteAttributeString("styleID", i.ToString());
-                                //writer.WriteAttributeString("name", (i == 0 ? "Default" : "ColumnColor" + i.ToString()));
-                                //writer.WriteAttributeString("fgColor", "000000");
-                                //writer.WriteAttributeString("bgColor", colors[i]);
-                                //writer.WriteAttributeString("fontName", "");
-                                //writer.WriteAttributeString("fontStyle", "0");
+                            //writer.WriteAttributeString("name", (i == 0 ? "Default" : "ColumnColor" + i.ToString()));
+                            //writer.WriteAttributeString("fgColor", "000000");
+                            //writer.WriteAttributeString("bgColor", colors[i]);
+                            //writer.WriteAttributeString("fontName", "");
+                            //writer.WriteAttributeString("fontStyle", "0");
                             //writer.WriteEndElement();
                             var name = i == 0 ? "Default" : "ColumnColor" + i.ToString();
                             var fgcolor = DefaultColorsets[coloridx].ToString("X6");
@@ -408,7 +408,7 @@ namespace Kbg.NppPluginNET
                 else
                 {
                     // analyze and determine csv definition
-                    csvdef = CsvAnalyze.InferFromData(true, '\0', "", false, 0); // parameters "", false, 0 -> defaults
+                    csvdef = CsvAnalyze.InferFromData(true, '\0', "", false, 0, Main.Settings.CommentCharacter); // parameters "", false, 0 -> defaults
                 }
                 FileCsvDef.Add(filename, csvdef);
             }
@@ -417,12 +417,14 @@ namespace Kbg.NppPluginNET
             string sepchar = csvdef.Separator.ToString();
             string sepcol = Settings.SeparatorColor ? "1" : "0";
             string skip = csvdef.SkipLines.ToString();
+            string comchar = csvdef.CommentChar.ToString();
 
             IScintillaGateway editor = new ScintillaGateway(PluginBase.GetCurrentScintilla());
 
             editor.SetProperty("separator", sepchar);
             editor.SetProperty("separatorcolor", sepcol);
             editor.SetProperty("skiplines", skip);
+            editor.SetProperty("commentchar", comchar);
 
             // if fixed width
             if ((csvdef.Separator == '\0') && (csvdef.FieldWidths != null))
@@ -474,12 +476,14 @@ namespace Kbg.NppPluginNET
             string sepchar = csvdef.Separator.ToString();
             string sepcol = Settings.SeparatorColor ? "1" : "0";
             string skip = csvdef.SkipLines.ToString();
+            string comchar = csvdef.CommentChar.ToString();
 
             IScintillaGateway editor = new ScintillaGateway(PluginBase.GetCurrentScintilla());
 
             editor.SetProperty("separator", sepchar);
             editor.SetProperty("separatorcolor", sepcol);
             editor.SetProperty("skiplines", skip);
+            editor.SetProperty("commentchar", comchar);
 
             // if fixed width
             if ((csvdef.Separator == '\0') && (csvdef.FieldWidths != null))
@@ -726,7 +730,7 @@ namespace Kbg.NppPluginNET
             {
                 ver = ver.Substring(0, ver.Length - 2);
             }
-            return ver;
+            return ver + "β2";
         }
     }
 }

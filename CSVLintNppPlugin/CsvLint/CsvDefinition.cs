@@ -180,6 +180,9 @@ namespace CSVLint
         /// SkipLines, skip first X lines of data file (Note: SkipLines is not formally of schema.ini standard)
         public int SkipLines { get; set; } = 0;
 
+        /// Comment character, skip lines if this is the first character
+        public char CommentChar { get; set; } = '\0';
+
         /// column names
         public string[] FieldNames { get; set; }
 
@@ -218,6 +221,7 @@ namespace CSVLint
             this.UseQuotes              = copyobj.UseQuotes;
             this.TextQualifier          = copyobj.TextQualifier;
             this.SkipLines              = copyobj.SkipLines;
+            this.CommentChar            = copyobj.CommentChar;
 
             this.FieldWidths = new List<int>();
             foreach (var wid in copyobj.FieldWidths)
@@ -510,6 +514,10 @@ namespace CSVLint
                     // How many lines to skip at start of data file
                     if (k == ";skiplines") this.SkipLines = vint;
 
+                    // schema.ini Comment character
+                    // Skip lines if they start with this character
+                    if (k == ";commentchar") this.CommentChar = val[0];
+
                     // schema.ini DecimalSymbol, typically ',' or '.' but can be set to any single character that is used to separate the integer from the fractional part of a number.
                     if (k == "colnameheader")
                     {
@@ -776,6 +784,10 @@ namespace CSVLint
             // How many lines to skip at start of data file
             if (this.SkipLines > 0) res += ";SkipLines=" + this.SkipLines + "\r\n";
 
+            // schema.ini Comment character
+            // Skip lines if they start with this character
+            if (this.CommentChar != '\0') res += ";CommentChar=" + this.CommentChar + "\r\n";
+
             // either all column names are in quotes or none, not mixed
             bool quotename = false;
             foreach (var fld in this.Fields)
@@ -842,29 +854,42 @@ namespace CSVLint
         }
 
         /// <summary>
-        /// when reading a data file, skip first comment lines
+        /// when reading a data file, skip first comment lines at start of the file
         /// </summary>
         /// <param name="data"> csv data </param>
-        public void SkipCommentLines(StreamReader strdata)
+        public int SkipCommentLinesAtStart(StreamReader strdata)
         {
-            // how many lines of commet to skip
+            var res = 1;
+            // SkipLines parameter, how many lines to skip at start of file
             int skip = (this.SkipLines >= 0 ? this.SkipLines : 0);
 
-            while ( (skip > 0) && (!strdata.EndOfStream) )
+            while ((skip > 0) && (!strdata.EndOfStream))
             {
                 // consume and ignore lines
                 String line = strdata.ReadLine();
                 skip--;
+                res++;
             }
+
+            // CommentChar parameter, skip any lines that start with comment character
+            while ((strdata.Peek() == this.CommentChar) && (!strdata.EndOfStream))
+            {
+                // consume and ignore lines
+                String line = strdata.ReadLine();
+                res++;
+            }
+
+            // return how many skipped lines
+            return res;
         }
 
         /// <summary>
         /// when editing, sorting or copying a data file, also copy the first comment lines
         /// </summary>
         /// <param name="data"> csv data </param>
-        public void CopyCommentLines(StreamReader strdata, StringBuilder sb, string prefix)
+        public void CopyCommentLinesAtStart(StreamReader strdata, StringBuilder sb, string prefix)
         {
-            // how many lines of commet to skip
+            // how many lines of comment to skip
             int skip = (this.SkipLines >= 0 ? this.SkipLines : 0);
 
             while ((skip > 0) && (!strdata.EndOfStream))
@@ -882,16 +907,34 @@ namespace CSVLint
         }
 
         /// <summary>
+        /// when editing, sorting or copying a data file, also copy the comment lines throughout the data
+        /// </summary>
+        /// <param name="data"> csv data </param>
+        public void CopyCommentLine(List<String> sldata, StringBuilder sb, string prefix, string postfix)
+        {
+            // skip comment lines
+            if (sldata.Count > 0)
+            {
+                // copy and add prefix and line feed
+                sb.Append(prefix);
+                sb.Append(sldata[0]);
+                sb.Append(postfix);
+                sb.Append("\n");
+            }
+        }
+
+        /// <summary>
         /// reformat file for date, decimal and separator
         /// </summary>
         /// <param name="data"> csv data </param>
-        public List<string> ParseNextLine(StreamReader strdata)
+        public List<string> ParseNextLine(StreamReader strdata, out bool iscomment)
         {
             // algorithm in part based on "How can I parse a CSV string with JavaScript, which contains comma in data?"
             // answer by user Bachor https://stackoverflow.com/a/58181757/1745616
 
-            // return list
+            // initialise return list and bool
             var res = new List<string>();
+            iscomment = false;
 
             StringBuilder value = new StringBuilder();
 
@@ -942,6 +985,7 @@ namespace CSVLint
             {
                 // variables
                 bool quote = false;
+                iscomment = ((char)strdata.Peek() == CommentChar);
                 bool wasquoted = false;
                 bool bNextCol = false;
                 bool isEOL = false;
@@ -953,14 +997,21 @@ namespace CSVLint
                     char cur = (char)strdata.Read();
                     char next = (char)strdata.Peek();
 
-                    if (!quote)
+                    if (iscomment)
+                    {
+                        // comment consume to end-of-line
+                        if ((cur == '\r') && (next == '\n')) { next = (char)strdata.Read(); bNextCol = true; isEOL = true; } // double carriage return/linefeed so also consume next character (i.e. skip it)
+                        else if ((cur == '\n') || (cur == '\r')) { bNextCol = true; isEOL = true; }
+                        else if (cur != '\0') value.Append(cur); // TODO: is check '\0' really needed here?
+                    }
+                    else if (!quote)
                     {
                         // check if starting a quoted value or going next column or going to next line
                         if ((cur == quote_char) && whitespace) { quote = true; wasquoted = true; whitespace = false; value.Clear(); } // Exception for ..,  "12,3",.. and do value.Clear() -> i.e. ignore whitespace before quote
                         else if (cur == Separator) { bNextCol = true; }
                         else if ((cur == '\r') && (next == '\n')) { next = (char)strdata.Read();  bNextCol = true; isEOL = true; } // double carriage return/linefeed so also consume next character (i.e. skip it)
                         else if ((cur == '\n') || (cur == '\r')) { bNextCol = true; isEOL = true; }
-                        else if (cur != '\0') value.Append(cur);
+                        else if (cur != '\0') value.Append(cur); // TODO: is check '\0' really needed here?
 
                         // If separator directly followed by spaces then interpret spaces as empty whitespace,
                         // any quotes following  empty/white are interpreted as starting/opening quote, so for example:
@@ -1013,32 +1064,39 @@ namespace CSVLint
         /// <summary>
         /// Based on the CsvDefinition, take array of data values and (re)constructs one line of output
         /// </summary>
-        public string ConstructLine(List<string> values)
+        public string ConstructLine(List<string> values, bool iscomment)
         {
             string res = "";
 
-            for (int c = 0; c < this.Fields.Count; c++)
+            if (iscomment)
             {
-                // get value
-                var val = (c < values.Count ? values[c] : "");
-
-                if (this.Separator == '\0')
+                if (values.Count > 0) res = values[0];
+            }
+            else
+            {
+                for (int c = 0; c < this.Fields.Count; c++)
                 {
-                    // fixed width
-                    if ( (Fields[c].DataType == ColumnType.Integer) || (Fields[c].DataType == ColumnType.Decimal) )
-                        res += val.PadLeft(Fields[c].MaxWidth, ' ');
+                    // get value
+                    var val = (c < values.Count ? values[c] : "");
+
+                    if (this.Separator == '\0')
+                    {
+                        // fixed width
+                        if ( (Fields[c].DataType == ColumnType.Integer) || (Fields[c].DataType == ColumnType.Decimal) )
+                            res += val.PadLeft(Fields[c].MaxWidth, ' ');
+                        else
+                            res += val.PadRight(Fields[c].MaxWidth, ' ');
+                    }
                     else
-                        res += val.PadRight(Fields[c].MaxWidth, ' ');
-                }
-                else
-                {
-                    // apply quotes
-                    val = CsvEdit.ApplyQuotesToString(val, this.Separator, Fields[c].DataType);
+                    {
+                        // apply quotes
+                        val = CsvEdit.ApplyQuotesToString(val, this.Separator, Fields[c].DataType);
 
-                    // character separated
-                    res += (c > 0 ? this.Separator.ToString() : "") + val;
+                        // character separated
+                        res += (c > 0 ? this.Separator.ToString() : "") + val;
+                    }
                 }
-            };
+            }
 
             return res;
         }

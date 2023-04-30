@@ -21,6 +21,7 @@ namespace CSVLintNppPlugin.Forms
         public string ManWidths { get; set; }
         public bool HeaderNames { get; set; }
         public int SkipLines { get; set; }
+        public char CommentChar { get; set; }
 
         public void InitialiseSetting()
         {
@@ -28,7 +29,18 @@ namespace CSVLintNppPlugin.Forms
             cmbColumnSeparator.Text = Main.Settings.DetectColumnSep;
             txtFixedWidthPos.Text = Main.Settings.DetectColumnWidths;
             chkHeaderNames.Checked = Main.Settings.DetectColumnHeader;
-            numSkipLines.Value = Main.Settings.DetectSkipLines;
+            chkSkipLines.Checked = Main.Settings.DetectSkipLines;
+            numSkipLines.Value = Main.Settings.DetectSkipLinesCount;
+            chkCommentChar.Checked = Main.Settings.DetectCommentChar;
+            txtCommentChar.Text = Main.Settings.CommentCharacter.ToString();
+
+            // initialise form, enable/disable controls
+            OnChkbx_CheckedChanged(chkSkipLines, null);
+            OnChkbx_CheckedChanged(chkCommentChar, null);
+        }
+        private void DetectColumnsForm_Load(object sender, EventArgs e)
+        {
+            InitialiseSetting();
         }
 
         private string GetProcessedColWidths()
@@ -89,7 +101,8 @@ namespace CSVLintNppPlugin.Forms
             Separator = (cmbColumnSeparator.Text.Length > 0 ? cmbColumnSeparator.Text[0] : '\0');
             ManWidths = GetProcessedColWidths();
             HeaderNames = chkHeaderNames.Checked;
-            SkipLines = Convert.ToInt32(numSkipLines.Value);
+            SkipLines = (chkSkipLines.Checked ? Convert.ToInt32(numSkipLines.Value) : 0);
+            CommentChar = (chkCommentChar.Checked && txtCommentChar.Text.Length > 0 ? txtCommentChar.Text[0] : '\0');
 
             // exception
             if (cmbColumnSeparator.Text == "{Tab}")         Separator = '\t';
@@ -102,7 +115,11 @@ namespace CSVLintNppPlugin.Forms
             Main.Settings.DetectColumnSep = cmbColumnSeparator.Text;
             Main.Settings.DetectColumnWidths = txtFixedWidthPos.Text.Replace(' ', ',').Replace(",,", ","); // Replace = allow both comma separated "10, 12, 15, 20" and space separated "10 12 15 20"
             Main.Settings.DetectColumnHeader = chkHeaderNames.Checked;
-            Main.Settings.DetectSkipLines = Convert.ToInt32(numSkipLines.Value);
+
+            Main.Settings.DetectSkipLines = chkSkipLines.Checked;
+            Main.Settings.DetectSkipLinesCount = Convert.ToInt32(numSkipLines.Value);
+            Main.Settings.DetectCommentChar = chkCommentChar.Checked;
+            Main.Settings.CommentCharacter = (chkCommentChar.Checked && txtCommentChar.Text.Length > 0 ? txtCommentChar.Text[0] : Main.Settings.CommentCharacter); // only first character
 
             // save to file
             Main.Settings.SaveToIniFile();
@@ -113,6 +130,13 @@ namespace CSVLintNppPlugin.Forms
             // which checkbox, see index in Tag property
             bool chk = ((sender as ComboBox).SelectedIndex == 4);
             ToggleControlBasedOnControl(sender as ComboBox, chk);
+        }
+
+        private void OnChkbx_CheckedChanged(object sender, EventArgs e)
+        {
+            // which checkbox, see index in Tag property
+            bool chk = (sender as CheckBox).Checked;
+            ToggleControlBasedOnControl(sender as CheckBox, chk);
         }
     }
 }
