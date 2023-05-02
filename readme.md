@@ -204,5 +204,6 @@ History
 09-oct-2022 - v0.4.6.1 Improved sort data and split options, various bugfixes  
 29-oct-2022 - v0.4.6.2 Fixed width positions parameter, docked window font, syntax highlighting toggle button  
 16-apr-2023 - v0.4.6.3 Syntax Highlighting fix, new SkipLines feature and quoted string improvements  
+02-may-2023 - v0.4.6.4 Comment character and dark mode support  
 
 BdR©2023 Free to use - send questions or comments: Bas de Reuver - bdr1976@gmail.com

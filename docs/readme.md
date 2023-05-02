@@ -93,14 +93,17 @@ the individual column widths, so `10, 6, 5` in this example, that will also
 work in most cases. Leave "Fixed positions" empty and the plug-in will
 try to detect fixed width columns same as auto-detect.
 
-Some data files contain comments or documentation about the data in the first
-lines of the file. When you set the "Skip lines" option to anything other
-than `0`, the column detection process will skip the first X lines of the file.
+Some data files contain comments or documentation about the data.
+
+You can select the "Skip lines" option and the column detection process will skip the first X lines of the file.
 For example when the first line of data (including header names) starts on
 line `16` then you can set "Skip lines" to `15`.
 Note that the `SkipLines` keyword is not officially part of the schema.ini format
 (please upvote [the suggestion here](https://feedback.azure.com/d365community/search/?q=schema.ini)),
 so applications that use the ODBC Text driver will ignore this setting.
+
+You can also indicate a comment character, any lines starting with this character will be skipped.
+Note that the `CommentChar` keyword is also not officially part of the schema.ini format.
 
 ![CSV Lint detect columns manually dialog](/docs/csvlint_detect_columns.png?raw=true "CSV Lint plug-in detect columns manually dialog")
 
@@ -605,4 +608,4 @@ always back-up your data files to prevent data loss.
 The [test data](../testdata/), examples and screenshots provided in this github repository do not contain real data, it
 is [randomly generated](https://github.com/BdR76/RandomValuesNPP) test data.
 
-BdR©2022 Free to use - send questions or comments: Bas de Reuver - bdr1976@gmail.com
+BdR©2023 Free to use - send questions or comments: Bas de Reuver - bdr1976@gmail.com
