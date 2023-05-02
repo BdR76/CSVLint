@@ -36,6 +36,7 @@ namespace CSVLintNppPlugin.Forms
             Main.Settings.DataConvertType = idx;
             Main.Settings.DataConvertName = txtTablename.Text;
             Main.Settings.DataConvertSQL = cmbSQLtype.SelectedIndex;
+            Main.Settings.DataConvertBatch = Convert.ToInt32(numSQLBatchSize.Value);
 
             // save to file
             Main.Settings.SaveToIniFile();

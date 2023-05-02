@@ -33,8 +33,8 @@ namespace CSVLintNppPlugin.Forms
             this.btnOk = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
             this.lblHorizontalLine = new System.Windows.Forms.Label();
-            this.lblTitle = new System.Windows.Forms.Label();
             this.picHelpIcon = new System.Windows.Forms.PictureBox();
+            this.lblTitle = new System.Windows.Forms.Label();
             this.toolTipBase = new System.Windows.Forms.ToolTip(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.picHelpIcon)).BeginInit();
             this.SuspendLayout();
@@ -71,18 +71,6 @@ namespace CSVLintNppPlugin.Forms
             this.lblHorizontalLine.Size = new System.Drawing.Size(310, 2);
             this.lblHorizontalLine.TabIndex = 4;
             // 
-            // lblTitle
-            // 
-            this.lblTitle.AutoSize = true;
-            this.lblTitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblTitle.ForeColor = System.Drawing.SystemColors.Highlight;
-            this.lblTitle.Location = new System.Drawing.Point(12, 9);
-            this.lblTitle.Name = "lblTitle";
-            this.lblTitle.Size = new System.Drawing.Size(34, 20);
-            this.lblTitle.TabIndex = 6;
-            this.lblTitle.Text = "title";
-            this.lblTitle.TextChanged += new System.EventHandler(this.lblTitle_TextChanged);
-            // 
             // picHelpIcon
             // 
             this.picHelpIcon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -95,14 +83,26 @@ namespace CSVLintNppPlugin.Forms
             this.picHelpIcon.TabStop = false;
             this.picHelpIcon.Click += new System.EventHandler(this.picHelpIcon_Click);
             // 
+            // lblTitle
+            // 
+            this.lblTitle.AutoSize = true;
+            this.lblTitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTitle.ForeColor = System.Drawing.SystemColors.Highlight;
+            this.lblTitle.Location = new System.Drawing.Point(12, 9);
+            this.lblTitle.Name = "lblTitle";
+            this.lblTitle.Size = new System.Drawing.Size(34, 20);
+            this.lblTitle.TabIndex = 6;
+            this.lblTitle.Text = "title";
+            this.lblTitle.TextChanged += new System.EventHandler(this.lblTitle_TextChanged);
+            // 
             // CsvEditFormBase
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnCancel;
             this.ClientSize = new System.Drawing.Size(318, 213);
-            this.Controls.Add(this.lblTitle);
             this.Controls.Add(this.picHelpIcon);
+            this.Controls.Add(this.lblTitle);
             this.Controls.Add(this.lblHorizontalLine);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnOk);
@@ -120,10 +120,10 @@ namespace CSVLintNppPlugin.Forms
 
         #endregion
         protected System.Windows.Forms.Button btnOk;
-        protected System.Windows.Forms.Button btnCancel;
-        protected System.Windows.Forms.Label lblTitle;
         protected System.Windows.Forms.PictureBox picHelpIcon;
+        protected System.Windows.Forms.Label lblTitle;
         protected System.Windows.Forms.Label lblHorizontalLine;
         private System.Windows.Forms.ToolTip toolTipBase;
+        protected System.Windows.Forms.Button btnCancel;
     }
 }

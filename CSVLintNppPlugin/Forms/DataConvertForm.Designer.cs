@@ -45,40 +45,40 @@ namespace CSVLintNppPlugin.Forms
             // 
             // btnOk
             // 
-            this.btnOk.Location = new System.Drawing.Point(38, 188);
+            this.btnOk.Location = new System.Drawing.Point(169, 188);
             this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
             // 
-            // btnCancel
+            // picHelpIcon
             // 
-            this.btnCancel.Location = new System.Drawing.Point(157, 188);
+            this.picHelpIcon.Location = new System.Drawing.Point(373, 8);
+            this.picHelpIcon.Tag = "convert-data";
             // 
             // lblTitle
             // 
             this.lblTitle.Size = new System.Drawing.Size(100, 20);
             this.lblTitle.Text = "Convert data";
             // 
-            // picHelpIcon
-            // 
-            this.picHelpIcon.Location = new System.Drawing.Point(242, 8);
-            this.picHelpIcon.Tag = "convert-data";
-            // 
             // lblHorizontalLine
             // 
-            this.lblHorizontalLine.Size = new System.Drawing.Size(262, 2);
+            this.lblHorizontalLine.Size = new System.Drawing.Size(393, 2);
+            // 
+            // btnCancel
+            // 
+            this.btnCancel.Location = new System.Drawing.Point(288, 188);
             // 
             // lblConvertTo
             // 
             this.lblConvertTo.AutoSize = true;
             this.lblConvertTo.Location = new System.Drawing.Point(12, 48);
             this.lblConvertTo.Name = "lblConvertTo";
-            this.lblConvertTo.Size = new System.Drawing.Size(56, 13);
+            this.lblConvertTo.Size = new System.Drawing.Size(80, 13);
             this.lblConvertTo.TabIndex = 3;
-            this.lblConvertTo.Text = "Convert to";
+            this.lblConvertTo.Text = "Convert data to";
             // 
             // rdbtnSQL
             // 
             this.rdbtnSQL.AutoSize = true;
-            this.rdbtnSQL.Location = new System.Drawing.Point(100, 46);
+            this.rdbtnSQL.Location = new System.Drawing.Point(192, 46);
             this.rdbtnSQL.Name = "rdbtnSQL";
             this.rdbtnSQL.Size = new System.Drawing.Size(46, 17);
             this.rdbtnSQL.TabIndex = 4;
@@ -91,7 +91,7 @@ namespace CSVLintNppPlugin.Forms
             // rdbtnXML
             // 
             this.rdbtnXML.AutoSize = true;
-            this.rdbtnXML.Location = new System.Drawing.Point(148, 46);
+            this.rdbtnXML.Location = new System.Drawing.Point(256, 46);
             this.rdbtnXML.Name = "rdbtnXML";
             this.rdbtnXML.Size = new System.Drawing.Size(47, 17);
             this.rdbtnXML.TabIndex = 4;
@@ -104,7 +104,7 @@ namespace CSVLintNppPlugin.Forms
             // rdbtnJSON
             // 
             this.rdbtnJSON.AutoSize = true;
-            this.rdbtnJSON.Location = new System.Drawing.Point(196, 46);
+            this.rdbtnJSON.Location = new System.Drawing.Point(318, 46);
             this.rdbtnJSON.Name = "rdbtnJSON";
             this.rdbtnJSON.Size = new System.Drawing.Size(53, 17);
             this.rdbtnJSON.TabIndex = 4;
@@ -123,9 +123,9 @@ namespace CSVLintNppPlugin.Forms
             "MySQL",
             "MS-SQL",
             "PostgreSQL"});
-            this.cmbSQLtype.Location = new System.Drawing.Point(98, 109);
+            this.cmbSQLtype.Location = new System.Drawing.Point(192, 109);
             this.cmbSQLtype.Name = "cmbSQLtype";
-            this.cmbSQLtype.Size = new System.Drawing.Size(92, 21);
+            this.cmbSQLtype.Size = new System.Drawing.Size(111, 21);
             this.cmbSQLtype.TabIndex = 8;
             this.cmbSQLtype.Tag = "1";
             // 
@@ -144,15 +144,15 @@ namespace CSVLintNppPlugin.Forms
             this.lblSQLBatchSize.AutoSize = true;
             this.lblSQLBatchSize.Location = new System.Drawing.Point(12, 144);
             this.lblSQLBatchSize.Name = "lblSQLBatchSize";
-            this.lblSQLBatchSize.Size = new System.Drawing.Size(56, 13);
+            this.lblSQLBatchSize.Size = new System.Drawing.Size(113, 13);
             this.lblSQLBatchSize.TabIndex = 9;
             this.lblSQLBatchSize.Tag = "";
-            this.lblSQLBatchSize.Text = "Batch size";
+            this.lblSQLBatchSize.Text = "Batch size SQL inserts";
             // 
             // numSQLBatchSize
             // 
             this.numSQLBatchSize.Enabled = false;
-            this.numSQLBatchSize.Location = new System.Drawing.Point(98, 142);
+            this.numSQLBatchSize.Location = new System.Drawing.Point(192, 141);
             this.numSQLBatchSize.Maximum = new decimal(new int[] {
             99999999,
             0,
@@ -164,7 +164,7 @@ namespace CSVLintNppPlugin.Forms
             0,
             0});
             this.numSQLBatchSize.Name = "numSQLBatchSize";
-            this.numSQLBatchSize.Size = new System.Drawing.Size(92, 20);
+            this.numSQLBatchSize.Size = new System.Drawing.Size(111, 20);
             this.numSQLBatchSize.TabIndex = 10;
             this.numSQLBatchSize.Tag = "1";
             this.numSQLBatchSize.Value = new decimal(new int[] {
@@ -175,9 +175,9 @@ namespace CSVLintNppPlugin.Forms
             // 
             // txtTablename
             // 
-            this.txtTablename.Location = new System.Drawing.Point(98, 78);
+            this.txtTablename.Location = new System.Drawing.Point(192, 77);
             this.txtTablename.Name = "txtTablename";
-            this.txtTablename.Size = new System.Drawing.Size(160, 20);
+            this.txtTablename.Size = new System.Drawing.Size(192, 20);
             this.txtTablename.TabIndex = 6;
             this.txtTablename.Tag = "1,2";
             // 
@@ -186,15 +186,15 @@ namespace CSVLintNppPlugin.Forms
             this.lblTablename.AutoSize = true;
             this.lblTablename.Location = new System.Drawing.Point(12, 80);
             this.lblTablename.Name = "lblTablename";
-            this.lblTablename.Size = new System.Drawing.Size(83, 13);
+            this.lblTablename.Size = new System.Drawing.Size(117, 13);
             this.lblTablename.TabIndex = 5;
             this.lblTablename.Tag = "";
-            this.lblTablename.Text = "Table/tag name";
+            this.lblTablename.Text = "Table name / XML root";
             // 
             // DataConvertForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.ClientSize = new System.Drawing.Size(269, 230);
+            this.ClientSize = new System.Drawing.Size(400, 230);
             this.Controls.Add(this.txtTablename);
             this.Controls.Add(this.numSQLBatchSize);
             this.Controls.Add(this.cmbSQLtype);

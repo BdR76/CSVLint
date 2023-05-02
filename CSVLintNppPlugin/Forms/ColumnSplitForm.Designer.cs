@@ -55,28 +55,28 @@ namespace CSVLintNppPlugin.Forms
             // 
             // btnOk
             // 
-            this.btnOk.Location = new System.Drawing.Point(152, 278);
-            this.btnOk.TabIndex = 14;
+            this.btnOk.Location = new System.Drawing.Point(169, 278);
+            this.btnOk.TabIndex = 15;
             this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
             // 
-            // btnCancel
+            // picHelpIcon
             // 
-            this.btnCancel.Location = new System.Drawing.Point(271, 278);
-            this.btnCancel.TabIndex = 15;
+            this.picHelpIcon.Location = new System.Drawing.Point(365, 9);
+            this.picHelpIcon.Tag = "add-new-columns";
             // 
             // lblTitle
             // 
             this.lblTitle.Size = new System.Drawing.Size(144, 20);
             this.lblTitle.Text = "Add new column(s)";
             // 
-            // picHelpIcon
-            // 
-            this.picHelpIcon.Location = new System.Drawing.Point(348, 9);
-            this.picHelpIcon.Tag = "add-new-columns";
-            // 
             // lblHorizontalLine
             // 
-            this.lblHorizontalLine.Size = new System.Drawing.Size(376, 2);
+            this.lblHorizontalLine.Size = new System.Drawing.Size(393, 2);
+            // 
+            // btnCancel
+            // 
+            this.btnCancel.Location = new System.Drawing.Point(288, 278);
+            this.btnCancel.TabIndex = 16;
             // 
             // lblSelectColumn
             // 
@@ -95,7 +95,7 @@ namespace CSVLintNppPlugin.Forms
             "(select a column)"});
             this.cmbSelectColumn.Location = new System.Drawing.Point(192, 50);
             this.cmbSelectColumn.Name = "cmbSelectColumn";
-            this.cmbSelectColumn.Size = new System.Drawing.Size(180, 21);
+            this.cmbSelectColumn.Size = new System.Drawing.Size(192, 21);
             this.cmbSelectColumn.TabIndex = 1;
             this.cmbSelectColumn.Tag = "";
             this.cmbSelectColumn.SelectedIndexChanged += new System.EventHandler(this.cmbSelectColumn_SelectedIndexChanged);
@@ -177,7 +177,7 @@ namespace CSVLintNppPlugin.Forms
             // lblPadLength
             // 
             this.lblPadLength.AutoSize = true;
-            this.lblPadLength.Location = new System.Drawing.Point(243, 86);
+            this.lblPadLength.Location = new System.Drawing.Point(256, 86);
             this.lblPadLength.Name = "lblPadLength";
             this.lblPadLength.Size = new System.Drawing.Size(59, 13);
             this.lblPadLength.TabIndex = 15;
@@ -186,7 +186,7 @@ namespace CSVLintNppPlugin.Forms
             // numPadLength
             // 
             this.numPadLength.Enabled = false;
-            this.numPadLength.Location = new System.Drawing.Point(306, 84);
+            this.numPadLength.Location = new System.Drawing.Point(336, 84);
             this.numPadLength.Maximum = new decimal(new int[] {
             999,
             0,
@@ -215,7 +215,7 @@ namespace CSVLintNppPlugin.Forms
             // lblSearchReplace
             // 
             this.lblSearchReplace.AutoSize = true;
-            this.lblSearchReplace.Location = new System.Drawing.Point(259, 118);
+            this.lblSearchReplace.Location = new System.Drawing.Point(272, 118);
             this.lblSearchReplace.Name = "lblSearchReplace";
             this.lblSearchReplace.Size = new System.Drawing.Size(26, 13);
             this.lblSearchReplace.TabIndex = 16;
@@ -224,7 +224,7 @@ namespace CSVLintNppPlugin.Forms
             // txtReplace
             // 
             this.txtReplace.Enabled = false;
-            this.txtReplace.Location = new System.Drawing.Point(306, 115);
+            this.txtReplace.Location = new System.Drawing.Point(336, 115);
             this.txtReplace.Name = "txtReplace";
             this.txtReplace.Size = new System.Drawing.Size(48, 20);
             this.txtReplace.TabIndex = 10;
@@ -246,14 +246,14 @@ namespace CSVLintNppPlugin.Forms
             this.lblSplitCharacter.AutoSize = true;
             this.lblSplitCharacter.Location = new System.Drawing.Point(246, 183);
             this.lblSplitCharacter.Name = "lblSplitCharacter";
-            this.lblSplitCharacter.Size = new System.Drawing.Size(55, 13);
+            this.lblSplitCharacter.Size = new System.Drawing.Size(81, 13);
             this.lblSplitCharacter.TabIndex = 15;
-            this.lblSplitCharacter.Text = "nth occur.";
+            this.lblSplitCharacter.Text = "Nth occurrence";
             // 
             // numSplitNth
             // 
             this.numSplitNth.Enabled = false;
-            this.numSplitNth.Location = new System.Drawing.Point(306, 180);
+            this.numSplitNth.Location = new System.Drawing.Point(336, 180);
             this.numSplitNth.Maximum = new decimal(new int[] {
             999,
             0,
@@ -299,7 +299,7 @@ namespace CSVLintNppPlugin.Forms
             this.chkDeleteOriginal.Location = new System.Drawing.Point(16, 244);
             this.chkDeleteOriginal.Name = "chkDeleteOriginal";
             this.chkDeleteOriginal.Size = new System.Drawing.Size(139, 17);
-            this.chkDeleteOriginal.TabIndex = 12;
+            this.chkDeleteOriginal.TabIndex = 14;
             this.chkDeleteOriginal.Tag = "6";
             this.chkDeleteOriginal.Text = "Remove original column";
             this.chkDeleteOriginal.UseVisualStyleBackColor = true;
@@ -308,7 +308,7 @@ namespace CSVLintNppPlugin.Forms
             // ColumnSplitForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.ClientSize = new System.Drawing.Size(383, 320);
+            this.ClientSize = new System.Drawing.Size(400, 320);
             this.Controls.Add(this.lblSearchReplace);
             this.Controls.Add(this.lblSplitCharacter);
             this.Controls.Add(this.lblPadLength);
@@ -356,8 +356,8 @@ namespace CSVLintNppPlugin.Forms
             this.Controls.SetChildIndex(this.lblSearchReplace, 0);
             ((System.ComponentModel.ISupportInitialize)(this.picHelpIcon)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numPadLength)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numSplitSubstring)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numSplitNth)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numSplitSubstring)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 

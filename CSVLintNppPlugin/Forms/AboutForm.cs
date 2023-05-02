@@ -58,7 +58,7 @@ namespace CSVLintNppPlugin.Forms
         {
             // display easter egg icon on certain dates
             DateTime today = DateTime.Now.AddHours(-3); // day 'starts' in the morning and lasts after midnight (especially for new years eve etc.)
-            //DateTime today = new DateTime(2021, 12, 31); // testing
+            //DateTime today = new DateTime(2023, 12, 31); // testing
 
             string msg = "";
             string obj = "";
@@ -104,6 +104,7 @@ namespace CSVLintNppPlugin.Forms
                 helperTip.SetToolTip(picEasterEgg, tip);
                 picEasterEgg.Image = img;
                 picEasterEgg.Visible = true;
+                picEasterEgg.Tag = "1"; // today is day with actual easter egg
             }
         }
         //private void displayEasterEgg_old()
@@ -158,11 +159,22 @@ namespace CSVLintNppPlugin.Forms
 
         private void picEasterEgg_Click(object sender, EventArgs e)
         {
-            ForceEasterEgg++;
-            if ((ForceEasterEgg == 5) && (picEasterEgg.Image == null))
-            {
-                helperTip.SetToolTip(picEasterEgg, "On certain days in the year you'll find an easter egg here ;)");
-                picEasterEgg.Image = CSVLintNppPlugin.Properties.Resources.easteregg;
+            // click to reveal easter egg, but only on days without actual easter egg
+            if (picEasterEgg.Tag.ToString() == "0") {
+                ForceEasterEgg++;
+
+                if (ForceEasterEgg % 5 == 0)
+                {
+                    // show image
+                    if (ForceEasterEgg <= 5)       picEasterEgg.Image = CSVLintNppPlugin.Properties.Resources.easteregg; // click 5 times
+                    else if (ForceEasterEgg <= 10) picEasterEgg.Image = CSVLintNppPlugin.Properties.Resources.clover;    // click 5 more times etc.
+                    else if (ForceEasterEgg <= 15) picEasterEgg.Image = CSVLintNppPlugin.Properties.Resources.pumpkin;
+                    else                           picEasterEgg.Image = CSVLintNppPlugin.Properties.Resources.oliebol;
+
+                    // update help text + counter
+                    helperTip.SetToolTip(picEasterEgg, "On certain days in the year you'll find an easter egg here ;)");
+                    if (ForceEasterEgg >= 20) ForceEasterEgg = 0; // cycle back to first
+                }
             }
         }
 

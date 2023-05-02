@@ -859,9 +859,9 @@ namespace CSVLint
         /// <param name="data"> csv data </param>
         public int SkipCommentLinesAtStart(StreamReader strdata)
         {
-            var res = 1;
+            var res = 0;
             // SkipLines parameter, how many lines to skip at start of file
-            int skip = (this.SkipLines >= 0 ? this.SkipLines : 0);
+            int skip = this.SkipLines;
 
             while ((skip > 0) && (!strdata.EndOfStream))
             {

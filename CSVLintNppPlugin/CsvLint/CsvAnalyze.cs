@@ -525,16 +525,16 @@ namespace CSVLint
 
             while (!strdata.EndOfStream)
             {
-                // keep track of how many lines
-                lineCount++;
-
                 values = csvdef.ParseNextLine(strdata, out bool iscomm);
 
                 // skip comment lines
-                if (!iscomm)
+                if (iscomm)
                     commentCount++;
                 else
                 {
+                    // keep track of how many lines
+                    lineCount++;
+
                     // inspect all values
                     for (int i = 0; i < values.Count; i++)
                     {

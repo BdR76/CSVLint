@@ -730,7 +730,7 @@ namespace Kbg.NppPluginNET
             {
                 ver = ver.Substring(0, ver.Length - 2);
             }
-            return ver + "β2";
+            return ver;
         }
     }
 }

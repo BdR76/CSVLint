@@ -483,8 +483,8 @@ namespace Kbg.NppPluginNET
             //if (ctrl is System.Windows.Forms.ButtonBase)
             if (ctrl is System.Windows.Forms.RadioButton || ctrl is System.Windows.Forms.CheckBox)
             {
-                ((ButtonBase)ctrl).BackColor = (!isDark ? Label.DefaultBackColor : NppDarkMode.BGRToColor(theme.PureBackground));
-                ((ButtonBase)ctrl).ForeColor = (!isDark ? Label.DefaultForeColor : NppDarkMode.BGRToColor(theme.Text));
+                ((ButtonBase)ctrl).BackColor = (!isDark ? ButtonBase.DefaultBackColor : NppDarkMode.BGRToColor(theme.PureBackground));
+                ((ButtonBase)ctrl).ForeColor = (!isDark ? ButtonBase.DefaultForeColor : NppDarkMode.BGRToColor(theme.Text));
             }
 
             // edit box
@@ -492,6 +492,8 @@ namespace Kbg.NppPluginNET
             {
                 ((TextBox)ctrl).BackColor = (!isDark ? TextBox.DefaultBackColor : NppDarkMode.BGRToColor(theme.SofterBackground));
                 ((TextBox)ctrl).ForeColor = (!isDark ? TextBox.DefaultForeColor : NppDarkMode.BGRToColor(theme.Text));
+                // exception for schema.ini textbox
+                if (ctrl.Name == "txtSchemaIni" && !isDark) ((TextBox)ctrl).BackColor = Color.FromKnownColor(KnownColor.Window);
             }
 
             // ListBox and ComboBox
@@ -503,8 +505,9 @@ namespace Kbg.NppPluginNET
 
             if (ctrl.GetType() == typeof(Button))
             {
-                ((Button)ctrl).BackColor = (!isDark ? Color.FromKnownColor(KnownColor.ButtonFace) : NppDarkMode.BGRToColor(theme.SofterBackground));
-                ((Button)ctrl).ForeColor = (!isDark ? Button.DefaultForeColor : NppDarkMode.BGRToColor(theme.Text));
+                ((Button)ctrl).BackColor = (!isDark ? Color.FromKnownColor(KnownColor.ControlLight) : NppDarkMode.BGRToColor(theme.SofterBackground));
+                ((Button)ctrl).ForeColor = (!isDark ? Color.FromKnownColor(KnownColor.ControlText) : NppDarkMode.BGRToColor(theme.Text));
+                ((Button)ctrl).UseVisualStyleBackColor = !isDark;
             }
 
             // dialog form or panel/groupbox

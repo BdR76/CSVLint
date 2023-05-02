@@ -302,6 +302,9 @@ namespace CSVLint
             // Python skip comment lines
             if (csvdef.SkipLines > 0) nameparam += string.Format(", skiprows={0}", csvdef.SkipLines);
 
+            // Python comment character
+            if (csvdef.CommentChar != '\0') nameparam += string.Format(", comment='{0}'", csvdef.CommentChar);
+
             // column types
             python.Append(string.Format("col_types = {{\r\n{0}}}\r\n", col_types));
 
@@ -361,22 +364,22 @@ namespace CSVLint
             python.Append("# Data transformation suggestions\r\n");
             python.Append("# --------------------------------------\r\n\r\n");
 
-            python.Append("# reorder or remove columns\r\n");
+            python.Append("# Reorder or remove columns (edit code below)\r\n");
             python.Append(string.Format("df = df[[\r\n{0}]]\r\n\r\n", col_names));
 
             if (exampleDate == "") exampleDate = "myDateField";
-            python.Append("# date to string format MM/dd/yyyy\r\n");
+            python.Append("# Date to string example, format as MM/dd/yyyy\r\n");
             python.Append(string.Format("#df['{0}'] = df['{0}'].dt.strftime('%m/%d/%Y')\r\n\r\n", exampleDate));
 
-            python.Append("# replace labels with codes, for example column contains 'Yes' or 'No' replace with '1' or '0'\r\n");
+            python.Append("# Replace labels with codes example, when column contains 'Yes' or 'No' replace with '1' or '0'\r\n");
             python.Append("#lookuplist = {'Yes': 1, 'No': 0}\r\n");
             python.Append("#df['fieldyesno_code'] = df['fieldyesno'].map(lookuplist)\r\n\r\n");
 
-            python.Append("# calculate new values\r\n");
+            python.Append("# Calculate new values example\r\n");
             python.Append("#df['bmi_calc'] = round(df['weight'] / (df['height'] / 100) ** 2, 1)\r\n");
             python.Append("#df['center_patient'] = df['centercode'].str.slice(0, 2) + '-' + df['patientcode'].map(str) # '01-123' etc\r\n\r\n");
 
-            python.Append("# merge dataframes example, to join on multiple columns use a list, for example: on=['patient_id', 'center_id']\r\n");
+            python.Append("# Merge dataframes example, to join on multiple columns use a list, for example: on=['patient_id', 'center_id']\r\n");
             python.Append("#merged_df = pd.merge(df1, df2, how='left', on='patient_id') # same key column name\r\n");
             python.Append("#merged_df = pd.merge(df1, df2, how='left', left_on='df1 key', right_on='df2 id') # different key column names\r\n\r\n");
 
@@ -529,7 +532,10 @@ namespace CSVLint
             }
 
             // R-script skip comment lines
-            if (csvdef.SkipLines > 0) nameparam += string.Format(", skip={0}", csvdef.SkipLines);
+            if (csvdef.SkipLines > 0) nameparam += string.Format("skip={0}, ", csvdef.SkipLines);
+
+            // R-script comment character
+            if (csvdef.CommentChar != '\0') nameparam += string.Format("comment.char=\"{0}\", ", csvdef.CommentChar);
 
             // column types
             rscript.Append(string.Format("colTypes <- {0}\r\n", col_types));
@@ -575,23 +581,23 @@ namespace CSVLint
             rscript.Append("# Data transformation suggestions\r\n");
             rscript.Append("# --------------------------------------\r\n\r\n");
 
-            rscript.Append("# reorder or remove columns\r\n");
+            rscript.Append("# Reorder or remove columns (edit code below)\r\n");
             rscript.Append(string.Format("colOrder <- {0}", col_names));
             rscript.Append("df <- df[, colOrder]\r\n\r\n");
 
-            rscript.Append("# date to string format MM/dd/yyyy\r\n");
+            rscript.Append("# Date to string example, format as MM/dd/yyyy\r\n");
             rscript.Append(string.Format("#df${0} <- format(df${0}, \"%m/%d/%Y\")\r\n\r\n", exampleDate));
 
-            rscript.Append("# replace labels with codes, for example column contains 'Yes' or 'No' replace with '1' or '0'\r\n");
+            rscript.Append("# Replace labels with codes example, when column contains 'Yes' or 'No' replace with '1' or '0'\r\n");
             rscript.Append("#lookuplist <- data.frame(\"code\" = c(\"0\", \"1\"),\r\n");
             rscript.Append("#                    \"label\" = c(\"No\", \"Yes\") )\r\n");
             rscript.Append("#df$fieldyesno_code <- lookuplist$code[match(df$fieldyesno, lookuplist$label)]\r\n\r\n");
             
-            rscript.Append("# calculate new values\r\n");
+            rscript.Append("# Calculate new values example\r\n");
             rscript.Append("#df$bmi_calc <- df$weight / (df$height / 100) ^ 2\r\n");
             rscript.Append("#df$center_patient <- paste(substr(df$centercode, 1, 2), '-', df$patientcode) # '01-123' etc.\r\n\r\n");
 
-            rscript.Append("# merge dataframes example, all.x=TRUE meaning take all df1 records(=x) and left outer join with df2(=y)\r\n");
+            rscript.Append("# Merge dataframes example, all.x=TRUE meaning take all df1 records(=x) and left outer join with df2(=y)\r\n");
             rscript.Append("#merged_df <- merge(df1, df2, all.x=TRUE, by=c('patient_id')) # same key column name\r\n");
             rscript.Append("#merged_df <- merge(df1, df2, all.x=TRUE, by.x=c('df1 key'), by.y=c('df2 id')) # different key column name\r\n\r\n");
 

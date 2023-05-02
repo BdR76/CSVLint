@@ -104,6 +104,7 @@ namespace CSVLintNppPlugin.Forms
             this.picEasterEgg.Size = new System.Drawing.Size(32, 32);
             this.picEasterEgg.TabIndex = 7;
             this.picEasterEgg.TabStop = false;
+            this.picEasterEgg.Tag = "0";
             this.picEasterEgg.Click += new System.EventHandler(this.picEasterEgg_Click);
             // 
             // lblDisclaimer

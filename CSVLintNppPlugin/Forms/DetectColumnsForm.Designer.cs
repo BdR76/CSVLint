@@ -152,10 +152,10 @@ namespace CSVLintNppPlugin.Forms
             this.chkCommentChar.AutoSize = true;
             this.chkCommentChar.Location = new System.Drawing.Point(12, 175);
             this.chkCommentChar.Name = "chkCommentChar";
-            this.chkCommentChar.Size = new System.Drawing.Size(158, 17);
+            this.chkCommentChar.Size = new System.Drawing.Size(139, 17);
             this.chkCommentChar.TabIndex = 6;
             this.chkCommentChar.Tag = "4";
-            this.chkCommentChar.Text = "Has line comment character";
+            this.chkCommentChar.Text = "Comment lines start with";
             this.chkCommentChar.UseVisualStyleBackColor = true;
             this.chkCommentChar.CheckedChanged += new System.EventHandler(this.OnChkbx_CheckedChanged);
             // 

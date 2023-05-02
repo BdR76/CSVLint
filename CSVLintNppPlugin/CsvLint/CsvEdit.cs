@@ -303,8 +303,17 @@ namespace CSVLint
             IScintillaGateway editor = new ScintillaGateway(PluginBase.GetCurrentScintilla());
 
             string FILE_NAME = Path.GetFileName(notepad.GetCurrentFilePath());
+
             string TABLE_NAME = Main.Settings.DataConvertName;
             if (TABLE_NAME == "") TABLE_NAME = StringToVariable(Path.GetFileNameWithoutExtension(notepad.GetCurrentFilePath()));
+            if (TABLE_NAME.Contains(" "))
+            {
+                if (Main.Settings.DataConvertSQL == 1) // MS-SQL
+                    TABLE_NAME = string.Format("[{0}]", TABLE_NAME);
+                else
+                    TABLE_NAME = string.Format("{1}{0}{1}", TABLE_NAME, (Main.Settings.DataConvertSQL == 0 ? "`" : "\""));
+            }
+
             string SQL_TYPE = (Main.Settings.DataConvertSQL <= 1 ? (Main.Settings.DataConvertSQL == 0 ? "mySQL" : "MS-SQL") : "PostgreSQL");
 
             sb.Append("-- -------------------------------------\r\n");
@@ -382,7 +391,7 @@ namespace CSVLint
             // primary key definition for mySQL
             if (Main.Settings.DataConvertSQL == 0) sb.Append(string.Format("\r\n\tprimary key(`{0}`)", recidname));
 
-            sb.Append("\r\n);\r\n\r\n");
+            sb.Append("\r\n);\r\n");
 
             // use stringreader to go line by line
             var strdata = ScintillaStreams.StreamAllText();
@@ -390,32 +399,13 @@ namespace CSVLint
             int lineCount = csvdef.ColNameHeader ? -1 : 0;
             int batchcomm = -1;  // batch comment line
             int batchstart = -1; // batch starting line
+            int lastend = -1;  // last line end character
 
             // copy any comment lines
             csvdef.CopyCommentLinesAtStart(strdata, sb, "-- ");
 
             while (!strdata.EndOfStream)
             {
-                // add in batches of maximal <MAX_SQL_ROWS> rows
-                if (lineCount % MAX_SQL_ROWS == 0)
-                {
-                    // batch comment, insert record count
-                    // note: not possible to insert now because the ammount of records is unknown at this point
-                    if (batchcomm > -1) sb.Insert(batchcomm, string.Format("{0} - {1}", batchstart, lineCount));
-
-                    // remember next batch
-                    batchstart = lineCount + 1;
-
-                    if (lineCount > 0) sb.Append(";\r\n\r\n");
-                    sb.Append("-- -------------------------------------\r\n");
-                    sb.Append("-- insert records \r\n");
-                    batchcomm = sb.Length - 2; // -2 because of the 2 characters \r\n
-                    sb.Append("-- -------------------------------------\r\n");
-                    sb.Append(string.Format("insert into {0} (\r\n", TABLE_NAME));
-                    sb.Append(cols);
-                    sb.Append("\r\n) values");
-                }
-
                 // get next 'record' from csv data
                 List<string> list = csvdef.ParseNextLine(strdata, out bool iscomm);
 
@@ -426,15 +416,31 @@ namespace CSVLint
                 }
                 else
                 {
+                    // add in batches of maximal <MAX_SQL_ROWS> rows
+                    if (lineCount % MAX_SQL_ROWS == 0)
+                    {
+                        // batch comment, insert record count
+                        // note: not possible to insert now because the ammount of records is unknown at this point
+                        if (batchcomm > -1) sb.Insert(batchcomm, string.Format("{0} - {1}", batchstart, lineCount));
+
+                        // remember next batch
+                        batchstart = lineCount + 1;
+
+                        sb.Append("\r\n");
+                        sb.Append("-- -------------------------------------\r\n");
+                        sb.Append("-- insert records \r\n");
+                        batchcomm = sb.Length - 2; // -2 because of the 2 characters \r\n
+                        sb.Append("-- -------------------------------------\r\n");
+                        sb.Append(string.Format("insert into {0} (\r\n", TABLE_NAME));
+                        sb.Append(cols);
+                        sb.Append("\r\n) values\r\n");
+                    }
+
                     // skip header line
                     if (lineCount >= 0)
                     {
-                        // add comma, except on last row (of this batch)
-                        if (lineCount % MAX_SQL_ROWS != 0)
-                        {
-                            sb.Append(",");
-                        }
-                        sb.Append("\r\n(");
+                        // next line of values
+                        sb.Append("(");
 
                         for (var r = 0; r < list.Count; r++)
                         {
@@ -488,7 +494,9 @@ namespace CSVLint
                             sb.Append((r > 0 ? ", " : "") + str);
                         }
 
-                        sb.Append(")");
+                        // end line with comma , or semicolon at end of a batch
+                        sb.Append(string.Format("){0}\r\n", ((lineCount+1) % MAX_SQL_ROWS != 0 ? "," : ";")));
+                        lastend = sb.Length - 3; // -3 because -1 for ,/; character and  -2 for characters \r\n
                     }
 
                     // next line
@@ -496,12 +504,15 @@ namespace CSVLint
                 }
             }
 
+            // finalise script, it's possible the last lines are all comment lines, then end of data line is not a semicolon ; but a comma , 
+            if (lastend > -1) {
+                sb.Remove(lastend, 1);   // remove last comma
+                sb.Insert(lastend, ";"); // replace with semi-colon
+            }
+
             // batch comment, insert record count
             // note: not possible to insert now because the ammount of records is unknown at this point
             if (batchcomm > -1) sb.Insert(batchcomm, string.Format("{0} - {1}", batchstart, lineCount));
-
-            // finalise script
-            sb.Append(";\r\n\r\n");
 
             // create new file
             notepad.FileNew();
