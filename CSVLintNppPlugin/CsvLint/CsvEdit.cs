@@ -1150,33 +1150,32 @@ namespace CSVLint
                                 int pos = -1;
                                 int index = 0;
 
-                                int i = 1;
+                                int i = 0;
                                 if (IntPar2 >= 0)
                                 {
                                     // first Nth occurance
-                                    while (i <= IntPar2 && (index = val.IndexOf(Parameter1, index + 1)) != -1)
+                                    while (++i <= IntPar2 && (index = val.IndexOf(Parameter1, index)) != -1)
                                     {
                                         if (i == IntPar2)
                                         {
                                             pos = index;
                                             break;
                                         }
-                                        i++;
+                                        index++;
                                     }
                                 }
                                 else
                                 {
                                     // last Nth occurance
-                                    i = -1;
                                     index = val.Length;
-                                    while (i >= IntPar2 && (index = val.LastIndexOf(Parameter1, index - 1)) != -1)
+                                    while (--i >= IntPar2 && (index = val.LastIndexOf(Parameter1, index)) != -1)
                                     {
                                         if (i == IntPar2)
                                         {
                                             pos = index;
                                             break;
                                         }
-                                        i--;
+                                        if (--index < 0) break; // LastIndexOf crashes on a negative startIndex
                                     }
                                 }
 

@@ -133,6 +133,7 @@ namespace CSVLintNppPlugin.Forms
             // AboutForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.CancelButton = this.btnOk;
             this.ClientSize = new System.Drawing.Size(244, 229);
             this.Controls.Add(this.btnDonate);
             this.Controls.Add(this.picEasterEgg);
