@@ -442,42 +442,43 @@ namespace CSVLint
                         // next line of values
                         sb.Append("(");
 
-                        for (var r = 0; r < list.Count; r++)
+                        for (var col = 0; col < csvdef.Fields.Count; col++)
                         {
                             // format next value, quotes for varchar and datetime
-                            var str = list[r];
+                            var colvalue = "";
+                            if (col < list.Count) colvalue = list[col];
 
                             // adjust for quoted values, trim first because can be a space before the first quote, example .., "BMI",..
-                            var strtrim = str.Trim();
+                            var strtrim = colvalue.Trim();
                             if ((strtrim.Length > 0) && (strtrim[0] == Main.Settings.DefaultQuoteChar))
                             {
-                                str = str.Trim();
-                                str = str.Trim(Main.Settings.DefaultQuoteChar);
+                                colvalue = colvalue.Trim();
+                                colvalue = colvalue.Trim(Main.Settings.DefaultQuoteChar);
                             }
 
                             // next value to evaluate
-                            if (Main.Settings.TrimValues) str = str.Trim();
+                            if (Main.Settings.TrimValues) colvalue = colvalue.Trim();
 
-                            if (str == "")
+                            if (colvalue == "")
                             {
-                                str = "NULL";
+                                colvalue = "NULL";
                             }
-                            else if (csvdef.Fields[r].DataType == ColumnType.Decimal)
+                            else if (csvdef.Fields[col].DataType == ColumnType.Decimal)
                             {
-                                str = str.Replace(csvdef.Fields[r].DecimalSymbol == '.' ? "," : ".", ""); // remove thousand separator
-                                str = str.Replace(csvdef.Fields[r].DecimalSymbol, '.');
+                                colvalue = colvalue.Replace(csvdef.Fields[col].DecimalSymbol == '.' ? "," : ".", ""); // remove thousand separator
+                                colvalue = colvalue.Replace(csvdef.Fields[col].DecimalSymbol, '.');
                             }
-                            else if ((csvdef.Fields[r].DataType == ColumnType.String)
-                                  || (csvdef.Fields[r].DataType == ColumnType.DateTime))
+                            else if ((csvdef.Fields[col].DataType == ColumnType.String)
+                                  || (csvdef.Fields[col].DataType == ColumnType.DateTime))
                             //|| (csvdef.Fields[r].DataType == ColumnType.Guid))
                             {
                                 // sql datetime format
-                                if (csvdef.Fields[r].DataType == ColumnType.DateTime)
+                                if (csvdef.Fields[col].DataType == ColumnType.DateTime)
                                 {
                                     try
                                     {
-                                        var dt = DateTime.ParseExact(str, csvdef.Fields[r].Mask, Main.dummyCulture);
-                                        str = dt.ToString("yyyy-MM-dd HH:mm:ss");
+                                        var dt = DateTime.ParseExact(colvalue, csvdef.Fields[col].Mask, Main.dummyCulture);
+                                        colvalue = dt.ToString("yyyy-MM-dd HH:mm:ss");
                                     }
                                     catch
                                     {
@@ -486,12 +487,12 @@ namespace CSVLint
                                     }
                                 }
                                 // sql single quotes
-                                str = str.Replace("'", "''");
-                                str = string.Format("'{0}'", str);
+                                colvalue = colvalue.Replace("'", "''");
+                                colvalue = string.Format("'{0}'", colvalue);
                             }
 
                             // add data value, preceded by a comma
-                            sb.Append((r > 0 ? ", " : "") + str);
+                            sb.Append((col > 0 ? ", " : "") + colvalue);
                         }
 
                         // end line with comma , or semicolon at end of a batch
