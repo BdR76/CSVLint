@@ -136,12 +136,13 @@ namespace Kbg.NppPluginNET
             if (position >= 0)
             {
                 // log line always "** error line 123: error in.. etc.", check for ':'
+                int lineStart = log.Text.IndexOf("** error line", position);
                 int lineEnd = log.Text.IndexOf(':', position);
-                if (lineEnd >= 0)
+                if ( (lineStart >= 0) && (lineEnd >= 0) && (lineStart < lineEnd) )
                 {
                     // get part between "line" and ":"
-                    position += 13; // "** error line " is 14 characters
-                    string logline = log.Text.Substring(position, lineEnd - position);
+                    //position += 13; // "** error line " is 14 characters
+                    string logline = log.Text.Substring(lineStart + 13, lineEnd - lineStart - 13);
 
                     int.TryParse(logline, out linenumber);
 

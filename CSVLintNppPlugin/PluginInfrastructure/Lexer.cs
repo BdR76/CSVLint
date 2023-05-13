@@ -393,7 +393,7 @@ namespace NppPluginNET.PluginInfrastructure
 
             if ((name == "separator") && (value.Length > 0))
             {
-                separatorChar = value[value.Length-1];
+                separatorChar = value[value.Length-1]; // last character instead of value[0] this is a hack to fix syntax highlighting for corner ¬ separator
             }
             else if (name == "fixedwidths")
             {

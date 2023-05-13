@@ -2,6 +2,7 @@
 using Kbg.NppPluginNET;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace CSVLintNppPlugin.Forms
@@ -43,11 +44,20 @@ namespace CSVLintNppPlugin.Forms
             radioSortAsc.Checked = Main.Settings.UniqueSortAsc;
             radioSortDesc.Checked = !Main.Settings.UniqueSortAsc;
 
-            // pre-select columns from previous
-            var tmp = Main.Settings.UniqueColumns.Split('|');
-            foreach (var colname in tmp)
+            // pre-select column names from previous session
+            var tmp = Main.Settings.UniqueColumns.Split('|').ToList();
+
+            // take into account duplicate column names, for as far as possible
+            for (int i = 0; i < listColumns.Items.Count; i++)
             {
-                if (listColumns.Items.IndexOf(colname) >= 0) listColumns.SelectedItems.Add(colname);
+                // Based on names, so the order of selected duplicate column names is not preserved
+                // Solution: don't use duplicate column names
+                var tmpidx = tmp.IndexOf(listColumns.Items[i].ToString());
+                if (tmpidx >= 0)
+                {
+                    listColumns.SetSelected(i, true);
+                    tmp.RemoveAt(tmpidx);
+                }
             }
         }
 
@@ -72,9 +82,9 @@ namespace CSVLintNppPlugin.Forms
 
             // indexes of selected columns
             columnIndexes = new List<int>();
-            foreach (var item in listColumns.SelectedItems)
+            for (int i=0; i < listColumns.Items.Count; i++)
             {
-                columnIndexes.Add(listColumns.Items.IndexOf(item)); // Add selected indexes to the List<int>
+                if (listColumns.GetSelected(i)) columnIndexes.Add(i); // Add selected indexes to the List<int>
             }
         }
 

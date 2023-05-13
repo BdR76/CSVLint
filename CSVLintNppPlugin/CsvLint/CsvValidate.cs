@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace CSVLint
@@ -54,6 +55,27 @@ namespace CSVLint
                 string msg = string.Format("Nothing to inspect, not tabular data ({0}).", csvdef.Fields[0].Name);
                 this.log.Add(new LogLine(msg, -1, -1));
                 return;
+            }
+
+            // ChatGPT generated this LinQ code :D
+            var duplicateNames = csvdef.Fields.GroupBy(c => c.Name) // Group the columns by their Name property
+                                        .Where(g => g.Count() > 1) // Only keep groups with more than one element (i.e. duplicates)
+                                        .Select(g => g.Key) // Select the Name property of each group
+                                        .ToList(); // Convert the result to a List<string>
+
+            // list any duplicate column names
+            if (duplicateNames.Count > 0)
+            {
+                // list duplicate column names
+                var msgdup = "";
+                foreach (var dup in duplicateNames)
+                {
+                    //var dupcount = dup.HowMany.ToString();
+                    msgdup += string.Format("{0}{1}", (msgdup == "" ? "" : ", "), dup);
+                }
+
+                string msg = string.Format("duplicate column names ({0})", msgdup);
+                this.log.Add(new LogLine(msg, -1, 0));
             }
 
             // start line reader
@@ -401,10 +423,10 @@ namespace CSVLint
             foreach (var line in this.log)
             {
                 // add line number and error/warning
-                if (line.Severity == 0) sb.Append("** warning ");
-                if (line.Severity > 0)  sb.Append("** error ");
+                if (line.Severity == 0) sb.Append("** warning");
+                if (line.Severity > 0)  sb.Append("** error");
 
-                if (line.LineNumber > 0) sb.Append("line " + line.LineNumber);
+                if (line.LineNumber > 0) sb.Append(" line " + line.LineNumber);
                 if (line.Severity >= 0) sb.Append(": ");
 
                 // add the message

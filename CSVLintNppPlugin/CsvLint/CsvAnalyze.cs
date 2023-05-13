@@ -573,18 +573,38 @@ namespace CSVLint
             sb.Append(string.Format("Max.unique values: {0}\r\n", Main.Settings.UniqueValuesMax));
             sb.Append("\r\n");
 
-			// goal output, depending on data found:
-			// -------------------------------------
-			// 2: Fieldname
-			// DataTypes     : string (174 = 87,0%), empty (26 = 13,0%)
-			// Width range   : 2 ~ 6 characters
-			// Integer range : 123 ~ 999
-			// Decimal range : 1,2 ~ 34,56
-			// Date range    : 01/01/2021 ~ 12/31/2021
-			// -- Unique values --
-			// n=123         : YES
-			// n=45          : NO
-			// n=6           : UNKOWN
+            // goal output, depending on data found:
+            // -------------------------------------
+            // 2: Fieldname
+            // DataTypes     : string (174 = 87,0%), empty (26 = 13,0%)
+            // Width range   : 2 ~ 6 characters
+            // Integer range : 123 ~ 999
+            // Decimal range : 1,2 ~ 34,56
+            // Date range    : 01/01/2021 ~ 12/31/2021
+            // -- Unique values --
+            // n=123         : YES
+            // n=45          : NO
+            // n=6           : UNKOWN
+
+            // ChatGPT generated this LinQ code :D
+            var duplicateNames = colstats.GroupBy(c => c.Name) // Group the columns by their Name property
+                                 .Where(g => g.Count() > 1) // Only keep groups with more than one element (i.e. duplicates)
+                                 .Select(g => new { Name = g.Key, HowMany = g.Count() }) // Select the Name and Count of each group as an anonymous type
+                                 .ToList(); // Convert the result to a List of anonymous types
+
+            // list any duplicate column names
+            if (duplicateNames.Count > 0)
+            {
+                // list duplicate column names
+                sb.Append(string.Format("**Warning: duplicate column names ({0}) **\r\n", duplicateNames.Count));
+
+                foreach (var dup in duplicateNames)
+                {
+                    var dupcount = dup.HowMany.ToString();
+                    sb.Append(string.Format("n={0}: {1}\r\n", dupcount.PadRight(13, ' '), dup.Name));
+                }
+                sb.Append("\r\n");
+            }
 
             // add columns as actual fields
             int idx = 0;
