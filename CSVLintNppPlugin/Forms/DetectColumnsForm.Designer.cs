@@ -104,6 +104,7 @@ namespace CSVLintNppPlugin.Forms
             // 
             // txtFixedWidthPos
             // 
+            this.txtFixedWidthPos.Enabled = false;
             this.txtFixedWidthPos.Location = new System.Drawing.Point(192, 77);
             this.txtFixedWidthPos.Name = "txtFixedWidthPos";
             this.txtFixedWidthPos.Size = new System.Drawing.Size(178, 20);

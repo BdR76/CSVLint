@@ -40,7 +40,7 @@ namespace CSVLintNppPlugin.Forms
             // 
             // btnOk
             // 
-            this.btnOk.Location = new System.Drawing.Point(60, 197);
+            this.btnOk.Location = new System.Drawing.Point(62, 197);
             this.btnOk.Size = new System.Drawing.Size(119, 25);
             // 
             // picHelpIcon
@@ -122,7 +122,7 @@ namespace CSVLintNppPlugin.Forms
             // btnDonate
             // 
             this.btnDonate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnDonate.Location = new System.Drawing.Point(60, 165);
+            this.btnDonate.Location = new System.Drawing.Point(62, 165);
             this.btnDonate.Name = "btnDonate";
             this.btnDonate.Size = new System.Drawing.Size(119, 25);
             this.btnDonate.TabIndex = 8;

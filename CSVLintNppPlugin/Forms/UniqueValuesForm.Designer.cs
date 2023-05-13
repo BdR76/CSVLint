@@ -55,26 +55,29 @@ namespace CSVLintNppPlugin.Forms
             this.btnOk.Location = new System.Drawing.Point(61, 345);
             this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
             // 
-            // btnCancel
+            // picHelpIcon
             // 
-            this.btnCancel.Location = new System.Drawing.Point(180, 345);
+            this.picHelpIcon.Location = new System.Drawing.Point(261, 8);
+            this.picHelpIcon.Tag = "count-unique-values";
             // 
             // lblTitle
             // 
             this.lblTitle.Size = new System.Drawing.Size(153, 20);
             this.lblTitle.Text = "Count unique values";
             // 
-            // picHelpIcon
-            // 
-            this.picHelpIcon.Location = new System.Drawing.Point(261, 8);
-            this.picHelpIcon.Tag = "count-unique-values";
-            // 
             // lblHorizontalLine
             // 
             this.lblHorizontalLine.Size = new System.Drawing.Size(285, 2);
             // 
+            // btnCancel
+            // 
+            this.btnCancel.Location = new System.Drawing.Point(180, 345);
+            // 
             // listColumns
             // 
+            this.listColumns.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.listColumns.ContextMenuStrip = this.ctxmnuColumns;
             this.listColumns.FormattingEnabled = true;
             this.listColumns.Location = new System.Drawing.Point(16, 85);
@@ -126,6 +129,7 @@ namespace CSVLintNppPlugin.Forms
             // 
             // panelSortWhat
             // 
+            this.panelSortWhat.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.panelSortWhat.Controls.Add(this.chkSortBy);
             this.panelSortWhat.Controls.Add(this.radioSortCount);
             this.panelSortWhat.Controls.Add(this.radioSortValue);
@@ -173,6 +177,7 @@ namespace CSVLintNppPlugin.Forms
             // 
             // panelSortHow
             // 
+            this.panelSortHow.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.panelSortHow.Controls.Add(this.labelSortHow);
             this.panelSortHow.Controls.Add(this.radioSortDesc);
             this.panelSortHow.Controls.Add(this.radioSortAsc);
@@ -224,6 +229,7 @@ namespace CSVLintNppPlugin.Forms
             this.Controls.Add(this.panelSortWhat);
             this.Controls.Add(this.lblDescription);
             this.Controls.Add(this.listColumns);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Name = "UniqueValuesForm";
             this.Text = "Count unique values";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.UniqueValuesForm_FormClosing);

@@ -393,7 +393,7 @@ namespace NppPluginNET.PluginInfrastructure
 
             if ((name == "separator") && (value.Length > 0))
             {
-                separatorChar = value[0];
+                separatorChar = value[value.Length-1];
             }
             else if (name == "fixedwidths")
             {
