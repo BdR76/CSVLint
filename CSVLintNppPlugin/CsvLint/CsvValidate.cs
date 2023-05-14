@@ -172,7 +172,7 @@ namespace CSVLint
                     if (err != "")
                     {
                         err = err.Remove(err.Length - 2); // remove last comma ", "
-                        this.log.Add(new LogLine(err, (lineCount+csvdef.SkipLines), 1));
+                        this.log.Add(new LogLine(err, csvdef.ParseCurrentLine, 1));
                     }
                 }
             }

@@ -879,6 +879,9 @@ namespace CSVLint
                 res++;
             }
 
+            // keep track of actual parsed line number
+            ParseCurrentLine += res;
+
             // return how many skipped lines
             return res;
         }
@@ -923,6 +926,9 @@ namespace CSVLint
             }
         }
 
+        /// Keep track of actual line number in file, take into account skipped lines and quoted strings with CrLf
+        public int ParseCurrentLine { get; set; } = 0;
+
         /// <summary>
         /// reformat file for date, decimal and separator
         /// </summary>
@@ -941,6 +947,7 @@ namespace CSVLint
             if (Separator == '\0')
             {
                 String line = strdata.ReadLine();
+                ParseCurrentLine++;
 
                 // fixed width columns
                 int pos = 0;
@@ -1023,7 +1030,14 @@ namespace CSVLint
                     {
                         if ((cur == quote_char) && (next == quote_char)) { value.Append(cur); next = (char)strdata.Read(); } // double " within quotes so also consume next character (i.e. skip it)
                         else if (cur == quote_char) quote = false;
-                        else value.Append(cur);
+                        else
+                        {
+                            value.Append(cur);
+
+                            // also count carriage returns within quotes
+                            if      ((cur == '\r') && (next == '\n')) ; // double \r\n do nothing, let the next '\n' character count the line break when examining the next character cur == '\n'
+                            else if ((cur == '\n') || (cur == '\r')) ParseCurrentLine++;
+                        }
                     }
 
                     // if next col or next line
@@ -1043,7 +1057,12 @@ namespace CSVLint
                         whitespace = true;
                     }
 
-                    if (isEOL) break;
+                    if (isEOL)
+                    {
+                        ParseCurrentLine++;
+                        break;
+                    }
+
                     isEOL = false;
                 }
 
