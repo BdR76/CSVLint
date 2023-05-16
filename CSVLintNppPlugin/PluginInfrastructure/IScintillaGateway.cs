@@ -1054,7 +1054,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// line is a header and whether it is effectively white space.
         /// (Scintilla feature 2222)
         /// </summary>
-        void SetFoldLevel(int line, int level);
+        void SetFoldLevel(int line, FoldLevel level);
 
         /// <summary>Retrieve the fold level of a line. (Scintilla feature 2223)</summary>
         FoldLevel GetFoldLevel(int line);

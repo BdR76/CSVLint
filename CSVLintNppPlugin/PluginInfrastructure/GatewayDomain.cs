@@ -22,29 +22,14 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
 			Blue = (rgb >> 16) & 0xFF;
 		}
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="red">a number 0-255</param>
-        /// <param name="green">a number 0-255</param>
-        /// <param name="blue">a number 0-255</param>
-        public Colour(int red, int green, int blue)
+        public Colour(byte red, byte green, byte blue)
         {
-            if(red > 255 || red < 0)
-                throw new ArgumentOutOfRangeException("red", "must be 0-255");
-            if(green > 255 || green < 0)
-                throw new ArgumentOutOfRangeException("green", "must be 0-255");
-            if(blue > 255 || blue < 0)
-                throw new ArgumentOutOfRangeException("blue", "must be 0-255");
             Red = red;
             Green = green;
             Blue = blue;
         }
 
-        public int Value
-        {
-            get { return Red + (Green << 8) + (Blue << 16); }
-        }
+        public int Value => Red + (Green << 8) + (Blue << 16);
     }
 
     /// <summary>
@@ -145,6 +130,9 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
             return Equals((Position)obj);
         }
 
+        public static implicit operator Position(int i) => new Position(i);
+        public static implicit operator int(Position i) => i.pos;
+
         public override int GetHashCode()
         {
             return pos;
@@ -189,7 +177,17 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
     [StructLayout(LayoutKind.Sequential)]
     public struct CharacterRange
     {
-        public CharacterRange(int cpmin, int cpmax) { cpMin = cpmin; cpMax = cpmax; }
+        public CharacterRange(IntPtr cpmin, IntPtr cpmax) { cpMin = cpmin; cpMax = cpmax; }
+        public IntPtr cpMin;
+        public IntPtr cpMax;
+    }
+
+    /// <summary>
+    /// This is used before N++ 8.3
+    /// </summary>
+    [StructLayout(LayoutKind.Sequential)]
+    public struct CharacterRangeLegacy
+    {
         public int cpMin;
         public int cpMax;
     }
@@ -211,16 +209,18 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         IntPtr _ptrSciTextRange;
         bool _disposed = false;
 
-        public TextRange(CharacterRange chrRange, int stringCapacity)
+        public TextRange(CharacterRange chrRange, long stringCapacity)
+            : this(chrRange.cpMin, chrRange.cpMax, stringCapacity)
+        { }
+
+        public TextRange(IntPtr cpmin, IntPtr cpmax, long stringCapacity = 0)
         {
-            _sciTextRange.chrg = chrRange;
-            _sciTextRange.lpstrText = Marshal.AllocHGlobal(stringCapacity);
-        }
-        public TextRange(int cpmin, int cpmax, int stringCapacity)
-        {
+            // The capacity must be _at least_ the given range plus one
+            stringCapacity = Math.Max(stringCapacity, Math.Abs(cpmax.ToInt64() - cpmin.ToInt64()) + 1);
+
             _sciTextRange.chrg.cpMin = cpmin;
             _sciTextRange.chrg.cpMax = cpmax;
-            _sciTextRange.lpstrText = Marshal.AllocHGlobal(stringCapacity);
+            _sciTextRange.lpstrText = Marshal.AllocHGlobal(new IntPtr(stringCapacity));
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -229,9 +229,13 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
             public CharacterRange chrg;
             public IntPtr lpstrText;
         }
+
         public IntPtr NativePointer { get { _initNativeStruct(); return _ptrSciTextRange; } }
+
         public string lpstrText { get { _readNativeStruct(); return Marshal.PtrToStringAnsi(_sciTextRange.lpstrText); } }
+
         public CharacterRange chrg { get { _readNativeStruct(); return _sciTextRange.chrg; } set { _sciTextRange.chrg = value; _initNativeStruct(); } }
+
 
         void _initNativeStruct()
         {

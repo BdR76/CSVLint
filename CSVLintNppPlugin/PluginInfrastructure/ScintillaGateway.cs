@@ -1771,7 +1771,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// </summary>
         public unsafe string GetText(int length)
         {
-            byte[] textBuffer = new byte[10000];
+            byte[] textBuffer = new byte[length];
             fixed (byte* textPtr = textBuffer)
             {
                 Win32.SendMessage(scintilla, SciMsg.SCI_GETTEXT, (IntPtr) length, (IntPtr) textPtr);
@@ -2036,7 +2036,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// line is a header and whether it is effectively white space.
         /// (Scintilla feature 2222)
         /// </summary>
-        public void SetFoldLevel(int line, int level)
+        public void SetFoldLevel(int line, FoldLevel level)
         {
             Win32.SendMessage(scintilla, SciMsg.SCI_SETFOLDLEVEL, (IntPtr) line, (IntPtr) level);
         }

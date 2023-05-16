@@ -3230,7 +3230,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// <param name="cpmin">range to search</param>
         /// <param name="cpmax">range to search</param>
         /// <param name="searchText">the search pattern</param>
-        public TextToFind(int cpmin, int cpmax, string searchText)
+        public TextToFind(IntPtr cpmin, IntPtr cpmax, string searchText)
         {
             _sciTextToFind.chrg.cpMin = cpmin;
             _sciTextToFind.chrg.cpMax = cpmax;
