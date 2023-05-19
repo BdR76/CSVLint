@@ -24,12 +24,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         L_ASM, L_DIFF, L_PROPS, L_PS, L_RUBY, L_SMALLTALK, L_VHDL, L_KIX, L_AU3,
         L_CAML, L_ADA, L_VERILOG, L_MATLAB, L_HASKELL, L_INNO, L_SEARCHRESULT,
         L_CMAKE, L_YAML, L_COBOL, L_GUI4CLI, L_D, L_POWERSHELL, L_R, L_JSP,
-        L_COFFEESCRIPT, L_JSON, L_JAVASCRIPT, L_FORTRAN_77, L_BAANC, L_SREC,
-        L_IHEX, L_TEHEX, L_SWIFT,
-        L_ASN1, L_AVS, L_BLITZBASIC, L_PUREBASIC, L_FREEBASIC,
-        L_CSOUND, L_ERLANG, L_ESCRIPT, L_FORTH, L_LATEX,
-        L_MMIXAL, L_NIM, L_NNCRONTAB, L_OSCRIPT, L_REBOL,
-        L_REGISTRY, L_RUST, L_SPICE, L_TXT2TAGS, L_VISUALPROLOG, L_TYPESCRIPT,
+        L_COFFEESCRIPT, L_JSON, L_JAVASCRIPT, L_FORTRAN_77,
         // Don't use L_JS, use L_JAVASCRIPT instead
         // The end of enumated language type, so it should be always at the end
         L_EXTERNAL
@@ -169,9 +164,11 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         NPPM_SETMENUITEMCHECK = Constants.NPPMSG + 40,
 
         /// <summary>
-        ///void WM_ADDTOOLBARICON(UINT funcItem[X]._cmdID, toolbarIcons icon)
+        ///void NPPM_ADDTOOLBARICON(UINT funcItem[X]._cmdID, toolbarIcons iconHandles) -- DEPRECATED : use NPPM_ADDTOOLBARICON_FORDARKMODE instead
+        ///2 formats of icon are needed: .ico & .bmp
+        ///Both handles below should be set so the icon will be displayed correctly if toolbar icon sets are changed by users
         /// </summary>
-        NPPM_ADDTOOLBARICON = Constants.NPPMSG + 41,
+        NPPM_ADDTOOLBARICON_DEPRECATED = Constants.NPPMSG + 41,
 
         /// <summary>
         ///winVer NPPM_GETWINDOWSVERSION(0, 0)
@@ -191,9 +188,9 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         NPPM_MAKECURRENTBUFFERDIRTY = Constants.NPPMSG + 44,
 
         /// <summary>
-        ///BOOL NPPM_GETENABLETHEMETEXTUREFUNC(0, 0)
+        ///BOOL NPPM_GETENABLETHEMETEXTUREFUNC(0, 0) -- DEPRECATED : use EnableThemeDialogTexture from uxtheme.h instead
         /// </summary>
-        NPPM_GETENABLETHEMETEXTUREFUNC = Constants.NPPMSG + 45,
+        NPPM_GETENABLETHEMETEXTUREFUNC_DEPRECATED = Constants.NPPMSG + 45,
 
         /// <summary>
         ///INT NPPM_GETPLUGINSCONFIGDIR(int strLen, TCHAR *str)
@@ -225,11 +222,31 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         NPPM_TRIGGERTABBARCONTEXTMENU = Constants.NPPMSG + 49,
 
         /// <summary>
-        /// int NPPM_GETNPPVERSION(0, 0)
-        /// return version
-        /// ex : v4.6
-        /// HIWORD(version) == 4
-        /// LOWORD(version) == 6
+        /// int NPPM_GETNPPVERSION(BOOL ADD_ZERO_PADDING, 0)
+        /// Get Notepad++ version
+        /// HIWORD(returned_value) is major part of version: the 1st number
+        /// LOWORD(returned_value) is minor part of version: the 3 last numbers
+        ///
+        /// ADD_ZERO_PADDING == TRUE
+        ///
+        /// version  | HIWORD | LOWORD
+        ///------------------------------
+        /// 8.9.6.4  | 8      | 964
+        /// 9        | 9      | 0
+        /// 6.9      | 6      | 900
+        /// 6.6.6    | 6      | 660
+        /// 13.6.6.6 | 13     | 666
+        ///
+        ///
+        /// ADD_ZERO_PADDING == FALSE
+        ///
+        /// version  | HIWORD | LOWORD
+        ///------------------------------
+        /// 8.9.6.4  | 8      | 964
+        /// 9        | 9      | 0
+        /// 6.9      | 6      | 9
+        /// 6.6.6    | 6      | 66
+        /// 13.6.6.6 | 13     | 666
         /// </summary>
         NPPM_GETNPPVERSION = Constants.NPPMSG + 50,
 
@@ -427,7 +444,8 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// <summary>
         /// BOOL NPPM_ALLOCATEMARKER(int numberRequested, int* startNumber)
         /// sets startNumber to the initial command ID if successful
-        /// Allocates a marker number to a plugin
+        /// Allocates a marker number to a plugin: if a plugin need to add a marker on Notepad++'s Scintilla marker margin,
+        /// it has to use this message to get marker number, in order to prevent from the conflict with the other plugins.
         /// Returns: TRUE if successful, FALSE otherwise. startNumber will also be set to 0 if unsuccessful
         /// </summary>
         NPPM_ALLOCATEMARKER = Constants.NPPMSG + 82,
@@ -453,17 +471,17 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         NPPM_GETLANGUAGEDESC = Constants.NPPMSG + 84,
 
         /// <summary>
-        /// VOID NPPM_SHOWDOCSWITCHER(0, BOOL toShowOrNot)
-        /// Send this message to show or hide doc switcher.
-        /// if toShowOrNot is TRUE then show doc switcher, otherwise hide it.
+        /// VOID NPPM_SHOWDOCLIST(0, BOOL toShowOrNot)
+        /// Send this message to show or hide Document List.
+        /// if toShowOrNot is TRUE then show Document List, otherwise hide it.
         /// </summary>
-        NPPM_SHOWDOCSWITCHER = Constants.NPPMSG + 85,
+        NPPM_SHOWDOCLIST = Constants.NPPMSG + 85,
 
         /// <summary>
-        /// BOOL NPPM_ISDOCSWITCHERSHOWN(0, 0)
-        /// Check to see if doc switcher is shown.
+        /// BOOL NPPM_ISDOCLISTSHOWN(0, 0)
+        /// Check to see if Document List is shown.
         /// </summary>
-        NPPM_ISDOCSWITCHERSHOWN = Constants.NPPMSG + 86,
+        NPPM_ISDOCLISTSHOWN = Constants.NPPMSG + 86,
 
         /// <summary>
         /// BOOL NPPM_GETAPPDATAPLUGINSALLOWED(0, 0)
@@ -478,10 +496,16 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         NPPM_GETCURRENTVIEW = Constants.NPPMSG + 88,
 
         /// <summary>
-        /// VOID NPPM_DOCSWITCHERDISABLECOLUMN(0, BOOL disableOrNot)
-        /// Disable or enable extension column of doc switcher
+        /// VOID NPPM_DOCLISTDISABLEEXTCOLUMN(0, BOOL disableOrNot)
+        /// Disable or enable extension column of Document List
         /// </summary>
-        NPPM_DOCSWITCHERDISABLECOLUMN = Constants.NPPMSG + 89,
+        NPPM_DOCLISTDISABLEEXTCOLUMN = Constants.NPPMSG + 89,
+
+        /// <summary>
+        /// VOID NPPM_DOCLISTDISABLEPATHCOLUMN(0, BOOL disableOrNot)
+        /// Disable or enable path column of Document List
+        /// </summary>
+        NPPM_DOCLISTDISABLEPATHCOLUMN = Constants.NPPMSG + 102,
 
         /// <summary>
         /// INT NPPM_GETEDITORDEFAULTFOREGROUNDCOLOR(0, 0)
@@ -541,14 +565,14 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// </summary>
         NPPM_GETSETTINGSONCLOUDPATH = Constants.NPPMSG + 98,
 
+        NPPM_SETLINENUMBERWIDTHMODE = Constants.NPPMSG + 99,
+        LINENUMWIDTH_DYNAMIC = 0,
         /// <summary>
         /// BOOL NPPM_SETLINENUMBERWIDTHMODE(0, INT widthMode)
         /// Set line number margin width in dynamic width mode (LINENUMWIDTH_DYNAMIC) or constant width mode (LINENUMWIDTH_CONSTANT)
         /// It may help some plugins to disable non-dynamic line number margins width to have a smoothly visual effect while vertical scrolling the content in Notepad++
         /// If calling is successful return TRUE, otherwise return FALSE.
         /// </summary>
-        NPPM_SETLINENUMBERWIDTHMODE = Constants.NPPMSG + 99,
-        LINENUMWIDTH_DYNAMIC = 0,
         LINENUMWIDTH_CONSTANT = 1,
 
         /// <summary>
@@ -560,27 +584,117 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// <summary>
         /// VOID NPPM_ADDTOOLBARICON_FORDARKMODE(UINT funcItem[X]._cmdID, toolbarIconsWithDarkMode iconHandles)
         /// Use NPPM_ADDTOOLBARICON_FORDARKMODE instead obsolete NPPM_ADDTOOLBARICON which doesn't support the dark mode
-        /// 2 formats / 3 icons are needed:  1 * BMP + 2 * ICO 
+        /// 2 formats / 3 icons are needed:  1 * BMP + 2 * ICO
         /// All 3 handles below should be set so the icon will be displayed correctly if toolbar icon sets are changed by users, also in dark mode
         /// </summary>
         NPPM_ADDTOOLBARICON_FORDARKMODE = Constants.NPPMSG + 101,
 
         /// <summary>
-        /// bool NPPM_ISDARKMODEENABLED(0, 0)
-        /// Returns true when Notepad++ Dark Mode is enabled, false when it is not.
-        /// <see href="https://github.com/notepad-plus-plus/notepad-plus-plus/commit/1eb5b10e41d7ab92b60aa32b28d4fe7739d15b53"/>
+        /// BOOL NPPM_GETEXTERNALLEXERAUTOINDENTMODE(const TCHAR *languageName, ExternalLexerAutoIndentMode &autoIndentMode)
+        /// Get ExternalLexerAutoIndentMode for an installed external programming language.
+        /// - Standard means Notepad++ will keep the same TAB indentation between lines;
+        /// - C_Like means Notepad++ will perform a C-Language style indentation for the selected external language;
+        /// - Custom means a Plugin will be controlling auto-indentation for the current language.
+        /// returned values: TRUE for successful searches, otherwise FALSE.
         /// </summary>
-        NPPM_ISDARKMODEENABLED = (Constants.NPPMSG + 107),
+        NPPM_GETEXTERNALLEXERAUTOINDENTMODE = Constants.NPPMSG + 103,
+
+        /// <summary>
+        /// BOOL NPPM_SETEXTERNALLEXERAUTOINDENTMODE(const TCHAR *languageName, ExternalLexerAutoIndentMode autoIndentMode)
+        /// Set ExternalLexerAutoIndentMode for an installed external programming language.
+        /// - Standard means Notepad++ will keep the same TAB indentation between lines;
+        /// - C_Like means Notepad++ will perform a C-Language style indentation for the selected external language;
+        /// - Custom means a Plugin will be controlling auto-indentation for the current language.
+        /// returned value: TRUE if function call was successful, otherwise FALSE.
+        /// </summary>
+        NPPM_SETEXTERNALLEXERAUTOINDENTMODE = Constants.NPPMSG + 104,
+
+        /// <summary>
+        /// BOOL NPPM_ISAUTOINDENTON(0, 0)
+        /// Returns the current Use Auto-Indentation setting in Notepad++ Preferences.
+        /// </summary>
+        NPPM_ISAUTOINDENTON = Constants.NPPMSG + 105,
+
+        /// <summary>
+        /// MacroStatus NPPM_GETCURRENTMACROSTATUS(0, 0)
+        /// Gets current enum class MacroStatus { Idle - means macro is not in use and it's empty, RecordInProgress, RecordingStopped, PlayingBack }
+        /// </summary>
+        NPPM_GETCURRENTMACROSTATUS = Constants.NPPMSG + 106,
+
+        /// <summary>
+        /// bool NPPM_ISDARKMODEENABLED(0, 0)
+        /// Returns true when Notepad++ Dark Mode is enable, false when it is not.
+        /// </summary>
+        NPPM_ISDARKMODEENABLED = Constants.NPPMSG + 107,
 
         /// <summary>
         /// bool NPPM_GETDARKMODECOLORS (size_t cbSize, NppDarkMode::Colors* returnColors)
         /// - cbSize must be filled with sizeof(NppDarkMode::Colors).
         /// - returnColors must be a pre-allocated NppDarkMode::Colors struct.
         /// Returns true when successful, false otherwise.
+        /// You need to uncomment the following code to use NppDarkMode::Colors structure:
+        ///
+        /// namespace NppDarkMode
+        /// {
+        ///	struct Colors
+        ///	{
+        ///		COLORREF background = 0;
+        ///		COLORREF softerBackground = 0;
+        ///		COLORREF hotBackground = 0;
+        ///		COLORREF pureBackground = 0;
+        ///		COLORREF errorBackground = 0;
+        ///		COLORREF text = 0;
+        ///		COLORREF darkerText = 0;
+        ///		COLORREF disabledText = 0;
+        ///		COLORREF linkText = 0;
+        ///		COLORREF edge = 0;
+        ///		COLORREF hotEdge = 0;
+        ///		COLORREF disabledEdge = 0;
+        ///	};
+        /// }
+        ///
+        /// Note: in the case of calling failure ("false" is returned), you may need to change NppDarkMode::Colors structure to:
+        /// https://github.com/notepad-plus-plus/notepad-plus-plus/blob/master/PowerEditor/src/NppDarkMode.h#L32
         /// </summary>
-        NPPM_GETDARKMODECOLORS = (Constants.NPPMSG + 108),
+        NPPM_GETDARKMODECOLORS = Constants.NPPMSG + 108,
+
+        /// <summary>
+        /// INT NPPM_GETCURRENTCMDLINE(size_t strLen, TCHAR *commandLineStr)
+        /// Get the Current Command Line string.
+        /// Returns the number of TCHAR copied/to copy.
+        /// Users should call it with commandLineStr as NULL to get the required number of TCHAR (not including the terminating nul character),
+        /// allocate commandLineStr buffer with the return value + 1, then call it again to get the current command line string.
+        /// </summary>
+        NPPM_GETCURRENTCMDLINE = Constants.NPPMSG + 109,
+
+        /// <summary>
+        /// void* NPPM_CREATELEXER(0, const TCHAR *lexer_name)
+        /// Returns the ILexer pointer created by Lexilla
+        /// </summary>
+        NPPM_CREATELEXER = Constants.NPPMSG + 110,
+
+        /// <summary>
+        /// void* NPPM_GETBOOKMARKID(0, 0)
+        /// Returns the bookmark ID
+        /// </summary>
+        NPPM_GETBOOKMARKID = Constants.NPPMSG + 111,
+
+        VAR_NOT_RECOGNIZED = 0,
+        FULL_CURRENT_PATH = 1,
+        CURRENT_DIRECTORY = 2,
+        FILE_NAME = 3,
+        NAME_PART = 4,
+        EXT_PART = 5,
+        CURRENT_WORD = 6,
+        NPP_DIRECTORY = 7,
+        CURRENT_LINE = 8,
+        CURRENT_COLUMN = 9,
+        NPP_FULL_FILE_PATH = 10,
+        GETFILENAMEATCURSOR = 11,
+        CURRENT_LINESTR = 12,
 
         RUNCOMMAND_USER = Constants.WM_USER + 3000,
+
         NPPM_GETFULLCURRENTPATH = RUNCOMMAND_USER + FULL_CURRENT_PATH,
         NPPM_GETCURRENTDIRECTORY = RUNCOMMAND_USER + CURRENT_DIRECTORY,
         NPPM_GETFILENAME = RUNCOMMAND_USER + FILE_NAME,
@@ -588,6 +702,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         NPPM_GETEXTPART = RUNCOMMAND_USER + EXT_PART,
         NPPM_GETCURRENTWORD = RUNCOMMAND_USER + CURRENT_WORD,
         NPPM_GETNPPDIRECTORY = RUNCOMMAND_USER + NPP_DIRECTORY,
+        NPPM_GETFILENAMEATCURSOR = RUNCOMMAND_USER + GETFILENAMEATCURSOR,
         /// <summary>
         /// BOOL NPPM_GETXXXXXXXXXXXXXXXX(size_t strLen, TCHAR *str)
         /// where str is the allocated TCHAR array,
@@ -595,7 +710,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// The return value is TRUE when get generic_string operation success
         /// Otherwise (allocated array size is too small) FALSE
         /// </summary>
-        NPPM_GETFILENAMEATCURSOR = RUNCOMMAND_USER + GETFILENAMEATCURSOR,
+        NPPM_GETCURRENTLINESTR = RUNCOMMAND_USER + CURRENT_LINESTR,
 
         /// <summary>
         /// INT NPPM_GETCURRENTLINE(0, 0)
@@ -610,19 +725,6 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         NPPM_GETCURRENTCOLUMN = RUNCOMMAND_USER + CURRENT_COLUMN,
 
         NPPM_GETNPPFULLFILEPATH = RUNCOMMAND_USER + NPP_FULL_FILE_PATH,
-
-        VAR_NOT_RECOGNIZED = 0,
-        FULL_CURRENT_PATH = 1,
-        CURRENT_DIRECTORY = 2,
-        FILE_NAME = 3,
-        NAME_PART = 4,
-        EXT_PART = 5,
-        CURRENT_WORD = 6,
-        NPP_DIRECTORY = 7,
-        CURRENT_LINE = 8,
-        CURRENT_COLUMN = 9,
-        NPP_FULL_FILE_PATH = 10,
-        GETFILENAMEATCURSOR = 11,
 
         /// <summary>
         /// To notify plugins that all the procedures of launchment of notepad++ are done.
@@ -639,7 +741,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         NPPN_READY = NPPN_FIRST + 1,
 
         /// <summary>
-        ///scnNotification->nmhdr.code = NPPN_TB_MODIFICATION;
+        ///scnNotification->nmhdr.code = NPPN_TBMODIFICATION;
         ///scnNotification->nmhdr.hwndFrom = hwndNpp;
         ///scnNotification->nmhdr.idFrom = 0;
         /// </summary>
@@ -826,12 +928,25 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         NPPN_FILEDELETED = NPPN_FIRST + 26,
 
         /// <summary>
-        /// To notify plugins that Dark Mode was enabled/disabled
-        /// scnNotification->nmhdr.code = NPPN_DARKMODECHANGED;
-        /// scnNotification->nmhdr.hwndFrom = hwndNpp;
-        /// scnNotification->nmhdr.idFrom = 0;
+        ///scnNotification->nmhdr.code = NPPN_DARKMODECHANGED;
+        ///scnNotification->nmhdr.hwndFrom = hwndNpp;
+        ///scnNotification->nmhdr.idFrom = 0;
         /// </summary>
-        NPPN_DARKMODECHANGED = (NPPN_FIRST + 27)
+        NPPN_DARKMODECHANGED = NPPN_FIRST + 27,
+
+        /// <summary>
+        ///scnNotification->nmhdr.code = NPPN_CMDLINEPLUGINMSG;
+        ///scnNotification->nmhdr.hwndFrom = hwndNpp;
+        ///scnNotification->nmhdr.idFrom = pluginMessage; //where pluginMessage is pointer of type wchar_t
+        /// </summary>
+        NPPN_CMDLINEPLUGINMSG = NPPN_FIRST + 28,
+
+        /// <summary>
+        ///scnNotification->nmhdr.code = NPPN_EXTERNALLEXERBUFFER;
+        ///scnNotification->nmhdr.hwndFrom = hwndNpp;
+        ///scnNotification->nmhdr.idFrom = BufferID; //where pluginMessage is pointer of type wchar_t
+        /// </summary>
+        NPPN_EXTERNALLEXERBUFFER = NPPN_FIRST + 29,
 
         /* --Autogenerated -- end of section automatically generated from notepad-plus-plus\PowerEditor\src\MISC\PluginsManager\Notepad_plus_msgs.h * */
     }

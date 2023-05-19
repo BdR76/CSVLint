@@ -38,13 +38,13 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
     public struct ScNotification
     {
         public ScNotificationHeader Header;
-        private int position;               /* SCN_STYLENEEDED, SCN_DOUBLECLICK, SCN_MODIFIED, SCN_MARGINCLICK, SCN_NEEDSHOWN, SCN_DWELLSTART, SCN_DWELLEND, SCN_CALLTIPCLICK, SCN_HOTSPOTCLICK, SCN_HOTSPOTDOUBLECLICK, SCN_HOTSPOTRELEASECLICK, SCN_INDICATORCLICK, SCN_INDICATORRELEASE, SCN_USERLISTSELECTION, SCN_AUTOCSELECTION */
+        private IntPtr position;            /* SCN_STYLENEEDED, SCN_DOUBLECLICK, SCN_MODIFIED, SCN_MARGINCLICK, SCN_NEEDSHOWN, SCN_DWELLSTART, SCN_DWELLEND, SCN_CALLTIPCLICK, SCN_HOTSPOTCLICK, SCN_HOTSPOTDOUBLECLICK, SCN_HOTSPOTRELEASECLICK, SCN_INDICATORCLICK, SCN_INDICATORRELEASE, SCN_USERLISTSELECTION, SCN_AUTOCSELECTION */
         public int character;               /* SCN_CHARADDED, SCN_KEY, SCN_AUTOCCOMPLETE, SCN_AUTOCSELECTION, SCN_USERLISTSELECTION */
         public int Mmodifiers;              /* SCN_KEY, SCN_DOUBLECLICK, SCN_HOTSPOTCLICK, SCN_HOTSPOTDOUBLECLICK, SCN_HOTSPOTRELEASECLICK, SCN_INDICATORCLICK, SCN_INDICATORRELEASE */
         public int ModificationType;        /* SCN_MODIFIED - modification types are name "SC_MOD_*" */
         public IntPtr TextPointer;          /* SCN_MODIFIED, SCN_USERLISTSELECTION, SCN_AUTOCSELECTION, SCN_URIDROPPED */
-        public int Length;                  /* SCN_MODIFIED */
-        public int LinesAdded;              /* SCN_MODIFIED */
+        public IntPtr Length;               /* SCN_MODIFIED */
+        public IntPtr LinesAdded;           /* SCN_MODIFIED */
         public int Message;                 /* SCN_MACRORECORD */
         public IntPtr wParam;               /* SCN_MACRORECORD */
         public IntPtr lParam;               /* SCN_MACRORECORD */
@@ -52,7 +52,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// <summary>
         /// 0-based index
         /// </summary>
-        public int LineNumber;           /* SCN_MODIFIED */
+        public IntPtr LineNumber;        /* SCN_MODIFIED */
         public int FoldLevelNow;         /* SCN_MODIFIED */
         public int FoldLevelPrev;        /* SCN_MODIFIED */
         public int Margin;               /* SCN_MARGINCLICK */
@@ -63,6 +63,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int AnnotationLinesAdded; /* SC_MOD_CHANGEANNOTATION */
         public int Updated;              /* SCN_UPDATEUI */
         public int ListCompletionMethod; /* SCN_AUTOCSELECTION, SCN_AUTOCCOMPLETED, SCN_USERLISTSELECTION */
+        public int CharacterSource;      /* SCN_CHARADDED */
 
         /// <summary>
         /// SCN_STYLENEEDED, SCN_DOUBLECLICK, SCN_MODIFIED, SCN_MARGINCLICK, SCN_NEEDSHOWN, SCN_DWELLSTART, SCN_DWELLEND, SCN_CALLTIPCLICK, SCN_HOTSPOTCLICK, SCN_HOTSPOTDOUBLECLICK, SCN_HOTSPOTRELEASECLICK, SCN_INDICATORCLICK, SCN_INDICATORRELEASE, SCN_USERLISTSELECTION, SCN_AUTOCSELECTION
@@ -124,6 +125,9 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// Returns the style byte at the position.
         SCI_GETSTYLEAT = 2010,
 
+        /// Returns the unsigned style byte at the position.
+        SCI_GETSTYLEINDEXAT = 2038,
+
         /// Redoes the next action on the undo history.
         SCI_REDO = 2011,
 
@@ -142,6 +146,10 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// Returns the number of bytes in the buffer not including terminating NULs.
         SCI_GETSTYLEDTEXT = 2015,
 
+        /// Retrieve a buffer of cells that can be past 2GB.
+        /// Returns the number of bytes in the buffer not including terminating NULs.
+        SCI_GETSTYLEDTEXTFULL = 2778,
+
         /// Are there any redoable actions in the undo history?
         SCI_CANREDO = 2016,
 
@@ -150,6 +158,12 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
 
         /// Delete a marker.
         SCI_MARKERDELETEHANDLE = 2018,
+
+        /// Retrieve marker handles of a line
+        SCI_MARKERHANDLEFROMLINE = 2732,
+
+        /// Retrieve marker number of a marker handle
+        SCI_MARKERNUMBERFROMLINE = 2733,
 
         /// Is undo history being collected?
         SCI_GETUNDOCOLLECTION = 2019,
@@ -241,6 +255,12 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// Retrieve the visible size of a tab.
         SCI_GETTABWIDTH = 2121,
 
+        /// Set the minimum visual width of a tab.
+        SCI_SETTABMINIMUMWIDTH = 2724,
+
+        /// Get the minimum visual width of a tab.
+        SCI_GETTABMINIMUMWIDTH = 2725,
+
         /// Clear explicit tabstops on a line.
         SCI_CLEARTABSTOPS = 2675,
 
@@ -256,6 +276,12 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// The SC_CP_UTF8 value can be used to enter Unicode mode.
         SCI_SETCODEPAGE = 2037,
 
+        /// Set the locale for displaying text.
+        SCI_SETFONTLOCALE = 2760,
+
+        /// Get the locale for displaying text.
+        SCI_GETFONTLOCALE = 2761,
+
         SC_IME_WINDOWED = 0,
 
         SC_IME_INLINE = 1,
@@ -263,8 +289,22 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// Is the IME displayed in a window or inline?
         SCI_GETIMEINTERACTION = 2678,
 
-        /// Choose to display the the IME in a winow or inline.
+        /// Choose to display the IME in a window or inline.
         SCI_SETIMEINTERACTION = 2679,
+
+        SC_ALPHA_TRANSPARENT = 0,
+
+        SC_ALPHA_OPAQUE = 255,
+
+        SC_ALPHA_NOALPHA = 256,
+
+        SC_CURSORNORMAL = 0xFFFFFFFF,
+
+        SC_CURSORARROW = 2,
+
+        SC_CURSORWAIT = 4,
+
+        SC_CURSORREVERSEARROW = 7,
 
         MARKER_MAX = 31,
 
@@ -334,7 +374,17 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
 
         SC_MARK_VERTICALBOOKMARK = 32,
 
+        SC_MARK_BAR = 33,
+
         SC_MARK_CHARACTER = 10000,
+
+        SC_MARKNUM_HISTORY_REVERTED_TO_ORIGIN = 21,
+
+        SC_MARKNUM_HISTORY_SAVED = 22,
+
+        SC_MARKNUM_HISTORY_MODIFIED = 23,
+
+        SC_MARKNUM_HISTORY_REVERTED_TO_MODIFIED = 24,
 
         SC_MARKNUM_FOLDEREND = 25,
 
@@ -364,7 +414,19 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// Set the background colour used for a particular marker number when its folding block is selected.
         SCI_MARKERSETBACKSELECTED = 2292,
 
-        /// Enable/disable highlight for current folding bloc (smallest one that contains the caret)
+        /// Set the foreground colour used for a particular marker number.
+        SCI_MARKERSETFORETRANSLUCENT = 2294,
+
+        /// Set the background colour used for a particular marker number.
+        SCI_MARKERSETBACKTRANSLUCENT = 2295,
+
+        /// Set the background colour used for a particular marker number when its folding block is selected.
+        SCI_MARKERSETBACKSELECTEDTRANSLUCENT = 2296,
+
+        /// Set the width of strokes used in .01 pixels so 50  = 1/2 pixel width.
+        SCI_MARKERSETSTROKEWIDTH = 2297,
+
+        /// Enable/disable highlight for current folding block (smallest one that contains the caret)
         SCI_MARKERENABLEHIGHLIGHT = 2293,
 
         /// Add a marker to a line, returning an ID which can be used to find or delete the marker.
@@ -394,6 +456,12 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
 
         /// Set the alpha used for a marker that is drawn in the text area, not the margin.
         SCI_MARKERSETALPHA = 2476,
+
+        /// Get the layer used for a marker that is drawn in the text area, not the margin.
+        SCI_MARKERGETLAYER = 2734,
+
+        /// Set the layer used for a marker that is drawn in the text area, not the margin.
+        SCI_MARKERSETLAYER = 2735,
 
         SC_MAX_MARGIN = 4,
 
@@ -626,6 +694,80 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// Set a style to be a hotspot or not.
         SCI_STYLESETHOTSPOT = 2409,
 
+        /// Indicate that a style may be monospaced over ASCII graphics characters which enables optimizations.
+        SCI_STYLESETCHECKMONOSPACED = 2254,
+
+        /// Get whether a style may be monospaced.
+        SCI_STYLEGETCHECKMONOSPACED = 2255,
+
+        /// Set the invisible representation for a style.
+        SCI_STYLESETINVISIBLEREPRESENTATION = 2256,
+
+        /// Get the invisible representation for a style.
+        SCI_STYLEGETINVISIBLEREPRESENTATION = 2257,
+
+        SC_ELEMENT_LIST = 0,
+
+        SC_ELEMENT_LIST_BACK = 1,
+
+        SC_ELEMENT_LIST_SELECTED = 2,
+
+        SC_ELEMENT_LIST_SELECTED_BACK = 3,
+
+        SC_ELEMENT_SELECTION_TEXT = 10,
+
+        SC_ELEMENT_SELECTION_BACK = 11,
+
+        SC_ELEMENT_SELECTION_ADDITIONAL_TEXT = 12,
+
+        SC_ELEMENT_SELECTION_ADDITIONAL_BACK = 13,
+
+        SC_ELEMENT_SELECTION_SECONDARY_TEXT = 14,
+
+        SC_ELEMENT_SELECTION_SECONDARY_BACK = 15,
+
+        SC_ELEMENT_SELECTION_INACTIVE_TEXT = 16,
+
+        SC_ELEMENT_SELECTION_INACTIVE_BACK = 17,
+
+        SC_ELEMENT_CARET = 40,
+
+        SC_ELEMENT_CARET_ADDITIONAL = 41,
+
+        SC_ELEMENT_CARET_LINE_BACK = 50,
+
+        SC_ELEMENT_WHITE_SPACE = 60,
+
+        SC_ELEMENT_WHITE_SPACE_BACK = 61,
+
+        SC_ELEMENT_HOT_SPOT_ACTIVE = 70,
+
+        SC_ELEMENT_HOT_SPOT_ACTIVE_BACK = 71,
+
+        SC_ELEMENT_FOLD_LINE = 80,
+
+        SC_ELEMENT_HIDDEN_LINE = 81,
+
+        /// Set the colour of an element. Translucency (alpha) may or may not be significant
+        /// and this may depend on the platform. The alpha byte should commonly be 0xff for opaque.
+        SCI_SETELEMENTCOLOUR = 2753,
+
+        /// Get the colour of an element.
+        SCI_GETELEMENTCOLOUR = 2754,
+
+        /// Use the default or platform-defined colour for an element.
+        SCI_RESETELEMENTCOLOUR = 2755,
+
+        /// Get whether an element has been set by SetElementColour.
+        /// When false, a platform-defined or default colour is used.
+        SCI_GETELEMENTISSET = 2756,
+
+        /// Get whether an element supports translucency.
+        SCI_GETELEMENTALLOWSTRANSLUCENT = 2757,
+
+        /// Get the colour of an element.
+        SCI_GETELEMENTBASECOLOUR = 2758,
+
         /// Set the foreground colour of the main and additional selections and whether to use this setting.
         SCI_SETSELFORE = 2067,
 
@@ -643,6 +785,30 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
 
         /// Set the selection to have its end of line filled or not.
         SCI_SETSELEOLFILLED = 2480,
+
+        SC_LAYER_BASE = 0,
+
+        SC_LAYER_UNDER_TEXT = 1,
+
+        SC_LAYER_OVER_TEXT = 2,
+
+        /// Get the layer for drawing selections
+        SCI_GETSELECTIONLAYER = 2762,
+
+        /// Set the layer for drawing selections: either opaquely on base layer or translucently over text
+        SCI_SETSELECTIONLAYER = 2763,
+
+        /// Get the layer of the background of the line containing the caret.
+        SCI_GETCARETLINELAYER = 2764,
+
+        /// Set the layer of the background of the line containing the caret.
+        SCI_SETCARETLINELAYER = 2765,
+
+        /// Get only highlighting subline instead of whole line.
+        SCI_GETCARETLINEHIGHLIGHTSUBLINE = 2773,
+
+        /// Set only highlighting subline instead of whole line.
+        SCI_SETCARETLINEHIGHLIGHTSUBLINE = 2774,
 
         /// Set the foreground colour of the caret.
         SCI_SETCARETFORE = 2069,
@@ -733,6 +899,8 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
 
         INDIC_GRADIENTCENTRE = 21,
 
+        INDIC_POINT_TOP = 22,
+
         INDIC_CONTAINER = 8,
 
         INDIC_IME = 32,
@@ -747,7 +915,23 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
 
         INDICATOR_IME_MAX = 35,
 
-        INDICATOR_MAX = 35,
+        INDICATOR_HISTORY_REVERTED_TO_ORIGIN_INSERTION = 36,
+
+        INDICATOR_HISTORY_REVERTED_TO_ORIGIN_DELETION = 37,
+
+        INDICATOR_HISTORY_SAVED_INSERTION = 38,
+
+        INDICATOR_HISTORY_SAVED_DELETION = 39,
+
+        INDICATOR_HISTORY_MODIFIED_INSERTION = 40,
+
+        INDICATOR_HISTORY_MODIFIED_DELETION = 41,
+
+        INDICATOR_HISTORY_REVERTED_TO_MODIFIED_INSERTION = 42,
+
+        INDICATOR_HISTORY_REVERTED_TO_MODIFIED_DELETION = 43,
+
+        INDICATOR_MAX = 43,
 
         /// Set an indicator to plain, squiggle or TT.
         SCI_INDICSETSTYLE = 2080,
@@ -783,6 +967,8 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
 
         SC_INDICVALUEMASK = 0xFFFFFF,
 
+        SC_INDICFLAG_NONE = 0,
+
         SC_INDICFLAG_VALUEFORE = 1,
 
         /// Set the attributes of an indicator.
@@ -790,6 +976,12 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
 
         /// Retrieve the attributes of an indicator.
         SCI_INDICGETFLAGS = 2685,
+
+        /// Set the stroke width of an indicator in hundredths of a pixel.
+        SCI_INDICSETSTROKEWIDTH = 2751,
+
+        /// Retrieve the stroke width of an indicator.
+        SCI_INDICGETSTROKEWIDTH = 2752,
 
         /// Set the foreground colour of all whitespace and whether to use this setting.
         SCI_SETWHITESPACEFORE = 2084,
@@ -897,6 +1089,16 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
 
         /// Retrieve whether or not autocompletion is hidden automatically when nothing matches.
         SCI_AUTOCGETAUTOHIDE = 2119,
+
+        SC_AUTOCOMPLETE_NORMAL = 0,
+
+        SC_AUTOCOMPLETE_FIXED_SIZE = 1,
+
+        /// Set autocompletion options.
+        SCI_AUTOCSETOPTIONS = 2638,
+
+        /// Retrieve autocompletion options.
+        SCI_AUTOCGETOPTIONS = 2639,
 
         /// Set whether or not autocompletion deletes any word characters
         /// after the inserted text upon completion.
@@ -1062,8 +1264,28 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// Find some text in the document.
         SCI_FINDTEXT = 2150,
 
-        /// On Windows, will draw the document into a display context such as a printer.
+        /// Find some text in the document.
+        SCI_FINDTEXTFULL = 2196,
+
+        /// Draw the document into a display context such as a printer.
         SCI_FORMATRANGE = 2151,
+
+        /// Draw the document into a display context such as a printer.
+        SCI_FORMATRANGEFULL = 2777,
+
+        SC_CHANGE_HISTORY_DISABLED = 0,
+
+        SC_CHANGE_HISTORY_ENABLED = 1,
+
+        SC_CHANGE_HISTORY_MARKERS = 2,
+
+        SC_CHANGE_HISTORY_INDICATORS = 4,
+
+        /// Enable or disable change history.
+        SCI_SETCHANGEHISTORY = 2780,
+
+        /// Report change history status.
+        SCI_GETCHANGEHISTORY = 2781,
 
         /// Retrieve the display line at the top of the display.
         SCI_GETFIRSTVISIBLELINE = 2152,
@@ -1074,6 +1296,9 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
 
         /// Returns the number of lines in the document. There is always at least one.
         SCI_GETLINECOUNT = 2154,
+
+        /// Enlarge the number of lines allocated.
+        SCI_ALLOCATELINES = 2089,
 
         /// Sets the size in pixels of the left margin.
         SCI_SETMARGINLEFT = 2155,
@@ -1102,8 +1327,15 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// Return the length of the text.
         SCI_GETTEXTRANGE = 2162,
 
+        /// Retrieve a range of text that can be past 2GB.
+        /// Return the length of the text.
+        SCI_GETTEXTRANGEFULL = 2039,
+
         /// Draw the selection either highlighted or in normal (non-highlighted) style.
         SCI_HIDESELECTION = 2163,
+
+        /// Draw the selection either highlighted or in normal (non-highlighted) style.
+        SCI_GETSELECTIONHIDDEN = 2088,
 
         /// Retrieve the x value of the point in the window where a position is displayed.
         SCI_POINTXFROMPOSITION = 2164,
@@ -1175,6 +1407,9 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// Retrieve a pointer to a function that processes messages for this Scintilla.
         SCI_GETDIRECTFUNCTION = 2184,
 
+        /// Retrieve a pointer to a function that processes messages for this Scintilla and returns status.
+        SCI_GETDIRECTSTATUSFUNCTION = 2772,
+
         /// Retrieve a pointer value to use as the first argument when calling
         /// the function returned by GetDirectFunction.
         SCI_GETDIRECTPOINTER = 2185,
@@ -1198,12 +1433,24 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// Get the position that starts the target.
         SCI_GETTARGETSTART = 2191,
 
+        /// Sets the virtual space of the target start
+        SCI_SETTARGETSTARTVIRTUALSPACE = 2728,
+
+        /// Get the virtual space of the target start
+        SCI_GETTARGETSTARTVIRTUALSPACE = 2729,
+
         /// Sets the position that ends the target which is used for updating the
         /// document without affecting the scroll position.
         SCI_SETTARGETEND = 2192,
 
         /// Get the position that ends the target.
         SCI_GETTARGETEND = 2193,
+
+        /// Sets the virtual space of the target end
+        SCI_SETTARGETENDVIRTUALSPACE = 2730,
+
+        /// Get the virtual space of the target end
+        SCI_GETTARGETENDVIRTUALSPACE = 2731,
 
         /// Sets both the start and end of the target in one call.
         SCI_SETTARGETRANGE = 2686,
@@ -1229,6 +1476,10 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// Returns the length of the replacement text including any change
         /// caused by processing the \d patterns.
         SCI_REPLACETARGETRE = 2195,
+
+        /// Replace the target text with the argument text but ignore prefix and suffix that
+        /// are the same as current.
+        SCI_REPLACETARGETMINIMAL = 2779,
 
         /// Search for a counted string in the target and set the target to the found
         /// range. Text is counted so it can contain NULs.
@@ -1282,6 +1533,8 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
 
         /// The number of display lines needed to wrap a document line
         SCI_WRAPCOUNT = 2235,
+
+        SC_FOLDLEVELNONE = 0x0,
 
         SC_FOLDLEVELBASE = 0x400,
 
@@ -1353,6 +1606,8 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
 
         SC_FOLDACTION_TOGGLE = 2,
 
+        SC_FOLDACTION_CONTRACT_EVERY_LEVEL = 4,
+
         /// Expand or contract a fold header.
         SCI_FOLDLINE = 2237,
 
@@ -1368,6 +1623,8 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// Ensure a particular line is visible by expanding any header line hiding it.
         SCI_ENSUREVISIBLE = 2232,
 
+        SC_AUTOMATICFOLD_NONE = 0x0000,
+
         SC_AUTOMATICFOLD_SHOW = 0x0001,
 
         SC_AUTOMATICFOLD_CLICK = 0x0002,
@@ -1379,6 +1636,8 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
 
         /// Get automatic folding behaviours.
         SCI_GETAUTOMATICFOLD = 2664,
+
+        SC_FOLDFLAG_NONE = 0x0000,
 
         SC_FOLDFLAG_LINEBEFORE_EXPANDED = 0x0002,
 
@@ -1835,6 +2094,9 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// The maxReStyle must be 0 for now. It may be defined in a future release.
         SCI_BRACEMATCH = 2353,
 
+        /// Similar to BraceMatch, but matching starts at the explicit start position.
+        SCI_BRACEMATCHNEXT = 2369,
+
         /// Are the end of line characters visible?
         SCI_GETVIEWEOL = 2355,
 
@@ -1883,6 +2145,9 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
 
         /// Clear all vertical edges.
         SCI_MULTIEDGECLEARALL = 2695,
+
+        /// Get multi edge positions.
+        SCI_GETMULTIEDGECOLUMN = 2749,
 
         /// Sets the current caret position to be the search anchor.
         SCI_SEARCHANCHOR = 2366,
@@ -1979,14 +2244,6 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
 
         /// Get whether mouse wheel can be active outside the window.
         SCI_GETMOUSEWHEELCAPTURES = 2697,
-
-        SC_CURSORNORMAL = 0xFFFFFFFF,
-
-        SC_CURSORARROW = 2,
-
-        SC_CURSORWAIT = 4,
-
-        SC_CURSORREVERSEARROW = 7,
 
         /// Sets the cursor to one of the SC_CURSOR* values.
         SCI_SETCURSOR = 2386,
@@ -2276,17 +2533,17 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// multi-byte characters. If beyond end of line, return line end position.
         SCI_FINDCOLUMN = 2456,
 
-        /// Can the caret preferred x position only be changed by explicit movement commands?
-        SCI_GETCARETSTICKY = 2457,
-
-        /// Stop the caret preferred x position changing when the user types.
-        SCI_SETCARETSTICKY = 2458,
-
         SC_CARETSTICKY_OFF = 0,
 
         SC_CARETSTICKY_ON = 1,
 
         SC_CARETSTICKY_WHITESPACE = 2,
+
+        /// Can the caret preferred x position only be changed by explicit movement commands?
+        SCI_GETCARETSTICKY = 2457,
+
+        /// Stop the caret preferred x position changing when the user types.
+        SCI_SETCARETSTICKY = 2458,
 
         /// Switch between sticky and non-sticky: meant to be bound to a key.
         SCI_TOGGLECARETSTICKY = 2459,
@@ -2297,14 +2554,11 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// Get convert-on-paste setting
         SCI_GETPASTECONVERTENDINGS = 2468,
 
+        /// Replace the selection with text like a rectangular paste.
+        SCI_REPLACERECTANGULAR = 2771,
+
         /// Duplicate the selection. If selection empty duplicate the line containing the caret.
         SCI_SELECTIONDUPLICATE = 2469,
-
-        SC_ALPHA_TRANSPARENT = 0,
-
-        SC_ALPHA_OPAQUE = 255,
-
-        SC_ALPHA_NOALPHA = 256,
 
         /// Set background alpha of the caret line.
         SCI_SETCARETLINEBACKALPHA = 2470,
@@ -2321,6 +2575,8 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         CARETSTYLE_OVERSTRIKE_BAR = 0,
 
         CARETSTYLE_OVERSTRIKE_BLOCK = 0x10,
+
+        CARETSTYLE_CURSES = 0x20,
 
         CARETSTYLE_INS_MASK = 0xF,
 
@@ -2367,6 +2623,12 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
 
         /// How many entries are allocated to the position cache?
         SCI_GETPOSITIONCACHE = 2515,
+
+        /// Set maximum number of threads used for layout
+        SCI_SETLAYOUTTHREADS = 2775,
+
+        /// Get maximum number of threads used for layout
+        SCI_GETLAYOUTTHREADS = 2776,
 
         /// Copy the selection, if selection empty copy the line with the caret
         SCI_COPYALLOWLINE = 2519,
@@ -2596,8 +2858,14 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// Returns the position at the start of the selection.
         SCI_GETSELECTIONNSTART = 2585,
 
+        /// Returns the virtual space at the start of the selection.
+        SCI_GETSELECTIONNSTARTVIRTUALSPACE = 2726,
+
         /// Sets the position that ends the selection - this becomes the currentPosition.
         SCI_SETSELECTIONNEND = 2586,
+
+        /// Returns the virtual space at the end of the selection.
+        SCI_GETSELECTIONNENDVIRTUALSPACE = 2727,
 
         /// Returns the position at the end of the selection.
         SCI_GETSELECTIONNEND = 2587,
@@ -2746,13 +3014,13 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// Create an ILoader*.
         SCI_CREATELOADER = 2632,
 
-        /// On OS X, show a find indicator.
+        /// On macOS, show a find indicator.
         SCI_FINDINDICATORSHOW = 2640,
 
-        /// On OS X, flash a find indicator, then fade out.
+        /// On macOS, flash a find indicator, then fade out.
         SCI_FINDINDICATORFLASH = 2641,
 
-        /// On OS X, hide the find indicator.
+        /// On macOS, hide the find indicator.
         SCI_FINDINDICATORHIDE = 2642,
 
         /// Move caret to before first visible character on display line.
@@ -2784,12 +3052,120 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// Set the way a character is drawn.
         SCI_SETREPRESENTATION = 2665,
 
-        /// Set the way a character is drawn.
+        /// Get the way a character is drawn.
         /// Result is NUL-terminated.
         SCI_GETREPRESENTATION = 2666,
 
         /// Remove a character representation.
         SCI_CLEARREPRESENTATION = 2667,
+
+        /// Clear representations to default.
+        SCI_CLEARALLREPRESENTATIONS = 2770,
+
+        SC_REPRESENTATION_PLAIN = 0,
+
+        SC_REPRESENTATION_BLOB = 1,
+
+        SC_REPRESENTATION_COLOUR = 0x10,
+
+        /// Set the appearance of a representation.
+        SCI_SETREPRESENTATIONAPPEARANCE = 2766,
+
+        /// Get the appearance of a representation.
+        SCI_GETREPRESENTATIONAPPEARANCE = 2767,
+
+        /// Set the colour of a representation.
+        SCI_SETREPRESENTATIONCOLOUR = 2768,
+
+        /// Get the colour of a representation.
+        SCI_GETREPRESENTATIONCOLOUR = 2769,
+
+        /// Set the end of line annotation text for a line
+        SCI_EOLANNOTATIONSETTEXT = 2740,
+
+        /// Get the end of line annotation text for a line
+        SCI_EOLANNOTATIONGETTEXT = 2741,
+
+        /// Set the style number for the end of line annotations for a line
+        SCI_EOLANNOTATIONSETSTYLE = 2742,
+
+        /// Get the style number for the end of line annotations for a line
+        SCI_EOLANNOTATIONGETSTYLE = 2743,
+
+        /// Clear the end of annotations from all lines
+        SCI_EOLANNOTATIONCLEARALL = 2744,
+
+        EOLANNOTATION_HIDDEN = 0x0,
+
+        EOLANNOTATION_STANDARD = 0x1,
+
+        EOLANNOTATION_BOXED = 0x2,
+
+        EOLANNOTATION_STADIUM = 0x100,
+
+        EOLANNOTATION_FLAT_CIRCLE = 0x101,
+
+        EOLANNOTATION_ANGLE_CIRCLE = 0x102,
+
+        EOLANNOTATION_CIRCLE_FLAT = 0x110,
+
+        EOLANNOTATION_FLATS = 0x111,
+
+        EOLANNOTATION_ANGLE_FLAT = 0x112,
+
+        EOLANNOTATION_CIRCLE_ANGLE = 0x120,
+
+        EOLANNOTATION_FLAT_ANGLE = 0x121,
+
+        EOLANNOTATION_ANGLES = 0x122,
+
+        /// Set the visibility for the end of line annotations for a view
+        SCI_EOLANNOTATIONSETVISIBLE = 2745,
+
+        /// Get the visibility for the end of line annotations for a view
+        SCI_EOLANNOTATIONGETVISIBLE = 2746,
+
+        /// Get the start of the range of style numbers used for end of line annotations
+        SCI_EOLANNOTATIONSETSTYLEOFFSET = 2747,
+
+        /// Get the start of the range of style numbers used for end of line annotations
+        SCI_EOLANNOTATIONGETSTYLEOFFSET = 2748,
+
+        SC_SUPPORTS_LINE_DRAWS_FINAL = 0,
+
+        SC_SUPPORTS_PIXEL_DIVISIONS = 1,
+
+        SC_SUPPORTS_FRACTIONAL_STROKE_WIDTH = 2,
+
+        SC_SUPPORTS_TRANSLUCENT_STROKE = 3,
+
+        SC_SUPPORTS_PIXEL_MODIFICATION = 4,
+
+        SC_SUPPORTS_THREAD_SAFE_MEASURE_WIDTHS = 5,
+
+        /// Get whether a feature is supported
+        SCI_SUPPORTSFEATURE = 2750,
+
+        SC_LINECHARACTERINDEX_NONE = 0,
+
+        SC_LINECHARACTERINDEX_UTF32 = 1,
+
+        SC_LINECHARACTERINDEX_UTF16 = 2,
+
+        /// Retrieve line character index state.
+        SCI_GETLINECHARACTERINDEX = 2710,
+
+        /// Request line character index be created or its use count increased.
+        SCI_ALLOCATELINECHARACTERINDEX = 2711,
+
+        /// Decrease use count of line character index and remove if 0.
+        SCI_RELEASELINECHARACTERINDEX = 2712,
+
+        /// Retrieve the document line containing a position measured in index units.
+        SCI_LINEFROMINDEXPOSITION = 2713,
+
+        /// Retrieve the position measured in index units at the start of a document line.
+        SCI_INDEXPOSITIONFROMLINE = 2714,
 
         /// Start notifying the container of all key presses and commands.
         SCI_STARTRECORD = 3001,
@@ -2910,6 +3286,9 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// Result is NUL-terminated.
         SCI_DESCRIPTIONOFSTYLE = 4032,
 
+        /// Set the lexer from an ILexer*.
+        SCI_SETILEXER = 4033,
+
         SC_MOD_NONE = 0x0,
 
         SC_MOD_INSERTTEXT = 0x1,
@@ -2956,7 +3335,11 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
 
         SC_MOD_CHANGETABSTOPS = 0x200000,
 
-        SC_MODEVENTMASKALL = 0x3FFFFF,
+        SC_MOD_CHANGEEOLANNOTATION = 0x400000,
+
+        SC_MODEVENTMASKALL = 0x7FFFFF,
+
+        SC_UPDATE_NONE = 0x0,
 
         SC_UPDATE_CONTENT = 0x1,
 
@@ -3033,6 +3416,8 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         SC_AC_NEWLINE = 4,
 
         SC_AC_COMMAND = 5,
+
+        SC_AC_SINGLE_CHOICE = 6,
 
         SC_CHARACTERSOURCE_DIRECT_INPUT = 0,
 
@@ -3148,27 +3533,6 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// Set bidirectional text display state.
         SCI_SETBIDIRECTIONAL = 2709,
 
-        SC_LINECHARACTERINDEX_NONE = 0,
-
-        SC_LINECHARACTERINDEX_UTF32 = 1,
-
-        SC_LINECHARACTERINDEX_UTF16 = 2,
-
-        /// Retrieve line character index state.
-        SCI_GETLINECHARACTERINDEX = 2710,
-
-        /// Request line character index be created or its use count increased.
-        SCI_ALLOCATELINECHARACTERINDEX = 2711,
-
-        /// Decrease use count of line character index and remove if 0.
-        SCI_RELEASELINECHARACTERINDEX = 2712,
-
-        /// Retrieve the document line containing a position measured in index units.
-        SCI_LINEFROMINDEXPOSITION = 2713,
-
-        /// Retrieve the position measured in index units at the start of a document line.
-        SCI_INDEXPOSITIONFROMLINE = 2714,
-
         /// Divide each styling byte into lexical class bits (default: 5) and indicator
         /// bits (default: 3). If a lexer requires more than 32 lexical states, then this
         /// is used to expand the possible states.
@@ -3230,10 +3594,10 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// <param name="cpmin">range to search</param>
         /// <param name="cpmax">range to search</param>
         /// <param name="searchText">the search pattern</param>
-        public TextToFind(IntPtr cpmin, IntPtr cpmax, string searchText)
+        public TextToFind(int cpmin, int cpmax, string searchText)
         {
-            _sciTextToFind.chrg.cpMin = cpmin;
-            _sciTextToFind.chrg.cpMax = cpmax;
+            _sciTextToFind.chrg.cpMin = new IntPtr(cpmin);
+            _sciTextToFind.chrg.cpMax = new IntPtr(cpmax);
             _sciTextToFind.lpstrText = Marshal.StringToHGlobalAnsi(searchText);
         }
 
@@ -3279,6 +3643,83 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         }
 
         ~TextToFind()
+        {
+            Dispose();
+        }
+    }
+
+    public class TextToFindFull : IDisposable
+    {
+        Sci_TextToFindFull _sciTextToFindFull;
+        IntPtr _ptrSciTextToFindFull;
+        bool _disposed = false;
+
+        /// <summary>
+        /// text to find
+        /// </summary>
+        /// <param name="chrRange">range to search</param>
+        /// <param name="searchText">the search pattern</param>
+        public TextToFindFull(CharacterRangeFull chrRange, string searchText)
+        {
+            _sciTextToFindFull.chrg = chrRange;
+            _sciTextToFindFull.lpstrText = Marshal.StringToHGlobalAnsi(searchText);
+        }
+
+        /// <summary>
+        /// text to find
+        /// </summary>
+        /// <param name="cpmin">range to search</param>
+        /// <param name="cpmax">range to search</param>
+        /// <param name="searchText">the search pattern</param>
+        public TextToFindFull(int cpmin, int cpmax, string searchText)
+        {
+            _sciTextToFindFull.chrg.cpMin = new IntPtr(cpmin);
+            _sciTextToFindFull.chrg.cpMax = new IntPtr(cpmax);
+            _sciTextToFindFull.lpstrText = Marshal.StringToHGlobalAnsi(searchText);
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        struct Sci_TextToFindFull
+        {
+            public CharacterRangeFull chrg;
+            public IntPtr lpstrText;
+            public CharacterRangeFull chrgText;
+        }
+
+        public IntPtr NativePointer { get { _initNativeStruct(); return _ptrSciTextToFindFull; } }
+        public string lpstrText { set { _freeNativeString(); _sciTextToFindFull.lpstrText = Marshal.StringToHGlobalAnsi(value); } }
+        public CharacterRangeFull chrg { get { _readNativeStruct(); return _sciTextToFindFull.chrg; } set { _sciTextToFindFull.chrg = value; _initNativeStruct(); } }
+        public CharacterRangeFull chrgText { get { _readNativeStruct(); return _sciTextToFindFull.chrgText; } }
+
+        void _initNativeStruct()
+        {
+            if (_ptrSciTextToFindFull == IntPtr.Zero)
+                _ptrSciTextToFindFull = Marshal.AllocHGlobal(Marshal.SizeOf(_sciTextToFindFull));
+            Marshal.StructureToPtr(_sciTextToFindFull, _ptrSciTextToFindFull, false);
+        }
+
+        void _readNativeStruct()
+        {
+            if (_ptrSciTextToFindFull != IntPtr.Zero)
+                _sciTextToFindFull = (Sci_TextToFindFull)Marshal.PtrToStructure(_ptrSciTextToFindFull, typeof(Sci_TextToFindFull));
+        }
+
+        void _freeNativeString()
+        {
+            if (_sciTextToFindFull.lpstrText != IntPtr.Zero) Marshal.FreeHGlobal(_sciTextToFindFull.lpstrText);
+        }
+
+        public void Dispose()
+        {
+            if (!_disposed)
+            {
+                _freeNativeString();
+                if (_ptrSciTextToFindFull != IntPtr.Zero) Marshal.FreeHGlobal(_ptrSciTextToFindFull);
+                _disposed = true;
+            }
+        }
+
+        ~TextToFindFull()
         {
             Dispose();
         }

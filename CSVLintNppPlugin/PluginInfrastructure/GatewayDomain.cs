@@ -33,6 +33,35 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
     }
 
     /// <summary>
+    /// Colours are set using the RGB format (Red, Green, Blue). The intensity of each colour is set in the range 0 to 255.
+    /// If you have three such intensities, they are combined as: red | (green &lt;&lt; 8) | (blue &lt;&lt; 16).
+    /// If you set all intensities to 255, the colour is white. If you set all intensities to 0, the colour is black.
+    /// When you set a colour, you are making a request. What you will get depends on the capabilities of the system and the current screen mode.
+    /// </summary>
+    public class ColourAlpha
+    {
+        public readonly int Red, Green, Blue, Alpha;
+
+        public ColourAlpha(Int64 rgba)
+        {
+            Red = (byte)rgba & 0xFF;
+            Green = (byte)(rgba >> 8) & 0xFF;
+            Blue = (byte)(rgba >> 16) & 0xFF;
+            Alpha = (byte)(rgba >> 24) & 0xFF;
+        }
+
+        public ColourAlpha(byte red, byte green, byte blue, byte alpha)
+        {
+            Red = red;
+            Green = green;
+            Blue = blue;
+            Alpha = alpha;
+        }
+
+        public int Value => Red + (Green << 8) + (Blue << 16) + (Alpha << 24);
+    }
+
+    /// <summary>
     /// Positions within the Scintilla document refer to a character or the gap before that character.
     /// The first character in a document is 0, the second 1 and so on. If a document contains nLen characters, the last character is numbered nLen-1. The caret exists between character positions and can be located from before the first character (0) to after the last character (nLen).
     ///
@@ -48,14 +77,17 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
     /// </summary>
     public class Position : IEquatable<Position>
     {
-        private readonly int pos;
+        private readonly Int64 pos;
 
-        public Position(int pos)
+        public Position(IntPtr ptr) : this(ptr.ToInt64())
+        { }
+
+        public Position(Int64 pos)
         {
             this.pos = pos;
         }
 
-        public int Value
+        public Int64 Value
         {
             get { return pos; }
         }
@@ -130,12 +162,12 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
             return Equals((Position)obj);
         }
 
-        public static implicit operator Position(int i) => new Position(i);
-        public static implicit operator int(Position i) => i.pos;
+        //public static implicit operator Position(int i) => new Position(i);
+        //public static implicit operator int(Position i) => i.pos;
 
         public override int GetHashCode()
         {
-            return pos;
+            return pos.GetHashCode();
         }
     }
 
@@ -178,6 +210,14 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
     public struct CharacterRange
     {
         public CharacterRange(IntPtr cpmin, IntPtr cpmax) { cpMin = cpmin; cpMax = cpmax; }
+        public IntPtr cpMin;
+        public IntPtr cpMax;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct CharacterRangeFull
+    {
+        public CharacterRangeFull(IntPtr cpmin, IntPtr cpmax) { cpMin = cpmin; cpMax = cpmax; }
         public IntPtr cpMin;
         public IntPtr cpMax;
     }
@@ -265,6 +305,68 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
             Dispose();
         }
     }
+    public class TextRangeFull : IDisposable
+    {
+        Sci_TextRangeFull _sciTextRangeFull;
+        IntPtr _ptrSciTextRangeFull;
+        bool _disposed = false;
+
+        public TextRangeFull(CharacterRange chrRange, long stringCapacity)
+            : this(chrRange.cpMin, chrRange.cpMax, stringCapacity)
+        { }
+
+        public TextRangeFull(IntPtr cpmin, IntPtr cpmax, long stringCapacity = 0)
+        {
+            // The capacity must be _at least_ the given range plus one
+            stringCapacity = Math.Max(stringCapacity, Math.Abs(cpmax.ToInt64() - cpmin.ToInt64()) + 1);
+
+            _sciTextRangeFull.chrg.cpMin = cpmin;
+            _sciTextRangeFull.chrg.cpMax = cpmax;
+            _sciTextRangeFull.lpstrText = Marshal.AllocHGlobal(new IntPtr(stringCapacity));
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        struct Sci_TextRangeFull
+        {
+            public CharacterRange chrg;
+            public IntPtr lpstrText;
+        }
+
+        public IntPtr NativePointer { get { _initNativeStruct(); return _ptrSciTextRangeFull; } }
+
+        public string lpstrText { get { _readNativeStruct(); return Marshal.PtrToStringAnsi(_sciTextRangeFull.lpstrText); } }
+
+        public CharacterRange chrg { get { _readNativeStruct(); return _sciTextRangeFull.chrg; } set { _sciTextRangeFull.chrg = value; _initNativeStruct(); } }
+
+
+        void _initNativeStruct()
+        {
+            if (_ptrSciTextRangeFull == IntPtr.Zero)
+                _ptrSciTextRangeFull = Marshal.AllocHGlobal(Marshal.SizeOf(_sciTextRangeFull));
+            Marshal.StructureToPtr(_sciTextRangeFull, _ptrSciTextRangeFull, false);
+        }
+
+        void _readNativeStruct()
+        {
+            if (_ptrSciTextRangeFull != IntPtr.Zero)
+                _sciTextRangeFull = (Sci_TextRangeFull)Marshal.PtrToStructure(_ptrSciTextRangeFull, typeof(Sci_TextRangeFull));
+        }
+
+        public void Dispose()
+        {
+            if (!_disposed)
+            {
+                if (_sciTextRangeFull.lpstrText != IntPtr.Zero) Marshal.FreeHGlobal(_sciTextRangeFull.lpstrText);
+                if (_ptrSciTextRangeFull != IntPtr.Zero) Marshal.FreeHGlobal(_ptrSciTextRangeFull);
+                _disposed = true;
+            }
+        }
+
+        ~TextRangeFull()
+        {
+            Dispose();
+        }
+    }
 
 
     /* ++Autogenerated -- start of section automatically generated from Scintilla.iface */
@@ -289,17 +391,28 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
             CR = 1,
             LF = 2
         }
-        /// <summary>
-        /// Set the code page used to interpret the bytes of the document as characters.
-        /// The SC_CP_UTF8 value can be used to enter Unicode mode.
-        /// (Scintilla feature SC_IME_)
-        /// </summary>
+        /// <summary>Get the locale for displaying text. (Scintilla feature SC_IME_)</summary>
         public enum IMEInteraction
         {
             WINDOWED = 0,
             INLINE = 1
         }
-        /// <summary>Choose to display the the IME in a winow or inline. (Scintilla feature SC_MARK_)</summary>
+        /// <summary>Choose to display the IME in a window or inline. (Scintilla feature SC_ALPHA_)</summary>
+        public enum Alpha
+        {
+            TRANSPARENT = 0,
+            OPAQUE = 255,
+            NOALPHA = 256
+        }
+        /// <summary>Choose to display the IME in a window or inline. (Scintilla feature SC_CURSOR)</summary>
+        public enum CursorShape
+        {
+            NORMAL = -1,
+            ARROW = 2,
+            WAIT = 4,
+            REVERSEARROW = 7
+        }
+        /// <summary>Choose to display the IME in a window or inline. (Scintilla feature SC_MARK_)</summary>
         public enum MarkerSymbol
         {
             CIRCLE = 0,
@@ -335,11 +448,16 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
             RGBAIMAGE = 30,
             BOOKMARK = 31,
             VERTICALBOOKMARK = 32,
+            BAR = 33,
             CHARACTER = 10000
         }
         /// <summary>Invisible mark that only sets the line background colour. (Scintilla feature SC_MARKNUM_)</summary>
         public enum MarkerOutline
         {
+            HISTORY_REVERTED_TO_ORIGIN = 21,
+            HISTORY_SAVED = 22,
+            HISTORY_MODIFIED = 23,
+            HISTORY_REVERTED_TO_MODIFIED = 24,
             FOLDEREND = 25,
             FOLDEROPENMID = 26,
             FOLDERMIDTAIL = 27,
@@ -348,7 +466,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
             FOLDER = 30,
             FOLDEROPEN = 31
         }
-        /// <summary>Set the alpha used for a marker that is drawn in the text area, not the margin. (Scintilla feature SC_MARGIN_)</summary>
+        /// <summary>Set the layer used for a marker that is drawn in the text area, not the margin. (Scintilla feature SC_MARGIN_)</summary>
         public enum MarginType
         {
             SYMBOL = 0,
@@ -418,6 +536,38 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
             SEMIBOLD = 600,
             BOLD = 700
         }
+        /// <summary>Get the invisible representation for a style. (Scintilla feature SC_ELEMENT_)</summary>
+        public enum Element
+        {
+            LIST = 0,
+            LIST_BACK = 1,
+            LIST_SELECTED = 2,
+            LIST_SELECTED_BACK = 3,
+            SELECTION_TEXT = 10,
+            SELECTION_BACK = 11,
+            SELECTION_ADDITIONAL_TEXT = 12,
+            SELECTION_ADDITIONAL_BACK = 13,
+            SELECTION_SECONDARY_TEXT = 14,
+            SELECTION_SECONDARY_BACK = 15,
+            SELECTION_INACTIVE_TEXT = 16,
+            SELECTION_INACTIVE_BACK = 17,
+            CARET = 40,
+            CARET_ADDITIONAL = 41,
+            CARET_LINE_BACK = 50,
+            WHITE_SPACE = 60,
+            WHITE_SPACE_BACK = 61,
+            HOT_SPOT_ACTIVE = 70,
+            HOT_SPOT_ACTIVE_BACK = 71,
+            FOLD_LINE = 80,
+            HIDDEN_LINE = 81
+        }
+        /// <summary>Set the selection to have its end of line filled or not. (Scintilla feature SC_LAYER_)</summary>
+        public enum Layer
+        {
+            BASE = 0,
+            UNDER_TEXT = 1,
+            OVER_TEXT = 2
+        }
         /// <summary>Indicator style enumeration and some constants (Scintilla feature INDIC_)</summary>
         public enum IndicatorStyle
         {
@@ -443,6 +593,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
             POINTCHARACTER = 19,
             GRADIENT = 20,
             GRADIENTCENTRE = 21,
+            POINT_TOP = 22,
             CONTAINER = 8,
             IME = 32,
             IME_MAX = 35,
@@ -459,7 +610,15 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
             CONTAINER = 8,
             IME = 32,
             IME_MAX = 35,
-            MAX = 35
+            HISTORY_REVERTED_TO_ORIGIN_INSERTION = 36,
+            HISTORY_REVERTED_TO_ORIGIN_DELETION = 37,
+            HISTORY_SAVED_INSERTION = 38,
+            HISTORY_SAVED_DELETION = 39,
+            HISTORY_MODIFIED_INSERTION = 40,
+            HISTORY_MODIFIED_DELETION = 41,
+            HISTORY_REVERTED_TO_MODIFIED_INSERTION = 42,
+            HISTORY_REVERTED_TO_MODIFIED_DELETION = 43,
+            MAX = 43
         }
         /// <summary>Retrieve the foreground hover colour of an indicator. (Scintilla feature SC_INDICVALUE)</summary>
         public enum IndicValue
@@ -470,7 +629,14 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// <summary>Retrieve the foreground hover colour of an indicator. (Scintilla feature SC_INDICFLAG_)</summary>
         public enum IndicFlag
         {
+            NONE = 0,
             VALUEFORE = 1
+        }
+        /// <summary>Define option flags for autocompletion lists (Scintilla feature SC_AUTOCOMPLETE_)</summary>
+        public enum AutoCompleteOption
+        {
+            NORMAL = 0,
+            FIXED_SIZE = 1
         }
         /// <summary>Is the horizontal scroll bar visible? (Scintilla feature SC_IV_)</summary>
         public enum IndentView
@@ -501,9 +667,18 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
             POSIX = 0x00400000,
             CXX11REGEX = 0x00800000
         }
+        /// <summary>Draw the document into a display context such as a printer. (Scintilla feature SC_CHANGE_HISTORY_)</summary>
+        public enum ChangeHistoryOption
+        {
+            DISABLED = 0,
+            ENABLED = 1,
+            MARKERS = 2,
+            INDICATORS = 4
+        }
         /// <summary>The number of display lines needed to wrap a document line (Scintilla feature SC_FOLDLEVEL)</summary>
         public enum FoldLevel
         {
+            NONE = 0x0,
             BASE = 0x400,
             WHITEFLAG = 0x1000,
             HEADERFLAG = 0x2000,
@@ -521,11 +696,13 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         {
             CONTRACT = 0,
             EXPAND = 1,
-            TOGGLE = 2
+            TOGGLE = 2,
+            CONTRACT_EVERY_LEVEL = 4
         }
         /// <summary>Ensure a particular line is visible by expanding any header line hiding it. (Scintilla feature SC_AUTOMATICFOLD_)</summary>
         public enum AutomaticFold
         {
+            NONE = 0x0000,
             SHOW = 0x0001,
             CLICK = 0x0002,
             CHANGE = 0x0004
@@ -533,6 +710,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// <summary>Get automatic folding behaviours. (Scintilla feature SC_FOLDFLAG_)</summary>
         public enum FoldFlag
         {
+            NONE = 0x0000,
             LINEBEFORE_EXPANDED = 0x0002,
             LINEBEFORE_CONTRACTED = 0x0004,
             LINEAFTER_EXPANDED = 0x0008,
@@ -646,14 +824,6 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
             WARN_START = 1000,
             WARN_REGEX = 1001
         }
-        /// <summary>Get whether mouse wheel can be active outside the window. (Scintilla feature SC_CURSOR)</summary>
-        public enum CursorShape
-        {
-            NORMAL = -1,
-            ARROW = 2,
-            WAIT = 4,
-            REVERSEARROW = 7
-        }
         /// <summary>Constants for use with SetVisiblePolicy, similar to SetCaretPolicy. (Scintilla feature VISIBLE_)</summary>
         public enum VisiblePolicy
         {
@@ -700,19 +870,16 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
             PERFORMSORT = 1,
             CUSTOM = 2
         }
-        /// <summary>Stop the caret preferred x position changing when the user types. (Scintilla feature SC_CARETSTICKY_)</summary>
+        /// <summary>
+        /// Find the position of a column on a line taking into account tabs and
+        /// multi-byte characters. If beyond end of line, return line end position.
+        /// (Scintilla feature SC_CARETSTICKY_)
+        /// </summary>
         public enum CaretSticky
         {
             OFF = 0,
             ON = 1,
             WHITESPACE = 2
-        }
-        /// <summary>Duplicate the selection. If selection empty duplicate the line containing the caret. (Scintilla feature SC_ALPHA_)</summary>
-        public enum Alpha
-        {
-            TRANSPARENT = 0,
-            OPAQUE = 255,
-            NOALPHA = 256
         }
         /// <summary>Get the background alpha of the caret line. (Scintilla feature CARETSTYLE_)</summary>
         public enum CaretStyle
@@ -722,6 +889,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
             BLOCK = 2,
             OVERSTRIKE_BAR = 0,
             OVERSTRIKE_BLOCK = 0x10,
+            CURSES = 0x20,
             INS_MASK = 0xF,
             BLOCK_AFTER = 0x100
         }
@@ -772,6 +940,46 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
             DEFAULT = 0,
             UNICODE = 1
         }
+        /// <summary>Can draw representations in various ways (Scintilla feature SC_REPRESENTATION)</summary>
+        public enum RepresentationAppearance
+        {
+            _PLAIN = 0,
+            _BLOB = 1,
+            _COLOUR = 0x10
+        }
+        /// <summary>Clear the end of annotations from all lines (Scintilla feature EOLANNOTATION_)</summary>
+        public enum EOLAnnotationVisible
+        {
+            HIDDEN = 0x0,
+            STANDARD = 0x1,
+            BOXED = 0x2,
+            STADIUM = 0x100,
+            FLAT_CIRCLE = 0x101,
+            ANGLE_CIRCLE = 0x102,
+            CIRCLE_FLAT = 0x110,
+            FLATS = 0x111,
+            ANGLE_FLAT = 0x112,
+            CIRCLE_ANGLE = 0x120,
+            FLAT_ANGLE = 0x121,
+            ANGLES = 0x122
+        }
+        /// <summary>Get the start of the range of style numbers used for end of line annotations (Scintilla feature SC_SUPPORTS_)</summary>
+        public enum Supports
+        {
+            LINE_DRAWS_FINAL = 0,
+            PIXEL_DIVISIONS = 1,
+            FRACTIONAL_STROKE_WIDTH = 2,
+            TRANSLUCENT_STROKE = 3,
+            PIXEL_MODIFICATION = 4,
+            THREAD_SAFE_MEASURE_WIDTHS = 5
+        }
+        /// <summary>Get whether a feature is supported (Scintilla feature SC_LINECHARACTERINDEX_)</summary>
+        public enum LineCharacterIndexType
+        {
+            NONE = 0,
+            UTF32 = 1,
+            UTF16 = 2
+        }
         /// <summary>
         /// Retrieve a '\n' separated list of properties understood by the current lexer.
         /// Result is NUL-terminated.
@@ -802,10 +1010,24 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// </summary>
         public enum Update
         {
+            NONE = 0x0,
             CONTENT = 0x1,
             SELECTION = 0x2,
             V_SCROLL = 0x4,
             H_SCROLL = 0x8
+        }
+        /// <summary>
+        /// For compatibility, these go through the COMMAND notification rather than NOTIFY
+        /// and should have had exactly the same values as the EN_* constants.
+        /// Unfortunately the SETFOCUS and KILLFOCUS are flipped over from EN_*
+        /// As clients depend on these constants, this will not be changed.
+        /// (Scintilla feature SCEN_)
+        /// </summary>
+        public enum FocusChange
+        {
+            CHANGE = 768,
+            SETFOCUS = 512,
+            KILLFOCUS = 256
         }
         /// <summary>
         /// Symbolic key codes and modifier flags.
@@ -834,7 +1056,8 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
             DOUBLECLICK = 2,
             TAB = 3,
             NEWLINE = 4,
-            COMMAND = 5
+            COMMAND = 5,
+            SINGLE_CHOICE = 6
         }
         /// <summary>characterSource for SCN_CHARADDED (Scintilla feature SC_CHARACTERSOURCE_)</summary>
         public enum CharacterSource
@@ -982,13 +1205,6 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
             DISABLED = 0,
             L2R = 1,
             R2L = 2
-        }
-        /// <summary>Set bidirectional text display state. (Scintilla feature SC_LINECHARACTERINDEX_)</summary>
-        public enum LineCharacterIndexType
-        {
-            NONE = 0,
-            UTF32 = 1,
-            UTF16 = 2
         }
     /* --Autogenerated -- end of section automatically generated from Scintilla.iface */
 
