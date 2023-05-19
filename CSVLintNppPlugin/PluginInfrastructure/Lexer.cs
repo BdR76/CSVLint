@@ -458,8 +458,13 @@ namespace NppPluginNET.PluginInfrastructure
                     && !Main.sShouldResetCaretBack)
                 {
                     var editor = new ScintillaGateway(PluginBase.GetCurrentScintilla());
-                    editor.SetCaretLineBackAlpha((Alpha)16 + 8);
-                    editor.SetCaretLineBack(sCaretLineBack);
+
+                    if (editor.GetCaretLineBackAlpha() == Alpha.NOALPHA) {
+                        editor.SetCaretLineBackAlpha((Alpha)16 + 8);
+                        //editor.SetCaretLineBack(sCaretLineBack);
+                        editor.SetCaretLineBack(new Colour(0)); // Main.CheckConfigDarkMode() ? 0xFFFFFF : 0
+                    }
+
                     Main.sShouldResetCaretBack = true;
                 }
             }

@@ -140,8 +140,14 @@ namespace Kbg.NppPluginNET
                     // set caret line to default on file change
                     sShouldResetCaretBack = false;
                     var editor = new ScintillaGateway(PluginBase.GetCurrentScintilla());
-                    editor.SetCaretLineBackAlpha(sAlpha);// Alpha.NOALPHA); // default
-                    editor.SetCaretLineBack(sCaretLineColor);
+                    if (editor.GetCaretLineBackAlpha() != Alpha.NOALPHA)
+                    {
+                        //editor.SetCaretLineBackAlpha(sAlpha); // reset to editor default
+                        //editor.SetCaretLineBack(sCaretLineColor); // reset to editor default
+                        editor.SetCaretLineBackAlpha(Alpha.NOALPHA); // default
+                        editor.SetCaretLineBack(new Colour(232, 232, 255)); // default light-mode color
+                        //editor.SetCaretLineBack(new Colour(32, 32, 32)); // default dark-mode color
+                    }
                 }
             }
         }
