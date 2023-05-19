@@ -131,25 +131,25 @@ namespace Kbg.NppPluginNET
                 Main.ToggleDarkMode(notepad.IsDarkModeEnabled());
             }
 
-            if (code > int.MaxValue) // windows messages
-            {
-                int wm = -(int)code;
-                // leaving previous tab
-                if (wm == 0x22A && sShouldResetCaretBack) // =554 WM_MDI_SETACTIVE
-                {
-                    // set caret line to default on file change
-                    sShouldResetCaretBack = false;
-                    var editor = new ScintillaGateway(PluginBase.GetCurrentScintilla());
-                    if (editor.GetCaretLineBackAlpha() != Alpha.NOALPHA)
-                    {
-                        //editor.SetCaretLineBackAlpha(sAlpha); // reset to editor default
-                        //editor.SetCaretLineBack(sCaretLineColor); // reset to editor default
-                        editor.SetCaretLineBackAlpha(Alpha.NOALPHA); // default
-                        editor.SetCaretLineBack(new Colour(232, 232, 255)); // default light-mode color
-                        //editor.SetCaretLineBack(new Colour(32, 32, 32)); // default dark-mode color
-                    }
-                }
-            }
+            //if (code > int.MaxValue) // windows messages
+            //{
+            //    int wm = -(int)code;
+            //    // leaving previous tab
+            //    if (wm == 0x22A && sShouldResetCaretBack) // =554 WM_MDI_SETACTIVE
+            //    {
+            //        // set caret line to default on file change
+            //        sShouldResetCaretBack = false;
+            //        var editor = new ScintillaGateway(PluginBase.GetCurrentScintilla());
+            //        if (editor.GetCaretLineBackAlpha() != Alpha.NOALPHA)
+            //        {
+            //            //editor.SetCaretLineBackAlpha(sAlpha); // reset to editor default
+            //            //editor.SetCaretLineBack(sCaretLineColor); // reset to editor default
+            //            editor.SetCaretLineBackAlpha(Alpha.NOALPHA); // default
+            //            editor.SetCaretLineBack(new Colour(232, 232, 255)); // default light-mode color
+            //            //editor.SetCaretLineBack(new Colour(32, 32, 32)); // default dark-mode color
+            //        }
+            //    }
+            //}
         }
 
         internal static void CommandMenuInit()
@@ -187,6 +187,17 @@ namespace Kbg.NppPluginNET
             tmp.DateTimeFormat.Calendar.TwoDigitYearMax = Settings.intTwoDigitYearMax; // any cutoff you need
                                                         // incorrect: tmp.Calendar.TwoDigitYearMax = 2039
             dummyCulture = CultureInfo.ReadOnly(tmp);
+
+            if (Settings.TransparentCursor)
+            {
+                var editor = new ScintillaGateway(PluginBase.GetCurrentScintilla());
+                if (editor.GetCaretLineBackAlpha() == Alpha.NOALPHA)
+                {
+                    editor.SetCaretLineBackAlpha((Alpha)16 + 8);
+                    //editor.SetCaretLineBack(sCaretLineBack);
+                    editor.SetCaretLineBack(new Colour(0)); // Main.CheckConfigDarkMode() ? 0xFFFFFF : 0
+                }
+            }
         }
 
         internal static bool CheckConfigDarkMode()

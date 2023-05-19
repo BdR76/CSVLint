@@ -450,24 +450,31 @@ namespace NppPluginNET.PluginInfrastructure
             int length = (int)length_doc;
             int start = (int)start_pos;
 
+            // Setting the SetCaretLineBackAlpha can crash Notepad++ in some unexplained circumstances.
+            // It might have to do with ANSI/Chinese encoding files and a very specific chain of events at startup of Notepad++
+            // I was able to reproduce the crash with two files and very specific circumstances in sessions.xml,
+            // the first tabfile firstVisibleLine="123" (so not 0) which would cause below code to trigger on the second tab,
+            // combined with a specific Chinese ANSI file with a certain name in a certain folder would trigger the crash.
+            // But even renaming the file by one character (both the file and in sessions.xml) and then it wouldn't crash anymore
+            //
             // transparent cursor line is optional
-            if (Main.Settings.TransparentCursor)
-            {
-                // create transparent cursor line
-                if (start == 0 && PluginBase.MainScintillaActive
-                    && !Main.sShouldResetCaretBack)
-                {
-                    var editor = new ScintillaGateway(PluginBase.GetCurrentScintilla());
-
-                    if (editor.GetCaretLineBackAlpha() == Alpha.NOALPHA) {
-                        editor.SetCaretLineBackAlpha((Alpha)16 + 8);
-                        //editor.SetCaretLineBack(sCaretLineBack);
-                        editor.SetCaretLineBack(new Colour(0)); // Main.CheckConfigDarkMode() ? 0xFFFFFF : 0
-                    }
-
-                    Main.sShouldResetCaretBack = true;
-                }
-            }
+            //if (Main.Settings.TransparentCursor)
+            //{
+            //    // create transparent cursor line
+            //    if (start == 0 && PluginBase.MainScintillaActive
+            //        && !Main.sShouldResetCaretBack)
+            //    {
+            //        var editor = new ScintillaGateway(PluginBase.GetCurrentScintilla());
+            //
+            //        if (editor.GetCaretLineBackAlpha() == Alpha.NOALPHA) {
+            //            editor.SetCaretLineBackAlpha((Alpha)16 + 8);
+            //            //editor.SetCaretLineBack(sCaretLineBack);
+            //            editor.SetCaretLineBack(new Colour(0)); // Main.CheckConfigDarkMode() ? 0xFFFFFF : 0
+            //        }
+            //
+            //        Main.sShouldResetCaretBack = true;
+            //    }
+            //}
 
             // allocate a buffer
             IntPtr buffer_ptr = Marshal.AllocHGlobal(length);
