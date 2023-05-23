@@ -291,7 +291,6 @@ namespace CSVLint
         public static void ConvertToSQL(CsvDefinition csvdef)
         {
             StringBuilder sb = new StringBuilder();
-            string VERSION_NO = Main.GetVersion();
             int MAX_SQL_ROWS = Main.Settings.DataConvertBatch;
 
             // if csv already contains "_record_number"
@@ -302,11 +301,9 @@ namespace CSVLint
             INotepadPPGateway notepad = new NotepadPPGateway();
             IScintillaGateway editor = new ScintillaGateway(PluginBase.GetCurrentScintilla());
 
-            string FILE_NAME = Path.GetFileName(notepad.GetCurrentFilePath());
-
             string TABLE_NAME = Main.Settings.DataConvertName;
             if (TABLE_NAME == "") TABLE_NAME = StringToVariable(Path.GetFileNameWithoutExtension(notepad.GetCurrentFilePath()));
-            if (TABLE_NAME.Contains(" "))
+            if (TABLE_NAME.Contains(" ") || TABLE_NAME.Contains("'"))
             {
                 if (Main.Settings.DataConvertSQL == 1) // MS-SQL
                     TABLE_NAME = string.Format("[{0}]", TABLE_NAME);
@@ -316,12 +313,18 @@ namespace CSVLint
 
             string SQL_TYPE = (Main.Settings.DataConvertSQL <= 1 ? (Main.Settings.DataConvertSQL == 0 ? "mySQL" : "MS-SQL") : "PostgreSQL");
 
+            // default comment
+            List<String> comment = ScriptInfo(notepad);
+
+            // build SQL
             sb.Append("-- -------------------------------------\r\n");
-            sb.Append(string.Format("-- CSV Lint plug-in v{0}\r\n", VERSION_NO));
-            sb.Append(string.Format("-- File: {0}\r\n", FILE_NAME));
-            sb.Append(string.Format("-- Date: {0}\r\n", DateTime.Now.ToString("dd-MMM-yyyy HH:mm")));
+            foreach (var str in comment)
+            {
+                sb.Append(string.Format("-- {0}\r\n", str));
+            }
             sb.Append(string.Format("-- SQL type: {0}\r\n", SQL_TYPE));
             sb.Append("-- -------------------------------------\r\n");
+
             sb.Append(string.Format("CREATE TABLE {0} (\r\n\t", TABLE_NAME));
 
             switch (Main.Settings.DataConvertSQL)
@@ -345,7 +348,8 @@ namespace CSVLint
 
                 // determine sql datatype
                 var sqltype = "varchar";
-                var comment = "";
+                var colcomment = "";
+
                 if (csvdef.Fields[r].DataType == ColumnType.Integer) sqltype = "integer";
                 if (csvdef.Fields[r].DataType == ColumnType.DateTime) sqltype = (Main.Settings.DataConvertSQL < 2 ? "datetime" : "timestamp"); // mySQL/MS-SQL = datetime, Postgress=timestamp
                 //if (csvdef.Fields[r].DataType == ColumnType.Guid) sqltype = "varchar(36)";
@@ -359,7 +363,7 @@ namespace CSVLint
                     var wd = csvdef.Fields[r].MaxWidth;
                     if (wd == 0)
                     {
-                        comment = (wd == 0 ? " -- width unknown" : "");
+                        colcomment = (wd == 0 ? " -- width unknown" : "");
                         wd = 10;
                     }
                     sqltype = string.Format("varchar({0})", wd);
@@ -379,7 +383,7 @@ namespace CSVLint
                 // no comma after last column, except for mySQL
                 var comma = (r < csvdef.Fields.Count - 1 || Main.Settings.DataConvertSQL == 0 ? "," : "");
 
-                sb.Append(string.Format("{0} {1}{2}{3}", sqlname, sqltype, comma, comment));
+                sb.Append(string.Format("{0} {1}{2}{3}", sqlname, sqltype, comma, colcomment));
                 cols += sqlname;
                 if (r < csvdef.Fields.Count - 1)
                 {
@@ -392,6 +396,22 @@ namespace CSVLint
             if (Main.Settings.DataConvertSQL == 0) sb.Append(string.Format("\r\n\tprimary key(`{0}`)", recidname));
 
             sb.Append("\r\n);\r\n");
+
+            // add comment table
+            var tabcomment = string.Join("\r\n", comment).Replace("'", "''");
+            switch (Main.Settings.DataConvertSQL)
+            {
+                case 1:
+                    sb.Append(string.Format("EXEC sp_addextendedproperty 'Comment', N'{1}', N'SCHEMA', DBO, N'TABLE', {0}\r\nGO\r\n", TABLE_NAME, tabcomment)); // MS-SQL
+                    //sb.Append(string.Format("EXEC sys.sp_addextendedproperty @name = N'comment', @value = N'{0}' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'{1}'\r\nGO\r\n", coment, tablemmaf)); // MS-SQL alt
+                    break;
+                case 2:
+                    sb.Append(string.Format("COMMENT ON TABLE {0} IS '{1}';\r\n", TABLE_NAME, tabcomment)); // PostgreSQL
+                    break;
+                default: // 0=mySQL
+                    sb.Append(string.Format("ALTER TABLE {0} COMMENT '{1}';\r\n\t", TABLE_NAME, tabcomment)); // mySQL
+                    break;
+            }
 
             // use stringreader to go line by line
             var strdata = ScintillaStreams.StreamAllText();
@@ -431,9 +451,9 @@ namespace CSVLint
                         sb.Append("-- insert records \r\n");
                         batchcomm = sb.Length - 2; // -2 because of the 2 characters \r\n
                         sb.Append("-- -------------------------------------\r\n");
-                        sb.Append(string.Format("insert into {0} (\r\n", TABLE_NAME));
+                        sb.Append(string.Format("INSERT INTO {0} (\r\n", TABLE_NAME));
                         sb.Append(cols);
-                        sb.Append("\r\n) values\r\n");
+                        sb.Append("\r\n) VALUES\r\n");
                     }
 
                     // skip header line
