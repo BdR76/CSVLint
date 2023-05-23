@@ -71,21 +71,6 @@ namespace CSVLint
         }
 
         /// <summary>
-        /// Convert xxx to xxx date format
-        /// </summary>
-        /// <param name="data"> csv data </param>
-        public string HeaderComment()
-        {
-            // default comment for all scripts
-            //return "Generated using Notepad++ CSV Lint plug-in"
-            //"Date: 10-jul-2020 12:22"
-            //"Inputfile: xxx.txt"
-            //"Comma separated data, contains header row, date format dd-mm-yyyy, decimal is '.'"
-            //"Output: xxx(processed).txt"
-            return "Header Comment";
-        }
-
-        /// <summary>
         /// generate JSON metadata
         /// </summary>
         /// <param name="data"> csv data </param>

@@ -14,10 +14,10 @@ namespace CSVLintNppPlugin.Forms
             InitializeComponent();
         }
 
-        public List<int> columnIndexes { get; set; }
-        public bool sortBy { get; set; }
-        public bool sortValue { get; set; }
-        public bool sortDesc { get; set; }
+        public List<int> ColumnIndexes { get; set; }
+        public bool SortBy { get; set; }
+        public bool SortValue { get; set; }
+        public bool SortDesc { get; set; }
 
         public void InitialiseSetting(CsvDefinition csvdef)
         {
@@ -76,15 +76,16 @@ namespace CSVLintNppPlugin.Forms
         private void UniqueValuesForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             // pass new values to previous form
-            sortBy = chkSortBy.Checked;
-            sortValue = radioSortValue.Checked;
-            sortDesc = radioSortDesc.Checked;
+            SortBy = chkSortBy.Checked;
+            SortValue = radioSortValue.Checked;
+            SortDesc = radioSortDesc.Checked;
 
             // indexes of selected columns
-            columnIndexes = new List<int>();
+            ColumnIndexes = new List<int>();
             for (int i=0; i < listColumns.Items.Count; i++)
             {
-                if (listColumns.GetSelected(i)) columnIndexes.Add(i); // Add selected indexes to the List<int>
+                // look at GetSelected indexes not SelectedItems strings, to accomodate duplicate column names
+                if (listColumns.GetSelected(i)) ColumnIndexes.Add(i); // Add selected indexes to the List<int>
             }
         }
 

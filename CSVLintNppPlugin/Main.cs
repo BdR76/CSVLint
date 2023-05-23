@@ -27,15 +27,15 @@ namespace Kbg.NppPluginNET
         static int idMyDlg = -1;
 
         // toolbar icons
-        static Bitmap tbBmp_color = CSVLintNppPlugin.Properties.Resources.csvlint;        // standard icon small color
-        static Icon tbIco_black = CSVLintNppPlugin.Properties.Resources.csvlint_black_32; // Fluent UI icon black
-        static Icon tbIco_white = CSVLintNppPlugin.Properties.Resources.csvlint_white_32; // Fluent UI icon white
+        static readonly Bitmap tbBmp_color = CSVLintNppPlugin.Properties.Resources.csvlint;        // standard icon small color
+        static readonly Icon tbIco_black = CSVLintNppPlugin.Properties.Resources.csvlint_black_32; // Fluent UI icon black
+        static readonly Icon tbIco_white = CSVLintNppPlugin.Properties.Resources.csvlint_white_32; // Fluent UI icon white
 
-        static IScintillaGateway editor = new ScintillaGateway(PluginBase.GetCurrentScintilla());
+        //static IScintillaGateway editor = new ScintillaGateway(PluginBase.GetCurrentScintilla());
         static Icon tbIcon = null;
 
-        static readonly Alpha sAlpha = editor.GetCaretLineBackAlpha();
-        static readonly Colour sCaretLineColor = editor.GetCaretLineBack();
+        //static readonly Alpha sAlpha = editor.GetCaretLineBackAlpha();
+        //static readonly Colour sCaretLineColor = editor.GetCaretLineBack();
         internal static bool sShouldResetCaretBack = false;
 
         // Note: colors are stored as #RGB int values, R=most significant, B=least significant, for easy editing #RGB values (and also smaller storage space than strings)
@@ -249,12 +249,14 @@ namespace Kbg.NppPluginNET
             string[] tags = new string[] { "instre1", "instre2", "type1", "type2", "type3", "type4", "type5", "type6" };
 
             // Create an XmlWriterSettings object with the correct options.
-            XmlWriterSettings xmlsettings = new XmlWriterSettings();
-            xmlsettings.Indent = true;
-            xmlsettings.IndentChars = "\t"; //  "\t";
-            xmlsettings.OmitXmlDeclaration = false;
-            //settings.Encoding = System.Text.Encoding.UTF8; // NOTE: this results in UTF-8-BOM, Notepad++ can only read UTF-8 xml
-            xmlsettings.Encoding = new UTF8Encoding(false); // The false means, do not emit the BOM.
+            XmlWriterSettings xmlsettings = new XmlWriterSettings
+            {
+                Indent = true,
+                IndentChars = "\t", //  "\t";
+                OmitXmlDeclaration = false,
+                //settings.Encoding = System.Text.Encoding.UTF8; // NOTE: this results in UTF-8-BOM, Notepad++ can only read UTF-8 xml
+                Encoding = new UTF8Encoding(false) // The false means, do not emit the BOM.
+            };
 
             try
             {
@@ -386,12 +388,13 @@ namespace Kbg.NppPluginNET
         internal static void SetToolBarIcon()
         {
             // create struct
-            toolbarIcons tbIcons = new toolbarIcons();
-
-            // add bmp icon
-            tbIcons.hToolbarBmp = tbBmp_color.GetHbitmap();
-            tbIcons.hToolbarIcon = tbIco_black.Handle;            // icon with black lines
-            tbIcons.hToolbarIconDarkMode = tbIco_white.Handle;  // icon with light grey lines
+            toolbarIcons tbIcons = new toolbarIcons
+            {
+                // add bmp icon
+                hToolbarBmp = tbBmp_color.GetHbitmap(),
+                hToolbarIcon = tbIco_black.Handle,            // icon with black lines
+                hToolbarIconDarkMode = tbIco_white.Handle  // icon with light grey lines
+            };
 
             // convert to c++ pointer
             IntPtr pTbIcons = Marshal.AllocHGlobal(Marshal.SizeOf(tbIcons));
@@ -410,10 +413,8 @@ namespace Kbg.NppPluginNET
             INotepadPPGateway notepad = new NotepadPPGateway();
             string filename = notepad.GetCurrentFilePath();
 
-            CsvDefinition csvdef;
-
             // check if already in list
-            if (!FileCsvDef.TryGetValue(filename, out csvdef))
+            if (!FileCsvDef.TryGetValue(filename, out CsvDefinition csvdef))
             {
                 // read schema.ini file
                 var lines = CsvSchemaIni.ReadIniSection(filename);
@@ -668,10 +669,10 @@ namespace Kbg.NppPluginNET
                 DialogResult r = frmunq.ShowDialog();
 
                 // user clicked OK or Cancel
-                List<int> colidx = new List<int>(frmunq.columnIndexes);
-                bool sortBy = frmunq.sortBy;
-                bool sortValue = frmunq.sortValue;
-                bool sortDesc = frmunq.sortDesc;
+                List<int> colidx = new List<int>(frmunq.ColumnIndexes);
+                bool sortBy = frmunq.SortBy;
+                bool sortValue = frmunq.SortValue;
+                bool sortDesc = frmunq.SortDesc;
 
                 // clear up
                 frmunq.Dispose();
@@ -697,9 +698,11 @@ namespace Kbg.NppPluginNET
                 {
                     Graphics g = Graphics.FromImage(newBmp);
                     ColorMap[] colorMap = new ColorMap[1];
-                    colorMap[0] = new ColorMap();
-                    colorMap[0].OldColor = Color.Fuchsia;
-                    colorMap[0].NewColor = Color.FromKnownColor(KnownColor.ButtonFace);
+                    colorMap[0] = new ColorMap
+                    {
+                        OldColor = Color.Fuchsia,
+                        NewColor = Color.FromKnownColor(KnownColor.ButtonFace)
+                    };
                     ImageAttributes attr = new ImageAttributes();
                     attr.SetRemapTable(colorMap);
                     g.DrawImage(tbBmp_color, new Rectangle(0, 0, 16, 16), 0, 0, 16, 16, GraphicsUnit.Pixel, attr);

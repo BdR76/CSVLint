@@ -1090,7 +1090,7 @@ namespace CSVLint
             if (csvdef.ColNameHeader)
             {
                 // if first line is header column names, then consume line and ignore
-                csvdef.ParseNextLine(strdata, out bool iscomm);
+                csvdef.ParseNextLine(strdata, out _); // bool iscomm should always be false here, because already skipped any comment lines and ColNameHeader=true
 
                 // add new header column names
                 for (int colhead = 0; colhead < csvnew.Fields.Count; colhead++)

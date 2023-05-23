@@ -866,7 +866,7 @@ namespace CSVLint
             while ((skip > 0) && (!strdata.EndOfStream))
             {
                 // consume and ignore lines
-                String line = strdata.ReadLine();
+                strdata.ReadLine();
                 skip--;
                 res++;
             }
@@ -875,7 +875,7 @@ namespace CSVLint
             while ((strdata.Peek() == this.CommentChar) && (!strdata.EndOfStream))
             {
                 // consume and ignore lines
-                String line = strdata.ReadLine();
+                strdata.ReadLine();
                 res++;
             }
 
@@ -1007,7 +1007,7 @@ namespace CSVLint
                     if (iscomment)
                     {
                         // comment consume to end-of-line
-                        if ((cur == '\r') && (next == '\n')) { next = (char)strdata.Read(); bNextCol = true; isEOL = true; } // double carriage return/linefeed so also consume next character (i.e. skip it)
+                        if ((cur == '\r') && (next == '\n')) { strdata.Read(); bNextCol = true; isEOL = true; } // double carriage return/linefeed so also consume next character (i.e. skip it)
                         else if ((cur == '\n') || (cur == '\r')) { bNextCol = true; isEOL = true; }
                         else if (cur != '\0') value.Append(cur); // TODO: is check '\0' really needed here?
                     }
@@ -1016,7 +1016,7 @@ namespace CSVLint
                         // check if starting a quoted value or going next column or going to next line
                         if ((cur == quote_char) && whitespace) { quote = true; wasquoted = true; whitespace = false; value.Clear(); } // Exception for ..,  "12,3",.. and do value.Clear() -> i.e. ignore whitespace before quote
                         else if (cur == Separator) { bNextCol = true; }
-                        else if ((cur == '\r') && (next == '\n')) { next = (char)strdata.Read();  bNextCol = true; isEOL = true; } // double carriage return/linefeed so also consume next character (i.e. skip it)
+                        else if ((cur == '\r') && (next == '\n')) { strdata.Read();  bNextCol = true; isEOL = true; } // double carriage return/linefeed so also consume next character (i.e. skip it)
                         else if ((cur == '\n') || (cur == '\r')) { bNextCol = true; isEOL = true; }
                         else if (cur != '\0') value.Append(cur); // TODO: is check '\0' really needed here?
 
@@ -1028,15 +1028,16 @@ namespace CSVLint
                     }
                     else
                     {
-                        if ((cur == quote_char) && (next == quote_char)) { value.Append(cur); next = (char)strdata.Read(); } // double " within quotes so also consume next character (i.e. skip it)
+                        if ((cur == quote_char) && (next == quote_char)) { value.Append(cur); strdata.Read(); } // double " within quotes so also consume next character (i.e. skip it)
                         else if (cur == quote_char) quote = false;
                         else
                         {
                             value.Append(cur);
 
                             // also count carriage returns within quotes
-                            if      ((cur == '\r') && (next == '\n')) ; // double \r\n do nothing, let the next '\n' character count the line break when examining the next character cur == '\n'
-                            else if ((cur == '\n') || (cur == '\r')) ParseCurrentLine++;
+                            //if      ((cur == '\r') && (next == '\n')) ; // double \r\n do nothing, let the next '\n' character count the line break when examining the next character cur == '\n'
+                            //else if ((cur == '\n') || (cur == '\r')) ParseCurrentLine++;
+                            if ((cur == '\n') || ((cur == '\r') && (next != '\n'))) ParseCurrentLine++;
                         }
                     }
 

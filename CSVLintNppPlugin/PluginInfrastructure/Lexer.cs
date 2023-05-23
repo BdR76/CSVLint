@@ -44,10 +44,10 @@ namespace NppPluginNET.PluginInfrastructure
         };
 
         // Styles
-        static List<string> NamedStylesList = new List<string> { "SCE_CSVLINT_DEFAULT" };
-        static int NamedStylesListCount = NamedStylesList.Count;
-        static List<string> TagsOfStyleList = new List<string> { "default" };
-        static List<string> DescriptionOfStyleList = new List<string> { "Default style" };
+        static readonly List<string> NamedStylesList = new List<string> { "SCE_CSVLINT_DEFAULT" };
+        static readonly int NamedStylesListCount = NamedStylesList.Count;
+        static readonly List<string> TagsOfStyleList = new List<string> { "default" };
+        static readonly List<string> DescriptionOfStyleList = new List<string> { "Default style" };
 
         // 1. since cpp defines these as interfaces, ILexer and IDocument, with virtual functions, 
         //      there is an implicit first parameter, the class instance
@@ -289,8 +289,8 @@ namespace NppPluginNET.PluginInfrastructure
         static ILexer4 ilexer4 = new ILexer4 { };
         static IntPtr vtable_pointer = IntPtr.Zero;
 
-        private static Colour sCaretLineBack = new Colour(
-            Main.CheckConfigDarkMode() ? 0xFFFFFF: 0); // default = white or black
+        //private static Colour sCaretLineBack = new Colour(
+        //    Main.CheckConfigDarkMode() ? 0xFFFFFF: 0); // default = white or black
 
         public static IntPtr ILexerImplementation()
         {
@@ -388,11 +388,16 @@ namespace NppPluginNET.PluginInfrastructure
              * requires lexing the document again while an optimisation could be to remember 
              * where a setting first affects the document and return that position.
              */
+
+            // TODO: currently using .NET 4.0, but Marshal.PtrToStringUTF8 is available in .NET 5.0 (nov 2020)
             string name = Marshal.PtrToStringAnsi(key);
             string value = Marshal.PtrToStringAnsi(val);
 
             if ((name == "separator") && (value.Length > 0))
             {
+                // TODO: ScintillaGateway.SetProperty encodes UTF8 so PtrToStringAnsi can potentially run into issues with >128 characters
+                // separator characters are usually below char(128) anyway, comma(44), semicolon(59), tab(9), pipe(124)
+                // but for example corner ¬ delimiter is char(172) and PtrToStringAnsi decodes UTF8 as "Â¬" so char(194) + char(172)
                 separatorChar = value[value.Length-1]; // last character instead of value[0] this is a hack to fix syntax highlighting for corner ¬ separator
             }
             else if (name == "fixedwidths")
@@ -413,7 +418,7 @@ namespace NppPluginNET.PluginInfrastructure
             }
             else
             {
-                SupportedProperties[name] = value == "0" ? false : true;
+                SupportedProperties[name] = value != "0";
             }
 
             return IntPtr.Zero;
