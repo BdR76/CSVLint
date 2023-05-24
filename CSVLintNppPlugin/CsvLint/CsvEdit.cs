@@ -1086,22 +1086,25 @@ namespace CSVLint
             // copy any comment lines
             csvdef.CopyCommentLinesAtStart(strdata, datanew, "");
 
+            // list for building new columns
+            List<string> newcols = new List<string>();
+
             // convert from fixed width to separated values, add header line
             if (csvdef.ColNameHeader)
             {
                 // if first line is header column names, then consume line and ignore
                 csvdef.ParseNextLine(strdata, out _); // bool iscomm should always be false here, because already skipped any comment lines and ColNameHeader=true
 
-                // add new header column names
+                // add new header with new column names
                 for (int colhead = 0; colhead < csvnew.Fields.Count; colhead++)
                 {
-                    datanew.Append((colhead > 0 ? sep : "") + csvnew.Fields[colhead].Name);
+                    newcols.Add(csvnew.Fields[colhead].Name);
                 }
+
+                datanew.Append(csvnew.ConstructLine(newcols, false));
+
                 datanew.Append("\n");
             }
-
-            // list for building new columns
-            List<string> newcols = new List<string>();
 
             // read all lines
             while (!strdata.EndOfStream)
