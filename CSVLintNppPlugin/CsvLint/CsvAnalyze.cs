@@ -17,25 +17,6 @@ namespace CSVLint
 {
     class CsvAnalyze
     {
-        private class CsvColumStats
-        {
-            public string Name = "";
-            public int MinWidth = 9999;
-            public int MaxWidth = 0;
-            public int CountString = 0;
-            public int CountInteger = 0;
-            public int CountDecimal = 0;
-            public int CountDecimalComma = 0;
-            public int CountDecimalPoint = 0;
-            public int DecimalDigMax = 0; // maximum digits, example "1234.5" = 4 digits
-            public int DecimalDecMax = 0; // maximum decimals, example "123.45" = 2 decimals
-            public int CountDateTime = 0;
-            public char DateSep = '\0';
-            public int DateMax1 = 0;
-            public int DateMax2 = 0;
-            public int DateMax3 = 0;
-        }
-
         /// <summary>
         /// Infer CSV definition from data; determine separators, column names, datatypes etc
         /// </summary>
@@ -349,7 +330,6 @@ namespace CSVLint
 
             // examine data and keep statistics for each column
             List<CsvAnalyzeColumn> colstats = new List<CsvAnalyzeColumn>();
-            //List<CsvColumStats> colstats = new List<CsvColumStats>();
             lineContent = 0;
 
             // skip any comment lines
@@ -512,7 +492,6 @@ namespace CSVLint
             // examine data and keep statistics for each column
             List<CsvAnalyzeColumn> colstats = new List<CsvAnalyzeColumn>();
 
-            //List<CsvColumStats> colstats = new List<CsvColumStats>();
             int lineCount = 0;
             bool fixedwidth = csvdef.Separator == '\0';
 
@@ -542,6 +521,11 @@ namespace CSVLint
                         if (i > colstats.Count - 1)
                         {
                             colstats.Add(new CsvAnalyzeColumn(i));
+                            // if datetime field, the datetime format is already known
+                            if ( (i < csvdef.Fields.Count) && (csvdef.Fields[i].DataType == ColumnType.DateTime) )
+                            {
+                                colstats[i].DateTimeFormatKnown(csvdef.Fields[i].Mask);
+                            }
                         }
 
                         // next value to evaluate

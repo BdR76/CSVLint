@@ -349,6 +349,25 @@ namespace CSVLint
             }
         }
 
+        public void DateTimeFormatKnown(string knownformat)
+        {
+            // When running the Analyze Data Report, the format of DateTime fields is already known
+            // because csvdef needs to be available anyway.
+            // Use the known datetime format before starting to analyze column data,
+            // so that the minimum and maximum datetime will always be correct.
+            // i.e. avoid day/Month Month/day mixup when determining the minimum and maximum date
+            if (knownformat != "")
+            {
+                // determine YMD, DMY or MDY
+                var d_before_y = (knownformat.IndexOf("d") < knownformat.IndexOf("y")); // so not "yyyy-MM-dd"
+                var M_before_d = (knownformat.IndexOf("M") < knownformat.IndexOf("d")); // example "MM/dd/yyyy"
+
+                // when datetime format is already known
+                this.stat_dat_dmy = (d_before_y ? (M_before_d ? 3 : 2) : 1);  // 0=unknown, 1=YMD, 2=DMY, 3=MDY
+                this.stat_dat_format = knownformat;
+            }
+        }
+
         public void KeepMinMaxDateTime(string value, int ddmax1, int ddmax2, int ddmax3, int datatype)
         {
             // TODO: this is not optimal, could still miss some minimum/maximum dates when initially assuming incorrect format

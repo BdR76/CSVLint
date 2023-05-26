@@ -535,6 +535,19 @@ namespace Kbg.NppPluginNET
             return FileCsvDef.TryGetValue(filename, out CsvDefinition result) ? result : null;
         }
 
+        public static bool CheckValidCsvDef(CsvDefinition csvdef, string errmsg)
+        {
+            // check if valid dictionary
+            if ((csvdef.Fields.Count == 1) && (csvdef.Fields[0].DataType == ColumnType.String) && (csvdef.Fields[0].MaxWidth >= 9999))
+            {
+                // show warning message and solution
+                errmsg = string.Format("Cannot {0} without valid csv metadata\nOpen the CSV Lint window, press [Detect columns] and try again.", errmsg);
+                MessageBox.Show(errmsg, "Missing csv metadata", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return false;
+            }
+            return true;
+        }
+
         public static void RemoveCSVdef(IntPtr buffer_id)
         {
             // Notepad++ closes a file, also remove the definition from list
@@ -580,29 +593,33 @@ namespace Kbg.NppPluginNET
             // get dictionary
             CsvDefinition csvdef = GetCurrentCsvDef();
 
-            // show split column dialog
-            var frmparam = new DataConvertForm();
-            frmparam.InitialiseSetting();
-
-            DialogResult r = frmparam.ShowDialog();
-
-            // clear up
-            frmparam.Dispose();
-
-            // return true (OK) or false (Cancel)
-            if (r == DialogResult.OK)
+            // check if valid csv metadata
+            if (CheckValidCsvDef(csvdef, "convert data"))
             {
-                switch (Main.Settings.DataConvertType)
+                // show split column dialog
+                var frmparam = new DataConvertForm();
+                frmparam.InitialiseSetting();
+
+                DialogResult r = frmparam.ShowDialog();
+
+                // clear up
+                frmparam.Dispose();
+
+                // return true (OK) or false (Cancel)
+                if (r == DialogResult.OK)
                 {
-                    case 1: // XML
-                        CsvEdit.ConvertToXML(csvdef);
-                        break;
-                    case 2: // JSON
-                        CsvEdit.ConvertToJSON(csvdef);
-                        break;
-                    default: // case 0: SQL
-                        CsvEdit.ConvertToSQL(csvdef);
-                        break;
+                    switch (Main.Settings.DataConvertType)
+                    {
+                        case 1: // XML
+                            CsvEdit.ConvertToXML(csvdef);
+                            break;
+                        case 2: // JSON
+                            CsvEdit.ConvertToJSON(csvdef);
+                            break;
+                        default: // case 0: SQL
+                            CsvEdit.ConvertToSQL(csvdef);
+                            break;
+                    }
                 }
             }
         }
@@ -611,33 +628,37 @@ namespace Kbg.NppPluginNET
         {
             // get dictionary
             CsvDefinition csvdef = GetCurrentCsvDef();
-        
-            // show metadata options
-            var frmparam = new MetaDataGenerateForm();
-            frmparam.InitialiseSetting();
 
-            DialogResult r = frmparam.ShowDialog();
-        
-            // clear up
-            frmparam.Dispose();
-        
-            // return true (OK) or false (Cancel)
-            if (r == DialogResult.OK)
+            // check if valid csv metadata
+            if (CheckValidCsvDef(csvdef, "generate script"))
             {
-                switch (Main.Settings.MetadataType)
+                // show metadata options
+                var frmparam = new MetaDataGenerateForm();
+                frmparam.InitialiseSetting();
+
+                DialogResult r = frmparam.ShowDialog();
+
+                // clear up
+                frmparam.Dispose();
+
+                // return true (OK) or false (Cancel)
+                if (r == DialogResult.OK)
                 {
-                    case 1: // schema JSON
-                        CsvGenerateCode.GenerateSchemaJSON(csvdef); 
-                        break;
-                    case 2: // Python
-                        CsvGenerateCode.GeneratePythonPanda(csvdef);
-                        break;
-                    case 3: // R - script
-                        CsvGenerateCode.GenerateRScript(csvdef); 
-                        break;
-                    default: // case 0: schema ini
-                        CsvGenerateCode.GenerateSchemaIni(csvdef); 
-                        break;
+                    switch (Main.Settings.MetadataType)
+                    {
+                        case 1: // schema JSON
+                            CsvGenerateCode.GenerateSchemaJSON(csvdef);
+                            break;
+                        case 2: // Python
+                            CsvGenerateCode.GeneratePythonPanda(csvdef);
+                            break;
+                        case 3: // R - script
+                            CsvGenerateCode.GenerateRScript(csvdef);
+                            break;
+                        default: // case 0: schema ini
+                            CsvGenerateCode.GenerateSchemaIni(csvdef);
+                            break;
+                    }
                 }
             }
         }
@@ -646,9 +667,9 @@ namespace Kbg.NppPluginNET
         {
             // get dictionary
             CsvDefinition csvdef = GetCurrentCsvDef();
-            
-            // check if valid dictionary
-            if (csvdef.Fields.Count > 0)
+
+            // check if valid csv metadata
+            if (CheckValidCsvDef(csvdef, "run Analyze Data Report"))
             {
                 // validate data
                 CsvAnalyze.StatisticalReportData(csvdef);
@@ -660,8 +681,8 @@ namespace Kbg.NppPluginNET
             // get dictionary
             CsvDefinition csvdef = GetCurrentCsvDef();
 
-            // check if valid dictionary
-            if (csvdef.Fields.Count > 0)
+            // check if valid csv metadata
+            if (CheckValidCsvDef(csvdef, "count unique values"))
             {
                 // show unique values parameters form
                 var frmunq = new UniqueValuesForm();
