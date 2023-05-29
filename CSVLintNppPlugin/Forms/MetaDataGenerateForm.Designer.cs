@@ -42,22 +42,22 @@ namespace CSVLintNppPlugin.Forms
             this.btnOk.Location = new System.Drawing.Point(93, 155);
             this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
             // 
-            // btnCancel
+            // picHelpIcon
             // 
-            this.btnCancel.Location = new System.Drawing.Point(212, 155);
+            this.picHelpIcon.Tag = "generate-metadata";
             // 
             // lblTitle
             // 
             this.lblTitle.Size = new System.Drawing.Size(209, 20);
             this.lblTitle.Text = "Generate metadata or script";
             // 
-            // picHelpIcon
-            // 
-            this.picHelpIcon.Tag = "generate-metadata";
-            // 
             // lblHorizontalLine
             // 
             this.lblHorizontalLine.Size = new System.Drawing.Size(316, 2);
+            // 
+            // btnCancel
+            // 
+            this.btnCancel.Location = new System.Drawing.Point(212, 155);
             // 
             // lblMetadataType
             // 
@@ -84,10 +84,10 @@ namespace CSVLintNppPlugin.Forms
             this.rdbtnSchemaJSON.AutoSize = true;
             this.rdbtnSchemaJSON.Location = new System.Drawing.Point(104, 72);
             this.rdbtnSchemaJSON.Name = "rdbtnSchemaJSON";
-            this.rdbtnSchemaJSON.Size = new System.Drawing.Size(95, 17);
+            this.rdbtnSchemaJSON.Size = new System.Drawing.Size(144, 17);
             this.rdbtnSchemaJSON.TabIndex = 4;
             this.rdbtnSchemaJSON.TabStop = true;
-            this.rdbtnSchemaJSON.Text = "Schema JSON";
+            this.rdbtnSchemaJSON.Text = "W3C CSV schema JSON";
             this.rdbtnSchemaJSON.UseVisualStyleBackColor = true;
             // 
             // rdbtnPython
@@ -95,10 +95,10 @@ namespace CSVLintNppPlugin.Forms
             this.rdbtnPython.AutoSize = true;
             this.rdbtnPython.Location = new System.Drawing.Point(104, 96);
             this.rdbtnPython.Name = "rdbtnPython";
-            this.rdbtnPython.Size = new System.Drawing.Size(58, 17);
+            this.rdbtnPython.Size = new System.Drawing.Size(86, 17);
             this.rdbtnPython.TabIndex = 5;
             this.rdbtnPython.TabStop = true;
-            this.rdbtnPython.Text = "Python";
+            this.rdbtnPython.Text = "Python script";
             this.rdbtnPython.UseVisualStyleBackColor = true;
             // 
             // rdbtnRScript
@@ -118,8 +118,8 @@ namespace CSVLintNppPlugin.Forms
             this.ClientSize = new System.Drawing.Size(324, 197);
             this.Controls.Add(this.rdbtnSchemaIni);
             this.Controls.Add(this.rdbtnSchemaJSON);
-            this.Controls.Add(this.rdbtnRScript);
             this.Controls.Add(this.rdbtnPython);
+            this.Controls.Add(this.rdbtnRScript);
             this.Controls.Add(this.lblMetadataType);
             this.Name = "MetaDataGenerateForm";
             this.Text = "Generate metadata";

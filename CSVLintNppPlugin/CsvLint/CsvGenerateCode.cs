@@ -89,13 +89,19 @@ namespace CSVLint
             // build JSON
             jsonmeta.Append("{\r\n");
             jsonmeta.Append(string.Format("\t\"url\": \"{0}\",\r\n", FILE_NAME));
-            jsonmeta.Append(string.Format("\t\"separator\": \"{0}\"", separator));
 
+            // file format
+            jsonmeta.Append("\t\"dialect\": {");
             if (csvdef.Separator == '\0')
-                jsonmeta.Append(string.Format(",\r\n\t\"columnpositions\": [{0}]", GetColumnWidths(csvdef, true)));
-
+                jsonmeta.Append(string.Format("\r\n\t\t\"columnpositions\": [{0}]", GetColumnWidths(csvdef, true)));
+            else
+                jsonmeta.Append(string.Format("\r\n\t\t\"delimiter\": \"{0}\"", separator));
+            jsonmeta.Append(string.Format(",\r\n\t\t\"header\": \"{0}\"", (csvdef.ColNameHeader ? "true" : "false")));
             if (csvdef.SkipLines > 0)
-                jsonmeta.Append(string.Format(",\r\n\t\"skiplines\": {0}", csvdef.SkipLines));
+                jsonmeta.Append(string.Format(",\r\n\t\t\"skipRows\": \"{0}\"", csvdef.SkipLines));
+            if (csvdef.CommentChar != '\0')
+                jsonmeta.Append(string.Format(",\r\n\t\t\"commentPrefix\": \"{0}\"", csvdef.CommentChar));
+            jsonmeta.Append("\r\n\t},\r\n");
 
             jsonmeta.Append("\t\"tableSchema\": {\r\n");
             jsonmeta.Append("\t\t\"columns\": [");
@@ -133,7 +139,16 @@ namespace CSVLint
                 jsonmeta.Append("\r\n\t\t\t{\r\n");
 
                 jsonmeta.Append(string.Format("\t\t\t\t\"name\": \"{0}\"", coldef.Name));
-                if ((mask != "") && (dec != ""))
+
+                if (coldef.isCodedValue)
+                {
+                    var codedlist = string.Join("|", coldef.CodedList);
+                    jsonmeta.Append(",\r\n\t\t\t\t\"datatype\": {");
+                    jsonmeta.Append(string.Format("\r\n\t\t\t\t\t\"base\": \"{0}\"", dattyp));
+                    jsonmeta.Append(string.Format(",\r\n\t\t\t\t\t\"format\": \"{0}\"", codedlist));
+                    jsonmeta.Append("\r\n\t\t\t\t}");
+                }
+                else if ((mask != "") && (dec != ""))
                 {
                     jsonmeta.Append(",\r\n\t\t\t\t\"datatype\": {");
                     jsonmeta.Append(string.Format("\r\n\t\t\t\t\t\"base\": \"{0}\"", dattyp));

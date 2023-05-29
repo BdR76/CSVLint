@@ -1,8 +1,12 @@
 {
-	"schemas": [
+	"@context": "http://www.w3.org/ns/csvw",
+	"tables": [
 		{
 			"url": "bpfile*.txt",
-			"separator": "|",
+			"dialect": {
+				"delimiter": "|",
+				"header": "true"
+			},
 			"tableSchema": {
 				"columns": [
 					{
@@ -17,22 +21,24 @@
 					},
 					{
 						"name": "Visit",
-						"datatype": "string",
-						"length": "4",
-						"format": "BASE|FUP1"
+						"datatype": {
+							"base": "string",
+							"format": "BASE|FUP1"
+						}
 					},
 					{
 						"name": "Position",
-						"datatype": "string",
-						"length": "3",
-						"format": "ZIT|LIG|STA"
+						"datatype": {
+							"base": "string",
+							"format": "LIG|STA|ZIT"
+						}
 					},
 					{
 						"name": "Measure",
-						"datatype": "integer",
-						"length": "1",
-						"minimum": "1",
-						"maximum": "3"
+						"datatype": {
+							"base": "integer",
+							"format": "1|2|3"
+						}
 					},
 					{
 						"name": "Date",
@@ -52,31 +58,40 @@
 					},
 					{
 						"name": "Systolic",
-						"datatype": "integer",
-						"length": "3",
-						"minimum": "30",
-						"maximum": "300"
+						"datatype": {
+							"base": "integer",
+							"length": "3",
+							"minimum": "30",
+							"maximum": "300"
+						}
 					},
 					{
 						"name": "Diastolic",
-						"datatype": "integer",
-						"length": "3",
-						"minimum": "30",
-						"maximum": "300"
+						"datatype": {
+							"base": "integer",
+							"length": "3",
+							"minimum": "30",
+							"maximum": "300"
+						}
 					},
 					{
 						"name": "Pulse",
-						"datatype": "integer",
-						"length": "3",
-						"minimum": "25",
-						"maximum": "250"
+						"datatype": {
+							"base": "integer",
+							"length": "3",
+							"minimum": "25",
+							"maximum": "250"
+						}
 					}
 				]
 			}
 		},
 		{
 			"url": "ggddata.txt",
-			"fixedwidth": "true",
+			"dialect": {
+				"columnpositions": [0, 14, 15, 22, 28, 38, 63, 87, 92, 93, 99, 123, 124, 132, 133],
+				"header": "false"
+			},
 			"tableSchema": {
 				"columns": [
 					{
@@ -90,8 +105,7 @@
 					{
 						"name": "ENTITEIT",
 						"datatype": "string",
-						"length": "1",
-						"format": "P"
+						"length": "1"
 					},
 					{
 						"name": "PRSPMONUM",
@@ -130,9 +144,11 @@
 					},
 					{
 						"name": "PRSPKDNUM",
-						"datatype": "string",
-						"length": "6",
-						"format": "[0-9]{4}[A-Z]{2}"
+						"datatype": {
+							"base": "string",
+							"length": "6",
+							"format": "[0-9]{4}[A-Z]{2}"
+						}
 					},
 					{
 						"name": "PRSWPLNAM",
@@ -141,9 +157,10 @@
 					},
 					{
 						"name": "PRSGESAND",
-						"datatype": "string",
-						"length": "1",
-						"format": "M|V"
+						"datatype": {
+							"base": "string",
+							"format": "M|V"
+						}
 					},
 					{
 						"name": "PRSGEBDAT",
@@ -155,26 +172,30 @@
 					},
 					{
 						"name": "PRSANDNAM",
-						"datatype": "string",
-						"length": "1",
-						"format": "V|E"
+						"datatype": {
+							"base": "string",
+							"format": "E|V"
+						}
 					}
 				]
 			}
 		},
 		{
 			"url": "labresults.txt",
-			"separator": ",",
+			"dialect": {
+				"delimiter": ",",
+				"header": "true"
+			},
 			"tableSchema": {
 				"columns": [
 					{
 						"name": "ResulID",
-						"datatype": "integer",
+						"datatype": "string",
 						"length": "5"
 					},
 					{
 						"name": "TubeID",
-						"datatype": "integer",
+						"datatype": "string",
 						"length": "5"
 					},
 					{
@@ -192,15 +213,16 @@
 					},
 					{
 						"name": "Material",
-						"datatype": "string",
-						"length": "14",
-						"format": "EDTA Purple4|EDTA Plasma T1|EDTA Plasma T2|Heparine T1|Heparine T2"
+						"datatype": {
+							"base": "string",
+							"format": "EDTA Purple4|EDTA Plasma T1|EDTA Plasma T2|Heparine T1|Heparine T2"
+						}
 					},
 					{
 						"name": "LabResult",
 						"datatype": {
 							"base": "number",
-							"length": "6",
+							"length": "17",
 							"format": {
 								"decimalChar": ".",
 								"pattern": "#0.00"
@@ -209,16 +231,20 @@
 					},
 					{
 						"name": "Unit",
-						"datatype": "string",
-						"length": "8",
-						"format": "mmol/L|mmol/mol|pmol/L|%"
+						"datatype": {
+							"base": "string",
+							"format": "%|mmol/L|mmol/mol|pmol/L"
+						}
 					}
 				]
 			}
 		},
 		{
 			"url": "medicine.csv",
-			"separator": ";",
+			"dialect": {
+				"delimiter": ";",
+				"header": "true"
+			},
 			"tableSchema": {
 				"columns": [
 					{
@@ -229,17 +255,17 @@
 					{
 						"name": "PatientNaam",
 						"datatype": "string",
-						"length": "9"
+						"length": "25"
 					},
 					{
 						"name": "MedicatieCode",
 						"datatype": "string",
-						"length": "7"
+						"length": "8"
 					},
 					{
 						"name": "MedicatieNaam",
 						"datatype": "string",
-						"length": "47"
+						"length": "50"
 					},
 					{
 						"name": "Dosis",
@@ -248,15 +274,16 @@
 							"length": "6",
 							"format": {
 								"decimalChar": ",",
-								"pattern": "#0,0"
+								"pattern": "#0,00"
 							}
 						}
 					},
 					{
 						"name": "DossisEenheid",
-						"datatype": "string"
-						"length": "2",
-						"format": "mg|g|gr|ml|e"
+						"datatype": {
+							"base": "string",
+							"format": "e|g|gr|mg|ml"
+						}
 					},
 					{
 						"name": "StartDatum",
@@ -279,37 +306,40 @@
 		},
 		{
 			"url": "orders.txt",
-			"separator": "\t",
+			"dialect": {
+				"delimiter": "\t",
+				"header": "true"
+			},
 			"tableSchema": {
 				"columns": [
 					{
 						"name": "OrderID",
 						"datatype": "integer",
-						"length": "5"
+						"length": "8"
 					},
 					{
 						"name": "OrderDate",
 						"datatype": {
 							"base": "date",
 							"length": "10",
-							"format": "dd/MM/yyyy"
+							"format": "MM/dd/yyyy"
 						}
 					},
 					{
 						"name": "ArtNo",
 						"datatype": "string",
-						"length": "14"
+						"length": "13"
 					},
 					{
 						"name": "Amount",
 						"datatype": "integer",
-						"length": "2"
+						"length": "3"
 					},
 					{
 						"name": "Price",
 						"datatype": {
 							"base": "number",
-							"length": "7",
+							"length": "8",
 							"format": {
 								"decimalChar": ".",
 								"pattern": "#0.00"
@@ -319,12 +349,263 @@
 					{
 						"name": "PartName",
 						"datatype": "string",
-						"length": "27"
+						"length": "30"
 					},
 					{
 						"name": "BrandName",
 						"datatype": "string",
+						"length": "30"
+					}
+				]
+			}
+		},
+		{
+			"url": "kinesiology.csv",
+			"dialect": {
+				"columnpositions": [0, 25, 45, 50, 58, 66, 74, 86, 96, 111, 129, 135, 141, 155, 165, 175, 181, 187, 198, 209, 224, 239, 254],
+				"header": "true"
+			},
+			"tableSchema": {
+				"columns": [
+					{
+						"name": "Patient_Name",
+						"datatype": "string",
+						"length": "25"
+					},
+					{
+						"name": "Patient_ID",
+						"datatype": "string",
 						"length": "20"
+					},
+					{
+						"name": "Age",
+						"datatype": "integer",
+						"length": "5"
+					},
+					{
+						"name": "Weight",
+						"datatype": "integer",
+						"length": "8"
+					},
+					{
+						"name": "Height",
+						"datatype": "integer",
+						"length": "8"
+					},
+					{
+						"name": "Gender",
+						"datatype": {
+							"base": "string",
+							"format": "Female|Male"
+						}
+					},
+					{
+						"name": "Date",
+						"datatype": {
+							"base": "date",
+							"length": "12",
+							"format": "MM/dd/yyyy"
+						}
+					},
+					{
+						"name": "Time",
+						"datatype": {
+							"base": "time",
+							"length": "10",
+							"format": "HH:mm"
+						}
+					},
+					{
+						"name": "Joint",
+						"datatype": {
+							"base": "string",
+							"format": "Ankle|Elbow|Forearm|Knee|Shoulder|Wrist"
+						}
+					},
+					{
+						"name": "MEDCODE",
+						"datatype": "string",
+						"length": "18"
+					},
+					{
+						"name": "Type",
+						"datatype": "string",
+						"length": "6"
+					},
+					{
+						"name": "Mode",
+						"datatype": "string",
+						"length": "6"
+					},
+					{
+						"name": "Contraction",
+						"datatype": "string",
+						"length": "14"
+					},
+					{
+						"name": "Involved",
+						"datatype": "string",
+						"length": "10"
+					},
+					{
+						"name": "Filtered",
+						"datatype": {
+							"base": "string",
+							"format": "No|Yes"
+						}
+					},
+					{
+						"name": "ROM_L",
+						"datatype": {
+							"base": "number",
+							"length": "6",
+							"format": {
+								"decimalChar": ".",
+								"pattern": "#0.0"
+							}
+						}
+					},
+					{
+						"name": "ROM_R",
+						"datatype": {
+							"base": "number",
+							"length": "6",
+							"format": {
+								"decimalChar": ".",
+								"pattern": "#0.0"
+							}
+						}
+					},
+					{
+						"name": "AgonAntagL",
+						"datatype": {
+							"base": "number",
+							"length": "11",
+							"format": {
+								"decimalChar": ".",
+								"pattern": "#0.0"
+							}
+						}
+					},
+					{
+						"name": "AgonAntagR",
+						"datatype": {
+							"base": "number",
+							"length": "11",
+							"format": {
+								"decimalChar": ".",
+								"pattern": "#0.0"
+							}
+						}
+					},
+					{
+						"name": "Health_Status",
+						"datatype": "string",
+						"length": "15"
+					},
+					{
+						"name": "Alternate_ID",
+						"datatype": "string",
+						"length": "15"
+					},
+					{
+						"name": "Group",
+						"datatype": {
+							"base": "string",
+							"format": "Group_I|Group_II|Group_III"
+						}
+					}
+				]
+			}
+		},
+		{
+			"url": "finretail.txt",
+			"dialect": {
+				"columnpositions": [0, 8, 12, 24, 37, 66, 72, 78, 88, 93, 109, 125, 133],
+				"header": "true"
+			},
+			"tableSchema": {
+				"columns": [
+					{
+						"name": "Entry",
+						"datatype": "integer",
+						"length": "8"
+					},
+					{
+						"name": "Per.",
+						"datatype": "string",
+						"length": "4"
+					},
+					{
+						"name": "Post Date",
+						"datatype": {
+							"base": "date",
+							"length": "12",
+							"format": "MM/dd/yyyy"
+						}
+					},
+					{
+						"name": "GL Account",
+						"datatype": "integer",
+						"length": "13"
+					},
+					{
+						"name": "Description",
+						"datatype": "string",
+						"length": "29"
+					},
+					{
+						"name": "Srce.",
+						"datatype": "string",
+						"length": "6"
+					},
+					{
+						"name": "cflow",
+						"datatype": {
+							"base": "string",
+							"format": "No|Yes"
+						}
+					},
+					{
+						"name": "Ref.",
+						"datatype": "string",
+						"length": "10"
+					},
+					{
+						"name": "Post",
+						"datatype": {
+							"base": "string",
+							"format": "No|Yes"
+						}
+					},
+					{
+						"name": "Debit",
+						"datatype": {
+							"base": "number",
+							"length": "16",
+							"format": {
+								"decimalChar": ".",
+								"pattern": "#0.00"
+							}
+						}
+					},
+					{
+						"name": "Credit",
+						"datatype": {
+							"base": "number",
+							"length": "16",
+							"format": {
+								"decimalChar": ".",
+								"pattern": "#0.00"
+							}
+						}
+					},
+					{
+						"name": "Alloc.",
+						"datatype": {
+							"base": "string",
+							"format": "No|Yes"
+						}
 					}
 				]
 			}

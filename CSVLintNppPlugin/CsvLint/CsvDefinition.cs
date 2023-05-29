@@ -131,6 +131,17 @@ namespace CSVLint
                 {
                     this.CodedList.Add(s.Key);
                 }
+
+                // Sort list, with a hack to sort integers correctly
+                // i.e. list of integers should not be sorted like [1, 10, 11, 2, 3, .. etc]
+                this.CodedList.Sort(
+                    delegate (string c1, string c2)
+                    {
+                        if (int.TryParse(c1, out int i1)) c1 = c1.PadLeft(Main.Settings.IntegerDigitsMax, '0');
+                        if (int.TryParse(c2, out int i2)) c2 = c2.PadLeft(Main.Settings.IntegerDigitsMax, '0');
+                        return c1.CompareTo(c2);
+                    }
+                );
             }
         }
     }
