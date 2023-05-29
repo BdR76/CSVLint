@@ -7,66 +7,66 @@
 				"columns": [
 					{
 						"name": "StudyNr",
-						"datatype": "string"
+						"datatype": "string",
 						"length": "6"
 					},
 					{
 						"name": "Age",
-						"datatype": "integer"
+						"datatype": "integer",
 						"length": "3"
 					},
 					{
 						"name": "Visit",
-						"datatype": "string"
+						"datatype": "string",
 						"length": "4",
 						"format": "BASE|FUP1"
 					},
 					{
 						"name": "Position",
-						"datatype": "string"
+						"datatype": "string",
 						"length": "3",
 						"format": "ZIT|LIG|STA"
 					},
 					{
 						"name": "Measure",
-						"datatype": "integer"
+						"datatype": "integer",
 						"length": "1",
 						"minimum": "1",
 						"maximum": "3"
 					},
 					{
-						"name": "Date"
+						"name": "Date",
 						"datatype": {
-							"base": "date"
+							"base": "date",
 							"length": "10",
 							"format": "yyyy/MM/dd"
 						}
 					},
 					{
-						"name": "Time"
+						"name": "Time",
 						"datatype": {
-							"base": "time"
+							"base": "time",
 							"length": "8",
 							"format": "HH:mm:ss"
 						}
 					},
 					{
 						"name": "Systolic",
-						"datatype": "integer"
+						"datatype": "integer",
 						"length": "3",
 						"minimum": "30",
 						"maximum": "300"
 					},
 					{
 						"name": "Diastolic",
-						"datatype": "integer"
+						"datatype": "integer",
 						"length": "3",
 						"minimum": "30",
 						"maximum": "300"
 					},
 					{
 						"name": "Pulse",
-						"datatype": "integer"
+						"datatype": "integer",
 						"length": "3",
 						"minimum": "25",
 						"maximum": "250"
@@ -80,82 +80,82 @@
 			"tableSchema": {
 				"columns": [
 					{
-						"name": "MUTDAT"
+						"name": "MUTDAT",
 						"datatype": {
-							"base": "datetime"
+							"base": "datetime",
 							"length": "14",
 							"format": "yyyyMMddHHmmss"
 						}
 					},
 					{
 						"name": "ENTITEIT",
-						"datatype": "string"
+						"datatype": "string",
 						"length": "1",
 						"format": "P"
 					},
 					{
 						"name": "PRSPMONUM",
-						"datatype": "string"
+						"datatype": "string",
 						"length": "7"
 					},
 					{
 						"name": "PRSGESVLT",
-						"datatype": "string"
+						"datatype": "string",
 						"length": "6"
 					},
 					{
 						"name": "PRSGESVVG",
-						"datatype": "string"
+						"datatype": "string",
 						"length": "10"
 					},
 					{
 						"name": "PRSGESNAM",
-						"datatype": "string"
+						"datatype": "string",
 						"length": "25"
 					},
 					{
 						"name": "PRSSTTNAM",
-						"datatype": "string"
+						"datatype": "string",
 						"length": "24"
 					},
 					{
 						"name": "PRSHUINUM",
-						"datatype": "integer"
+						"datatype": "integer",
 						"length": "5"
 					},
 					{
 						"name": "PRSHUILET",
-						"datatype": "string"
+						"datatype": "string",
 						"length": "1"
 					},
 					{
 						"name": "PRSPKDNUM",
-						"datatype": "string"
+						"datatype": "string",
 						"length": "6",
 						"format": "[0-9]{4}[A-Z]{2}"
 					},
 					{
 						"name": "PRSWPLNAM",
-						"datatype": "string"
+						"datatype": "string",
 						"length": "24"
 					},
 					{
 						"name": "PRSGESAND",
-						"datatype": "string"
+						"datatype": "string",
 						"length": "1",
 						"format": "M|V"
 					},
 					{
-						"name": "PRSGEBDAT"
+						"name": "PRSGEBDAT",
 						"datatype": {
-							"base": "date"
+							"base": "date",
 							"length": "8",
 							"format": "yyyyMMdd"
 						}
 					},
 					{
 						"name": "PRSANDNAM",
-						"datatype": "string"
+						"datatype": "string",
 						"length": "1",
 						"format": "V|E"
 					}
@@ -169,35 +169,35 @@
 				"columns": [
 					{
 						"name": "ResulID",
-						"datatype": "integer"
+						"datatype": "integer",
 						"length": "5"
 					},
 					{
 						"name": "TubeID",
-						"datatype": "integer"
+						"datatype": "integer",
 						"length": "5"
 					},
 					{
-						"name": "LabDateTime"
+						"name": "LabDateTime",
 						"datatype": {
-							"base": "datetime"
+							"base": "datetime",
 							"length": "16",
 							"format": "yyyy-MM-dd HH:mm"
 						}
 					},
 					{
 						"name": "TestName",
-						"datatype": "string"
+						"datatype": "string",
 						"length": "15"
 					},
 					{
 						"name": "Material",
-						"datatype": "string"
+						"datatype": "string",
 						"length": "14",
 						"format": "EDTA Purple4|EDTA Plasma T1|EDTA Plasma T2|Heparine T1|Heparine T2"
 					},
 					{
-						"name": "LabResult"
+						"name": "LabResult",
 						"datatype": {
 							"base": "number",
 							"length": "6",
@@ -209,7 +209,7 @@
 					},
 					{
 						"name": "Unit",
-						"datatype": "string"
+						"datatype": "string",
 						"length": "8",
 						"format": "mmol/L|mmol/mol|pmol/L|%"
 					}
@@ -223,26 +223,26 @@
 				"columns": [
 					{
 						"name": "Code",
-						"datatype": "integer"
+						"datatype": "integer",
 						"length": "4"
 					},
 					{
 						"name": "PatientNaam",
-						"datatype": "string"
+						"datatype": "string",
 						"length": "9"
 					},
 					{
 						"name": "MedicatieCode",
-						"datatype": "string"
+						"datatype": "string",
 						"length": "7"
 					},
 					{
 						"name": "MedicatieNaam",
-						"datatype": "string"
+						"datatype": "string",
 						"length": "47"
 					},
 					{
-						"name": "Dosis"
+						"name": "Dosis",
 						"datatype": {
 							"base": "number",
 							"length": "6",
@@ -259,17 +259,17 @@
 						"format": "mg|g|gr|ml|e"
 					},
 					{
-						"name": "StartDatum"
+						"name": "StartDatum",
 						"datatype": {
-							"base": "date"
+							"base": "date",
 							"length": "10",
 							"format": "d-M-yyyy"
 						}
 					},
 					{
-						"name": "StopDatum"
+						"name": "StopDatum",
 						"datatype": {
-							"base": "date"
+							"base": "date",
 							"length": "10",
 							"format": "d-M-yyyy"
 						}
@@ -284,29 +284,29 @@
 				"columns": [
 					{
 						"name": "OrderID",
-						"datatype": "integer"
+						"datatype": "integer",
 						"length": "5"
 					},
 					{
-						"name": "OrderDate"
+						"name": "OrderDate",
 						"datatype": {
-							"base": "date"
+							"base": "date",
 							"length": "10",
 							"format": "dd/MM/yyyy"
 						}
 					},
 					{
 						"name": "ArtNo",
-						"datatype": "string"
+						"datatype": "string",
 						"length": "14"
 					},
 					{
 						"name": "Amount",
-						"datatype": "integer"
+						"datatype": "integer",
 						"length": "2"
 					},
 					{
-						"name": "Price"
+						"name": "Price",
 						"datatype": {
 							"base": "number",
 							"length": "7",
@@ -318,12 +318,12 @@
 					},
 					{
 						"name": "PartName",
-						"datatype": "string"
+						"datatype": "string",
 						"length": "27"
 					},
 					{
 						"name": "BrandName",
-						"datatype": "string"
+						"datatype": "string",
 						"length": "20"
 					}
 				]
