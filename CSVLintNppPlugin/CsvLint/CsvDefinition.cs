@@ -9,6 +9,7 @@ using Kbg.NppPluginNET;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
@@ -40,6 +41,8 @@ namespace CSVLint
         public int Decimals = 0;
         public string sTag; // depends on datatype, datetime="" , float=",." or ".,"
         public int iTag;    // depends on datatype, datetime=nr digits year (2 or 4), float=max decimals
+        public bool isCodedValue = false;
+        public List<string> CodedList;
 
         public CsvColumn(int idx)
         {
@@ -97,7 +100,7 @@ namespace CSVLint
                 this.sTag = pos1 > pos2 ? ",." : ".,";
 
                 // iTag, max decimal places
-                this.iTag = this.Mask.Length - p - 1;
+                this.iTag     = this.Mask.Length - p - 1;
                 this.Decimals = this.Mask.Length - p - 1;
             }
         }
@@ -113,6 +116,21 @@ namespace CSVLint
             foreach (var s in tmp)
             {
                 if ((newmask.IndexOf(s) < 0) && (newmask.IndexOf(s[0]) >= 0)) this.MaxWidth++;
+            }
+        }
+        public void AddCodedValues(Dictionary<string, int> slcodes)
+        {
+            if ( (slcodes.Count > 0) && (slcodes.Count <= Main.Settings.UniqueValuesMax) )
+            {
+                // set coded values
+                this.isCodedValue = true;
+
+                this.CodedList = new List<string>();
+
+                foreach (var s in slcodes)
+                {
+                    this.CodedList.Add(s.Key);
+                }
             }
         }
     }
@@ -257,7 +275,7 @@ namespace CSVLint
             this.AddColumn(idx, name, maxwidth, datatype, mask);
         }
         public void AddColumn(int idx, string name, int maxwidth, ColumnType datatype, string mask)
-        {
+         {
             if (datatype == ColumnType.DateTime)
             {
                 // allow different datemask formats per column, but keep track of first datetime format as schema.ini global
@@ -647,8 +665,20 @@ namespace CSVLint
 
                         ColumnType datatypealt = ColumnType.String;
 
+                        var isCoded = false;
+                        var CodedValues = "";
+                        // check for enumeration metadata
+                        int posalt = val.LastIndexOf("Enumeration");
+                        if (posalt >= 0)
+                        {
+                            isCoded = true;
+                            int spcalt = val.IndexOf(" ", posalt);
+                            CodedValues = val.Substring(spcalt, val.Length - spcalt).Trim();
+                            val = "";
+                        }
+
                         // check for valid datatype must be at end of line
-                        int posalt = val.LastIndexOf("DateTime");
+                        posalt = val.LastIndexOf("DateTime");
                         if (posalt >= 0)
                         {
                             int spcalt = val.IndexOf(" ", posalt);
@@ -665,17 +695,25 @@ namespace CSVLint
                         if (datatypestr == "DateTime") datatypealt = ColumnType.DateTime;
                         if (datatypestr == "Float") datatypealt = ColumnType.Decimal;
 
-                        // if alternative datatype found
-                        if (datatypealt != ColumnType.String)
+                        // additional metadata found, alternative datatype or coded values
+                        if ( (datatypealt != ColumnType.String) || (isCoded))
                         {
                             // look for index
                             for (int x = 0; x < this.Fields.Count; x++)
                             {
                                 if (this.Fields[x].Index == idxalt)
                                 {
-                                    this.Fields[x].DataType = datatypealt;
-                                    this.Fields[x].Mask = val;
-                                    this.Fields[x].Initialize();
+                                    if (isCoded)
+                                    {
+                                        this.Fields[x].isCodedValue = true;
+                                        this.Fields[x].CodedList = new List<string>(CodedValues.Split('|'));
+                                    }
+                                    else
+                                    {
+                                        this.Fields[x].DataType = datatypealt;
+                                        this.Fields[x].Mask = val;
+                                        this.Fields[x].Initialize();
+                                    }
                                 }
                             };
                         }
@@ -734,14 +772,14 @@ namespace CSVLint
 
                 }
             }
-            // get most commen
+            // determine most common nr of factional digits for float/decimal columns
             this.NumberDigits = 0;
             int deccommon = 0;
             foreach (var deckey in DecimalOccurance)
                 if (deccommon < deckey.Value)
                 {
-                    this.NumberDigits = deckey.Key;
-                    deccommon = deckey.Value;
+                    this.NumberDigits = deckey.Key; // how many factional digits, example 1234.56 is two digits
+                    deccommon = deckey.Value;       // how many columns have this nr of factional digits
                 }
 
             if (this.NumberDigits > 0) res += "NumberDigits=" + this.NumberDigits + "\r\n";
@@ -809,6 +847,14 @@ namespace CSVLint
                 // add quotes "" only when name contains space
                 //if (this.Name.IndexOf(" ") >= 0) def = string.Format("\"{0}\"", col.Name);
                 if (quotename) def = string.Format("\"{0}\"", col.Name);
+
+                // enumeration metadata
+                if (col.isCodedValue)
+                {
+                    var codedlist = string.Join("|", col.CodedList);
+                    // schma.ini doesn't support enumeration/coded values
+                    com = string.Format(";Col{0}={1} Enumeration {2}\r\n", i + 1, def, codedlist);
+                }
 
                 // datatype
                 if (col.DataType == ColumnType.String) def += " Text";

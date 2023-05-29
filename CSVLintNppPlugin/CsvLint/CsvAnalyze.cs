@@ -381,6 +381,13 @@ namespace CSVLint
                 // add column
                 result.AddColumn(idx, col.Name, col.MaxWidth, col.DataType, col.Mask);
 
+                // Check for coded values, only when datatype is string or integer
+                // i.e. do not treat datetime/float values as coded values
+                if ((col.DataType == ColumnType.String) || (col.DataType == ColumnType.Integer))
+                {
+                    result.Fields[idx].AddCodedValues(stats.stat_uniquecount);
+                }
+
                 idx++;
             }
 

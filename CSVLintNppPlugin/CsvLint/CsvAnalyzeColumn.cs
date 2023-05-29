@@ -101,7 +101,8 @@ namespace CSVLint
                     if (length > this.MaxWidth) this.MaxWidth = length;
 
                     // keep full statistics
-                    if (fullstats) KeepUniqueValues(data);
+                    //if (fullstats) KeepUniqueValues(data);
+                    KeepUniqueValues(data);
 
                     // check each character in string
                     int digits = 0;

@@ -197,7 +197,7 @@ namespace CSVLint
 
             // ignore null values
             if (val == Main.Settings.NullValue) val = "";
-            
+
             // check if value is too long
             if (val.Length > coldef.MaxWidth)
             {
@@ -208,21 +208,37 @@ namespace CSVLint
                 bool valid = true;
                 string typ = "";
                 string msg = "";
-                switch (coldef.DataType)
+
+                // check coded values
+                if (coldef.isCodedValue)
                 {
-                    case ColumnType.Integer:
-                        typ = "integer";
-                        valid = EvaluateInteger(val);
-                        break;
-                    case ColumnType.Decimal:
-                        typ = "decimal";
-                        valid = EvaluateDecimal(val, coldef, out msg);
-                        break;
-                    case ColumnType.DateTime:
-                        typ = "datetime";
-                        valid = EvaluateDateTime(val, coldef, out msg);
-                        break;
-                };
+                    if (coldef.CodedList.IndexOf(val) == -1)
+                    {
+                        msg = "is not a valid enumeration member";
+                        valid = false;
+                    }
+                }
+
+                // check valid data types
+                if (valid)
+                {
+                    switch (coldef.DataType)
+                    {
+                        case ColumnType.Integer:
+                            typ = "integer";
+                            valid = EvaluateInteger(val);
+                            break;
+                        case ColumnType.Decimal:
+                            typ = "decimal";
+                            valid = EvaluateDecimal(val, coldef, out msg);
+                            break;
+                        case ColumnType.DateTime:
+                            typ = "datetime";
+                            valid = EvaluateDateTime(val, coldef, out msg);
+                            break;
+                    };
+                }
+
 
                 // report if value is invalid
                 if (!valid)
