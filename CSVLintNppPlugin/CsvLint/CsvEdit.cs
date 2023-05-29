@@ -295,21 +295,18 @@ namespace CSVLint
 
             // if csv already contains "_record_number"
             var recidname = csvdef.GetUniqueColumnName("_record_number", out int postfix);
-            if (postfix > 0) recidname = string.Format("{0} ({1})", recidname, postfix);
+            if (postfix > 0) recidname = SQLSafeName(string.Format("{0} ({1})", recidname, postfix));
 
             // get access to Notepad++
             INotepadPPGateway notepad = new NotepadPPGateway();
             IScintillaGateway editor = new ScintillaGateway(PluginBase.GetCurrentScintilla());
 
+            // user supplied table name, or use file name if empty
             string TABLE_NAME = Main.Settings.DataConvertName;
             if (TABLE_NAME == "") TABLE_NAME = StringToVariable(Path.GetFileNameWithoutExtension(notepad.GetCurrentFilePath()));
-            if (TABLE_NAME.Contains(" ") || TABLE_NAME.Contains("'"))
-            {
-                if (Main.Settings.DataConvertSQL == 1) // MS-SQL
-                    TABLE_NAME = string.Format("[{0}]", TABLE_NAME);
-                else
-                    TABLE_NAME = string.Format("{1}{0}{1}", TABLE_NAME, (Main.Settings.DataConvertSQL == 0 ? "`" : "\""));
-            }
+
+            // apply brackets or quotes, only if needed
+            TABLE_NAME = SQLSafeName(TABLE_NAME);
 
             string SQL_TYPE = (Main.Settings.DataConvertSQL <= 1 ? (Main.Settings.DataConvertSQL == 0 ? "mySQL" : "MS-SQL") : "PostgreSQL");
 
@@ -329,22 +326,25 @@ namespace CSVLint
 
             switch (Main.Settings.DataConvertSQL)
             {
-                case 1:
-                    sb.Append(string.Format("[{0}] int IDENTITY(1,1) PRIMARY KEY,\r\n\t", recidname)); // MS-SQL
+                case 1: // MS-SQL
+                    sb.Append(string.Format("{0} int IDENTITY(1,1) PRIMARY KEY,\r\n\t", recidname));
                     break;
-                case 2:
-                    sb.Append(string.Format("\"{0}\" SERIAL PRIMARY KEY,\r\n\t", recidname)); // PostgreSQL
+                case 2: // PostgreSQL
+                    sb.Append(string.Format("{0} SERIAL PRIMARY KEY,\r\n\t", recidname));
                     break;
                 default: // 0=mySQL
-                    sb.Append(string.Format("`{0}` int AUTO_INCREMENT NOT NULL,\r\n\t", recidname)); // mySQL
+                    sb.Append(string.Format("{0} int AUTO_INCREMENT NOT NULL,\r\n\t", recidname));
                     break;
             }
+
             var cols = "\t";
+            var enumcols1 = "";
+            var enumcols2 = "";
 
             for (var r = 0; r < csvdef.Fields.Count; r++)
             {
                 // determine sql column name -> mySQL = `colname`, MS-SQL = [colname], PostgreSQL = "colname"
-                string sqlname = string.Format((Main.Settings.DataConvertSQL <= 1 ? (Main.Settings.DataConvertSQL == 0 ? "`{0}`" : "[{0}]") : "\"{0}\""), csvdef.Fields[r].Name);
+                string sqlname = SQLSafeName(csvdef.Fields[r].Name);
 
                 // determine sql datatype
                 var sqltype = "varchar";
@@ -390,15 +390,59 @@ namespace CSVLint
                     sb.Append("\r\n\t");
                     cols += ",\r\n\t";
                 };
+
+                // build SQL for Enum columns
+                if (csvdef.Fields[r].isCodedValue)
+                {
+                    var enumvals = string.Join("\", \"", csvdef.Fields[r].CodedList).Replace("'", "''");
+                    switch (Main.Settings.DataConvertSQL)
+                    {
+                        case 1: // MS-SQL
+                        //case 2: // PostgreSQL
+                        // constrains name is based on column name, for example "[test]" -> "[CHK_test]"
+                            var chkname = SQLSafeName("CHK_" + csvdef.Fields[r].Name);
+                            var mscolate = "";
+                            // Constrains for string or integer values
+                            if (csvdef.Fields[r].DataType == ColumnType.String)
+                            {
+                                enumvals = string.Format("'{0}'", enumvals.Replace("\"", "'")); // use quotes
+                                if (Main.Settings.DataConvertSQL == 1) mscolate = " COLLATE Latin1_General_CS_AS"; // MS-SQL case-sensitive
+                            }
+                            else {
+                                enumvals = enumvals.Replace("\"", ""); // no quotes
+                            };
+                            enumcols1 += string.Format("ALTER TABLE {0} ADD CONSTRAINT {1} CHECK({2}{3} IN ({4}));\r\n", TABLE_NAME, chkname, sqlname, mscolate, enumvals);
+                            break;
+                        // NOTE: Could also use CONSTRAINT..CHECK for both MS-SQL and PostgreSQL,
+                        // even though PostgreSQL supports custom enum TYPE but it is less flexible than just CONSTRAINT..CHECK
+                        case 2: // PostgreSQL
+                            var postenum = SQLSafeName("enum_" + csvdef.Fields[r].Name);
+                            enumcols1 += string.Format("CREATE TYPE {0} AS ENUM ('{1}');\r\n", postenum, enumvals.Replace("\"", "'"));
+                            enumcols2 += string.Format("ALTER TABLE {0} ALTER COLUMN {1} TYPE {2} USING ({1}::text)::{2};\r\n", TABLE_NAME, sqlname, postenum);
+                            // for PostgreSQL, insert statements on ENUM column must always use quotes, so ('0', '1', '2') instead of (0, 1, 2)
+                            if (csvdef.Fields[r].DataType == ColumnType.Integer) csvdef.Fields[r].DataType = ColumnType.String;
+                            break;
+                        default: // 0=mySQL
+                            enumvals = enumvals.Replace("\"", "'"); // ENUM on mySQL is always treated as string value
+                            enumcols1 += string.Format("ALTER TABLE {0} MODIFY COLUMN {1} ENUM('{2}');\r\n", TABLE_NAME, sqlname, enumvals);
+                            // for mySQL, insert statements on ENUM column must always use quotes, so ('0', '1', '2') instead of (0, 1, 2)
+                            if (csvdef.Fields[r].DataType == ColumnType.Integer) csvdef.Fields[r].DataType = ColumnType.String;
+                            break;
+                    }
+                }
             };
 
             // primary key definition for mySQL
-            if (Main.Settings.DataConvertSQL == 0) sb.Append(string.Format("\r\n\tprimary key(`{0}`)", recidname));
+            if (Main.Settings.DataConvertSQL == 0) sb.Append(string.Format("\r\n\tprimary key({0})", recidname));
 
             sb.Append("\r\n);\r\n");
 
+            // add enumeration columns
+            if (enumcols1 != "") sb.Append(string.Format("-- Enumeration columns\r\n{0}{1}", enumcols1, enumcols2));
+
             // add comment table
             var tabcomment = string.Join("\r\n", comment).Replace("'", "''");
+            sb.Append("-- Table comment\r\n");
             switch (Main.Settings.DataConvertSQL)
             {
                 case 1:
@@ -409,7 +453,7 @@ namespace CSVLint
                     sb.Append(string.Format("COMMENT ON TABLE {0} IS '{1}';\r\n", TABLE_NAME, tabcomment)); // PostgreSQL
                     break;
                 default: // 0=mySQL
-                    sb.Append(string.Format("ALTER TABLE {0} COMMENT '{1}';\r\n\t", TABLE_NAME, tabcomment)); // mySQL
+                    sb.Append(string.Format("ALTER TABLE {0} COMMENT '{1}';\r\n", TABLE_NAME, tabcomment)); // mySQL
                     break;
             }
 
@@ -541,6 +585,21 @@ namespace CSVLint
             notepad.SetCurrentLanguage(LangType.L_SQL);
         }
 
+        private static string SQLSafeName(string sqlname)
+        {
+            var res = sqlname;
+
+            // use brackets or quotes only when absolutely ncessary
+            if (res.Contains(" ") || res.Contains("'"))
+            {
+                if (Main.Settings.DataConvertSQL == 1) // MS-SQL
+                    res = string.Format("[{0}]", res);
+                else
+                    res = string.Format("{1}{0}{1}", res, (Main.Settings.DataConvertSQL == 0 ? "`" : "\""));
+            }
+
+            return res;
+        }
         private static string XMLSafeName(string name)
         {
             // xml safe tag name
@@ -549,7 +608,6 @@ namespace CSVLint
 
             return name;
         }
-
 
         /// <summary>
         /// convert to XML data
