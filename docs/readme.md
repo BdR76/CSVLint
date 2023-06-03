@@ -658,6 +658,4 @@ History
 16-apr-2023 - v0.4.6.3 Syntax Highlighting fix, new SkipLines feature and quoted string improvements  
 02-may-2023 - v0.4.6.4 Comment character and dark mode support  
 
-Total downloads v0.4.1 `4.3k`, v0.4.2 `101`, v0.4.3 `12k`, v0.4.4 `16k`, v0.4.5 `16k`, v0.4.5.1 `12k`, v0.4.5.2 `5k`, v0.4.5.3 `470`, v0.4.5.4 `6k`
-
 BdR©2023 Free to use - send questions or comments: Bas de Reuver - bdr1976@gmail.com
