@@ -187,105 +187,104 @@ namespace Kbg.NppPluginNET
         //    Category("Validate"), DefaultValue("jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec")]
         //public String MonthAbbrev { get; set; }
 
-        [Description("Detect columns automatically, uncheck this option to manually set the column separator and header names parameters before detecting column datatypes."), Category("UserPref"), DefaultValue(true)]
+        [Description("various dialogs, save last used settings"), Category("UserDialogs"), Browsable(false), DefaultValue(true)]
         public bool AutoDetectColumns { get; set; }
 
         // SORT user preferences
-        [Description("Sort data, selected column name."), Category("UserPref"), DefaultValue("")]
+        [Category("UserDialogs"), Browsable(false), DefaultValue("")]
         public string SortColName { get; set; }
 
-        [Description("Sort data, sort ascending."), Category("UserPref"), DefaultValue(true)]
+        [Category("UserDialogs"), Browsable(false), DefaultValue(true)]
         public bool SortAscending { get; set; }
 
         // SPLIT COLUMN user preferences
-        [Description("Split column, selected column name."), Category("UserPref"), DefaultValue("")]
+        [Category("UserDialogs"), Browsable(false), DefaultValue("")]
         public string SplitColName { get; set; }
 
-        [Description("Split column, selected option."), Category("UserPref"), DefaultValue(0)]
+        [Category("UserDialogs"), Browsable(false), DefaultValue(0)]
         public int SplitOption { get; set; }
 
-        [Description("Edit column, pad with character."), Category("UserPref"), DefaultValue("0")]
+        [Category("UserDialogs"), Browsable(false), DefaultValue("0")]
         public string EditColPad { get; set; }
 
-        [Description("Edit column, pad with character count."), Category("UserPref"), DefaultValue(10)]
+        [Category("UserDialogs"), Browsable(false), DefaultValue(10)]
         public int EditColPadLength { get; set; }
 
-        [Description("Edit column, search for value."), Category("UserPref"), DefaultValue("abc")]
+        [Category("UserDialogs"), Browsable(false), DefaultValue("abc")]
         public string EditColSearch { get; set; }
 
-        [Description("Edit colun, replace with value."), Category("UserPref"), DefaultValue("xyz")]
+        [Category("UserDialogs"), Browsable(false), DefaultValue("xyz")]
         public string EditColReplace { get; set; }
 
-        [Description("Split column, split on character."), Category("UserPref"), DefaultValue("/")]
+        [Category("UserDialogs"), Browsable(false), DefaultValue("/")]
         public string SplitChar { get; set; }
 
-        [Description("Split column, split on Nth occurrence of character."), Category("UserPref"), DefaultValue(1)]
+        [Category("UserDialogs"), Browsable(false), DefaultValue(1)]
         public int SplitCharNth { get; set; }
 
-        [Description("Split column, split on position."), Category("UserPref"), DefaultValue(3)]
+        [Category("UserDialogs"), Browsable(false), DefaultValue(3)]
         public int SplitPos { get; set; }
 
-        [Description("Split column, remove original column."), Category("UserPref"), DefaultValue(false)]
+        [Category("UserDialogs"), Browsable(false), DefaultValue(false)]
         public bool SplitRemoveOrg { get; set; }
 
         // REFORMAT user preferences
-        [Description("Reformat dataset, checkbox options."), Category("UserPref"), DefaultValue("")]
+        [Category("UserDialogs"), Browsable(false), DefaultValue("")]
         public string ReformatOptions { get; set; }
 
-        [Description("Reformat dataset, date format."), Category("UserPref"), DefaultValue("yyyy-MM-dd")]
+        [Category("UserDialogs"), Browsable(false), DefaultValue("yyyy-MM-dd")]
         public string ReformatDateFormat { get; set; }
 
-        [Description("Reformat dataset, decimal separator."), Category("UserPref"), DefaultValue(".")]
+        [Category("UserDialogs"), Browsable(false), DefaultValue(".")]
         public string ReformatDecSep { get; set; }
 
-        [Description("Reformat dataset, column separator."), Category("UserPref"), DefaultValue(";")]
+        [Category("UserDialogs"), Browsable(false), DefaultValue(";")]
         public string ReformatColSep { get; set; }
 
-        [Description("Reformat dataset, replace carriage return line feeds with this string value."), Category("UserPref"), DefaultValue("<br>")]
+        [Category("UserDialogs"), Browsable(false), DefaultValue("<br>")]
         public string ReformatReplaceCrLf { get; set; }
 
         // DETECT COLUMNS user preferences
-        [Description("Detect columns, contains separator character."), Category("UserPref"), DefaultValue(",")]
+        [Category("UserDialogs"), Browsable(false), DefaultValue(",")]
         public string DetectColumnSep { get; set; }
 
-        [Description("Detect columns, fixed width column positions, absolute positions and comma separated."), Category("UserPref"), DefaultValue("")]
+        [Category("UserDialogs"), Browsable(false), DefaultValue("")]
         public string DetectColumnWidths { get; set; }
 
-        [Description("Detect columns, contains header names."), Category("UserPref"), DefaultValue(false)]
+        [Category("UserDialogs"), Browsable(false), DefaultValue(false)]
         public bool DetectColumnHeader { get; set; }
 
-        [Description("Detect columns, skip lines."), Category("UserPref"), DefaultValue(false)]
+        [Category("UserDialogs"), Browsable(false), DefaultValue(false)]
         public bool DetectSkipLines { get; set; }
 
-        [Description("Detect columns, skip lines."), Category("UserPref"), DefaultValue(0)]
+        [Category("UserDialogs"), Browsable(false), DefaultValue(0)]
         public int DetectSkipLinesCount { get; set; }
 
-        [Description("Detect columns, comment character."), Category("UserPref"), DefaultValue(false)]
+        [Category("UserDialogs"), Browsable(false), DefaultValue(false)]
         public bool DetectCommentChar { get; set; }
 
         // COUNT UNIQUE user preferences
-        [Description("Count unique values, list of selected columns."), Category("UserPref"), DefaultValue("")]
+        [Category("UserDialogs"), Browsable(false), DefaultValue("")]
         public string UniqueColumns { get; set; }
 
-        [Description("Count unique values, sort result."), Category("UserPref"), DefaultValue(true)]
+        [Category("UserDialogs"), Browsable(false), DefaultValue(true)]
         public bool UniqueSortBy { get; set; }
 
-        [Description("Count unique values, sort by value or count."), Category("UserPref"), DefaultValue(false)]
+        [Category("UserDialogs"), Browsable(false), DefaultValue(false)]
         public bool UniqueSortValue { get; set; }
 
-        [Description("Count unique values, sort ascending or descending."), Category("UserPref"), DefaultValue(false)]
+        [Category("UserDialogs"), Browsable(false), DefaultValue(false)]
         public bool UniqueSortAsc { get; set; }
 
-        [Description("Data convert, convert to type."), Category("UserPref"), DefaultValue(0)]
+        [Category("UserDialogs"), Browsable(false), DefaultValue(0)]
         public int DataConvertType { get; set; }
 
-        [Description("Data convert, SQL tablename or XML tag name."), Category("UserPref"), DefaultValue("")]
+        [Category("UserDialogs"), Browsable(false), DefaultValue("")]
         public string DataConvertName { get; set; }
 
         private int _sqlbatch;
 
-        [Description("Maximum records per SQL insert batch, minimum batch size is 10."),
-            Category("UserPref"), DefaultValue(1000)]
+        [Category("UserDialogs"), Browsable(false), DefaultValue(1000)]
         public int DataConvertBatch
         {
             get { return _sqlbatch; }
@@ -295,10 +294,10 @@ namespace Kbg.NppPluginNET
             }
         }
 
-        [Description("Convert data to SQL, database type mySQL, MS-SQL or PostgreSQL (0, 1 or 2)."), Category("UserPref"), DefaultValue(0)]
+        [Category("UserDialogs"), Browsable(false), DefaultValue(0)]
         public int DataConvertSQL { get; set; }
 
-        [Description("Metadata generate type."), Category("UserPref"), DefaultValue(0)]
+        [Category("UserDialogs"), Browsable(false), DefaultValue(0)]
         public int MetadataType { get; set; }
 
         // helper function for "CurrentYear" as year values

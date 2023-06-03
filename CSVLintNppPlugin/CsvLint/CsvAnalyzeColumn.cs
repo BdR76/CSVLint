@@ -26,6 +26,7 @@ namespace CSVLint
         public int CountDecimalPoint = 0;
         public int DecimalDigMax = 0; // maximum digits, example "1234.5" = 4 digits
         public int DecimalDecMax = 0; // maximum decimals, example "123.45" = 2 decimals
+        public int DecimalIntMax = 0; // maximum integer, example "12345" = 5 digits
         public int CountDateTime = 0;
         public char DateSep = '\0';
         public int DateMax1 = 0;
@@ -272,6 +273,8 @@ namespace CSVLint
                             this.CountInteger++;
                             // keep full statistics
                             if (fullstats) KeepMinMaxInteger(data);
+                            // incase switch to decimal/float, keep max length int
+                            if (data.Length > this.DecimalIntMax) this.DecimalIntMax = data.Length;
                         }
                     }
                     else if ((digits > 0) && ((point == 1) || (comma == 1)) && (sign <= 1) && (signpos == 0) && (other == 0) && (datesep <= 2) ) // datesep <= 2 for example "-12.34" a dot and a minus
@@ -525,6 +528,9 @@ namespace CSVLint
                     // consider it to be a decimal column
                     this.CountDecimal += this.CountInteger;
                     this.CountInteger = 0;
+
+                    // switch fro integer to float, incase large integers;
+                    if (this.DecimalDigMax < this.DecimalIntMax) this.DecimalDigMax = this.DecimalIntMax;
                 }
                 // if less than 1% then interpret column as integers and decimals are errors in data
             }
@@ -547,7 +553,7 @@ namespace CSVLint
 
                 // Note: when dataset contains values "12.345" and "1234.5" then maxlength=6
                 // However then DecimalDigMax=4 and DecimalDigMax=3 so mask is "9999.999" and maxlength should be 8 (not 6)
-                if (mask.Length < this.MaxWidth)
+                if (mask.Length > this.MaxWidth)
                 {
                     this.MaxWidth = mask.Length;
                 };

@@ -541,7 +541,7 @@ namespace Kbg.NppPluginNET
             if ((csvdef.Fields.Count == 1) && (csvdef.Fields[0].DataType == ColumnType.String) && (csvdef.Fields[0].MaxWidth >= 9999))
             {
                 // show warning message and solution
-                errmsg = string.Format("Cannot {0} without valid csv metadata\nOpen the CSV Lint window, press [Detect columns] and try again.", errmsg);
+                errmsg = string.Format("Cannot {0} without valid csv metadata.\nOpen the CSV Lint window, press [Detect columns] and try again.", errmsg);
                 MessageBox.Show(errmsg, "Missing csv metadata", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return false;
             }

@@ -106,6 +106,7 @@ namespace CSVLint
 
             if (align)
             {
+                var applyCode = Main.Settings.ReformatQuotes;
                 // add header column names
                 for (int c = 0; c < csvdef.Fields.Count; c++)
                 {
@@ -113,6 +114,14 @@ namespace CSVLint
                     var algwid = csvdef.Fields[c].MaxWidth;
 
                     if (algwid < csvdef.Fields[c].Name.Length) algwid = csvdef.Fields[c].Name.Length;
+
+                    // add 2 extra character to width, to account for the added quotes
+                    //if (applyCode == 1 && strinput.IndexOf(" ") >= 0)    // space, NOTE: cannot be sure wether or not column contains spaces
+                    if ( (applyCode == 2 && csvdef.Fields[c].DataType == ColumnType.String) // string
+                      || (applyCode == 3 && csvdef.Fields[c].DataType != ColumnType.Integer && csvdef.Fields[c].DataType != ColumnType.Decimal) // non-numeric
+                      || (applyCode == 4) // all
+                        )
+                        algwid += 2;
 
                     alignwidths.Add(algwid);
                 }
@@ -438,7 +447,7 @@ namespace CSVLint
             sb.Append("\r\n);\r\n");
 
             // add enumeration columns
-            if (enumcols1 != "") sb.Append(string.Format("-- Enumeration columns\r\n{0}{1}", enumcols1, enumcols2));
+            if (enumcols1 != "") sb.Append(string.Format("-- Enumeration columns (optional)\r\n/*\r\n{0}{1}*/\r\n", enumcols1, enumcols2));
 
             // add comment table
             var tabcomment = string.Join("\r\n", comment).Replace("'", "''");
@@ -589,7 +598,7 @@ namespace CSVLint
         {
             var res = sqlname;
 
-            // use brackets or quotes only when absolutely ncessary
+            // use brackets or quotes only when absolutely necessary
             if (res.Contains(" ") || res.Contains("'"))
             {
                 if (Main.Settings.DataConvertSQL == 1) // MS-SQL
@@ -909,7 +918,6 @@ namespace CSVLint
             editor.SetText(sb.ToString());
             notepad.SetCurrentLanguage(LangType.L_JSON);
         }
-
 
         private static string SortableString(string val, CsvColumn csvcol)
         {

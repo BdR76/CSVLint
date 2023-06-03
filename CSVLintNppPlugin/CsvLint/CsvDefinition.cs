@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 
@@ -25,6 +26,26 @@ namespace CSVLint
         Decimal = 2,
         String = 4,
         DateTime = 8
+    }
+
+    /// <summary>
+    /// Use Windows StrCmpLogicalW function
+    /// Compares two Unicode strings and digits in the strings are considered as numerical content rather than text.
+    /// 
+    /// For example:
+    /// Normal  .Sort() -> "fu_12mnd", "fu_1mnd", "fu_24mnd", "fu_3mnd_1", "fu_3mnd_10", "fu_3mnd_5", "fu_6mnd"
+    /// Special .Sort() -> "fu_1mnd", "fu_3mnd_1", "fu_3mnd_5", "fu_3mnd_10", "fu_6mnd", "fu_12mnd", "fu_24mnd"
+    /// C# example code by Scott Chamberlain https://stackoverflow.com/a/40943999/1745616
+    /// </summary>
+    public class StrCmpLogicalComparer : Comparer<string>
+    {
+        [DllImport("Shlwapi.dll", CharSet = CharSet.Unicode)]
+        private static extern int StrCmpLogicalW(string x, string y);
+
+        public override int Compare(string x, string y)
+        {
+            return StrCmpLogicalW(x, y);
+        }
     }
 
     /// <summary>
@@ -54,7 +75,6 @@ namespace CSVLint
 
             this.Initialize();
         }
-
         public CsvColumn(int idx, string name, int maxwidth, ColumnType datatype, string mask)
         {
             this.Index = idx;
@@ -120,7 +140,15 @@ namespace CSVLint
         }
         public void AddCodedValues(Dictionary<string, int> slcodes)
         {
-            if ( (slcodes.Count > 0) && (slcodes.Count <= Main.Settings.UniqueValuesMax) )
+            // if any contains Carriage Retunr/Line Feed, then it's probably text not codes
+            var containsCrLf = false;
+            foreach (var s in slcodes)
+            {
+                if (s.Key.Contains('\r') || s.Key.Contains('\n')) containsCrLf = true;
+            }
+
+            // check if could be coded values
+            if ( (containsCrLf == false) && (slcodes.Count > 0) && (slcodes.Count <= Main.Settings.UniqueValuesMax) )
             {
                 // set coded values
                 this.isCodedValue = true;
@@ -134,14 +162,7 @@ namespace CSVLint
 
                 // Sort list, with a hack to sort integers correctly
                 // i.e. list of integers should not be sorted like [1, 10, 11, 2, 3, .. etc]
-                this.CodedList.Sort(
-                    delegate (string c1, string c2)
-                    {
-                        if (int.TryParse(c1, out int i1)) c1 = c1.PadLeft(Main.Settings.IntegerDigitsMax, '0');
-                        if (int.TryParse(c2, out int i2)) c2 = c2.PadLeft(Main.Settings.IntegerDigitsMax, '0');
-                        return c1.CompareTo(c2);
-                    }
-                );
+                this.CodedList.Sort(new StrCmpLogicalComparer());
             }
         }
     }
