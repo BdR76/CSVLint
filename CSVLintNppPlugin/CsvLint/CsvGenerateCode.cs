@@ -233,6 +233,7 @@ namespace CSVLint
             var col_dates = "";
             var col_datef = "";
             var col_ints = "";
+            var col_enums = "";
 
             var exampleDate = "";
 
@@ -251,6 +252,21 @@ namespace CSVLint
 
                 // list all column names
                 col_names += string.Format("    '{0}'{1}\r\n", colname, comma);
+
+                // enumeration
+                if (coldef.isCodedValue) {
+                    var enumvals = string.Join("\", \"", coldef.CodedList);
+                    // Constrains for string or integer values
+                    if (coldef.DataType == ColumnType.String)
+                    {
+                        enumvals = string.Format("\"{0}\"", enumvals); // use quotes
+                    }
+                    else
+                    {
+                        enumvals = enumvals.Replace("\"", ""); // no quotes
+                    };
+                    col_enums += string.Format("    \"{0}\": [{1}],\r\n", coldef.Name, enumvals);
+                }
 
                 // indent for next lines
                 //if (c > 0) col_types += "              ";
@@ -359,6 +375,15 @@ namespace CSVLint
             // Python datatype warning
             if ( (col_ints != "") || (col_dates != "") ) python.Append("# double check datatypes\r\nprint(df.dtypes)\r\n\r\n");
 
+            // Python enumeration check
+            if (col_enums != "")
+            {
+                col_enums = col_enums.Remove(col_enums.Length - 3); // remove last comma + CrLf ",\r\n"
+                python.Append(string.Format("# enumeration allowed values\r\nallowed_values = {{\r\n{0}\r\n}}\r\n\r\n", col_enums));
+                python.Append("# check enumeration\r\ndf_invalid = {\r\n    column_name: df[~df[column_name].isin(allowed_values)]\r\n                 .value_counts(subset = column_name)\r\n                 .to_frame().reset_index(names = \"Invalid_value\")\r\n    for column_name, allowed_values in allowed_values.items()\r\n}\r\ndf_chk = pd.concat(df_invalid, names = (\"Column_name\", None)).droplevel(1)\r\n");
+                python.Append("if not df_chk.empty:\r\n    print(\"Invalid values found:\")\r\n    print(df_chk)\r\n\r\n");
+            }
+
             // Python examples of typical data transformations
             python.Append("# --------------------------------------\r\n");
             python.Append("# Data transformation suggestions\r\n");
@@ -466,6 +491,7 @@ namespace CSVLint
             var col_types = "c(";
             var col_dates = "";
             var col_numbs = "";
+            var col_enums = "";
 
             var exampleDate = "myDateField";
 
@@ -488,6 +514,22 @@ namespace CSVLint
 
                 // indent for next lines
                 if (c > 0) col_types += "              ";
+
+                // enumeration
+                if (coldef.isCodedValue)
+                {
+                    var enumvals = string.Join("\", \"", coldef.CodedList);
+                    // Constrains for string or integer values
+                    if (coldef.DataType == ColumnType.String)
+                    {
+                        enumvals = string.Format("\"{0}\"", enumvals); // use quotes
+                    }
+                    else
+                    {
+                        enumvals = enumvals.Replace("\"", ""); // no quotes
+                    };
+                    col_enums += string.Format("  \"{0}\" = c({1}),\r\n", coldef.Name, enumvals);
+                }
 
                 // R-script datetypes
                 switch (coldef.DataType)
@@ -574,6 +616,19 @@ namespace CSVLint
                 rscript.Append("# NOTE: the error message \"NAs introduced by coercion\" means there are decimal formatting errors\r\n");
                 rscript.Append(col_numbs);
                 rscript.Append("\r\n");
+            }
+
+            // R-script enumeration check
+            if (col_enums != "")
+            {
+                col_enums = col_enums.Remove(col_enums.Length - 3); // remove last comma + CrLf ",\r\n"
+                rscript.Append(string.Format("# enumeration allowed values\r\nallowed_values <- list(\r\n{0}\r\n)\r\n\r\n", col_enums));
+
+                // The following R code was generated using ChatGPT based on the Python code
+                // If anyone can refactor it to something more readable or more sensible code,
+                // please let me know or submit as a pull request
+                rscript.Append("# check enumeration\r\ndf_invalid <- lapply(names(allowed_enum), function(column_name) {\r\n  df[[column_name]] <- as.character(df[[column_name]])  # Convert values to strings\r\n  invalid_values <- df[!df[[column_name]] %in% as.character(allowed_enum[[column_name]]), column_name]\r\n  invalid_counts <- table(invalid_values)\r\n  data.frame(Column_name = column_name, Invalid_value = names(invalid_counts), Count = as.numeric(invalid_counts), stringsAsFactors = FALSE)\r\n})\r\n");
+                rscript.Append("df_chk <- bind_rows(df_invalid)\r\nif (nrow(df_chk) > 0) {\r\n  cat(\"Invalid values found:\\n\")\r\n  print(df_chk)\r\n}\r\n\r\n");
             }
 
             // R-script examples of typical data transformations
