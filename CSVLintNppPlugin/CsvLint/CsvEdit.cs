@@ -1007,7 +1007,7 @@ namespace CSVLint
                 return;
             }
 
-            // examine data and keep list of counters per unique values
+            // examine data and keep list of all data lines
             // Note: can be a dictionary, not a list, because the sortable values are guaranteed to be unique
             Dictionary<string, string> sortlines = new Dictionary<string, string>();
             var strdata = ScintillaStreams.StreamAllText();
@@ -1070,7 +1070,7 @@ namespace CSVLint
             else
                 sortlines = sortlines.OrderByDescending(obj => obj.Key).ToDictionary(obj => obj.Key, obj => obj.Value);
 
-            // add all unique values, sort by count
+            // add all lines, sort by count
             foreach (KeyValuePair<string, string> rec in sortlines)
             {
                 sbsort.Append(string.Format("{0}\n", rec.Value));

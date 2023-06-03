@@ -627,7 +627,7 @@ namespace CSVLint
                 // The following R code was generated using ChatGPT based on the Python code
                 // If anyone can refactor it to something more readable or more sensible code,
                 // please let me know or submit as a pull request
-                rscript.Append("# check enumeration\r\ndf_invalid <- lapply(names(allowed_enum), function(column_name) {\r\n  df[[column_name]] <- as.character(df[[column_name]])  # Convert values to strings\r\n  invalid_values <- df[!df[[column_name]] %in% as.character(allowed_enum[[column_name]]), column_name]\r\n  invalid_counts <- table(invalid_values)\r\n  data.frame(Column_name = column_name, Invalid_value = names(invalid_counts), Count = as.numeric(invalid_counts), stringsAsFactors = FALSE)\r\n})\r\n");
+                rscript.Append("# check enumeration\r\ndf_invalid <- lapply(names(allowed_values), function(column_name) {\r\n  df[[column_name]] <- as.character(df[[column_name]])  # Convert values to strings\r\n  invalid_values <- df[!df[[column_name]] %in% as.character(allowed_values[[column_name]]), column_name]\r\n  invalid_counts <- table(invalid_values)\r\n  data.frame(Column_name = column_name, Invalid_value = names(invalid_counts), Count = as.numeric(invalid_counts), stringsAsFactors = FALSE)\r\n})\r\n");
                 rscript.Append("df_chk <- bind_rows(df_invalid)\r\nif (nrow(df_chk) > 0) {\r\n  cat(\"Invalid values found:\\n\")\r\n  print(df_chk)\r\n}\r\n\r\n");
             }
 

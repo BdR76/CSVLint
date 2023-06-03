@@ -371,7 +371,7 @@ namespace Kbg.NppPluginNET
 
                     // display process message
                     var colname = csvdef.Fields[idx].Name;
-                    txtOutput.Text = string.Format("Sort data on column '{0}' is ready, time elapsed {1}\r\n", colname, dtElapsed); ;
+                    txtOutput.Text = string.Format("Sort data {0}scending on column '{1}' is ready, time elapsed {2}\r\n", (asc ? "a" : "de"), colname, dtElapsed); ;
 
                     // refresh datadefinition
                     //OnBtnDetectColumns_Click(sender, e);

@@ -189,102 +189,11 @@ namespace Kbg.NppPluginNET
 
         [Description("various dialogs, save last used settings"), Category("UserDialogs"), Browsable(false), DefaultValue(true)]
         public bool AutoDetectColumns { get; set; }
-
-        // SORT user preferences
-        [Category("UserDialogs"), Browsable(false), DefaultValue("")]
-        public string SortColName { get; set; }
-
-        [Category("UserDialogs"), Browsable(false), DefaultValue(true)]
-        public bool SortAscending { get; set; }
-
-        // SPLIT COLUMN user preferences
-        [Category("UserDialogs"), Browsable(false), DefaultValue("")]
-        public string SplitColName { get; set; }
-
-        [Category("UserDialogs"), Browsable(false), DefaultValue(0)]
-        public int SplitOption { get; set; }
-
-        [Category("UserDialogs"), Browsable(false), DefaultValue("0")]
-        public string EditColPad { get; set; }
-
-        [Category("UserDialogs"), Browsable(false), DefaultValue(10)]
-        public int EditColPadLength { get; set; }
-
-        [Category("UserDialogs"), Browsable(false), DefaultValue("abc")]
-        public string EditColSearch { get; set; }
-
-        [Category("UserDialogs"), Browsable(false), DefaultValue("xyz")]
-        public string EditColReplace { get; set; }
-
-        [Category("UserDialogs"), Browsable(false), DefaultValue("/")]
-        public string SplitChar { get; set; }
-
-        [Category("UserDialogs"), Browsable(false), DefaultValue(1)]
-        public int SplitCharNth { get; set; }
-
-        [Category("UserDialogs"), Browsable(false), DefaultValue(3)]
-        public int SplitPos { get; set; }
-
-        [Category("UserDialogs"), Browsable(false), DefaultValue(false)]
-        public bool SplitRemoveOrg { get; set; }
-
-        // REFORMAT user preferences
-        [Category("UserDialogs"), Browsable(false), DefaultValue("")]
-        public string ReformatOptions { get; set; }
-
-        [Category("UserDialogs"), Browsable(false), DefaultValue("yyyy-MM-dd")]
-        public string ReformatDateFormat { get; set; }
-
-        [Category("UserDialogs"), Browsable(false), DefaultValue(".")]
-        public string ReformatDecSep { get; set; }
-
-        [Category("UserDialogs"), Browsable(false), DefaultValue(";")]
-        public string ReformatColSep { get; set; }
-
-        [Category("UserDialogs"), Browsable(false), DefaultValue("<br>")]
-        public string ReformatReplaceCrLf { get; set; }
-
-        // DETECT COLUMNS user preferences
-        [Category("UserDialogs"), Browsable(false), DefaultValue(",")]
-        public string DetectColumnSep { get; set; }
-
-        [Category("UserDialogs"), Browsable(false), DefaultValue("")]
-        public string DetectColumnWidths { get; set; }
-
-        [Category("UserDialogs"), Browsable(false), DefaultValue(false)]
-        public bool DetectColumnHeader { get; set; }
-
-        [Category("UserDialogs"), Browsable(false), DefaultValue(false)]
-        public bool DetectSkipLines { get; set; }
-
-        [Category("UserDialogs"), Browsable(false), DefaultValue(0)]
-        public int DetectSkipLinesCount { get; set; }
-
-        [Category("UserDialogs"), Browsable(false), DefaultValue(false)]
-        public bool DetectCommentChar { get; set; }
-
-        // COUNT UNIQUE user preferences
-        [Category("UserDialogs"), Browsable(false), DefaultValue("")]
-        public string UniqueColumns { get; set; }
-
-        [Category("UserDialogs"), Browsable(false), DefaultValue(true)]
-        public bool UniqueSortBy { get; set; }
-
-        [Category("UserDialogs"), Browsable(false), DefaultValue(false)]
-        public bool UniqueSortValue { get; set; }
-
-        [Category("UserDialogs"), Browsable(false), DefaultValue(false)]
-        public bool UniqueSortAsc { get; set; }
-
-        [Category("UserDialogs"), Browsable(false), DefaultValue(0)]
-        public int DataConvertType { get; set; }
-
-        [Category("UserDialogs"), Browsable(false), DefaultValue("")]
-        public string DataConvertName { get; set; }
-
+		
+        // CONVERT DATA user preferences
         private int _sqlbatch;
 
-        [Category("UserDialogs"), Browsable(false), DefaultValue(1000)]
+        [Description("Convert data dialog"), Category("UserDialogs"), Browsable(false), DefaultValue(1000)]
         public int DataConvertBatch
         {
             get { return _sqlbatch; }
@@ -294,11 +203,106 @@ namespace Kbg.NppPluginNET
             }
         }
 
+        [Category("UserDialogs"), Browsable(false), DefaultValue("")]
+        public string DataConvertName { get; set; }
+
         [Category("UserDialogs"), Browsable(false), DefaultValue(0)]
         public int DataConvertSQL { get; set; }
 
         [Category("UserDialogs"), Browsable(false), DefaultValue(0)]
+        public int DataConvertType { get; set; }
+		
+        // DETECT COLUMNS MANUALLY user preferences
+        [Description("Detect columns manually"), Category("UserDialogs"), Browsable(false), DefaultValue(false)]
+        public bool DetectColumnHeader { get; set; }
+
+        [Category("UserDialogs"), Browsable(false), DefaultValue(",")]
+        public string DetectColumnSep { get; set; }
+
+        [Category("UserDialogs"), Browsable(false), DefaultValue("")]
+        public string DetectColumnWidths { get; set; }
+
+        [Category("UserDialogs"), Browsable(false), DefaultValue(false)]
+        public bool DetectCommentChar { get; set; }
+
+        [Category("UserDialogs"), Browsable(false), DefaultValue(false)]
+        public bool DetectSkipLines { get; set; }
+
+        [Category("UserDialogs"), Browsable(false), DefaultValue(0)]
+        public int DetectSkipLinesCount { get; set; }
+		
+        // ADD NEW COLUMNS (1) user preferences
+        [Description("Add new columns (1)"), Category("UserDialogs"), Browsable(false), DefaultValue("0")]
+        public string EditColPad { get; set; }
+
+        [Category("UserDialogs"), Browsable(false), DefaultValue(10)]
+        public int EditColPadLength { get; set; }
+
+        [Category("UserDialogs"), Browsable(false), DefaultValue("xyz")]
+        public string EditColReplace { get; set; }
+
+        [Category("UserDialogs"), Browsable(false), DefaultValue("abc")]
+        public string EditColSearch { get; set; }
+		
+        // GENERATE METADATA OR SCRIPT user preferences
+        [Description("Generate metadata or script"), Category("UserDialogs"), Browsable(false), DefaultValue(0)]
         public int MetadataType { get; set; }
+
+        // REFORMAT DATA user preferences
+        [Description("Reformat data"), Category("UserDialogs"), Browsable(false), DefaultValue(";")]
+        public string ReformatColSep { get; set; }
+
+        [Category("UserDialogs"), Browsable(false), DefaultValue("yyyy-MM-dd")]
+        public string ReformatDateFormat { get; set; }
+
+        [Category("UserDialogs"), Browsable(false), DefaultValue(".")]
+        public string ReformatDecSep { get; set; }
+
+        [Category("UserDialogs"), Browsable(false), DefaultValue("")]
+        public string ReformatOptions { get; set; }
+
+        [Category("UserDialogs"), Browsable(false), DefaultValue("<br>")]
+        public string ReformatReplaceCrLf { get; set; }
+		
+        // SORT DATA user preferences
+        [Description("Sort data"), Category("UserDialogs"), Browsable(false), DefaultValue(true)]
+        public bool SortAscending { get; set; }
+
+        [Category("UserDialogs"), Browsable(false), DefaultValue("")]
+        public string SortColName { get; set; }
+
+		// ADD NEW COLUMNS (2) user preferences
+        [Description("Add new columns (2)"), Category("UserDialogs"), Browsable(false), DefaultValue("/")]
+        public string SplitChar { get; set; }
+
+        [Category("UserDialogs"), Browsable(false), DefaultValue(1)]
+        public int SplitCharNth { get; set; }
+
+        [Category("UserDialogs"), Browsable(false), DefaultValue("")]
+        public string SplitColName { get; set; }
+
+        [Category("UserDialogs"), Browsable(false), DefaultValue(0)]
+        public int SplitOption { get; set; }
+
+
+        [Category("UserDialogs"), Browsable(false), DefaultValue(3)]
+        public int SplitPos { get; set; }
+
+        [Category("UserDialogs"), Browsable(false), DefaultValue(false)]
+        public bool SplitRemoveOrg { get; set; }
+
+        // COUNT UNIQUE VALUES user preferences
+        [Description("Count unique values"), Category("UserDialogs"), Browsable(false), DefaultValue("")]
+        public string UniqueColumns { get; set; }
+
+        [Category("UserDialogs"), Browsable(false), DefaultValue(true)]
+        public bool UniqueSortBy { get; set; }
+
+        [Category("UserDialogs"), Browsable(false), DefaultValue(false)]
+        public bool UniqueSortAsc { get; set; }
+
+        [Category("UserDialogs"), Browsable(false), DefaultValue(false)]
+        public bool UniqueSortValue { get; set; }
 
         // helper function for "CurrentYear" as year values
         private int GetYearFromString(string yr)
