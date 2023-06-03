@@ -93,8 +93,6 @@ the individual column widths, so `10, 6, 5` in this example, that will also
 work in most cases. Leave "Fixed positions" empty and the plug-in will
 try to detect fixed width columns same as auto-detect.
 
-Some data files contain comments or documentation about the data.
-
 You can select the "Skip lines" option and the column detection process will skip the first X lines of the file.
 For example when the first line of data (including header names) starts on
 line `16` then you can set "Skip lines" to `15`.
@@ -103,7 +101,6 @@ Note that the `SkipLines` keyword is not officially part of the schema.ini forma
 so applications that use the ODBC Text driver will ignore this setting.
 
 You can also indicate a comment character, any lines starting with this character will be skipped.
-Note that the `CommentChar` keyword is also not officially part of the schema.ini format.
 
 ![CSV Lint detect columns manually dialog](/docs/csvlint_detect_columns.png?raw=true "CSV Lint plug-in detect columns manually dialog")
 
@@ -155,6 +152,38 @@ DecimalSymbol can be either `.` or `,` and CSV Lint will assume the thousand
 separators symbol is the opposite of the DecimalSymbol. Define the maximum
 decimals digits for example `NumberDigits=2` for values like "1.23" or
 "-45.67" etc.
+
+### Comment lines
+
+Some data files contain comments or documentation about the data.
+CSV Lint supports a `SkipLines` option to skip at start of the file, and a `CommentChar` option to skip lines thst start with this character.
+
+Note that the `SkipLines` and `CommentChar` keywords are not officially part of the schema.ini format,
+(please upvote [the suggestion here](https://feedback.azure.com/d365community/search/?q=schema.ini)),
+so applications that use the ODBC Text driver will ignore this setting.
+
+### Enumeration
+
+Enumeration, or coded values, is when a column may only contain a certain set of values.
+For example boolean columns that can only contain `true`/`false` or `Yes`/`No`,
+or a variable "TestStage" that can only contain `Recovery`, `Training` or `Warmup`.
+
+This type of column is also not supported by the schema.ini format, but
+CSV Lint does support this using the `Enumeration` keyword followed by the
+enumeration items separated by a `|` character, see example below
+
+	Col6=Filtered Text Width 3
+	;Col6=Filtered Enumeration No|Yes
+	
+    Col7=TestStage Text Width 8
+    ;Col7=TestStage Enumeration Recovery|Training|Warmup
+	
+Auto-detect will check the unique values for string or integer columns, if the unique value count is less than or equal to the `UniqueValuesMax` setting, then 
+it will be treated as a enumeration column, and stored as such in the meta data.
+
+The plug-in menu options `Convert data` and `Generate metadata` will also export these enumeration metadata, where possible.
+When converting the data to an SQL insert statements, the script will also contain column constrains or enum types, depending on the SQL database type.
+The Generate metadata option for "W3C CSV Schema JSON" will also export the coded value in the `format` tags.
 
 Reformat
 --------
@@ -527,7 +556,7 @@ format for the Microsoft Jet OLE DB, also known as the ODBC text driver.
 
 ### schema JSON ###
 
-File and column metadata in W3 schema JSON format (preliminary support).
+File and column metadata in [W3C CSV schema JSON](https://www.w3.org/TR/tabular-data-primer/) format.
 
 ### Python ###
 
@@ -607,5 +636,28 @@ This software is free-to-use and it is provided as-is without warranty of any ki
 always back-up your data files to prevent data loss.  
 The [test data](../testdata/), examples and screenshots provided in this github repository do not contain real data, it
 is [randomly generated](https://github.com/BdR76/RandomValuesNPP) test data.
+
+History
+-------
+15-dec-2019 - v0.1 first release  
+02-may-2021 - v0.2 reformat data, double-click jumps to line, various bugfixes  
+25-aug-2021 - v0.3 quoted string values, syntax highlighting, SQL export  
+26-sep-2021 - v0.4 performance improvement, save/load metadata, split column option, count unique values  
+17-oct-2021 - v0.4.1 various bugfixes  
+29-oct-2021 - v0.4.2 startup error "CSVLint.xml is missing" fixed, toggle toolbar icon, clean up settings  
+12-nov-2021 - v0.4.3 dark mode icons and colors, save form settings, documentation, bugfixes  
+19-dec-2021 - v0.4.4 Support large integer values, various bugfixes  
+12-mar-2022 - v0.4.5 Render on background thread, transparent cursor line, convert to XML/JSON, generate metadata, quotes reformat, help icons, bugfixes  
+27-apr-2022 - v0.4.5.1 bugfix for Notepad++ 8.4 Lexer v5 update  
+03-jun-2022 - v0.4.5.2 Another Lexer v5 bugfix, generate Python script  
+25-jul-2022 - v0.4.5.3 Manually detect columns, improved fixed width support  
+14-aug-2022 - v0.4.5.4 Improved datatype and datetime mask detection, various bugfixes  
+30-sep-2022 - v0.4.6 Improved unicode support, sort data option, default color sets 12 colors, various bugfixes  
+09-oct-2022 - v0.4.6.1 Improved sort data and split options, various bugfixes  
+29-oct-2022 - v0.4.6.2 Fixed width positions parameter, docked window font, syntax highlighting toggle button  
+16-apr-2023 - v0.4.6.3 Syntax Highlighting fix, new SkipLines feature and quoted string improvements  
+02-may-2023 - v0.4.6.4 Comment character and dark mode support  
+
+Total downloads v0.4.1 `4.3k`, v0.4.2 `101`, v0.4.3 `12k`, v0.4.4 `16k`, v0.4.5 `16k`, v0.4.5.1 `12k`, v0.4.5.2 `5k`, v0.4.5.3 `470`, v0.4.5.4 `6k`
 
 BdR©2023 Free to use - send questions or comments: Bas de Reuver - bdr1976@gmail.com

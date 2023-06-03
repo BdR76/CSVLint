@@ -138,7 +138,8 @@ The CSV Lint plugin is work-in-progress, here is list of features I want to add 
 - [x] ~~Load/save schema.ini~~
 - [x] ~~Improve automatic datatype detection~~
 - [x] ~~Add feature GUI click to jump to error line~~
-- [ ] Support code=label values (in schema.json?) + error check + replace-code-with-label
+- [x] Support enumeration coded + error check
+- [ ] Replace-code-with-label (using schema.json?)
 - [ ] Support FrictionlessData schema.json format
 - [ ] Improve GUI instead of plain text
 - [x] ~~Add feature generate scripts (SQL, Python, R)~~
@@ -184,26 +185,5 @@ kind, always back-up your data files to prevent data loss.
 The [test data](./testdata/), examples and screenshots provided in this github
 repository do not contain real data, it is all
 [randomly generated](https://github.com/BdR76/RandomValuesNPP) test data.
-
-History
--------
-15-dec-2019 - v0.1 first release  
-02-may-2021 - v0.2 reformat data, double-click jumps to line, various bugfixes  
-25-aug-2021 - v0.3 quoted string values, syntax highlighting, SQL export  
-26-sep-2021 - v0.4 performance improvement, save/load metadata, split column option, count unique values  
-17-oct-2021 - v0.4.1 various bugfixes  
-29-oct-2021 - v0.4.2 startup error "CSVLint.xml is missing" fixed, toggle toolbar icon, clean up settings  
-12-nov-2021 - v0.4.3 dark mode icons and colors, save form settings, documentation, bugfixes  
-19-dec-2021 - v0.4.4 Support large integer values, various bugfixes  
-12-mar-2022 - v0.4.5 Render on background thread, transparent cursor line, convert to XML/JSON, generate metadata, quotes reformat, help icons, bugfixes  
-27-apr-2022 - v0.4.5.1 bugfix for Notepad++ 8.4 Lexer v5 update  
-03-jun-2022 - v0.4.5.2 Another Lexer v5 bugfix, generate Python script  
-25-jul-2022 - v0.4.5.3 Manually detect columns, improved fixed width support  
-14-aug-2022 - v0.4.5.4 Improved datatype and datetime mask detection, various bugfixes  
-30-sep-2022 - v0.4.6 Improved unicode support, sort data option, default color sets 12 colors, various bugfixes  
-09-oct-2022 - v0.4.6.1 Improved sort data and split options, various bugfixes  
-29-oct-2022 - v0.4.6.2 Fixed width positions parameter, docked window font, syntax highlighting toggle button  
-16-apr-2023 - v0.4.6.3 Syntax Highlighting fix, new SkipLines feature and quoted string improvements  
-02-may-2023 - v0.4.6.4 Comment character and dark mode support  
 
 BdR©2023 Free to use - send questions or comments: Bas de Reuver - bdr1976@gmail.com
