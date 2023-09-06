@@ -596,7 +596,7 @@ namespace Kbg.NppPluginNET
             // check if valid csv metadata
             if (CheckValidCsvDef(csvdef, "convert data"))
             {
-                // show split column dialog
+                // show convert data dialog
                 var frmparam = new DataConvertForm();
                 frmparam.InitialiseSetting();
 
@@ -604,6 +604,8 @@ namespace Kbg.NppPluginNET
 
                 // clear up
                 frmparam.Dispose();
+
+                //var dtStart = DateTime.Now;
 
                 // return true (OK) or false (Cancel)
                 if (r == DialogResult.OK)
@@ -621,6 +623,10 @@ namespace Kbg.NppPluginNET
                             break;
                     }
                 }
+                // show time elapsed
+                //var dtElapsed = (DateTime.Now - dtStart).ToString(@"hh\:mm\:ss\.fff");
+                //var strMsg = (Main.Settings.DataConvertType < 2 ? (Main.Settings.DataConvertType == 0 ? "SQL" : "XML") : "JSON");
+                //Debug.WriteLine(string.Format("Converted data to {0}, time elapsed {1}", strMsg, dtElapsed));
             }
         }
 

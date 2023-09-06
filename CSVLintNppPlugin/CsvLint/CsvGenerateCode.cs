@@ -5,6 +5,7 @@
 // makes changes to both the data and the CsvDefinition
 // -------------------------------------
 using CsvQuery.PluginInfrastructure;
+using Kbg.NppPluginNET;
 using Kbg.NppPluginNET.PluginInfrastructure;
 using System;
 using System.Collections.Generic;
@@ -183,7 +184,9 @@ namespace CSVLint
             // create new file
             notepad.FileNew();
             editor.SetText(jsonmeta.ToString());
-            notepad.SetCurrentLanguage(LangType.L_JSON);
+            if (jsonmeta.Length < Main.Settings.AutoSyntaxLimit) {
+                notepad.SetCurrentLanguage(LangType.L_JSON);
+            }
         }
 
         /// <summary>
@@ -416,7 +419,9 @@ namespace CSVLint
             // create new file
             notepad.FileNew();
             editor.SetText(python.ToString());
-            notepad.SetCurrentLanguage(LangType.L_PYTHON);
+            if (python.Length < Main.Settings.AutoSyntaxLimit) {
+                notepad.SetCurrentLanguage(LangType.L_PYTHON);
+            }
         }
 
         /// <summary>
@@ -440,7 +445,9 @@ namespace CSVLint
             // create new file
             notepad.FileNew();
             editor.SetText(txt);
-            notepad.SetCurrentLanguage(LangType.L_INI);
+            if (txt.Length < Main.Settings.AutoSyntaxLimit) {
+                notepad.SetCurrentLanguage(LangType.L_INI);
+            }
         }
 
         /// <summary>
@@ -663,7 +670,9 @@ namespace CSVLint
             // create new file
             notepad.FileNew();
             editor.SetText(rscript.ToString());
-            notepad.SetCurrentLanguage(LangType.L_R);
+            if (rscript.Length < Main.Settings.AutoSyntaxLimit) {
+                notepad.SetCurrentLanguage(LangType.L_R);
+            }
         }
     }
 }

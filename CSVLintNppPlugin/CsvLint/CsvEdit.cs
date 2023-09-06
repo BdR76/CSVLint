@@ -591,7 +591,9 @@ namespace CSVLint
             // create new file
             notepad.FileNew();
             editor.SetText(sb.ToString());
-            notepad.SetCurrentLanguage(LangType.L_SQL);
+            if (sb.Length < Main.Settings.AutoSyntaxLimit) {
+                notepad.SetCurrentLanguage(LangType.L_SQL);
+            }
         }
 
         private static string SQLSafeName(string sqlname)
@@ -709,25 +711,25 @@ namespace CSVLint
                                 colvalue = colvalue.Replace((csvdef.Fields[col].DecimalSymbol == '.' ? "," : "."), ""); // remove thousand separator
                                 colvalue = colvalue.Replace(csvdef.Fields[col].DecimalSymbol, '.');
                             }
-                            else if ((csvdef.Fields[col].DataType == ColumnType.String)
-                                    || (csvdef.Fields[col].DataType == ColumnType.DateTime))
-                            //|| (csvdef.Fields[col].DataType == ColumnType.Guid))
+                            else if ((csvdef.Fields[col].DataType == ColumnType.DateTime)
+                                    && (colvalue != ""))
                             {
                                 // sql datetime format
-                                if (csvdef.Fields[col].DataType == ColumnType.DateTime)
+                                try
                                 {
-                                    try
-                                    {
-                                        var dt = DateTime.ParseExact(colvalue, csvdef.Fields[col].Mask, Main.dummyCulture);
-                                        colvalue = dt.ToString("s");
-                                        //colvalue = dt.ToString("yyyy-MM-ddTHH\\:mm\\:ss"); // no milliseconds or timezone
-                                    }
-                                    catch
-                                    {
-                                        // do nothing, just keep old value if error in date value
-                                        //str = ??
-                                    }
+                                    var dt = DateTime.ParseExact(colvalue, csvdef.Fields[col].Mask, Main.dummyCulture);
+                                    colvalue = dt.ToString("s"); // "s" -> format as sortable XML Schema
+                                    //colvalue = dt.ToString("yyyy-MM-ddTHH\\:mm\\:ss"); // no milliseconds or timezone
                                 }
+                                catch
+                                {
+                                    // do nothing, just keep old value if error in date value
+                                    //str = ??
+                                }
+                            }
+                            else if ((csvdef.Fields[col].DataType == ColumnType.String)
+                              && (colvalue != ""))
+                            {
                                 // XML escape characters
                                 colvalue = colvalue.Replace("&", "&amp;"); // ampersnd
                                 colvalue = colvalue.Replace("<", "&lt;"); // less than
@@ -742,7 +744,6 @@ namespace CSVLint
                                 colvalue = colvalue.Replace("'", "&apos;"); // single quote/apostrophe
 
                                 colvalue = colvalue.Replace("'", "''");
-                                colvalue = string.Format("{0}", colvalue);
                             }
 
                             if (colvalue == "")
@@ -769,7 +770,9 @@ namespace CSVLint
             // create new file
             notepad.FileNew();
             editor.SetText(sb.ToString());
-            notepad.SetCurrentLanguage(LangType.L_XML);
+            if (sb.Length < Main.Settings.AutoSyntaxLimit) {
+                notepad.SetCurrentLanguage(LangType.L_XML);
+            }
         }
 
         /// <summary>
@@ -815,7 +818,6 @@ namespace CSVLint
                     // skip header line
                     if (lineCount >= 0)
                     {
-
                         // close previous line with comma (not the last records)
                         if (lineCount > 0) sb.Append(",");
 
@@ -862,25 +864,24 @@ namespace CSVLint
                                     colvalue = colvalue.Replace(csvdef.Fields[col].DecimalSymbol, '.');
                                 }
                             }
-                            else if ((csvdef.Fields[col].DataType == ColumnType.String)
-                                    || (csvdef.Fields[col].DataType == ColumnType.DateTime))
-                            //|| (csvdef.Fields[col].DataType == ColumnType.Guid))
+                            else if ((csvdef.Fields[col].DataType == ColumnType.DateTime)
+                                    && (colvalue != ""))
                             {
-                                // sql datetime format
-                                if (csvdef.Fields[col].DataType == ColumnType.DateTime)
+                                // json datetime format
+                                try
                                 {
-                                    try
-                                    {
-                                        var dt = DateTime.ParseExact(colvalue, csvdef.Fields[col].Mask, Main.dummyCulture);
-                                        colvalue = dt.ToString("s");
-                                        //colvalue = dt.ToString("yyyy-MM-ddTHH\\:mm\\:ss"); // no milliseconds or timezone
-                                    }
-                                    catch
-                                    {
-                                        // do nothing, just keep old value if error in date value
-                                        //str = ??
-                                    }
+                                    var dt = DateTime.ParseExact(colvalue, csvdef.Fields[col].Mask, Main.dummyCulture);
+                                    colvalue = dt.ToString("s"); // "s" -> format as sortable XML Schema
+                                    //colvalue = dt.ToString("yyyy-MM-ddTHH\\:mm\\:ss"); // no milliseconds or timezone
                                 }
+                                catch
+                                {
+                                    // do nothing, just keep old value if error in date value
+                                    //str = ??
+                                }
+                            }
+                            else if (csvdef.Fields[col].DataType == ColumnType.String)
+                            {
                                 // JSON escape characters
                                 colvalue = colvalue.Replace("\\", "\\\\"); // \\  Backslash character
                                 colvalue = colvalue.Replace("\b", "\\b"); // \b Backspace(ascii code 08)
@@ -889,8 +890,12 @@ namespace CSVLint
                                 colvalue = colvalue.Replace("\r", "\\r"); // \r Carriage return
                                 colvalue = colvalue.Replace("\t", "\\t"); // \t Tab
                                 colvalue = colvalue.Replace("\"", "\\\""); // \"  Double quote
+                            }
 
-                                // put value in double quotes
+                            // put string and datetime values in double quotes
+                            if ((csvdef.Fields[col].DataType == ColumnType.String)
+                                || (csvdef.Fields[col].DataType == ColumnType.DateTime))
+                            {
                                 colvalue = string.Format("\"{0}\"", colvalue);
                             }
 
@@ -916,7 +921,9 @@ namespace CSVLint
             // create new file
             notepad.FileNew();
             editor.SetText(sb.ToString());
-            notepad.SetCurrentLanguage(LangType.L_JSON);
+            if (sb.Length < Main.Settings.AutoSyntaxLimit) {
+                notepad.SetCurrentLanguage(LangType.L_JSON);
+            }
         }
 
         private static string SortableString(string val, CsvColumn csvcol)

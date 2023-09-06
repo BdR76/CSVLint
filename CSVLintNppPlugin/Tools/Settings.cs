@@ -90,6 +90,9 @@ namespace Kbg.NppPluginNET
         [Description("Reformat dataset, apply quotes option. 0 = None minimal, 1..3, 4 = Always."), Category("Edit"), DefaultValue(0)] // TODO change to proper dropdownlist (0=None minial, 1=Values with spaces, 2=All string values, 3=All non-numeric values, 4=All values)
         public int ReformatQuotes { get; set; }
 
+        [Description("Convert data, automatically apply syntax highlighting to resulting file, only when it's smaller than this size. Prevent Notepad++ from freezing on large files."), Category("General"), DefaultValue(1024*1024)]
+        public int AutoSyntaxLimit { get; set; }
+
         [Description("Default quote character, typically double quote \" or single quote '"), Category("General"), DefaultValue('"')]
         public char DefaultQuoteChar { get; set; }
 
