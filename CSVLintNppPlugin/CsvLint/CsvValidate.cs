@@ -196,7 +196,7 @@ namespace CSVLint
             int colnr = idx + 1;
 
             // ignore null values
-            if (val == Main.Settings.NullValue) val = "";
+            if (val == Main.Settings.NullKeyword) val = "";
 
             // check if value is too long
             if (val.Length > coldef.MaxWidth)

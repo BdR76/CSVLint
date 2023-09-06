@@ -1124,7 +1124,7 @@ namespace CSVLint
                     {
                         // check if column value is NULL value
                         var csvval = value.ToString();
-                        if ((wasquoted == false) && (csvval == Main.Settings.NullValue)) csvval = "";
+                        if ((wasquoted == false) && (csvval == Main.Settings.NullKeyword)) csvval = "";
                         if (Main.Settings.TrimValues) csvval = csvval.Trim();
 
                         // add column value
@@ -1150,7 +1150,7 @@ namespace CSVLint
                 {
                     // check if column value is NULL value
                     var val = value.ToString();
-                    if ((wasquoted == false) && (val == Main.Settings.NullValue)) val = "";
+                    if ((wasquoted == false) && (val == Main.Settings.NullKeyword)) val = "";
                     if (Main.Settings.TrimValues) val = val.Trim();
                     res.Add(val);
                 }

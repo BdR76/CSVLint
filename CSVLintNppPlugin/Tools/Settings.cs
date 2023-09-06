@@ -104,9 +104,9 @@ namespace Kbg.NppPluginNET
         [Description("Default font for text boxes in CSV Lint docking window. Changing the font requires closing and opening the CSV docked window."), Category("General"), DefaultValue(typeof(Font), FontDockDefault)]
         public Font FontDock { get; set; }
 
-        [Description("Keyword for empty values or null values in the csv data, case-sensitive."),
+        [Description("A case-sensitive keyword that will be treated as an empty value, typically NULL, NaN, NA or None depending on your data."),
             Category("General"), DefaultValue("NaN")]
-        public string NullValue { get; set; }
+        public string NullKeyword { get; set; }
 
         [Description("Include separator in syntax highlighting colors. Set to false and the separator characters are not colored."),
             Category("General"), DefaultValue(false)]
