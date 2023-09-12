@@ -195,6 +195,7 @@ namespace CSVLint
                             {
                                 sign++;
                                 signpos = charidx;
+                                other--; // in hindsight was incorrectly counted as 'other' because '+' could also be integer -> correction
                             }
                             // plus and minus are signs for digits, check separately because minus ('-') is also counted as date separator, example "31-12-1999"
                             if (ch == '-')
