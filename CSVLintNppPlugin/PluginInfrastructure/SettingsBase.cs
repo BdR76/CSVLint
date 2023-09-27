@@ -264,7 +264,7 @@ namespace CsvQuery.PluginInfrastructure
                 }
             };
 
-            dialog.Controls["Cancel"].Click += (a, b) => dialog.Close();
+            dialog.CancelButton = (IButtonControl)dialog.Controls["Cancel"];
             dialog.Controls["Ok"].Click += (a, b) =>
             {
                 var changesEventArgs = new SettingsChangedEventArgs((Settings)this, copy);
