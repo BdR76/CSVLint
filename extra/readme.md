@@ -25,9 +25,11 @@ used for testing the syntax highlighting and different Windows region/code page 
 Python script to determine the syntax highlighting colors. The script
 determines color sequences where there won't be columns with similar colors
 next to each other (red/orange or blue/cyan). The script selects a color
-sequence where each color is as different as possible from the next. This makes
-it easier to distinguish columns and also makes it more accessible for people
-who are color blind. See the [results here](https://github.com/BdR76/CSVLint/tree/master/extra/generate_colors.png).
+sequence where each color is as different as possible from the next,
+see the [results here](https://github.com/BdR76/CSVLint/tree/master/extra/generate_colors.png).
+This makes it easier to distinguish columns while also making it more accessible
+for people who are [color blind](https://github.com/BdR76/CSVLint/tree/master/extra/colorblind_vision1.png)
+(as opposed to using a color scheme [like this](https://github.com/BdR76/CSVLint/tree/master/extra/colorblind_vision2.png)).
 
 Note: Technically the CSV Lint plugin can use max 31 different column colors.
 However, for 16 or more colors the script starts generating very similar
