@@ -62,8 +62,8 @@ namespace CSVLintNppPlugin.Forms
             bool chk = (sender as CheckBox).Checked;
             ToggleControlBasedOnControl(sender as CheckBox, chk);
 
-            // can not press OK when nothing selected
-            btnOk.Enabled = chkSeparator.Checked | chkDateTime.Checked | chkDecimal.Checked | chkReplaceCrLf.Checked | chkTrimValues.Checked | chkAlignVert.Checked;
+            // can always press OK, even when nothing selected to apply the general Trim and Quotes settings
+            //btnOk.Enabled = chkSeparator.Checked | chkDateTime.Checked | chkDecimal.Checked | chkReplaceCrLf.Checked | chkTrimValues.Checked | chkAlignVert.Checked;
         }
 
         private void ReformatForm_FormClosing(object sender, FormClosingEventArgs e)
