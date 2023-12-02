@@ -228,10 +228,9 @@ namespace Kbg.NppPluginNET
                 // when initially creating CSVLintxml for first time
                 if (presetidx == -1)
                 {
-                    // initially give users random color preset, i.e. distribute random among all users, to see which they like best
+                    // Give users color preset based on Darkmode or not
                     bool checkdarkmode = CheckConfigDarkMode();
-                    var sec = DateTime.Now.Second % 2; // semi-random 0..1
-                    presetidx = (checkdarkmode ? 2 : 0) + sec; // 0..1 for normal, 2..3 for dark mode
+                    presetidx = (checkdarkmode ? 3 : 0); // 0=Normal background, 3=Dark mode Neon colors
                 }
 
                 // create syntax color xml

@@ -24,6 +24,34 @@ toolbar icon.
 **If you find the CSV Lint plug-in useful you can buy me a coffee!** ☕  
 [![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=US5SMK2DC6TXE)
 
+Syntax highlighting colors
+--------------------------
+Syntax highlighting will make it easier to see columns in the data files.
+Note that the rendering of the syntax highlighting runs on a separate thread
+in the background. This means that for larger files (~50MB or more) it can
+happen that the beginning of the file displays column colors but at the end of the
+file it's still uncolored.
+
+There are four pre-defined color schemes you can select in the `Setttings` dialog.
+At first time startup, the plug-in will select normal or darkmode color scheme,
+depending on the Dark Mode setting in the Notepad++ `config.xml`.
+
+![CSV Lint color styles for syntax highlighting](/docs/csvlint_color_styles.png?raw=true "CSV Lint plug-in color styles for syntax highlighting")
+
+These predefined color sets have been [carefully selected](https://github.com/BdR76/CSVLint/tree/master/extra#generate_colorspy)
+so that each column color is as different as possible from the next.
+The color scheme settings are stored in a file `CSVLint.xml` which is
+automatically created at first time startup or when the file is missing,
+also see an example [CSVLint.xml file here](https://github.com/BdR76/CSVLint/blob/master/extra/).
+
+	%USERPROFILE%\AppData\Roaming\Notepad++\plugins\config\CSVLint.xml
+
+You can also change the colors in the "Style Configurator dialog", see menu item
+`Settings > Style configurator... > Language: CSV Lint`. If you have a CSV file
+open you'll immediately see the changes as you edit them. Note that selecting a
+default color scheme in `Setttings` will overwrite any changes made in
+the Style Configurator dialog.
+
 CSV Lint window
 ---------------
 Click the toolbar icon or select the menu item `Plugins > CSVLint > CSV Lint window`
@@ -598,34 +626,6 @@ and they are stored in a settings file `%USERPROFILE%\AppData\Roaming\Notepad++\
 | TrimValues       | Trim values before analyzing or editing (recommended).                                                          | true    |
 | UserPref section | Various input settings for the CSV Lint dialogs for Convert Data, Reformat, Split Column etc.                   |         |
 
-Syntax highlighting colors
---------------------------
-Syntax highlighting will make it easier to see columns in the data files.
-Note that the rendering of the syntax highlighting runs on a separate thread
-in the background. This means that for larger files (~50MB or more) it can
-happen that the beginning of the file displays column colors but at the end of the
-file it's still uncolored.
-
-There are four pre-defined color schemes you can select in the `Setttings` dialog.
-At first time startup, the plug-in will select normal or darkmode color scheme,
-depending on the Dark Mode setting in the Notepad++ `config.xml`.
-
-![CSV Lint color styles for syntax highlighting](/docs/csvlint_color_styles.png?raw=true "CSV Lint plug-in color styles for syntax highlighting")
-
-These predefined color sets have been [carefully selected](https://github.com/BdR76/CSVLint/tree/master/extra#generate_colorspy)
-so that each column color is as different as possible from the next.
-The color scheme settings are stored in a file `CSVLint.xml` which is
-automatically created at first time startup or when the file is missing,
-also see an example [CSVLint.xml file here](https://github.com/BdR76/CSVLint/blob/master/extra/).
-
-	%USERPROFILE%\AppData\Roaming\Notepad++\plugins\config\CSVLint.xml
-
-You can also change the colors in the "Style Configurator dialog", see menu item
-`Settings > Style configurator... > Language: CSV Lint`. If you have a CSV file
-open you'll immediately see the changes as you edit them. Note that selecting a
-default color scheme in `Setttings` will overwrite any changes made in
-the Style Configurator dialog.
-
 About
 -----
 An about window
@@ -657,5 +657,6 @@ History
 29-oct-2022 - v0.4.6.2 Fixed width positions parameter, docked window font, syntax highlighting toggle button  
 16-apr-2023 - v0.4.6.3 Syntax Highlighting fix, new SkipLines feature and quoted string improvements  
 02-may-2023 - v0.4.6.4 Comment character and dark mode support  
+04-jun-2023 - v0.4.6.5 Support enum/coded values and various updates  
 
 BdR©2023 Free to use - send questions or comments: Bas de Reuver - bdr1976@gmail.com
