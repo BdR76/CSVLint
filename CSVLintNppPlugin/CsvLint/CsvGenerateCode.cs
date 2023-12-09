@@ -207,7 +207,60 @@ namespace CSVLint
         /// <param name="data"> csv data </param>
         public static void GenerateDatadictionaryCSV(CsvDefinition csvdef)
         {
-            //TODO
+            // get access to Notepad++
+            INotepadPPGateway notepad = new NotepadPPGateway();
+            IScintillaGateway editor = new ScintillaGateway(PluginBase.GetCurrentScintilla());
+
+            string FILE_NAME = Path.GetFileName(notepad.GetCurrentFilePath());
+            var separator = (csvdef.Separator == '\0' ? "{fixed-width}" : csvdef.Separator.ToString());
+            if (separator == "\t") separator = "\\t";
+
+            StringBuilder csvmeta = new StringBuilder();
+
+            // build CSV
+            csvmeta.Append("Nr,ColumnName,DataType,Width,Decimals,Mask,Enumeration\r\n");
+
+            for (int c = 0; c < csvdef.Fields.Count; c++)
+            {
+                // next field
+                var coldef = csvdef.Fields[c];
+
+                // prepare JSON variables
+                var dattyp = "String";
+                var mask = "";
+                var dec = "";
+                var colwid = coldef.MaxWidth.ToString();
+                var enumvals = "";
+                switch (coldef.DataType)
+                {
+                    case ColumnType.DateTime:
+                        mask = coldef.Mask;
+                        dattyp = (mask.IndexOf("y") >= 0 ? "Date" : "") + (mask.IndexOf("H") >= 0 ? "Time" : "");
+                        break;
+                    case ColumnType.Integer:
+                        dattyp = "Integer";
+                        break;
+                    case ColumnType.Decimal:
+                        dattyp = "Decimal";
+                        //mask = coldef.Mask;
+                        mask = "#0" + coldef.DecimalSymbol + "".PadRight(coldef.Decimals, '0');
+                        dec = coldef.Decimals.ToString();
+                        break;
+                };
+
+                // enumeration
+                if (coldef.isCodedValue)
+                {
+                    enumvals = string.Join("|", coldef.CodedList);
+                    enumvals = string.Format("\"{0}\"", enumvals); // use quotes
+                }
+
+                csvmeta.Append(string.Format("{0},{1},{2},{3},{4},{5},{6}\r\n", (c + 1), coldef.Name, dattyp, colwid, dec, mask, enumvals));
+            }
+
+            // create new file
+            notepad.FileNew();
+            editor.SetText(csvmeta.ToString());
         }
 
         /// <summary>

@@ -655,7 +655,7 @@ namespace Kbg.NppPluginNET
                             CsvGenerateCode.GenerateSchemaJSON(csvdef);
                             break;
                         case 2: // CSV datadictionary
-                            //TODO
+                            CsvGenerateCode.GenerateDatadictionaryCSV(csvdef);
                             break;
                         case 3: // Python
                             CsvGenerateCode.GeneratePythonPanda(csvdef);
