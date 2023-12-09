@@ -72,6 +72,18 @@ namespace CSVLint
         }
 
         /// <summary>
+        /// Standard disclaimer for generated scripts
+        /// </summary>
+        private static void ScriptDisclaimer(StringBuilder sb)
+        {
+            sb.Append("#\r\n# NOTE:\r\n");
+            sb.Append("# This is a generated script and it doesn't handle all potential data errors.\r\n");
+            sb.Append("# The script is meant as a starting point for processing your data files.\r\n");
+            sb.Append("# Adjust and expand the script for your specific data processing needs.\r\n");
+            sb.Append("# Always back-up your data files to prevent data loss.\r\n\r\n");
+        }
+
+        /// <summary>
         /// generate JSON metadata
         /// </summary>
         /// <param name="data"> csv data </param>
@@ -190,6 +202,15 @@ namespace CSVLint
         }
 
         /// <summary>
+        /// generate CSV datadictionary metadata
+        /// </summary>
+        /// <param name="data"> csv data </param>
+        public static void GenerateDatadictionaryCSV(CsvDefinition csvdef)
+        {
+            //TODO
+        }
+
+        /// <summary>
         /// generate Python Panda code based on columns (most asked on stackoverflow)
         /// </summary>
         /// <param name="data"> csv data </param>
@@ -215,13 +236,10 @@ namespace CSVLint
             List<String> comment = CsvEdit.ScriptInfo(notepad);
             foreach (var str in comment) python.Append(string.Format("# {0}\r\n", str));
 
-            // warning
-            python.Append("#\r\n# NOTE:\r\n");
-            python.Append("# This is a generated script and it doesn't handle all potential data errors.\r\n");
-            python.Append("# The script is meant as a starting point for processing your data files.\r\n");
-            python.Append("# Adjust and expand the script for your specific data processing needs.\r\n");
-            python.Append("# Always back-up your data files to prevent data loss.\r\n\r\n");
+            // add standard disclaimer for generated scripts
+            ScriptDisclaimer(python);
 
+            // start Python script
             python.Append("# Library\r\n");
             python.Append("import os\r\n");
             python.Append("import numpy as np\r\n");
@@ -476,13 +494,10 @@ namespace CSVLint
             List<String> comment = CsvEdit.ScriptInfo(notepad);
             foreach (var str in comment) rscript.Append(string.Format("# {0}\r\n", str));
 
-            // warning
-            rscript.Append("#\r\n# NOTE:\r\n");
-            rscript.Append("# This is a generated script and it doesn't handle all potential data errors.\r\n");
-            rscript.Append("# The script is meant as a starting point for processing your data files.\r\n");
-            rscript.Append("# Adjust and expand the script for your specific data processing needs.\r\n");
-            rscript.Append("# Always back-up your data files to prevent data loss.\r\n\r\n");
+            // add standard disclaimer for generated scripts
+            ScriptDisclaimer(rscript);
 
+            // start R-script
             rscript.Append("# Library\r\n");
             rscript.Append("library(dplyr)\r\n\r\n");
 
@@ -672,6 +687,232 @@ namespace CSVLint
             editor.SetText(rscript.ToString());
             if (rscript.Length < Main.Settings.AutoSyntaxLimit) {
                 notepad.SetCurrentLanguage(LangType.L_R);
+            }
+        }
+
+        /// <summary>
+        /// generate PowerShell code based on columns (sometimes asked on stackoverflow)
+        /// </summary>
+        /// <param name="data"> csv data </param>
+        public static void GeneratePowerShell(CsvDefinition csvdef)
+        {
+            // get access to Notepad++
+            INotepadPPGateway notepad = new NotepadPPGateway();
+            IScintillaGateway editor = new ScintillaGateway(PluginBase.GetCurrentScintilla());
+
+            // Python requires forward slash for filepaths
+            string FILE_PATH = Path.GetDirectoryName(notepad.GetCurrentFilePath()).TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar;
+            string FILE_NAME = Path.GetFileName(notepad.GetCurrentFilePath());
+
+            StringBuilder ps1 = new StringBuilder();
+
+            // build Python script
+            ps1.Append("# PowerShell - read csv with datatypes\r\n");
+
+            // default comment
+            List<String> comment = CsvEdit.ScriptInfo(notepad);
+            foreach (var str in comment) ps1.Append(string.Format("# {0}\r\n", str));
+
+            // add standard disclaimer for generated scripts
+            ScriptDisclaimer(ps1);
+
+            // start PowerShell script
+            ps1.Append("# working directory and filename\r\n");
+            ps1.Append(string.Format("$pathname = \"{0}\")\r\n", FILE_PATH));
+            ps1.Append(string.Format("$filename = $pathname + \"{0}\"\r\n\r\n", FILE_NAME));
+
+            var col_names = "";
+            var col_order = "";
+            var col_types = "";
+            var col_enums = "";
+            var check_enums = "";
+
+            var exampleDate = "";
+
+            var r_dec = "";
+
+            for (int c = 0; c < csvdef.Fields.Count; c++)
+            {
+                // next field
+                var coldef = csvdef.Fields[c];
+
+                // any characters are allowed in Python column names
+                var colname = coldef.Name;
+                //colname = Regex.Replace(colname, "[^a-zA-Z0-9]", "_"); // not letter or digit
+                var colnamepad = colname.PadRight(15, ' ');
+
+                var comma = (c < csvdef.Fields.Count - 1 ? ", " : "");
+
+                // list all column names
+                col_names += string.Format("\"{0}\"{1}", colname, comma);
+                col_order += string.Format("\t{0} = $_.{1}\r\n", colnamepad, colname);
+
+                // enumeration
+                if (coldef.isCodedValue)
+                {
+                    var enumvals = string.Join("\", \"", coldef.CodedList);
+                    // Constrains for string or integer values
+                    if (coldef.DataType == ColumnType.String)
+                    {
+                        enumvals = string.Format("\"{0}\"", enumvals); // use quotes
+                    }
+                    else
+                    {
+                        enumvals = enumvals.Replace("\"", ""); // no quotes
+                    };
+                    col_enums += string.Format("${0}_array = @({1})\r\n", coldef.Name, enumvals);
+                    check_enums += string.Format("\tif (!(${0}_array -contains $row.{0})) {{$errmsg += \" $($row.{0}) is invalid {0}\"}}\r\n", coldef.Name);
+                }
+
+                // indent for next lines
+                //if (c > 0) col_types += "              ";
+
+                // Python datetypes
+                switch (coldef.DataType)
+                {
+                    case ColumnType.DateTime:
+                        // build Python fomat example "M/d/yyyy HH:m:s" -> "%m/%d/%Y %H:%M:%S"
+                        var msk = coldef.Mask;
+                        msk = DateMaskStandardToCstr(msk);
+                        col_types += string.Format("\t$row.{0} = [datetime]::parseexact($row.{1}, '{2}', $null)\r\n", colnamepad, colname, msk);
+                        if (exampleDate == "") exampleDate = colname;
+                        break;
+                    case ColumnType.Integer:
+                        col_types += string.Format("\t$row.{0} = [int]($row.{1} -replace 'NaN', '')\r\n", colnamepad, colname);
+
+                        break;
+                    case ColumnType.Decimal:
+                        col_types += string.Format("\t$row.{0} = [decimal]($row.{1} -replace ',', '.')\r\n", colnamepad, colname);
+
+                        // just use the first decimal symbol
+                        if (r_dec == "") r_dec = coldef.DecimalSymbol.ToString();
+                        break;
+                    //default:
+                    //    col_types += string.Format("#\t$row.{0} = $row.{1}\r\n", colnamepad, colname);
+                    //    break;
+                };
+            }
+
+            // no decimals, then not technically needed but nice to have as example code
+            if (r_dec == "") r_dec = ".";
+
+            // csv-parameters
+            var nameparam = "";
+            var separator = csvdef.Separator.ToString();
+            if (separator != "\0")
+            {
+                if (separator == "\t") separator = "`t";
+                nameparam = string.Format(" -Delimiter \"{0}\"", separator);
+            }
+
+            if (!csvdef.ColNameHeader)
+            {
+                nameparam = string.Format(" -Header @({0})", col_names);
+            }
+
+            // PowerShell skip comment lines
+            if (csvdef.SkipLines > 0) nameparam += string.Format(" | Select-Object -Skip {0}", csvdef.SkipLines);
+
+            // PowerShell comment character not supported(?)
+            //if (csvdef.CommentChar != '\0') nameparam += string.Format(" -Comment '{0}'", csvdef.CommentChar);
+
+            // read csv file
+            if (csvdef.Separator == '\0')
+            {
+                // fixed width
+                ps1.Append(string.Format("# read fixed width data file, positions {0}\r\n", GetColumnWidths(csvdef, true)));
+
+                ps1.Append("$stream_in = [System.IO.StreamReader]::new($pathname + $filename)\r\n\r\n");
+                ps1.Append("$csvdata = while ($line = $stream_in.ReadLine()) {\r\n");
+                ps1.Append("\t[PSCustomObject]@{\r\n");
+
+                // fixed width columns
+                var startpos = 0;
+                for (int c = 0; c < csvdef.Fields.Count; c++)
+                {
+                    // next field
+                    var coldef = csvdef.Fields[c];
+
+                    // space characters are not allowed in PowerShell customobject field names
+                    var colname = coldef.Name.PadRight(15, ' ');
+                    var strpos = startpos.ToString().PadLeft(3, ' ');
+                    var strwid = coldef.MaxWidth.ToString().PadLeft(2, ' ');
+                    ps1.Append(string.Format("\t\t{0} = $line.Substring({1}, {2}).Trim(' \"')\r\n", colname, strpos, strwid));
+                    startpos += coldef.MaxWidth;
+                };
+                ps1.Append("\t}\r\n}\r\n\r\n");
+            }
+            else
+            {
+                // character separated
+                ps1.Append("# read csv data file\r\n");
+                ps1.Append(string.Format("$csvdata = Import-Csv -Path $filename{0}\r\n\r\n", nameparam));
+            }
+
+            // column types
+            if (col_types != "")
+            {
+                ps1.Append("# Explicit datatypes\r\n");
+                ps1.Append("# WARNING: The script below doesn't have any eror handling for null/empty values,\r\n");
+                ps1.Append("# so if your data file contains int, decimal or datetime columns with empty or incorrect values,\r\n");
+                ps1.Append("# this script can throw errors or silently change values to '0', so beware.\r\n");
+                ps1.Append("foreach ($row in $csvdata)\r\n{\r\n");
+                ps1.Append(col_types);
+                ps1.Append("}\r\n\r\n");
+            }
+
+            // PowerShell enumeration check
+            if (col_enums != "")
+            {
+                ps1.Append("# Enumeration allowed values\r\n");
+                ps1.Append(string.Format("{0}\r\n", col_enums));
+                ps1.Append("# enumeration check invalid values\r\n");
+                ps1.Append("$line = 0\r\n");
+                ps1.Append("foreach ($row in $csvdata)\r\n\r\n");
+                ps1.Append("\t# check invalid values\r\n");
+                ps1.Append("\t$errmsg = \"\"\r\n");
+                ps1.Append(string.Format("{0}\r\n", check_enums));
+                ps1.Append("\t# report invalid values\r\n");
+                ps1.Append("\t$line = $line + 1\r\n");
+                ps1.Append("\tif ($errmsg) {Write-Output \"line $($line):$errmsg\" }\r\n}\r\n\r\n");
+            }
+
+            if (exampleDate == "") exampleDate = "myDateField";
+
+            // Python examples of typical data transformations
+            ps1.Append("# --------------------------------------\r\n");
+            ps1.Append("# Data transformation suggestions\r\n");
+            ps1.Append("# --------------------------------------\r\n\r\n");
+
+            ps1.Append("# Reorder or remove columns (edit code below)\r\n");
+            ps1.Append("$csvnew = $csvdata | ForEach-Object {\r\n");
+            ps1.Append("\t# Reorder columns\r\n");
+            ps1.Append(col_order);
+            ps1.Append("#\t# Add columns\r\n");
+            ps1.Append(string.Format("#\t{0}  = $_.{0}.ToString(\"yyyy-MM-dd\")\r\n", exampleDate));
+            ps1.Append("#\tYesNo_code = switch ($_.YesNoValue) {\r\n");
+            ps1.Append("#\t\t\t\"No\" {\"0\"}\r\n");
+            ps1.Append("#\t\t\t\"Yes\" {\"1\"}\r\n");
+            ps1.Append("#\t\t\tdefault {$_}\r\n");
+            ps1.Append("#\t\t}\r\n");
+            ps1.Append("#\tbmi          = [math]::Round($_.Weight / ($_.Height * $_.Height), 2)\r\n");
+            ps1.Append("#\tcenter_patient  = $_.centercode.SubString(0, 2) + \"-\" + patientcode # '01-123' etc\r\n");
+            ps1.Append("}\r\n\r\n");
+
+            ps1.Append("# Merge datasets example, to join on multiple columns use a list, for example: on=['patient_id', 'center_id']\r\n");
+            ps1.Append("# $merged_df = Join-Object -Left $PSCustomObject -Right $DataTable -LeftJoinProperty 'ID' -RightJoinProperty 'IDD' -ExcludeRightProperties 'Junk' -Prefix 'R_' | Format-Table # same key column name\r\n");
+            ps1.Append("# $merged_df = Join-Object -Left $PSCustomObject -Right $DataTable -LeftJoinProperty 'ID' -RightJoinProperty 'IDD' -ExcludeRightProperties 'Junk' -Prefix 'R_' | Format-Table # different key column names\r\n\r\n");
+
+            ps1.Append("# csv write new output\r\n");
+            ps1.Append("$filenew = $pathname + \"output.txt\"\r\n");
+            ps1.Append(string.Format("$csvnew | Export-Csv -Path $filenew -Delimiter \"`t\" -NoTypeInformation\r\n", separator));
+
+            // create new file
+            notepad.FileNew();
+            editor.SetText(ps1.ToString());
+            if (ps1.Length < Main.Settings.AutoSyntaxLimit)
+            {
+                notepad.SetCurrentLanguage(LangType.L_POWERSHELL);
             }
         }
     }

@@ -654,11 +654,17 @@ namespace Kbg.NppPluginNET
                         case 1: // schema JSON
                             CsvGenerateCode.GenerateSchemaJSON(csvdef);
                             break;
-                        case 2: // Python
+                        case 2: // CSV datadictionary
+                            //TODO
+                            break;
+                        case 3: // Python
                             CsvGenerateCode.GeneratePythonPanda(csvdef);
                             break;
-                        case 3: // R - script
+                        case 4: // R-script
                             CsvGenerateCode.GenerateRScript(csvdef);
+                            break;
+                        case 5: // PowerShell
+                            CsvGenerateCode.GeneratePowerShell(csvdef);
                             break;
                         default: // case 0: schema ini
                             CsvGenerateCode.GenerateSchemaIni(csvdef);

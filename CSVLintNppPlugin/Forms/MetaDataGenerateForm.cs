@@ -14,19 +14,23 @@ namespace CSVLintNppPlugin.Forms
         public void InitialiseSetting()
         {
             // save user preferences
-            rdbtnSchemaIni.Checked  = (Main.Settings.MetadataType == 0); // schema ini
-            rdbtnSchemaJSON.Checked = (Main.Settings.MetadataType == 1); // schema JSON
-            rdbtnPython.Checked     = (Main.Settings.MetadataType == 2); // Python
-            rdbtnRScript.Checked    = (Main.Settings.MetadataType == 3); // R - script
+            rdbtnSchemaIni.Checked   = (Main.Settings.MetadataType == 0); // schema ini
+            rdbtnSchemaJSON.Checked  = (Main.Settings.MetadataType == 1); // schema JSON
+            rdbtnDatadictCSV.Checked = (Main.Settings.MetadataType == 2); // Datadictionary CSV
+            rdbtnPython.Checked      = (Main.Settings.MetadataType == 3); // Python
+            rdbtnRScript.Checked     = (Main.Settings.MetadataType == 4); // R-script
+            rdbtnPowerShell.Checked  = (Main.Settings.MetadataType == 5); // PowerShell
         }
 
         private void btnOk_Click(object sender, EventArgs e)
         {
             // save user preferences
             int idx = 0; // schema ini
-            if (rdbtnSchemaJSON.Checked) idx = 1; // schema JSON
-            if (rdbtnPython.Checked)     idx = 2; // Python
-            if (rdbtnRScript.Checked)    idx = 3; // R - script
+            if (rdbtnSchemaJSON.Checked)  idx = 1; // schema JSON
+            if (rdbtnDatadictCSV.Checked) idx = 2; // Datadictionary CSV
+            if (rdbtnPython.Checked)      idx = 3; // Python
+            if (rdbtnRScript.Checked)     idx = 4; // R-script
+            if (rdbtnPowerShell.Checked)  idx = 5; // PowerShell
 
             Main.Settings.MetadataType = idx;
 
