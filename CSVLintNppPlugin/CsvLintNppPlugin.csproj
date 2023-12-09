@@ -121,6 +121,9 @@
     </Compile>
     <Compile Include="PluginInfrastructure\DarkMode.cs" />
     <Compile Include="PluginInfrastructure\Lexer.cs" />
+    <Compile Include="Tools\MenuButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Tools\Settings.cs" />
     <Compile Include="Tools\Helper.cs" />
     <Compile Include="Forms\AboutForm.cs">

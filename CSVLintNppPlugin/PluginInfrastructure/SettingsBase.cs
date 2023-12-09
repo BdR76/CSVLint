@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using CSVLint.Tools;
+using CSVLintNppPlugin.Tools;
 using Kbg.NppPluginNET;
 using Kbg.NppPluginNET.PluginInfrastructure;
 
@@ -150,11 +151,11 @@ namespace CsvQuery.PluginInfrastructure
 
         private void colorButton_Click(object sender, EventArgs e)
         {
-            Button btn = (Button)sender;
-            //ContextMenu cm = btn.ContextMenu;
-            ContextMenuStrip cm = btn.ContextMenuStrip;
-
-            cm.Show(btn, new Point(0, btn.Height)); // offset from the edge of your button
+            // Button btn = (Button)sender;
+            // //ContextMenu cm = btn.ContextMenu;
+            // ContextMenuStrip cm = btn.ContextMenuStrip;
+            // 
+            // cm.Show(btn, new Point(0, btn.Height)); // offset from the edge of your button
         }
 
         private void colorMenuItem_Click(object sender, EventArgs e)
@@ -250,16 +251,18 @@ namespace CsvQuery.PluginInfrastructure
                         AutoScaleDimensions = new SizeF(6F,13F),
                         SelectedObject = copy
                     },
-                    new Button
+                    new MenuButton
                     {
                         Name = "Colors",
-                        Text = "Colors",
+                        Text = "Highlighting",
                         Anchor = AnchorStyles.Bottom | AnchorStyles.Left,
-                        Size = new Size(75, 23),
+                        Size = new Size(100, 23),
                         Location = new Point(13, DEFAULT_HEIGHT - 23 - 13),
                         UseVisualStyleBackColor = true,
                         //ContextMenu = cm
-                        ContextMenuStrip = cm
+                        Menu = cm
+                        //,Image = CSVLintNppPlugin.Properties.Resources.setcolor1,
+                        //ImageAlign = ContentAlignment.MiddleLeft
                     }
                 }
             };
