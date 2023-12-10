@@ -256,7 +256,7 @@ namespace CsvQuery.PluginInfrastructure
                         Name = "Colors",
                         Text = "Highlighting",
                         Anchor = AnchorStyles.Bottom | AnchorStyles.Left,
-                        Size = new Size(100, 23),
+                        Size = new Size(128, 23),
                         Location = new Point(13, DEFAULT_HEIGHT - 23 - 13),
                         UseVisualStyleBackColor = true,
                         //ContextMenu = cm

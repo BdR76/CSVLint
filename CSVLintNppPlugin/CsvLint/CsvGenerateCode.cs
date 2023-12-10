@@ -211,11 +211,22 @@ namespace CSVLint
             INotepadPPGateway notepad = new NotepadPPGateway();
             IScintillaGateway editor = new ScintillaGateway(PluginBase.GetCurrentScintilla());
 
+            CsvDefinition datadict = new CsvDefinition(',');
+
+            datadict.AddColumn("Nr", 8, ColumnType.Integer);
+            datadict.AddColumn("ColumnName", 1000, ColumnType.String);
+            datadict.AddColumn("DataType", 1000, ColumnType.String);
+            datadict.AddColumn("Width", 8, ColumnType.Integer);
+            datadict.AddColumn("Decimals", 8, ColumnType.Integer);
+            datadict.AddColumn("Mask", 1000, ColumnType.String);
+            datadict.AddColumn("Enumeration", 9999, ColumnType.String);
+
             string FILE_NAME = Path.GetFileName(notepad.GetCurrentFilePath());
             var separator = (csvdef.Separator == '\0' ? "{fixed-width}" : csvdef.Separator.ToString());
             if (separator == "\t") separator = "\\t";
 
             StringBuilder csvmeta = new StringBuilder();
+            List<string> sl = new List<string>();
 
             // build CSV
             csvmeta.Append("Nr,ColumnName,DataType,Width,Decimals,Mask,Enumeration\r\n");
@@ -249,13 +260,20 @@ namespace CSVLint
                 };
 
                 // enumeration
-                if (coldef.isCodedValue)
-                {
-                    enumvals = string.Join("|", coldef.CodedList);
-                    enumvals = string.Format("\"{0}\"", enumvals); // use quotes
-                }
+                if (coldef.isCodedValue) enumvals = string.Join("|", coldef.CodedList);
 
-                csvmeta.Append(string.Format("{0},\"{1}\",{2},{3},{4},{5},{6}\r\n", (c + 1), coldef.Name, dattyp, colwid, dec, mask, enumvals));
+                // add values as columns
+                sl.Clear();
+                sl.Add((c + 1).ToString()); // Nr
+                sl.Add(coldef.Name);        // ColumnName
+                sl.Add(dattyp);             // DataType
+                sl.Add(colwid);             // Width
+                sl.Add(dec);                // Decimals
+                sl.Add(mask);               // Mask
+                sl.Add(enumvals);           // Enumeration
+
+                // Construct/format csv line
+                csvmeta.Append(string.Format("{0}\r\n", datadict.ConstructLine(sl, false)));
             }
 
             // create new file
