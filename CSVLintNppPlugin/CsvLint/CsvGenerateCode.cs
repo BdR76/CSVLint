@@ -255,7 +255,7 @@ namespace CSVLint
                     enumvals = string.Format("\"{0}\"", enumvals); // use quotes
                 }
 
-                csvmeta.Append(string.Format("{0},{1},{2},{3},{4},{5},{6}\r\n", (c + 1), coldef.Name, dattyp, colwid, dec, mask, enumvals));
+                csvmeta.Append(string.Format("{0},\"{1}\",{2},{3},{4},{5},{6}\r\n", (c + 1), coldef.Name, dattyp, colwid, dec, mask, enumvals));
             }
 
             // create new file
@@ -771,10 +771,11 @@ namespace CSVLint
 
             // start PowerShell script
             ps1.Append("# working directory and filename\r\n");
-            ps1.Append(string.Format("$pathname = \"{0}\")\r\n", FILE_PATH));
+            ps1.Append(string.Format("$pathname = \"{0}\"\r\n", FILE_PATH));
             ps1.Append(string.Format("$filename = $pathname + \"{0}\"\r\n\r\n", FILE_NAME));
 
             var col_names = "";
+            var col_fixed = "";
             var col_order = "";
             var col_types = "";
             var col_enums = "";
@@ -783,7 +784,13 @@ namespace CSVLint
             var exampleDate = "";
 
             var r_dec = "";
+            var startpos = 0;
 
+            // get max column name length, for aligning columns
+            var MAX_COLNAME = 1;
+            for (int c = 0; c < csvdef.Fields.Count; c++) { if (csvdef.Fields[c].Name.Length > MAX_COLNAME) MAX_COLNAME = csvdef.Fields[c].Name.Length; };
+
+            // process all columns
             for (int c = 0; c < csvdef.Fields.Count; c++)
             {
                 // next field
@@ -791,14 +798,16 @@ namespace CSVLint
 
                 // any characters are allowed in Python column names
                 var colname = coldef.Name;
-                //colname = Regex.Replace(colname, "[^a-zA-Z0-9]", "_"); // not letter or digit
-                var colnamepad = colname.PadRight(15, ' ');
+                var colname_fix = Regex.Replace(colname, "[^a-zA-Z0-9]", "_"); // not letter or digit
+                if (colname != colname_fix) colname = string.Format("\"{0}\"", colname); // if columns name contains spaces
+
+                var colnamepad = colname.PadRight(MAX_COLNAME, ' ');
 
                 var comma = (c < csvdef.Fields.Count - 1 ? ", " : "");
 
                 // list all column names
-                col_names += string.Format("\"{0}\"{1}", colname, comma);
-                col_order += string.Format("\t{0} = $_.{1}\r\n", colnamepad, colname);
+                col_names += string.Format("\"{0}\"{1}", coldef.Name, comma);
+                col_order += string.Format("\t\t{0} = $_.{1}\r\n", colnamepad, colname);
 
                 // enumeration
                 if (coldef.isCodedValue)
@@ -813,8 +822,8 @@ namespace CSVLint
                     {
                         enumvals = enumvals.Replace("\"", ""); // no quotes
                     };
-                    col_enums += string.Format("${0}_array = @({1})\r\n", coldef.Name, enumvals);
-                    check_enums += string.Format("\tif (!(${0}_array -contains $row.{0})) {{$errmsg += \" $($row.{0}) is invalid {0}\"}}\r\n", coldef.Name);
+                    col_enums += string.Format("${0}_array = @({1})\r\n", colname_fix, enumvals);
+                    check_enums += string.Format("\tif ($row.{1} -and !(${0}_array -contains $row.{1})) {{$errmsg += \"Invalid {2} \"\"$($row.{1})\"\" \"}}\r\n", colname_fix, colname, colname.Replace("\"", "\"\""));
                 }
 
                 // indent for next lines
@@ -826,24 +835,33 @@ namespace CSVLint
                     case ColumnType.DateTime:
                         // build Python fomat example "M/d/yyyy HH:m:s" -> "%m/%d/%Y %H:%M:%S"
                         var msk = coldef.Mask;
-                        msk = DateMaskStandardToCstr(msk);
-                        col_types += string.Format("\t$row.{0} = [datetime]::parseexact($row.{1}, '{2}', $null)\r\n", colnamepad, colname, msk);
+                        //msk = DateMaskStandardToCstr(msk);
+                        col_types += string.Format("\t\t$row.{0} = [datetime]::parseexact($row.{1}, '{2}', $null)\r\n", colnamepad, colname, msk);
                         if (exampleDate == "") exampleDate = colname;
                         break;
                     case ColumnType.Integer:
-                        col_types += string.Format("\t$row.{0} = [int]($row.{1} -replace 'NaN', '')\r\n", colnamepad, colname);
+                        col_types += string.Format("\t\t$row.{0} = [int]($row.{1} -replace '{2}', '')\r\n", colnamepad, colname, Main.Settings.NullKeyword);
 
                         break;
                     case ColumnType.Decimal:
-                        col_types += string.Format("\t$row.{0} = [decimal]($row.{1} -replace ',', '.')\r\n", colnamepad, colname);
+                        col_types += string.Format("\t\t$row.{0} = [decimal]($row.{1} -replace ',', '.')\r\n", colnamepad, colname);
 
                         // just use the first decimal symbol
                         if (r_dec == "") r_dec = coldef.DecimalSymbol.ToString();
                         break;
-                    //default:
-                    //    col_types += string.Format("#\t$row.{0} = $row.{1}\r\n", colnamepad, colname);
-                    //    break;
+                    default:
+                        col_types += string.Format("\t\t$row.{0} = $row.{1}.Trim(' \"')\r\n", colnamepad, colname);
+                        break;
                 };
+
+                // fixed width columns
+                if (csvdef.Separator == '\0')
+                {
+                    var strpos = startpos.ToString().PadLeft(3, ' ');
+                    var strwid = coldef.MaxWidth.ToString().PadLeft(2, ' ');
+                    col_fixed += string.Format("\t\t{0} = $line.Substring({1}, {2}).Trim(' \"')\r\n", colnamepad, strpos, strwid);
+                    startpos += coldef.MaxWidth;
+                }
             }
 
             // no decimals, then not technically needed but nice to have as example code
@@ -855,12 +873,12 @@ namespace CSVLint
             if (separator != "\0")
             {
                 if (separator == "\t") separator = "`t";
-                nameparam = string.Format(" -Delimiter \"{0}\"", separator);
+                nameparam += string.Format(" -Delimiter \"{0}\"", separator);
             }
 
             if (!csvdef.ColNameHeader)
             {
-                nameparam = string.Format(" -Header @({0})", col_names);
+                nameparam += string.Format(" -Header @({0})", col_names);
             }
 
             // PowerShell skip comment lines
@@ -875,24 +893,10 @@ namespace CSVLint
                 // fixed width
                 ps1.Append(string.Format("# read fixed width data file, positions {0}\r\n", GetColumnWidths(csvdef, true)));
 
-                ps1.Append("$stream_in = [System.IO.StreamReader]::new($pathname + $filename)\r\n\r\n");
+                ps1.Append("$stream_in = [System.IO.StreamReader]::new($filename)\r\n\r\n");
                 ps1.Append("$csvdata = while ($line = $stream_in.ReadLine()) {\r\n");
                 ps1.Append("\t[PSCustomObject]@{\r\n");
-
-                // fixed width columns
-                var startpos = 0;
-                for (int c = 0; c < csvdef.Fields.Count; c++)
-                {
-                    // next field
-                    var coldef = csvdef.Fields[c];
-
-                    // space characters are not allowed in PowerShell customobject field names
-                    var colname = coldef.Name.PadRight(15, ' ');
-                    var strpos = startpos.ToString().PadLeft(3, ' ');
-                    var strwid = coldef.MaxWidth.ToString().PadLeft(2, ' ');
-                    ps1.Append(string.Format("\t\t{0} = $line.Substring({1}, {2}).Trim(' \"')\r\n", colname, strpos, strwid));
-                    startpos += coldef.MaxWidth;
-                };
+                ps1.Append(col_fixed);
                 ps1.Append("\t}\r\n}\r\n\r\n");
             }
             else
@@ -906,11 +910,17 @@ namespace CSVLint
             if (col_types != "")
             {
                 ps1.Append("# Explicit datatypes\r\n");
-                ps1.Append("# WARNING: The script below doesn't have any eror handling for null/empty values,\r\n");
-                ps1.Append("# so if your data file contains int, decimal or datetime columns with empty or incorrect values,\r\n");
-                ps1.Append("# this script can throw errors or silently change values to '0', so beware.\r\n");
+                ps1.Append("# WARNING: PowerShell has very basic error handling for null or invalid values,\r\n");
+                ps1.Append("# so if your data file contains integer, decimal or datetime columns with empty or incorrect values,\r\n");
+                ps1.Append("# this script can throw errors, silently change values to '0' or omit rows in the output csv, so beware.\r\n");
+                ps1.Append("$line = 0\r\n");
                 ps1.Append("foreach ($row in $csvdata)\r\n{\r\n");
+                ps1.Append("\t$line += 1\r\n");
+                ps1.Append("\ttry {\r\n");
                 ps1.Append(col_types);
+                ps1.Append("\t} catch {\r\n");
+                ps1.Append("\t\tWrite-Error \"Data conversion error(s) on line $line\" -TargetObject $row\r\n");
+                ps1.Append("\t}\r\n");
                 ps1.Append("}\r\n\r\n");
             }
 
@@ -921,13 +931,13 @@ namespace CSVLint
                 ps1.Append(string.Format("{0}\r\n", col_enums));
                 ps1.Append("# enumeration check invalid values\r\n");
                 ps1.Append("$line = 0\r\n");
-                ps1.Append("foreach ($row in $csvdata)\r\n\r\n");
+                ps1.Append("foreach ($row in $csvdata)\r\n{\r\n");
                 ps1.Append("\t# check invalid values\r\n");
                 ps1.Append("\t$errmsg = \"\"\r\n");
                 ps1.Append(string.Format("{0}\r\n", check_enums));
                 ps1.Append("\t# report invalid values\r\n");
                 ps1.Append("\t$line = $line + 1\r\n");
-                ps1.Append("\tif ($errmsg) {Write-Output \"line $($line):$errmsg\" }\r\n}\r\n\r\n");
+                ps1.Append("\tif ($errmsg) {Write-Error \"$errmsg on line $line\" -TargetObject $row}\r\n}\r\n\r\n");
             }
 
             if (exampleDate == "") exampleDate = "myDateField";
@@ -939,17 +949,19 @@ namespace CSVLint
 
             ps1.Append("# Reorder or remove columns (edit code below)\r\n");
             ps1.Append("$csvnew = $csvdata | ForEach-Object {\r\n");
-            ps1.Append("\t# Reorder columns\r\n");
+            ps1.Append("\t[PSCustomObject]@{\r\n");
+            ps1.Append("\t\t# Reorder columns\r\n");
             ps1.Append(col_order);
-            ps1.Append("#\t# Add columns\r\n");
-            ps1.Append(string.Format("#\t{0}  = $_.{0}.ToString(\"yyyy-MM-dd\")\r\n", exampleDate));
-            ps1.Append("#\tYesNo_code = switch ($_.YesNoValue) {\r\n");
-            ps1.Append("#\t\t\t\"No\" {\"0\"}\r\n");
-            ps1.Append("#\t\t\t\"Yes\" {\"1\"}\r\n");
-            ps1.Append("#\t\t\tdefault {$_}\r\n");
-            ps1.Append("#\t\t}\r\n");
-            ps1.Append("#\tbmi          = [math]::Round($_.Weight / ($_.Height * $_.Height), 2)\r\n");
-            ps1.Append("#\tcenter_patient  = $_.centercode.SubString(0, 2) + \"-\" + patientcode # '01-123' etc\r\n");
+            ps1.Append("#\t\t# Add columns\r\n");
+            ps1.Append(string.Format("#\t\t{0} = $_.{1}.ToString(\"yyyy-MM-dd\")\r\n", exampleDate.PadRight(MAX_COLNAME, ' '), exampleDate));
+            ps1.Append(string.Format("#\t\t{0} = switch ($_.YesNoValue) {{\r\n", "YesNo_code".PadRight(MAX_COLNAME, ' ')));
+            ps1.Append("#\t\t\t\t\"No\" {\"0\"}\r\n");
+            ps1.Append("#\t\t\t\t\"Yes\" {\"1\"}\r\n");
+            ps1.Append("#\t\t\t\tdefault {$_}\r\n");
+            ps1.Append("#\t\t\t}\r\n");
+            ps1.Append(string.Format("#\t\t{0} = [math]::Round($_.Weight / ($_.Height * $_.Height), 2)\r\n", "bmi".PadRight(MAX_COLNAME, ' ')));
+            ps1.Append(string.Format("#\t\t{0} = $_.centercode.SubString(0, 2) + \"-\" + patientcode # '01-123' etc\r\n", "cent_pat".PadRight(MAX_COLNAME, ' ')));
+            ps1.Append("\t}\r\n");
             ps1.Append("}\r\n\r\n");
 
             ps1.Append("# Merge datasets example, to join on multiple columns use a list, for example: on=['patient_id', 'center_id']\r\n");
