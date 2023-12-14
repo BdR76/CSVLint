@@ -1,6 +1,6 @@
 CSV Lint - Notepad++ plugin
 ===========================
-![Release version](https://img.shields.io/github/v/release/BdR76/CSVLint) ![GitHub all releases](https://img.shields.io/github/downloads/BdR76/CSVLint/total) ![GitHub latest release](https://img.shields.io/github/downloads/BdR76/CSVLint/latest/total) [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=US5SMK2DC6TXE)   
+![Release version](https://img.shields.io/github/v/release/BdR76/CSVLint) ![GitHub all releases](https://img.shields.io/github/downloads/BdR76/CSVLint/total) ![GitHub latest release](https://img.shields.io/github/downloads/BdR76/CSVLint/latest/total) [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/donate/?hosted_button_id=T8QZSFBNAPERL)   
 
 CSV Lint plug-in for [Notepad++](http://notepad-plus-plus.org/) adds
 syntax highlighting to [comma-separated values](https://en.wikipedia.org/wiki/Comma-separated_values)
@@ -30,7 +30,7 @@ so if you encounter any bugs or unexpected output I encourage you to [report iss
 CSVLint is based on a prototype project [Dataset MultiTool](https://github.com/BdR76/datasetmultitool)
 
 **If you find the CSV Lint plug-in useful you can buy me a coffee!** ☕  
-[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=US5SMK2DC6TXE)
+[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/donate/?hosted_button_id=T8QZSFBNAPERL)
 
 How to install
 --------------

@@ -22,7 +22,7 @@ CSV Lint under the `Plugins > CSV Lint` menu item and a CSV Lint icon in the
 toolbar icon.
 
 **If you find the CSV Lint plug-in useful you can buy me a coffee!** ☕  
-[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=US5SMK2DC6TXE)
+[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/donate/?hosted_button_id=T8QZSFBNAPERL)
 
 Syntax highlighting colors
 --------------------------
