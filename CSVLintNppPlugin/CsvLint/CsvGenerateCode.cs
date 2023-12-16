@@ -769,6 +769,8 @@ namespace CSVLint
 
             var col_names = "";
             var col_fixed = "";
+            var col_fixed_write1 = "";
+            var col_fixed_write2 = "";
             var col_order = "";
             var col_types = "";
             var col_enums = "";
@@ -800,7 +802,8 @@ namespace CSVLint
 
                 // list all column names
                 col_names += string.Format("\"{0}\"{1}", coldef.Name, comma);
-                col_order += string.Format("\t\t{0} = $_.{1}\r\n", colnamepad, colname);
+                var datemask = (coldef.DataType == ColumnType.DateTime ? string.Format(".ToString(\"{0}\")", coldef.Mask) : ""); 
+                col_order += string.Format("\t\t{0} = $_.{1}{2}\r\n", colnamepad, colname, datemask);
 
                 // enumeration
                 if (coldef.isCodedValue)
@@ -855,6 +858,8 @@ namespace CSVLint
                     col_fixed += string.Format("\t\t{0} = $line.Substring({1}, {2}).Trim(' \"')\r\n", colnamepad, strpos, strwid);
                     startpos += coldef.MaxWidth;
                 }
+                col_fixed_write1 += string.Format("{{{0},{1}{2}}} ", c, (coldef.DataType == ColumnType.Integer || coldef.DataType == ColumnType.Decimal ? "" : "-"), coldef.MaxWidth);
+                col_fixed_write2 += string.Format("$row.{0}{1}", colname, comma);
             }
 
             // no decimals, then not technically needed but nice to have as example code
@@ -884,13 +889,26 @@ namespace CSVLint
             if (csvdef.Separator == '\0')
             {
                 // fixed width
-                ps1.Append(string.Format("# read fixed width data file, positions {0}\r\n", GetColumnWidths(csvdef, true)));
-
+                ps1.Append(string.Format("# read fixed width data file, positions {0}\r\n", csvdef.GetColumnWidths(true)));
                 ps1.Append("$stream_in = [System.IO.StreamReader]::new($filename)\r\n\r\n");
+
+                if (csvdef.SkipLines > 0)
+                {
+                    ps1.Append(string.Format("# skip first {0} lines\r\n", csvdef.SkipLines));
+                    ps1.Append(string.Format("for ($i=0; $i -lt {0}; $i=$i+1) { $skipline = $stream_in.ReadLine() }\r\n", csvdef.SkipLines));
+                }
+
+                if (csvdef.ColNameHeader)
+                {
+                    ps1.Append("# skip header\r\n");
+                    ps1.Append("$skipline = $stream_in.ReadLine()\r\n");
+                }
+
+                ps1.Append("# read fixed width data\r\n");
                 ps1.Append("$csvdata = while ($line = $stream_in.ReadLine()) {\r\n");
                 ps1.Append("\t[PSCustomObject]@{\r\n");
                 ps1.Append(col_fixed);
-                ps1.Append("\t}\r\n}\r\n\r\n");
+                ps1.Append("\t}\r\n}\r\n$stream_in.Dispose()\r\n\r\n");
             }
             else
             {
@@ -957,13 +975,22 @@ namespace CSVLint
             ps1.Append("\t}\r\n");
             ps1.Append("}\r\n\r\n");
 
-            ps1.Append("# Merge datasets example, to join on multiple columns use a list, for example: on=['patient_id', 'center_id']\r\n");
-            ps1.Append("# $merged_df = Join-Object -Left $PSCustomObject -Right $DataTable -LeftJoinProperty 'ID' -RightJoinProperty 'IDD' -ExcludeRightProperties 'Junk' -Prefix 'R_' | Format-Table # same key column name\r\n");
-            ps1.Append("# $merged_df = Join-Object -Left $PSCustomObject -Right $DataTable -LeftJoinProperty 'ID' -RightJoinProperty 'IDD' -ExcludeRightProperties 'Junk' -Prefix 'R_' | Format-Table # different key column names\r\n\r\n");
+            ps1.Append("## Merge datasets in PowerShell requires custom external modules which goes beyond the scope of this generated script\r\n");
+            ps1.Append("##Install-Module -Name Join-Object\r\n");
+            ps1.Append("##$merged_df = Join-Object -Left $patients -Right $visits -LeftJoinProperty 'PATIENT_ID' -RightJoinProperty 'PATIENT_ID' -ExcludeRightProperties 'Junk' -Prefix 'R_' | Format-Table\r\n\r\n");
 
             ps1.Append("# csv write new output\r\n");
             ps1.Append("$filenew = $pathname + \"output.txt\"\r\n");
-            ps1.Append(string.Format("$csvnew | Export-Csv -Path $filenew -Delimiter \"`t\" -NoTypeInformation\r\n", separator));
+            ps1.Append(string.Format("$csvnew | Export-Csv -Path $filenew -Encoding utf8 -Delimiter \"`t\" -NoTypeInformation\r\n\r\n", separator));
+
+            ps1.Append("# alternatively, write as fixed width\r\n");
+            ps1.Append("#$stream_out = New-Object System.IO.StreamWriter $filenew\r\n");
+            ps1.Append("#foreach ($row in $csvnew)\r\n");
+            ps1.Append("#{\r\n");
+            ps1.Append("#\t# {colnr,width} space etc, negative width means left aligned\r\n");
+            ps1.Append(string.Format("#\t$stream_out.WriteLine((\"{0}\" -f {1}))\r\n", col_fixed_write1.Trim(), col_fixed_write2));
+            ps1.Append("#}\r\n");
+            ps1.Append("#$stream_out.Dispose()\r\n");
 
             // create new file
             notepad.FileNew();
