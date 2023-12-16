@@ -586,6 +586,10 @@ format for the Microsoft Jet OLE DB, also known as the ODBC text driver.
 
 File and column metadata in [W3C CSV schema JSON](https://www.w3.org/TR/tabular-data-primer/) format.
 
+### Datadictionary CSV ###
+
+File and column metadata in CSV format.
+
 ### Python ###
 
 Generates a [Python](https://www.python.org/) script to read the csv data file
@@ -598,6 +602,12 @@ Generates an [R-script](https://www.r-project.org/) to read the csv data file
 as a dataframe. It contains the required scripting for the appropriate
 datatypes, and it is meant as a starting point for further script development in
 [R-Studio](https://www.rstudio.com/products/rstudio/).
+
+### PowerShell ###
+
+Generates a [PowerShell](https://en.wikipedia.org/wiki/PowerShell/) script to read the csv data file
+as a dataset variable. It contains the required scripting for the appropriate
+datatypes, and it is meant as a starting point for further script development.
 
 Settings
 --------
@@ -619,7 +629,7 @@ and they are stored in a settings file `%USERPROFILE%\AppData\Roaming\Notepad++\
 | TwoDigitYearMax  | Maximum year for two digit year date values. For example, when set to 2024 the year values 24 and 25 will be interpreted as 2024 and 1925. Set as CurrentYear for current year. | CurrentYear |
 | DefaultQuoteChar | Default quote character, typically a double quote " or a single quote '                                         | "       |
 | FontDock         | Default font for text boxes in CSV Lint docking window. Changing the font requires closing and opening the CSV docked window.  | Courier New, 11.25pt  |
-| NullValue        | Keyword for empty values or null values in the csv data, case-sensitive.                                        | NaN     |
+| NullKeyword      | A case-sensitive keyword that will be treated as an empty value, typically `NULL`, `NaN`, `NA` or `None` depending on your data | NaN     |
 | SeparatorColor   | Include separator in syntax highlighting colors. Set to false and the separator characters are always white.    | false   |
 | Separators       | Preferred characters when automatically detecting the separator character. For special characters like tab, use \\t or hexadecimal escape sequence \\u0009 or \\x09. | ,;\t&#124; |
 | TransparentCursor| Transparent cursor line, changing this setting will require a restart of Notepad++                              | true    |
@@ -658,5 +668,6 @@ History
 16-apr-2023 - v0.4.6.3 Syntax Highlighting fix, new SkipLines feature and quoted string improvements  
 02-may-2023 - v0.4.6.4 Comment character and dark mode support  
 04-jun-2023 - v0.4.6.5 Support enum/coded values and various updates  
+16-dec-2023 - v0.4.6.6 PowerShell support and various updates  
 
 BdR©2023 Free to use - send questions or comments: Bas de Reuver - bdr1976@gmail.com

@@ -499,8 +499,7 @@ namespace CSVLint
                         // remember next batch
                         batchstart = lineCount + 1;
 
-                        sb.Append("\r\n");
-                        sb.Append("-- -------------------------------------\r\n");
+                        sb.Append("\r\n-- -------------------------------------\r\n");
                         sb.Append("-- insert records \r\n");
                         batchcomm = sb.Length - 2; // -2 because of the 2 characters \r\n
                         sb.Append("-- -------------------------------------\r\n");
@@ -830,7 +829,7 @@ namespace CSVLint
                             var colvalue = "";
                             if (col < list.Count) colvalue = list[col];
 
-                            var colname = csvdef.Fields[col].Name;
+                            var colname = csvdef.Fields[col].Name.Replace("\"", "\\\""); // \"  Double quote
 
                             // adjust for quoted values, trim first because can be a space before the first quote, example .., "BMI",..
                             var strtrim = colvalue.Trim();
