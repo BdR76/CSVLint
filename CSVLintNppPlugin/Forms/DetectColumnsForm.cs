@@ -1,4 +1,5 @@
-﻿using Kbg.NppPluginNET;
+﻿using CSVLint;
+using Kbg.NppPluginNET;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -137,6 +138,18 @@ namespace CSVLintNppPlugin.Forms
             // which checkbox, see index in Tag property
             bool chk = (sender as CheckBox).Checked;
             ToggleControlBasedOnControl(sender as CheckBox, chk);
+        }
+
+        private void btnFixedWidthPos_Click(object sender, EventArgs e)
+        {
+            // show dialog
+            DialogResult dialogResult = MessageBox.Show("Paste column end positions based on the current column widths?", "Paste end positions", MessageBoxButtons.OKCancel);
+            if (dialogResult == DialogResult.OK)
+            {
+                // paste column positions
+                CsvDefinition csvdef = Main.GetCurrentCsvDef();
+                txtFixedWidthPos.Text = csvdef.GetColumnWidths(true);
+            }
         }
     }
 }

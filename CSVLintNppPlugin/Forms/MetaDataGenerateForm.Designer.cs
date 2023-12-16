@@ -67,14 +67,14 @@ namespace CSVLintNppPlugin.Forms
             this.lblMetadataType.AutoSize = true;
             this.lblMetadataType.Location = new System.Drawing.Point(13, 48);
             this.lblMetadataType.Name = "lblMetadataType";
-            this.lblMetadataType.Size = new System.Drawing.Size(75, 13);
+            this.lblMetadataType.Size = new System.Drawing.Size(98, 13);
             this.lblMetadataType.TabIndex = 3;
-            this.lblMetadataType.Text = "Metadata type";
+            this.lblMetadataType.Text = "Generate metadata";
             // 
             // rdbtnSchemaIni
             // 
             this.rdbtnSchemaIni.AutoSize = true;
-            this.rdbtnSchemaIni.Location = new System.Drawing.Point(104, 48);
+            this.rdbtnSchemaIni.Location = new System.Drawing.Point(120, 48);
             this.rdbtnSchemaIni.Name = "rdbtnSchemaIni";
             this.rdbtnSchemaIni.Size = new System.Drawing.Size(77, 17);
             this.rdbtnSchemaIni.TabIndex = 3;
@@ -85,7 +85,7 @@ namespace CSVLintNppPlugin.Forms
             // rdbtnSchemaJSON
             // 
             this.rdbtnSchemaJSON.AutoSize = true;
-            this.rdbtnSchemaJSON.Location = new System.Drawing.Point(104, 72);
+            this.rdbtnSchemaJSON.Location = new System.Drawing.Point(120, 72);
             this.rdbtnSchemaJSON.Name = "rdbtnSchemaJSON";
             this.rdbtnSchemaJSON.Size = new System.Drawing.Size(144, 17);
             this.rdbtnSchemaJSON.TabIndex = 4;
@@ -96,7 +96,7 @@ namespace CSVLintNppPlugin.Forms
             // rdbtnDatadictCSV
             // 
             this.rdbtnDatadictCSV.AutoSize = true;
-            this.rdbtnDatadictCSV.Location = new System.Drawing.Point(104, 96);
+            this.rdbtnDatadictCSV.Location = new System.Drawing.Point(120, 96);
             this.rdbtnDatadictCSV.Name = "rdbtnDatadictCSV";
             this.rdbtnDatadictCSV.Size = new System.Drawing.Size(117, 17);
             this.rdbtnDatadictCSV.TabIndex = 5;
@@ -107,7 +107,7 @@ namespace CSVLintNppPlugin.Forms
             // rdbtnPython
             // 
             this.rdbtnPython.AutoSize = true;
-            this.rdbtnPython.Location = new System.Drawing.Point(104, 120);
+            this.rdbtnPython.Location = new System.Drawing.Point(120, 120);
             this.rdbtnPython.Name = "rdbtnPython";
             this.rdbtnPython.Size = new System.Drawing.Size(86, 17);
             this.rdbtnPython.TabIndex = 6;
@@ -118,7 +118,7 @@ namespace CSVLintNppPlugin.Forms
             // rdbtnRScript
             // 
             this.rdbtnRScript.AutoSize = true;
-            this.rdbtnRScript.Location = new System.Drawing.Point(104, 144);
+            this.rdbtnRScript.Location = new System.Drawing.Point(120, 144);
             this.rdbtnRScript.Name = "rdbtnRScript";
             this.rdbtnRScript.Size = new System.Drawing.Size(61, 17);
             this.rdbtnRScript.TabIndex = 7;
@@ -129,7 +129,7 @@ namespace CSVLintNppPlugin.Forms
             // rdbtnPowerShell
             // 
             this.rdbtnPowerShell.AutoSize = true;
-            this.rdbtnPowerShell.Location = new System.Drawing.Point(104, 168);
+            this.rdbtnPowerShell.Location = new System.Drawing.Point(120, 168);
             this.rdbtnPowerShell.Name = "rdbtnPowerShell";
             this.rdbtnPowerShell.Size = new System.Drawing.Size(78, 17);
             this.rdbtnPowerShell.TabIndex = 8;
@@ -142,9 +142,9 @@ namespace CSVLintNppPlugin.Forms
             this.lblScripts.AutoSize = true;
             this.lblScripts.Location = new System.Drawing.Point(13, 120);
             this.lblScripts.Name = "lblScripts";
-            this.lblScripts.Size = new System.Drawing.Size(39, 13);
+            this.lblScripts.Size = new System.Drawing.Size(79, 13);
             this.lblScripts.TabIndex = 3;
-            this.lblScripts.Text = "Scripts";
+            this.lblScripts.Text = "Generate script";
             // 
             // MetaDataGenerateForm
             // 

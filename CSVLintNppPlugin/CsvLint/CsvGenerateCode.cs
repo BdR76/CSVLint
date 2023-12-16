@@ -47,31 +47,6 @@ namespace CSVLint
         }
 
         /// <summary>
-        /// Get list of widths fixed width
-        /// </summary>
-        /// <param name="csvdef"> csvdefinition </param>
-        /// <param name="abspos"> absolute column positions or column widths</param>
-        private static string GetColumnWidths(CsvDefinition csvdef, bool abspos)
-        {
-            var res = (abspos ? "0, " : "");
-            var colwidth = 0;
-
-            for (int c = 0; c < csvdef.Fields.Count; c++)
-            {
-                // next field
-                if (abspos) {
-                    colwidth += csvdef.Fields[c].MaxWidth;
-                } else {
-                    colwidth = csvdef.Fields[c].MaxWidth;
-                }
-                var comma = (c < csvdef.Fields.Count-1 ? ", " : "");
-                res += string.Format("{0}{1}", colwidth, comma);
-            }
-
-            return res;
-        }
-
-        /// <summary>
         /// Standard disclaimer for generated scripts
         /// </summary>
         private static void ScriptDisclaimer(StringBuilder sb)
@@ -106,7 +81,7 @@ namespace CSVLint
             // file format
             jsonmeta.Append("\t\"dialect\": {");
             if (csvdef.Separator == '\0')
-                jsonmeta.Append(string.Format("\r\n\t\t\"columnpositions\": [{0}]", GetColumnWidths(csvdef, true)));
+                jsonmeta.Append(string.Format("\r\n\t\t\"columnpositions\": [{0}]", csvdef.GetColumnWidths(true)));
             else
                 jsonmeta.Append(string.Format("\r\n\t\t\"delimiter\": \"{0}\"", separator));
             jsonmeta.Append(string.Format(",\r\n\t\t\"header\": \"{0}\"", (csvdef.ColNameHeader ? "true" : "false")));
@@ -437,8 +412,8 @@ namespace CSVLint
             if (csvdef.Separator == '\0')
             {
                 // fixed width
-                python.Append(string.Format("# fixed width, positions {0}\r\n", GetColumnWidths(csvdef, true)));
-                python.Append(string.Format("col_widths = [{0}]\r\n", GetColumnWidths(csvdef, false)));
+                python.Append(string.Format("# fixed width, positions {0}\r\n", csvdef.GetColumnWidths(true)));
+                python.Append(string.Format("col_widths = [{0}]\r\n", csvdef.GetColumnWidths(false)));
                 python.Append(string.Format("df = pd.read_fwf(filename, decimal='{0}'{1}{2}, dtype=col_types, widths=col_widths)\r\n\r\n", r_dec, nameparam, col_dates));
             }
             else
@@ -525,7 +500,7 @@ namespace CSVLint
 
             // fixed width, also output absolute column positions
             var colwidth = "";
-            if (csvdef.Separator == '\0') colwidth = string.Format("\r\n; Fixed Length positions {0}\r\n", GetColumnWidths(csvdef, true));
+            if (csvdef.Separator == '\0') colwidth = string.Format("\r\n; Fixed Length positions {0}\r\n", csvdef.GetColumnWidths(true));
 
             // also add filename
             string FILE_NAME = Path.GetFileName(notepad.GetCurrentFilePath());
@@ -683,8 +658,8 @@ namespace CSVLint
             if (csvdef.Separator == '\0')
             {
                 // fixed width
-                rscript.Append(string.Format("# fixed width, positions {0}\r\n", GetColumnWidths(csvdef, true)));
-                rscript.Append(string.Format("colWidths <- c({0})\r\n", GetColumnWidths(csvdef, false)));
+                rscript.Append(string.Format("# fixed width, positions {0}\r\n", csvdef.GetColumnWidths(true)));
+                rscript.Append(string.Format("colWidths <- c({0})\r\n", csvdef.GetColumnWidths(false)));
                 rscript.Append(string.Format("df <- read.fwf(filename, {0}colClasses=colTypes, width=colWidths, stringsAsFactors=FALSE, comment.char='', header={1})\r\n\r\n", nameparam, header));
             } else {
                 // character separated

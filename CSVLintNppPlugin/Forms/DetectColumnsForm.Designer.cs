@@ -33,6 +33,7 @@ namespace CSVLintNppPlugin.Forms
             this.cmbColumnSeparator = new System.Windows.Forms.ComboBox();
             this.lblFixedWidthPos = new System.Windows.Forms.Label();
             this.txtFixedWidthPos = new System.Windows.Forms.TextBox();
+            this.btnFixedWidthPos = new System.Windows.Forms.Button();
             this.chkHeaderNames = new System.Windows.Forms.CheckBox();
             this.chkSkipLines = new System.Windows.Forms.CheckBox();
             this.numSkipLines = new System.Windows.Forms.NumericUpDown();
@@ -44,13 +45,13 @@ namespace CSVLintNppPlugin.Forms
             // 
             // btnOk
             // 
-            this.btnOk.Location = new System.Drawing.Point(153, 212);
-            this.btnOk.TabIndex = 8;
+            this.btnOk.Location = new System.Drawing.Point(192, 210);
+            this.btnOk.TabIndex = 9;
             this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
             // 
             // picHelpIcon
             // 
-            this.picHelpIcon.Location = new System.Drawing.Point(356, 8);
+            this.picHelpIcon.Location = new System.Drawing.Point(395, 8);
             this.picHelpIcon.Tag = "detect-columns";
             // 
             // lblTitle
@@ -60,12 +61,12 @@ namespace CSVLintNppPlugin.Forms
             // 
             // lblHorizontalLine
             // 
-            this.lblHorizontalLine.Size = new System.Drawing.Size(376, 2);
+            this.lblHorizontalLine.Size = new System.Drawing.Size(415, 2);
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(272, 212);
-            this.btnCancel.TabIndex = 9;
+            this.btnCancel.Location = new System.Drawing.Point(311, 210);
+            this.btnCancel.TabIndex = 10;
             // 
             // lblColumnSeparator
             // 
@@ -107,18 +108,28 @@ namespace CSVLintNppPlugin.Forms
             this.txtFixedWidthPos.Enabled = false;
             this.txtFixedWidthPos.Location = new System.Drawing.Point(192, 77);
             this.txtFixedWidthPos.Name = "txtFixedWidthPos";
-            this.txtFixedWidthPos.Size = new System.Drawing.Size(178, 20);
+            this.txtFixedWidthPos.Size = new System.Drawing.Size(186, 20);
             this.txtFixedWidthPos.TabIndex = 2;
             this.txtFixedWidthPos.Tag = "1";
-            this.txtFixedWidthPos.Text = " ";
+            // 
+            // btnFixedWidthPos
+            // 
+            this.btnFixedWidthPos.Location = new System.Drawing.Point(384, 77);
+            this.btnFixedWidthPos.Name = "btnFixedWidthPos";
+            this.btnFixedWidthPos.Size = new System.Drawing.Size(30, 23);
+            this.btnFixedWidthPos.TabIndex = 3;
+            this.btnFixedWidthPos.Tag = "1";
+            this.btnFixedWidthPos.Text = "..";
+            this.btnFixedWidthPos.UseVisualStyleBackColor = true;
+            this.btnFixedWidthPos.Click += new System.EventHandler(this.btnFixedWidthPos_Click);
             // 
             // chkHeaderNames
             // 
             this.chkHeaderNames.AutoSize = true;
-            this.chkHeaderNames.Location = new System.Drawing.Point(12, 111);
+            this.chkHeaderNames.Location = new System.Drawing.Point(12, 109);
             this.chkHeaderNames.Name = "chkHeaderNames";
             this.chkHeaderNames.Size = new System.Drawing.Size(250, 17);
-            this.chkHeaderNames.TabIndex = 3;
+            this.chkHeaderNames.TabIndex = 4;
             this.chkHeaderNames.Tag = "2";
             this.chkHeaderNames.Text = "Header names, first line contains column names";
             this.chkHeaderNames.UseVisualStyleBackColor = true;
@@ -126,10 +137,10 @@ namespace CSVLintNppPlugin.Forms
             // chkSkipLines
             // 
             this.chkSkipLines.AutoSize = true;
-            this.chkSkipLines.Location = new System.Drawing.Point(12, 143);
+            this.chkSkipLines.Location = new System.Drawing.Point(12, 141);
             this.chkSkipLines.Name = "chkSkipLines";
             this.chkSkipLines.Size = new System.Drawing.Size(90, 17);
-            this.chkSkipLines.TabIndex = 4;
+            this.chkSkipLines.TabIndex = 5;
             this.chkSkipLines.Tag = "3";
             this.chkSkipLines.Text = "Skip first lines";
             this.chkSkipLines.UseVisualStyleBackColor = true;
@@ -137,7 +148,7 @@ namespace CSVLintNppPlugin.Forms
             // 
             // numSkipLines
             // 
-            this.numSkipLines.Location = new System.Drawing.Point(192, 141);
+            this.numSkipLines.Location = new System.Drawing.Point(192, 139);
             this.numSkipLines.Maximum = new decimal(new int[] {
             9999,
             0,
@@ -145,16 +156,16 @@ namespace CSVLintNppPlugin.Forms
             0});
             this.numSkipLines.Name = "numSkipLines";
             this.numSkipLines.Size = new System.Drawing.Size(83, 20);
-            this.numSkipLines.TabIndex = 5;
+            this.numSkipLines.TabIndex = 6;
             this.numSkipLines.Tag = "3";
             // 
             // chkCommentChar
             // 
             this.chkCommentChar.AutoSize = true;
-            this.chkCommentChar.Location = new System.Drawing.Point(12, 175);
+            this.chkCommentChar.Location = new System.Drawing.Point(12, 173);
             this.chkCommentChar.Name = "chkCommentChar";
             this.chkCommentChar.Size = new System.Drawing.Size(139, 17);
-            this.chkCommentChar.TabIndex = 6;
+            this.chkCommentChar.TabIndex = 7;
             this.chkCommentChar.Tag = "4";
             this.chkCommentChar.Text = "Comment lines start with";
             this.chkCommentChar.UseVisualStyleBackColor = true;
@@ -162,34 +173,36 @@ namespace CSVLintNppPlugin.Forms
             // 
             // txtCommentChar
             // 
-            this.txtCommentChar.Location = new System.Drawing.Point(192, 173);
+            this.txtCommentChar.Location = new System.Drawing.Point(192, 171);
             this.txtCommentChar.Name = "txtCommentChar";
             this.txtCommentChar.Size = new System.Drawing.Size(83, 20);
-            this.txtCommentChar.TabIndex = 7;
+            this.txtCommentChar.TabIndex = 8;
             this.txtCommentChar.Tag = "4";
             this.txtCommentChar.Text = " ";
             // 
             // DetectColumnsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.ClientSize = new System.Drawing.Size(384, 254);
+            this.ClientSize = new System.Drawing.Size(423, 252);
             this.Controls.Add(this.numSkipLines);
             this.Controls.Add(this.chkSkipLines);
             this.Controls.Add(this.chkCommentChar);
             this.Controls.Add(this.chkHeaderNames);
             this.Controls.Add(this.txtCommentChar);
+            this.Controls.Add(this.btnFixedWidthPos);
             this.Controls.Add(this.txtFixedWidthPos);
-            this.Controls.Add(this.cmbColumnSeparator);
             this.Controls.Add(this.lblFixedWidthPos);
+            this.Controls.Add(this.cmbColumnSeparator);
             this.Controls.Add(this.lblColumnSeparator);
             this.Name = "DetectColumnsForm";
             this.Text = "Detect columns manually";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.DetectColumnsForm_FormClosing);
             this.Load += new System.EventHandler(this.DetectColumnsForm_Load);
             this.Controls.SetChildIndex(this.lblColumnSeparator, 0);
-            this.Controls.SetChildIndex(this.lblFixedWidthPos, 0);
             this.Controls.SetChildIndex(this.cmbColumnSeparator, 0);
+            this.Controls.SetChildIndex(this.lblFixedWidthPos, 0);
             this.Controls.SetChildIndex(this.txtFixedWidthPos, 0);
+            this.Controls.SetChildIndex(this.btnFixedWidthPos, 0);
             this.Controls.SetChildIndex(this.txtCommentChar, 0);
             this.Controls.SetChildIndex(this.chkHeaderNames, 0);
             this.Controls.SetChildIndex(this.chkCommentChar, 0);
@@ -212,6 +225,7 @@ namespace CSVLintNppPlugin.Forms
         private System.Windows.Forms.ComboBox cmbColumnSeparator;
         private System.Windows.Forms.Label lblFixedWidthPos;
         private System.Windows.Forms.TextBox txtFixedWidthPos;
+        private System.Windows.Forms.Button btnFixedWidthPos;
         private System.Windows.Forms.CheckBox chkHeaderNames;
         private System.Windows.Forms.CheckBox chkSkipLines;
         private System.Windows.Forms.NumericUpDown numSkipLines;

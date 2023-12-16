@@ -1199,5 +1199,32 @@ namespace CSVLint
             return res;
         }
 
+        /// <summary>
+        /// Based on the CsvDefinition, return column positions based on column widths
+        /// </summary>
+        /// <param name="abspos"> absolute column positions or column widths</param>
+        public string GetColumnWidths(bool abspos)
+        {
+            var res = (abspos ? "0, " : "");
+            var colwidth = 0;
+
+            for (int c = 0; c < Fields.Count; c++)
+            {
+                // next field
+                if (abspos)
+                {
+                    colwidth += Fields[c].MaxWidth;
+                }
+                else
+                {
+                    colwidth = Fields[c].MaxWidth;
+                }
+                var comma = (c < Fields.Count - 1 ? ", " : "");
+                res += string.Format("{0}{1}", colwidth, comma);
+            }
+
+            return res;
+        }
+
     }
 }
