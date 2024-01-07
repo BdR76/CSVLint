@@ -605,7 +605,7 @@ datatypes, and it is meant as a starting point for further script development in
 
 ### PowerShell ###
 
-Generates a [PowerShell](https://en.wikipedia.org/wiki/PowerShell/) script to read the csv data file
+Generates a [PowerShell](https://en.wikipedia.org/wiki/PowerShell) script to read the csv data file
 as a dataset variable. It contains the required scripting for the appropriate
 datatypes, and it is meant as a starting point for further script development.
 

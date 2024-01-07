@@ -1205,7 +1205,7 @@ namespace CSVLint
         /// <param name="abspos"> absolute column positions or column widths</param>
         public string GetColumnWidths(bool abspos)
         {
-            var res = (abspos ? "0, " : "");
+            var res = "";
             var colwidth = 0;
 
             for (int c = 0; c < Fields.Count; c++)

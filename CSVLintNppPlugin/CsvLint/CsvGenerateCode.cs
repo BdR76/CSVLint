@@ -81,7 +81,7 @@ namespace CSVLint
             // file format
             jsonmeta.Append("\t\"dialect\": {");
             if (csvdef.Separator == '\0')
-                jsonmeta.Append(string.Format("\r\n\t\t\"columnpositions\": [{0}]", csvdef.GetColumnWidths(true)));
+                jsonmeta.Append(string.Format("\r\n\t\t\"columnpositions\": [0, {0}]", csvdef.GetColumnWidths(true)));
             else
                 jsonmeta.Append(string.Format("\r\n\t\t\"delimiter\": \"{0}\"", separator));
             jsonmeta.Append(string.Format(",\r\n\t\t\"header\": \"{0}\"", (csvdef.ColNameHeader ? "true" : "false")));
