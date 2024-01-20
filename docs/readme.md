@@ -32,7 +32,8 @@ in the background. This means that for larger files (~50MB or more) it can
 happen that the beginning of the file displays column colors but at the end of the
 file it's still uncolored.
 
-There are four pre-defined color schemes you can select in the `Setttings` dialog.
+There are four pre-defined color schemes you can select using the
+`Highlighting` button on the `Plugins > CSV Lint > Setttings` dialog.
 At first time startup, the plug-in will select normal or darkmode color scheme,
 depending on the Dark Mode setting in the Notepad++ `config.xml`.
 

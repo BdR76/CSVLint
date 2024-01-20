@@ -9,10 +9,10 @@ can detect data formatting errors and adjust datetime and decimal formats.
 
 ![preview screenshot](/csvlint_preview.png?raw=true "CSVLint plug-in preview")
 
-Use CSV Lint for metadata discovery, technical data validation and
-reformatting on tabular data files. It is _not_ meant to be a replacement for
-spreadsheet programs like Excel or SPSS, but rather it's a quality control
-tool to examine, verify or polish up a dataset before further processing.
+You can use CSV Lint to analyse, validate, convert and reformat text data
+files. It is _not_ meant to be a replacement for spreadsheet programs like
+Excel or SPSS, but rather it's a quality control tool to examine, verify or
+polish up a dataset before further processing.
 
 With CSV Lint you can take a dataset and:
 
@@ -23,7 +23,9 @@ With CSV Lint you can take a dataset and:
 * Convert between comma, semicolon, tab separated, fixed width formats
 * Split valid/invalid values into two separate columns
 * Count unique values of one or more columns
-* Convert csv data to SQL insert script
+* Sort based on one of the columns
+* Convert csv data to SQL insert script or XML or JSON format.
+* Generate Python, R or PowerShell scripts
 
 CSV Lint is stable and usable for most general use-cases, but it is a work-in-progress, 
 so if you encounter any bugs or unexpected output I encourage you to [report issues here](https://github.com/BdR76/CSVLint/issues).
@@ -138,14 +140,14 @@ The CSV Lint plugin is work-in-progress, here is list of features I want to add 
 - [x] ~~Load/save schema.ini~~
 - [x] ~~Improve automatic datatype detection~~
 - [x] ~~Add feature GUI click to jump to error line~~
-- [x] Support enumeration coded + error check
+- [x] ~~Support enumeration coded + error check~~
 - [ ] Replace-code-with-label (using schema.json?)
 - [ ] Support FrictionlessData schema.json format
 - [ ] Improve GUI instead of plain text
 - [x] ~~Add feature generate scripts (SQL, Python, R)~~
 - [x] ~~Syntax highlighting, display columns as [colors](https://community.notepad-plus-plus.org/topic/21124/c-adding-a-custom-styler-or-lexer-in-c-for-scintilla-notepad/)~~
 - [ ] Search for value in column, search next empty/non-empty in column
-- [x] Search/replace in single column
+- [x] ~~Search/replace in single column~~
 - [x] ~~Split column into new column ("123/456" -> "123", "456")~~
 
 Trouble shooting / Known issues
@@ -160,7 +162,7 @@ detected correctly. Especially when the data contains values like `05/06/2022`
 the order of day and month can be incorrect. You can adjust it manually to
 match your data before pressing the "Validate data" button.
 
-* When you select Language > CSVLint to enable the syntax highlighing colors,
+* When you select `Language > CSVLint` to enable the syntax highlighing colors,
 or change the metadata manually, the column colors aren't always updated
 immediately. Click inside the textfile or switch tabs to a different file and
 then back and it should display correctly.
