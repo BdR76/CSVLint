@@ -1002,7 +1002,7 @@ namespace CSVLint
         /// </summary>
         /// <param name="data">csv data</param>
         /// <param name="AscDesc">true = ascending, true = decending</param>
-        public static void SortData(CsvDefinition csvdef, int SortIdx, bool AscDesc)
+        public static void SortData(CsvDefinition csvdef, int SortIdx, bool AscDesc, bool ValLen)
         {
             // this should never happen
             if (SortIdx > csvdef.Fields.Count - 1)
@@ -1056,7 +1056,12 @@ namespace CSVLint
                 {
                     // construct sortable value
                     var val = (SortIdx < values.Count ? values[SortIdx] : "");
-                    sortval = SortableString(val, csvcol);
+
+                    // sort on values or on length of values
+                    if (ValLen)
+                        sortval = SortableString(val, csvcol); // sort on values
+                    else
+                        sortval = val.Length.ToString().PadLeft(8, '0');  // sort on length of values. Implicit assumption: max. string length = 99999999 characters
                 }
 
                 // reconstruct original line of data

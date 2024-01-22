@@ -274,7 +274,10 @@ namespace Kbg.NppPluginNET
         [Category("UserDialogs"), Browsable(false), DefaultValue("")]
         public string SortColName { get; set; }
 
-		// ADD NEW COLUMNS (2) user preferences
+        [Category("UserDialogs"), Browsable(false), DefaultValue(true)]
+        public bool SortValue { get; set; }
+
+        // ADD NEW COLUMNS (2) user preferences
         [Description("Add new columns (2)"), Category("UserDialogs"), Browsable(false), DefaultValue("/")]
         public string SplitChar { get; set; }
 

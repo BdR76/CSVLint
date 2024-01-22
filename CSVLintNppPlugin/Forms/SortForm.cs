@@ -20,6 +20,7 @@ namespace CSVLintNppPlugin.Forms
         public int SortColumn { get; set; }
 
         public bool SortAscending { get; set; }
+        public bool SortValue { get; set; }
 
         public void InitialiseSetting(CsvDefinition csvdef)
         {
@@ -36,14 +37,19 @@ namespace CSVLintNppPlugin.Forms
             cmbSelectColumn.SelectedIndex = idx;
 
             // which option selected
-            rdbtnAscending.Checked  = (Main.Settings.SortAscending);
+            rdbtnAscending.Checked = (Main.Settings.SortAscending);
             rdbtnDescending.Checked = (!Main.Settings.SortAscending);
+
+            rdbtnValue.Checked = (Main.Settings.SortValue);
+            rdbtnLength.Checked = (!Main.Settings.SortValue);
         }
+
         private void EvaluateOkButton()
         {
             // can not press OK when nothing selected
             btnOk.Enabled = (cmbSelectColumn.SelectedIndex > 0);
         }
+
         private void cmbSelectColumn_SelectedIndexChanged(object sender, EventArgs e)
         {
             EvaluateOkButton();
@@ -55,6 +61,7 @@ namespace CSVLintNppPlugin.Forms
             SortColumn = cmbSelectColumn.SelectedIndex - 1; // zero based, first item is a dummy
 
             SortAscending = rdbtnAscending.Checked;
+            SortValue = rdbtnValue.Checked;
         }
 
         private void btnOk_Click(object sender, EventArgs e)
@@ -63,6 +70,7 @@ namespace CSVLintNppPlugin.Forms
             Main.Settings.SortColName = cmbSelectColumn.Items[cmbSelectColumn.SelectedIndex].ToString(); ;
 
             Main.Settings.SortAscending = rdbtnAscending.Checked;
+            Main.Settings.SortValue = rdbtnValue.Checked;
 
             // save to file
             Main.Settings.SaveToIniFile();

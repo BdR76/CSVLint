@@ -351,6 +351,7 @@ namespace Kbg.NppPluginNET
                 // user clicked OK or Cancel
                 int idx = frmsort.SortColumn;
                 bool asc = frmsort.SortAscending;
+                bool val = frmsort.SortValue;
 
                 // clear up
                 frmsort.Dispose();
@@ -365,7 +366,7 @@ namespace Kbg.NppPluginNET
                     var dtStart = DateTime.Now;
 
                     // split column
-                    CsvEdit.SortData(csvdef, idx, asc);
+                    CsvEdit.SortData(csvdef, idx, asc, val);
 
                     var dtElapsed = (DateTime.Now - dtStart).ToString(@"hh\:mm\:ss\.fff");
 
