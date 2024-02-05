@@ -16,7 +16,7 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Add msbuild to PATH
-      uses: microsoft/setup-msbuild@v1.3.1
+      uses: microsoft/setup-msbuild@v2.0.0
 
     - name: MSBuild of solution
       run: msbuild CsvLintSolution.sln /p:configuration="${{ matrix.build_configuration }}" /p:platform="${{ matrix.build_platform }}" /m /verbosity:minimal
