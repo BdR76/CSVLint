@@ -49,6 +49,17 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         }
 
         /// <summary>
+        /// @see https://learn.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-nmhdr
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential)]
+        public struct TagNMHDR
+        {
+            public IntPtr hwndFrom;
+            public UIntPtr idFrom;
+            public uint code;
+        }
+
+        /// <summary>
         /// Used for the ScrollInfo fMask
         /// SIF_ALL             => Combination of SIF_PAGE, SIF_POS, SIF_RANGE, and SIF_TRACKPOS.
         /// SIF_DISABLENOSCROLL => This value is used only when setting a scroll bar's parameters. If the scroll bar's new parameters make the scroll bar unnecessary, disable the scroll bar instead of removing it.
@@ -302,6 +313,56 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public static extern int CheckMenuItem(IntPtr hmenu, int uIDCheckItem, int uCheck);
 
         public const int WM_CREATE = 1;
+        public const int WM_NOTIFY = 0x004e;
+        public const int GWL_EXSTYLE = -20;
+        public const int GWLP_HINSTANCE = -6;
+        public const int GWLP_HWNDPARENT = -8;
+        public const int GWLP_ID = -12;
+        public const int GWL_STYLE = -16;
+        public const int GWLP_USERDATA = -21;
+        public const int GWLP_WNDPROC = -4;
+        public const long WS_EX_ACCEPTFILES = 0x00000010L;
+        public const long WS_EX_APPWINDOW = 0x00040000L;
+        public const long WS_EX_CLIENTEDGE = 0x00000200L;
+        public const long WS_EX_COMPOSITED = 0x02000000L;
+        public const long WS_EX_CONTEXTHELP = 0x00000400L;
+        public const long WS_EX_CONTROLPARENT = 0x00010000L;
+        public const long WS_EX_DLGMODALFRAME = 0x00000001L;
+        public const long WS_EX_LAYERED = 0x00080000L;
+        public const long WS_EX_LAYOUTRTL = 0x00400000L;
+        public const long WS_EX_LEFT = 0x00000000L;
+        public const long WS_EX_LEFTSCROLLBAR = 0x00004000L;
+        public const long WS_EX_LTRREADING = 0x00000000L;
+        public const long WS_EX_MDICHILD = 0x00000040L;
+        public const long WS_EX_NOACTIVATE = 0x08000000L;
+        public const long WS_EX_NOINHERITLAYOUT = 0x00100000L;
+        public const long WS_EX_NOPARENTNOTIFY = 0x00000004L;
+        public const long WS_EX_NOREDIRECTIONBITMAP = 0x00200000L;
+        public const long WS_EX_OVERLAPPEDWINDOW = (WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE);
+        public const long WS_EX_PALETTEWINDOW = (WS_EX_WINDOWEDGE | WS_EX_TOOLWINDOW | WS_EX_TOPMOST);
+        public const long WS_EX_RIGHT = 0x00001000L;
+        public const long WS_EX_RIGHTSCROLLBAR = 0x00000000L;
+        public const long WS_EX_RTLREADING = 0x00002000L;
+        public const long WS_EX_STATICEDGE = 0x00020000L;
+        public const long WS_EX_TOOLWINDOW = 0x00000080L;
+        public const long WS_EX_TOPMOST = 0x00000008L;
+        public const long WS_EX_TRANSPARENT = 0x00000020L;
+        public const long WS_EX_WINDOWEDGE = 0x00000100L;
+
+        public delegate IntPtr WindowLongGetter(IntPtr hWnd, int nIndex);
+        public delegate IntPtr WindowLongSetter(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
+
+        [DllImport("user32")]
+        public static extern IntPtr GetWindowLongPtr(IntPtr hWnd, int nIndex);
+
+        [DllImport("user32")]
+        public static extern IntPtr GetWindowLong(IntPtr hWnd, int nIndex);
+
+        [DllImport("user32")]
+        public static extern IntPtr SetWindowLongPtr(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
+
+        [DllImport("user32")]
+        public static extern IntPtr SetWindowLong(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
 
         [DllImport("user32")]
         public static extern bool ClientToScreen(IntPtr hWnd, ref Point lpPoint);

@@ -140,6 +140,9 @@
     <Compile Include="Forms\CsvLintWindow.Designer.cs">
       <DependentUpon>CsvLintWindow.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\DockingFormBase.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="PluginInfrastructure\ScintillaStreams.cs" />
     <Compile Include="PluginInfrastructure\Win32.cs" />
     <Compile Include="Main.cs" />
