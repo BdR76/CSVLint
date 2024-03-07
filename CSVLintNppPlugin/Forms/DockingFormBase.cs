@@ -5,13 +5,14 @@ using Kbg.NppPluginNET.PluginInfrastructure;
 
 namespace CSVLintNppPlugin.Forms
 {
-    public partial class DockingFormBase : UserControl
+    public partial class DockingFormBase : Form
     {
         private static Win32.WindowLongGetter _wndLongGetter;
         private static Win32.WindowLongSetter _wndLongSetter;
 
         public DockingFormBase()
         {
+            InitializeComponent();
             if (Marshal.SizeOf(typeof(IntPtr)) == 8) // we are 64-bit
             {
                 _wndLongGetter = Win32.GetWindowLongPtr;
