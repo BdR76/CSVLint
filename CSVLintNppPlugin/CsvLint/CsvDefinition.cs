@@ -142,27 +142,36 @@ namespace CSVLint
         {
             // if any contains Carriage Retunr/Line Feed, then it's probably text not codes
             var containsCrLf = false;
+            var total = 0;
             foreach (var s in slcodes)
             {
                 if (s.Key.Contains('\r') || s.Key.Contains('\n')) containsCrLf = true;
+                total += s.Value;
             }
 
             // check if could be coded values
             if ( (containsCrLf == false) && (slcodes.Count > 0) && (slcodes.Count <= Main.Settings.UniqueValuesMax) )
             {
-                // set coded values
-                this.isCodedValue = true;
+                // check enumeration ratio, this is to avoid interpreting a column with 100 rows and only 3 text values to be interpreted as enumeration
+                var ratio = 1.0 * total / slcodes.Count;
 
-                this.CodedList = new List<string>();
-
-                foreach (var s in slcodes)
+                // in a coded values column each unique value must be used at least 2 tiumes or more (on average)
+                if (ratio >= 2.0)
                 {
-                    this.CodedList.Add(s.Key);
-                }
+                    // set coded values
+                    this.isCodedValue = true;
 
-                // Sort list, with a hack to sort integers correctly
-                // i.e. list of integers should not be sorted like [1, 10, 11, 2, 3, .. etc]
-                this.CodedList.Sort(new StrCmpLogicalComparer());
+                    this.CodedList = new List<string>();
+
+                    foreach (var s in slcodes)
+                    {
+                        this.CodedList.Add(s.Key);
+                    }
+
+                    // Sort list, with a hack to sort integers correctly
+                    // i.e. list of integers should not be sorted like [1, 10, 11, 2, 3, .. etc]
+                    this.CodedList.Sort(new StrCmpLogicalComparer());
+                }
             }
         }
     }
