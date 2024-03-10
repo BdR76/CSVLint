@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 namespace Kbg.NppPluginNET
 {
-    public partial class CsvLintWindow : Form
+    public partial class CsvLintWindow : DockingFormBase
     {
         public CsvLintWindow()
         {
