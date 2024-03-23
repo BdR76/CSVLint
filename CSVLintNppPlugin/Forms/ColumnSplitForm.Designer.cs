@@ -89,6 +89,8 @@ namespace CSVLintNppPlugin.Forms
             // 
             // cmbSelectColumn
             // 
+            this.cmbSelectColumn.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.cmbSelectColumn.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbSelectColumn.FormattingEnabled = true;
             this.cmbSelectColumn.Items.AddRange(new object[] {
@@ -327,6 +329,9 @@ namespace CSVLintNppPlugin.Forms
             this.Controls.Add(this.rdbtnPadChar);
             this.Controls.Add(this.cmbSelectColumn);
             this.Controls.Add(this.lblSelectColumn);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
+            this.MaximumSize = new System.Drawing.Size(960, 359);
+            this.MinimumSize = new System.Drawing.Size(416, 359);
             this.Name = "ColumnSplitForm";
             this.Tag = "split-column";
             this.Text = "Add new column(s)";

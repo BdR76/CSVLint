@@ -44,12 +44,12 @@ namespace CSVLintNppPlugin.Forms
             // 
             // btnOk
             // 
-            this.btnOk.Location = new System.Drawing.Point(153, 187);
+            this.btnOk.Location = new System.Drawing.Point(169, 187);
             this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
             // 
             // picHelpIcon
             // 
-            this.picHelpIcon.Location = new System.Drawing.Point(356, 8);
+            this.picHelpIcon.Location = new System.Drawing.Point(372, 8);
             this.picHelpIcon.Tag = "sort-data";
             // 
             // lblTitle
@@ -59,11 +59,11 @@ namespace CSVLintNppPlugin.Forms
             // 
             // lblHorizontalLine
             // 
-            this.lblHorizontalLine.Size = new System.Drawing.Size(376, 2);
+            this.lblHorizontalLine.Size = new System.Drawing.Size(392, 2);
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(272, 187);
+            this.btnCancel.Location = new System.Drawing.Point(288, 187);
             // 
             // lblSortOrder
             // 
@@ -139,13 +139,15 @@ namespace CSVLintNppPlugin.Forms
             // 
             // cmbSelectColumn
             // 
+            this.cmbSelectColumn.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.cmbSelectColumn.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbSelectColumn.FormattingEnabled = true;
             this.cmbSelectColumn.Items.AddRange(new object[] {
             "(select a column)"});
             this.cmbSelectColumn.Location = new System.Drawing.Point(192, 48);
             this.cmbSelectColumn.Name = "cmbSelectColumn";
-            this.cmbSelectColumn.Size = new System.Drawing.Size(180, 21);
+            this.cmbSelectColumn.Size = new System.Drawing.Size(196, 21);
             this.cmbSelectColumn.TabIndex = 3;
             this.cmbSelectColumn.Tag = "";
             this.cmbSelectColumn.SelectedIndexChanged += new System.EventHandler(this.cmbSelectColumn_SelectedIndexChanged);
@@ -162,13 +164,16 @@ namespace CSVLintNppPlugin.Forms
             // SortForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.ClientSize = new System.Drawing.Size(384, 229);
+            this.ClientSize = new System.Drawing.Size(400, 229);
             this.Controls.Add(this.pnlSortOn);
             this.Controls.Add(this.rdbtnDescending);
             this.Controls.Add(this.rdbtnAscending);
             this.Controls.Add(this.lblSortOrder);
             this.Controls.Add(this.cmbSelectColumn);
             this.Controls.Add(this.lblSelectColumn);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
+            this.MaximumSize = new System.Drawing.Size(960, 268);
+            this.MinimumSize = new System.Drawing.Size(416, 268);
             this.Name = "SortForm";
             this.Text = "Sort data";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SortForm_FormClosing);
