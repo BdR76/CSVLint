@@ -480,10 +480,12 @@ namespace CSVLint
             if (stat_uniquecount.Count <= Main.Settings.UniqueValuesMax)
             {
                 // count unique value(s)
-                if (!stat_uniquecount.ContainsKey(value))
-                    stat_uniquecount.Add(value, 1);
-                else
-                    stat_uniquecount[value]++;
+                // Note: always Trim() and ignore settings.TrimValues because space(s) cannot be a coded value
+                if (value.Trim() != "")
+                    if (!stat_uniquecount.ContainsKey(value))
+                        stat_uniquecount.Add(value, 1);
+                    else
+                        stat_uniquecount[value]++;
             }
         }
 

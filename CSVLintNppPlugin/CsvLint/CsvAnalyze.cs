@@ -410,7 +410,8 @@ namespace CSVLint
                 }
 
                 // if value in first row (=Names) is empty then probably not header names
-                if (namcol.Name == "") emptyname = true;
+                // Note: always Trim() and ignore settings.TrimValues for name detection
+                if (namcol.Name.Trim() == "") emptyname = true;
 
                 // TODO: carriage returns in header name not supported
                 // replace with space so that schema.ini can at least be validated

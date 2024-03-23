@@ -712,9 +712,11 @@ namespace CSVLint
                         int posalt = val.LastIndexOf("Enumeration");
                         if (posalt >= 0)
                         {
-                            isCoded = true;
                             int spcalt = val.IndexOf(" ", posalt);
-                            CodedValues = val.Substring(spcalt, val.Length - spcalt).Trim();
+                            if (spcalt >= 0) {
+                                isCoded = true;
+                                CodedValues = val.Substring(spcalt, val.Length - spcalt).Trim();
+                            }
                             val = "";
                         }
 
