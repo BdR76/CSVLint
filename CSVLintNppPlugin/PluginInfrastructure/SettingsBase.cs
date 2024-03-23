@@ -193,9 +193,9 @@ namespace CsvQuery.PluginInfrastructure
 
             // color popup menu
             //MenuItem[] mi = new MenuItem[4];
-            //mi[0] = new MenuItem("Normal mode (background colors)", colorMenuItem_Click);
-            ////mi[0] = new MenuItem("Normal mode (background colors)", colorMenuItem_Click);
-            //mi[1] = new MenuItem("Normal mode (foreground colors)", colorMenuItem_Click);
+            //mi[0] = new MenuItem("Light mode (background colors)", colorMenuItem_Click);
+            ////mi[0] = new MenuItem("Light mode (background colors)", colorMenuItem_Click);
+            //mi[1] = new MenuItem("Light mode (foreground colors)", colorMenuItem_Click);
             //mi[2] = new MenuItem("Dark mode (pastel colors)", colorMenuItem_Click);
             //mi[3] = new MenuItem("Dark mode (neon colors)", colorMenuItem_Click);
             //ContextMenu cm = new ContextMenu(mi);
@@ -203,9 +203,9 @@ namespace CsvQuery.PluginInfrastructure
             ContextMenuStrip cm = new ContextMenuStrip();
 
             //var img = CSVLintNppPlugin.Properties.Resources.clover;
-            //ContextMenuStrip cm = new ContextMenuStrip("Normal mode (background colors)", img, colorMenuItem_Click);
-            cm.Items.Add("Normal mode (background colors)", CSVLintNppPlugin.Properties.Resources.setcolor1, colorMenuItem_Click);
-            cm.Items.Add("Normal mode (foreground colors)", CSVLintNppPlugin.Properties.Resources.setcolor2, colorMenuItem_Click);
+            //ContextMenuStrip cm = new ContextMenuStrip("Light mode (background colors)", img, colorMenuItem_Click);
+            cm.Items.Add("Light mode (background colors)", CSVLintNppPlugin.Properties.Resources.setcolor1, colorMenuItem_Click);
+            cm.Items.Add("Light mode (foreground colors)", CSVLintNppPlugin.Properties.Resources.setcolor2, colorMenuItem_Click);
             cm.Items.Add("Dark mode (pastel colors)", CSVLintNppPlugin.Properties.Resources.setcolor3, colorMenuItem_Click);
             cm.Items.Add("Dark mode (neon colors)", CSVLintNppPlugin.Properties.Resources.setcolor4, colorMenuItem_Click);
 

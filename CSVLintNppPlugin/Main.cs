@@ -244,7 +244,7 @@ namespace Kbg.NppPluginNET
 
         internal static bool CreateLexerXML(string filename, int presetidx)
         {
-            string[] presets = new string[] { "normal mode (background colors)", "normal mode (foreground colors)", "dark mode (pastel)", "dark mode (neon)" };
+            string[] presets = new string[] { "light mode (background colors)", "light mode (foreground colors)", "dark mode (pastel)", "dark mode (neon)" };
             string[] tags = new string[] { "instre1", "instre2", "type1", "type2", "type3", "type4", "type5", "type6" };
 
             // Create an XmlWriterSettings object with the correct options.

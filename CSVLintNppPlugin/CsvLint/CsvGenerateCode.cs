@@ -572,7 +572,7 @@ namespace CSVLint
 
                 // R-script safe tag, replace .
                 var colname = coldef.Name;
-                colname = Regex.Replace(colname, "[^a-zA-Z0-9]", "."); // not letter or digit
+                colname = Regex.Replace(colname, "[^a-zA-Z0-9_]", "."); // not letter or digit
 
                 var comma = (c < csvdef.Fields.Count - 1 ? "," : ")");
 
