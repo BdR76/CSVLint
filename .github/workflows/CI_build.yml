@@ -16,21 +16,21 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Add msbuild to PATH
-      uses: microsoft/setup-msbuild@v1.3.1
+      uses: microsoft/setup-msbuild@v2.0.0
 
     - name: MSBuild of solution
       run: msbuild CsvLintSolution.sln /p:configuration="${{ matrix.build_configuration }}" /p:platform="${{ matrix.build_platform }}" /m /verbosity:minimal
 
     - name: Archive artifacts for x64
       if: matrix.build_platform == 'x64' && matrix.build_configuration == 'Release'
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
           name: plugin_dll_x64
           path: CSVLintNppPlugin\bin\${{ matrix.build_configuration }}-x64\CSVLint.dll
 
     - name: Archive artifacts for x86
       if: matrix.build_platform == 'x86' && matrix.build_configuration == 'Release'
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
           name: plugin_dll_x86
           path: CSVLintNppPlugin\bin\${{ matrix.build_configuration }}\CSVLint.dll
