@@ -13,9 +13,13 @@ namespace CSVLintNppPlugin.Forms
 {
     public partial class DetectColumnsForm : CSVLintNppPlugin.Forms.CsvEditFormBase
     {
+        private readonly ToolTip helperTip = new ToolTip();
         public DetectColumnsForm()
         {
             InitializeComponent();
+
+            // tooltip initialization
+            helperTip.SetToolTip(btnFixedWidthPos, "Column end positions based on current column widths");
         }
 
         public char Separator { get; set; }

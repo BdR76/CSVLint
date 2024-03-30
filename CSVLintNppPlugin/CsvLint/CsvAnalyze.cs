@@ -682,6 +682,10 @@ namespace CSVLint
             // if first line is header column names, then consume line and ignore
             if (csvdef.ColNameHeader) csvdef.ParseNextLine(strdata, out iscomm);
 
+            // New separator same as old
+            // Exception for fixed width, because code for fixed width output would be too complicated
+            var newsep = (csvdef.Separator == '\0' ? ',' : csvdef.Separator);
+
             // read all data lines
             while (!strdata.EndOfStream)
             {
@@ -701,14 +705,14 @@ namespace CSVLint
 
                         // if value contains separator character then put value in quotes
                         var val = col < values.Count ? values[col] : "";
-                        if (val.IndexOf(csvdef.Separator) >= 0)
+                        if (val.IndexOf(newsep) >= 0)
                         {
                             val = val.Replace("\"", "\"\"");
                             val = string.Format("\"{0}\"", val);
                         }
 
                         // concatenate selected column values as csv string, use same separator as source file
-                        uniq += (i > 0 ? csvdef.Separator.ToString() : "") + val;
+                        uniq += (i > 0 ? newsep.ToString() : "") + val;
                     }
 
                     // count unique value(s)
@@ -724,7 +728,7 @@ namespace CSVLint
             StringBuilder sb = new StringBuilder();
 
             // new output unique values and count to new file
-            CsvDefinition csvnew = new CsvDefinition(csvdef.Separator);
+            CsvDefinition csvnew = new CsvDefinition(newsep);
 
             // get access to Notepad++
             INotepadPPGateway notepad = new NotepadPPGateway();
@@ -735,10 +739,10 @@ namespace CSVLint
             {
                 // if column name contains separator character then put column name in quotes
                 var colname = colidx[i] < csvdef.Fields.Count ? csvdef.Fields[colidx[i]].Name : "";
-                if (colname.IndexOf(csvdef.Separator) >= 0) colname = string.Format("\"{0}\"", colname);
+                if (colname.IndexOf(newsep) >= 0) colname = string.Format("\"{0}\"", colname);
 
                 // new header
-                sb.Append(string.Format("{0}{1}", colname, csvdef.Separator));
+                sb.Append(string.Format("{0}{1}", colname, newsep));
 
                 // new csv defintion
                 csvnew.AddColumn(i, colname, csvdef.Fields[colidx[i]].MaxWidth, csvdef.Fields[colidx[i]].DataType, csvdef.Fields[colidx[i]].Mask);
@@ -759,7 +763,7 @@ namespace CSVLint
             var maxwidth = 0;
             foreach (KeyValuePair<string, int> unqcnt in uniquecount)
             {
-                sb.Append(string.Format("{0}{1}{2}\r\n", unqcnt.Key, csvdef.Separator, unqcnt.Value));
+                sb.Append(string.Format("{0}{1}{2}\r\n", unqcnt.Key, newsep, unqcnt.Value));
                 if (maxwidth < unqcnt.Value) maxwidth = unqcnt.Value;
             }
             csvnew.AddColumn("count_unique", maxwidth.ToString().Length, ColumnType.Integer);
