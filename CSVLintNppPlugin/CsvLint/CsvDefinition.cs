@@ -155,7 +155,7 @@ namespace CSVLint
                 // check enumeration ratio, this is to avoid interpreting a column with 100 rows and only 3 text values to be interpreted as enumeration
                 var ratio = 1.0 * total / slcodes.Count;
 
-                // in a coded values column each unique value must be used at least 2 tiumes or more (on average)
+                // in a coded values column each unique value must be used at least 2 times or more (on average)
                 if (ratio >= 2.0)
                 {
                     // set coded values

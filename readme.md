@@ -158,7 +158,7 @@ unexpected validation results, try saving the datafile or refreshing the meta
 data before clicking "Detect columns".
 
 * When you press "Detect columns" the datetime format of the data isn't always
-detected correctly. Especially when the data contains values like `05/06/2022`
+detected correctly. Especially when the data contains values like `05/06/2024`
 the order of day and month can be incorrect. You can adjust it manually to
 match your data before pressing the "Validate data" button.
 
@@ -182,10 +182,10 @@ For a similar plug-in for Visual Studio Code check out [Rainbow CSV](https://git
 
 Disclaimer
 ----------
-This software is free-to-use and it is provided as-is without warranty of any
-kind, always back-up your data files to prevent data loss.  
-The [test data](./testdata/), examples and screenshots provided in this github
-repository do not contain real data, it is all
-[randomly generated](https://github.com/BdR76/RandomValuesNPP) test data.
+This software is free-to-use and it is provided as-is without warranty of any kind.  
+Always back-up your data files to prevent data loss.  
+All [test files](../testdata/), examples and screenshots provided in this github repository contain fictitious and 
+[randomly generated](https://github.com/BdR76/RandomValuesNPP) data,
+any resemblance to real-life cases is the result of chance.
 
-BdR©2023 Free to use - send questions or comments: Bas de Reuver - bdr1976@gmail.com
+BdR©2019-2024 Free to use - send questions or comments: Bas de Reuver - bdr1976@gmail.com

@@ -116,7 +116,7 @@ indicate whether or not the first line contains the column names.
 
 When selecting "Fixed Widths" you can optionally provide a comma separated
 list of the column ending positions in "Column end positions". For example
-the text data `2022-10-15HbA1c 123.5` has column end positions `10, 16, 21`.
+the text data `2024-10-15HbA1c 123.5` has column end positions `10, 16, 21`.
 The plug-in expects the column character positions, but if you instead enter
 the individual column widths, so `10, 6, 5` in this example, that will also
 work in most cases. Leave "Fixed positions" empty and the plug-in will
@@ -303,7 +303,7 @@ right. It will check the input data for the following errors:
 * Non-numeric values in numeric columns, example value "n/a" when column datatype is Integer
 * Incorrect decimal separator, example value "12.34" when DecimalSymbol is set to comma
 * Too many decimals, example value "12.345" when NumberDigits=2.
-* Incorrect date format, example value "12/31/2022" when DateTimeFormat=dd/mm/yyyy
+* Incorrect date format, example value "12/31/2024" when DateTimeFormat=dd/mm/yyyy
 
 Important note: If you've edited the data file, for example changed the column
 separator or added columns using the Split function, make sure to also update
@@ -321,7 +321,7 @@ current `Apply quotes` setting in the Reformat dialog.
 
 ![CSV Lint sort data dialog](/docs/csvlint_sort_data.png?raw=true "CSV Lint plug-in sort data dialog")
 
-Sort **ascending** start with low values, end with high values `A -> Z, 0 -> 9`  
+Sort **ascending** start with low values, end with high values `0 -> 9, A -> Z`  
 Sort **descending** start with high values, end with low values `Z -> A, 9 -> 0`
 
 When sorting on a column that contains several of the same values, then the
@@ -395,10 +395,10 @@ as a date value formated as `dd-mm-yyyy`, see some example results below:
 
 | visitdat   | visitdat (2) | visitdat (3) |
 |------------|--------------|--------------|
-| 15-04-2021 | 15-04-2021   |              |
-| 23-05-2019 | 23-05-2019   |              |
-| 07/26/2022 |              | 07/26/2022   |
-| 18-09-2022 | 18-09-2022   |              |
+| 15-04-2023 | 15-04-2023   |              |
+| 23-05-2021 | 23-05-2021   |              |
+| 07/26/2024 |              | 07/26/2024   |
+| 18-09-2024 | 18-09-2024   |              |
 | No show    |              | No show      |
 
 ### Split on character ###
@@ -407,26 +407,27 @@ Split on a character, split the value on the Nth occurrence of character or
 string. For example split on `/` with Nth occurrence `1` will split the orginal
 value `121/84` into `121` and `84`, see examples below:
 
-| bpvalue | bpvalue (2) | bpvalue (3) |
-|---------|-------------|-------------|
-| 113/79  | 113         | 79          |
-| 169/102 | 169         | 102         |
-| 125     | 125         |             |
-| /85     |             | 85          |
-| 31/12/99| 31          | 12/99       |
+| bpvalue              | bpvalue (2) | bpvalue (3)     |
+|----------------------|-------------|-----------------|
+| 113/79               | 113         | 79              |
+| 31/12/99             | 31          | 12/99           |
+| 125                  | 125         |                 |
+| /85                  |             | 85              |
+| IPPV/ASSIST/AutoFlow | IPPV        | ASSIST/AutoFlow |
+
 
 You can also enter a negative occurrence to split the value on the last Nth
 occurrence of the character. For example splitting on character `/` and
 occurrence `-1` will split `pat/01/023` into `pat/01` and `023`, see other
 examples below
 
-| stringval      | stringval (2) | stringval (3) |
-|----------------|---------------|---------------|
-| pat/med123/txt | pat/med123    | txt           |
-| 31/12/2023     | 31/12         | 2023          |
-| MED0001/3456   | MED0001       | 3456          |
-| abcdefghijk    | abcdefghijk   |               |
-| a/b/c/d/e/f    | a/b/c/d/e     | f             |
+| stringval             | stringval (2) | stringval (3) |
+|-----------------------|---------------|---------------|
+| usr/medic/p01/img.nii | usr/medic/p01 | img.nii       |
+| 31/12/2024            | 31/12         | 2024          |
+| Creatinine            | Creatinine    |               |
+| /MED-0001             |               | MED-0001      |
+| mo/tu/we/th/fr        | mo/tu/we/th   | fr            |
 
 ### Split on position ###
 
@@ -438,10 +439,10 @@ other examples below
 | position        | position (2) | position (3) |
 |-----------------|--------------|--------------|
 | ZKH\21-006-2516 | ZKH          | \21-006-2516 |
-| OZG\19-006-1489 | OZG          | \19-006-1489 |
-| abcdefghijk     | abc          | defghijk     |
-| 123.45          | 123          | .45          |
-| 12345.67        | 123          | 45.67        |
+| 1-6-2024        | 1-6          | -2024        |
+| TGAGCATCGGAC    | TGA          | GCATCGGAC    |
+| 1.2650          | 1.2          | 650          |
+| 4015672111745   } 401          | 5672111745   |
 
 You can enter a negative position to split from the end of the value, for
 example split on position `-4` will split value `PT0123` into `PT` and `0123`,
@@ -450,10 +451,11 @@ see other examples below
 | posneg         | posneg (2) | posneg (3) |
 |----------------|------------|------------|
 | medication.txt | medication | .txt       |
-| 31-12-2022     | 31-12-     | 2022       |
-| abcdefghijk    | abcdefg    | hijk       |
+| 31-12-2024     | 31-12-     | 2024       |
+| ACGAGTATCATG   | ACGAGTAT   | CATG       |
 | 12.345         | 12         | .345       |
-| 4015672110397  | 401567211  | 0397       |
+| M978196A002    | M978196    | A002       |
+
 
 ### Remove original column ###
 
@@ -558,9 +560,9 @@ See below for an example of an SQL insert script the plugin will generate:
         `visitdat`,
         `labpth`
     ) values
-    (1001, '2022-08-21', 10.8),
-    (2002, '2022-09-05', 143.5),
-    (3003, '2022-09-24', 76.4),
+    (1001, '2024-08-21', 10.8),
+    (2002, '2024-09-05', 143.5),
+    (3003, '2024-09-24', 76.4),
     -- etc.
 
 Select XML or JSON to convert the data to an XML or JSON dataset.
@@ -643,10 +645,11 @@ An about window
 
 Disclaimer
 ----------
-This software is free-to-use and it is provided as-is without warranty of any kind,
-always back-up your data files to prevent data loss.  
-The [test data](../testdata/), examples and screenshots provided in this github repository do not contain real data, it
-is [randomly generated](https://github.com/BdR76/RandomValuesNPP) test data.
+This software is free-to-use and it is provided as-is without warranty of any kind.  
+Always back-up your data files to prevent data loss.  
+All [test files](../testdata/), examples and screenshots provided in this github repository contain fictitious and 
+[randomly generated](https://github.com/BdR76/RandomValuesNPP) data,
+any resemblance to real-life cases is the result of chance.
 
 History
 -------
@@ -671,4 +674,4 @@ History
 04-jun-2023 - v0.4.6.5 Support enum/coded values and various updates  
 16-dec-2023 - v0.4.6.6 PowerShell support and various updates  
 
-BdR©2023 Free to use - send questions or comments: Bas de Reuver - bdr1976@gmail.com
+BdR©2019-2024 Free to use - send questions or comments: Bas de Reuver - bdr1976@gmail.com
