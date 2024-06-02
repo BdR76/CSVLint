@@ -59,6 +59,16 @@ namespace CSVLint
         }
 
         /// <summary>
+        /// Standard disclaimer for generated scripts
+        /// </summary>
+        private static void ScriptHeader(StringBuilder sb, String stext)
+        {
+            sb.Append("# --------------------------------------\r\n");
+            sb.Append(string.Format("# {0}\r\n", stext));
+            sb.Append("# --------------------------------------\r\n");
+        }
+
+        /// <summary>
         /// generate JSON metadata
         /// </summary>
         /// <param name="data"> csv data </param>
@@ -346,8 +356,8 @@ namespace CSVLint
                         var msk = coldef.Mask;
                         msk = DateMaskStandardToCstr(msk);
 
-                        col_datef += string.Format("'{0}'{1} ", msk, comma); // formats
-                        col_dates += string.Format("'{0}'{1} ", colname, comma); // names
+                        col_datef += string.Format("'{0}', ", msk); // formats
+                        col_dates += string.Format("'{0}', ", colname); // names
                         if (exampleDate == "") exampleDate = colname;
                         break;
                     case ColumnType.Integer:
@@ -451,15 +461,24 @@ namespace CSVLint
                 python.Append("if not df_chk.empty:\r\n    print(\"Invalid values found:\")\r\n    print(df_chk)\r\n\r\n");
             }
 
-            // Python examples of typical data transformations
-            python.Append("# --------------------------------------\r\n");
-            python.Append("# Data transformation suggestions\r\n");
-            python.Append("# --------------------------------------\r\n\r\n");
+            // Python examples of filtering, transformation, merge
+            if (exampleDate == "") exampleDate = "myDateField";
+            var exampleYear = DateTime.Now.Year;
+            python.Append("# Remove or uncomment the script parts below to filter, transform, merge as needed\r\n\r\n");
+
+            // -------------------------------------
+            ScriptHeader(python, "Data filtering suggestions");
+            // -------------------------------------
+            python.Append("# filter on value or date range\r\n");
+            python.Append("#df = df[(df[\"date_column\"] == \"test\")]\r\n");
+            python.Append(string.Format("#df = df[(df[\"{0}\"] >= \"{1}-01-01\") & (df[\"{0}\"] < \"{1}-07-01\")]\r\n\r\n", exampleDate, exampleYear));
 
             python.Append("# Reorder or remove columns (edit code below)\r\n");
             python.Append(string.Format("df = df[[\r\n{0}]]\r\n\r\n", col_names));
 
-            if (exampleDate == "") exampleDate = "myDateField";
+            // -------------------------------------
+            ScriptHeader(python, "Data transformation suggestions");
+            // -------------------------------------
             python.Append("# Date to string example, format as MM/dd/yyyy\r\n");
             python.Append(string.Format("#df['{0}'] = df['{0}'].dt.strftime('%m/%d/%Y')\r\n\r\n", exampleDate));
 
@@ -470,6 +489,10 @@ namespace CSVLint
             python.Append("# Calculate new values example\r\n");
             python.Append("#df['bmi_calc'] = round(df['weight'] / (df['height'] / 100) ** 2, 1)\r\n");
             python.Append("#df['center_patient'] = df['centercode'].str.slice(0, 2) + '-' + df['patientcode'].map(str) # '01-123' etc\r\n\r\n");
+
+            // -------------------------------------
+            ScriptHeader(python, "Data merge example");
+            // -------------------------------------
 
             python.Append("# Merge dataframes example, to join on multiple columns use a list, for example: on=['patient_id', 'center_id']\r\n");
             python.Append("#merged_df = pd.merge(df1, df2, how='left', on='patient_id') # same key column name\r\n");
@@ -700,13 +723,24 @@ namespace CSVLint
             }
 
             // R-script examples of typical data transformations
-            rscript.Append("# --------------------------------------\r\n");
-            rscript.Append("# Data transformation suggestions\r\n");
-            rscript.Append("# --------------------------------------\r\n\r\n");
+            var exampleYear = DateTime.Now.Year;
+            rscript.Append("# Remove or uncomment the script parts below to filter, transform, merge as needed\r\n\r\n");
+
+            // -------------------------------------
+            ScriptHeader(rscript, "Filter suggestions");
+            // -------------------------------------
+
+            rscript.Append("# filter on value or date range\r\n");
+            rscript.Append("#filtered_df <- df[df$study == \"123\"), ]\r\n");
+            rscript.Append(string.Format("#filtered_df <- df[df${0} >= as.Date(\"{1}-01-01\") & df${0} < as.Date(\"{1}-07-01\"), ]\r\n\r\n", exampleDate, exampleYear));
 
             rscript.Append("# Reorder or remove columns (edit code below)\r\n");
             rscript.Append(string.Format("colOrder <- {0}", col_names));
             rscript.Append("df <- df[, colOrder]\r\n\r\n");
+
+            // -------------------------------------
+            ScriptHeader(rscript, "Data transformation suggestions");
+            // -------------------------------------
 
             rscript.Append("# Date to string example, format as MM/dd/yyyy\r\n");
             rscript.Append(string.Format("#df${0} <- format(df${0}, \"%m/%d/%Y\")\r\n\r\n", exampleDate));
@@ -719,6 +753,10 @@ namespace CSVLint
             rscript.Append("# Calculate new values example\r\n");
             rscript.Append("#df$bmi_calc <- df$weight / (df$height / 100) ^ 2\r\n");
             rscript.Append("#df$center_patient <- paste(substr(df$centercode, 1, 2), '-', df$patientcode) # '01-123' etc.\r\n\r\n");
+
+            // -------------------------------------
+            ScriptHeader(rscript, "Merge examples");
+            // -------------------------------------
 
             rscript.Append("# Merge dataframes example, all.x=TRUE meaning take all df1 records(=x) and left outer join with df2(=y)\r\n");
             rscript.Append("#merged_df <- merge(df1, df2, all.x=TRUE, by=c('patient_id')) # same key column name\r\n");
@@ -864,6 +902,7 @@ namespace CSVLint
 
             // no decimals, then not technically needed but nice to have as example code
             if (r_dec == "") r_dec = ".";
+            if (exampleDate == "") exampleDate = "myDateField";
 
             // csv-parameters
             var nameparam = "";
@@ -951,18 +990,25 @@ namespace CSVLint
                 ps1.Append("\tif ($errmsg) {Write-Error \"$errmsg on line $line\" -TargetObject $row}\r\n}\r\n\r\n");
             }
 
-            if (exampleDate == "") exampleDate = "myDateField";
-
-            // Python examples of typical data transformations
-            ps1.Append("# --------------------------------------\r\n");
-            ps1.Append("# Data transformation suggestions\r\n");
-            ps1.Append("# --------------------------------------\r\n\r\n");
+            // PowerShell examples of typical data transformations
+            var exampleYear = DateTime.Now.Year;
+            ps1.Append("# Remove or uncomment the script parts below to filter, transform, merge as needed\r\n\r\n");
+            // -------------------------------------
+            ScriptHeader(ps1, "Data filter suggestions");
+            // -------------------------------------
+            ps1.Append("# filter on value or date range\r\n");
+            ps1.Append(string.Format("$filteredData = $data | Where - Object { $_.{0} - gt[DateTime]::Parse(\"{1}-01-01\") -and $_.{0} -lt [DateTime]::Parse(\"{1}-07-01\") }\r\n", exampleDate, exampleYear));
 
             ps1.Append("# Reorder or remove columns (edit code below)\r\n");
             ps1.Append("$csvnew = $csvdata | ForEach-Object {\r\n");
             ps1.Append("\t[PSCustomObject]@{\r\n");
             ps1.Append("\t\t# Reorder columns\r\n");
             ps1.Append(col_order);
+
+            // -------------------------------------
+            ScriptHeader(ps1, "Data transformation suggestions");
+            // -------------------------------------
+
             ps1.Append("#\t\t# Add columns\r\n");
             ps1.Append(string.Format("#\t\t{0} = $_.{1}.ToString(\"yyyy-MM-dd\")\r\n", exampleDate.PadRight(MAX_COLNAME, ' '), exampleDate));
             ps1.Append(string.Format("#\t\t{0} = switch ($_.YesNoValue) {{\r\n", "YesNo_code".PadRight(MAX_COLNAME, ' ')));
@@ -974,6 +1020,10 @@ namespace CSVLint
             ps1.Append(string.Format("#\t\t{0} = $_.centercode.SubString(0, 2) + \"-\" + patientcode # '01-123' etc\r\n", "cent_pat".PadRight(MAX_COLNAME, ' ')));
             ps1.Append("\t}\r\n");
             ps1.Append("}\r\n\r\n");
+
+            // -------------------------------------
+            ScriptHeader(ps1, "Merge data example");
+            // -------------------------------------
 
             ps1.Append("## Merge datasets in PowerShell requires custom external modules which goes beyond the scope of this generated script\r\n");
             ps1.Append("##Install-Module -Name Join-Object\r\n");
