@@ -188,35 +188,20 @@ namespace Kbg.NppPluginNET
                                                         // incorrect: tmp.Calendar.TwoDigitYearMax = 2039
             dummyCulture = CultureInfo.ReadOnly(tmp);
 
+            // cursor line / caret line transparency
             if (Settings.TransparentCursor)
             {
+                // check if cursor line currently has alpha value
                 var editor = new ScintillaGateway(PluginBase.GetCurrentScintilla());
                 if (editor.GetCaretLineBackAlpha() == Alpha.NOALPHA)
                 {
+                    // set cursor line transparency
                     editor.SetCaretLineBackAlpha((Alpha)16 + 8);
                     //editor.SetCaretLineBack(sCaretLineBack);
                     editor.SetCaretLineBack(new Colour(0)); // Main.CheckConfigDarkMode() ? 0xFFFFFF : 0
+                    editor.SetCaretLineLayer(Layer.UNDER_TEXT); // *IMPORTANT*
                 }
             }
-        }
-
-        internal static bool CheckConfigDarkMode()
-        {
-            string darkmodeenabled = "no";
-
-            var xmlfile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Notepad++\\config.xml");
-            try
-            {
-                XmlDocument config = new XmlDocument();
-                config.Load(xmlfile);
-
-                XmlNode darkmode = config.DocumentElement.SelectSingleNode("/NotepadPlus/GUIConfigs/GUIConfig[@name='DarkMode']");
-                darkmodeenabled = (darkmode != null) &&
-                    (darkmode as XmlElement).HasAttribute("enable") ? darkmode.Attributes["enable"].Value : "no";
-            }
-            catch { };
-
-            return darkmodeenabled == "yes";
         }
 
         internal static void TryCreateLexerXml(int presetidx, bool overwrite)
@@ -229,7 +214,8 @@ namespace Kbg.NppPluginNET
                 if (presetidx == -1)
                 {
                     // Give users color preset based on Darkmode or not
-                    bool checkdarkmode = CheckConfigDarkMode();
+                    INotepadPPGateway notepad = new NotepadPPGateway();
+                    bool checkdarkmode = notepad.IsDarkModeEnabled();
                     presetidx = (checkdarkmode ? 3 : 0); // 0=Normal background, 3=Dark mode Neon colors
                 }
 
