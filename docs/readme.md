@@ -21,6 +21,9 @@ search for "csv lint", check the checkbox and press Install. This will add
 CSV Lint under the `Plugins > CSV Lint` menu item and a CSV Lint icon in the
 toolbar icon.
 
+CSV Lint doesn't require an internet connection and doesn't use any cloud service.
+All data processing is done offline on the pc that runs Notepad++.
+
 **If you find the CSV Lint plug-in useful you can buy me a coffee!** ☕  
 [![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/donate/?hosted_button_id=T8QZSFBNAPERL)
 
@@ -442,7 +445,7 @@ other examples below
 | 1-6-2024        | 1-6          | -2024        |
 | TGAGCATCGGAC    | TGA          | GCATCGGAC    |
 | 1.2650          | 1.2          | 650          |
-| 4015672111745   } 401          | 5672111745   |
+| 4015672111745   | 401          | 5672111745   |
 
 You can enter a negative position to split from the end of the value, for
 example split on position `-4` will split value `PT0123` into `PT` and `0123`,

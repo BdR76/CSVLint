@@ -27,7 +27,9 @@ With CSV Lint you can take a dataset and:
 * Convert csv data to SQL insert script or XML or JSON format.
 * Generate Python, R or PowerShell scripts
 
-CSV Lint is stable and usable for most general use-cases, but it is a work-in-progress, 
+CSV Lint doesn't require an internet connection and doesn't use any cloud service.
+All data processing is done offline on the pc that runs Notepad++.
+The plug-in is stable and usable for most general use-cases, but it is a work-in-progress, 
 so if you encounter any bugs or unexpected output I encourage you to [report issues here](https://github.com/BdR76/CSVLint/issues).
 CSVLint is based on a prototype project [Dataset MultiTool](https://github.com/BdR76/datasetmultitool)
 
