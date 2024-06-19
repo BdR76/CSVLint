@@ -484,7 +484,7 @@ namespace CSVLint
 
             python.Append("# Replace labels with codes example, when column contains 'Yes' or 'No' replace with '1' or '0'\r\n");
             python.Append("#lookuplist = {'Yes': 1, 'No': 0}\r\n");
-            python.Append("#df['fieldyesno_code'] = df['fieldyesno'].map(lookuplist)\r\n\r\n");
+            python.Append("#df['yesno_int'] = df['yesno_str'].map(lookuplist)\r\n\r\n");
 
             python.Append("# Calculate new values example\r\n");
             python.Append("#df['bmi_calc'] = round(df['weight'] / (df['height'] / 100) ** 2, 1)\r\n");
@@ -522,12 +522,24 @@ namespace CSVLint
             IScintillaGateway editor = new ScintillaGateway(PluginBase.GetCurrentScintilla());
 
             // fixed width, also output absolute column positions
-            var colwidth = "";
-            if (csvdef.Separator == '\0') colwidth = string.Format("\r\n; Fixed Length positions {0}\r\n", csvdef.GetColumnWidths(true));
+            var comment = "";
+            if (csvdef.Separator == '\0') comment += string.Format("\r\n; Fixed Length positions {0}\r\n", csvdef.GetColumnWidths(true));
+
+            // check for non-supported file features
+            var notsup = false;
+            if ((csvdef.SkipLines > 0) || (csvdef.CommentChar != '\0')) notsup = true;
+            // check for non-supported column features
+            foreach (var col in csvdef.Fields) {
+                if ( (col.isCodedValue)
+                        || ((col.DataType == ColumnType.Decimal) && (col.Decimals != csvdef.NumberDigits))
+                        || ((col.DataType == ColumnType.DateTime) && (col.Mask != csvdef.DateTimeFormat))
+                    ) notsup = true;
+            }
+            if (notsup) comment += "\r\n; NOTE: some CSV Lint features are not supported by the ODBC Text driver, that is why these lines are are commented out";
 
             // also add filename
             string FILE_NAME = Path.GetFileName(notepad.GetCurrentFilePath());
-            var txt = string.Format("[{0}]\r\n{1}{2}", FILE_NAME, csvdef.GetIniLines().ToString(), colwidth);
+            var txt = string.Format("[{0}]\r\n{1}{2}", FILE_NAME, csvdef.GetIniLines().ToString(), comment);
 
             // create new file
             notepad.FileNew();
@@ -748,7 +760,7 @@ namespace CSVLint
             rscript.Append("# Replace labels with codes example, when column contains 'Yes' or 'No' replace with '1' or '0'\r\n");
             rscript.Append("#lookuplist <- data.frame(\"code\" = c(\"0\", \"1\"),\r\n");
             rscript.Append("#                    \"label\" = c(\"No\", \"Yes\") )\r\n");
-            rscript.Append("#df$fieldyesno_code <- lookuplist$code[match(df$fieldyesno, lookuplist$label)]\r\n\r\n");
+            rscript.Append("#df$yesno_int <- lookuplist$code[match(df$yesno_str, lookuplist$label)]\r\n\r\n");
             
             rscript.Append("# Calculate new values example\r\n");
             rscript.Append("#df$bmi_calc <- df$weight / (df$height / 100) ^ 2\r\n");
@@ -878,7 +890,8 @@ namespace CSVLint
 
                         break;
                     case ColumnType.Decimal:
-                        col_types += string.Format("\t\t$row.{0} = [decimal]($row.{1} -replace ',', '.')\r\n", colnamepad, colname);
+                        var repl = (coldef.DecimalSymbol.ToString() == "." ? "-replace ',', ''" : "-replace '\\.', '' -replace ',', '.'");
+                        col_types += string.Format("\t\t$row.{0} = [decimal]($row.{1} {2})\r\n", colnamepad, colname, repl);
 
                         // just use the first decimal symbol
                         if (r_dec == "") r_dec = coldef.DecimalSymbol.ToString();
@@ -918,9 +931,6 @@ namespace CSVLint
                 nameparam += string.Format(" -Header @({0})", col_names);
             }
 
-            // PowerShell skip comment lines
-            if (csvdef.SkipLines > 0) nameparam += string.Format(" | Select-Object -Skip {0}", csvdef.SkipLines);
-
             // PowerShell comment character not supported(?)
             //if (csvdef.CommentChar != '\0') nameparam += string.Format(" -Comment '{0}'", csvdef.CommentChar);
 
@@ -953,7 +963,13 @@ namespace CSVLint
             {
                 // character separated
                 ps1.Append("# read csv data file\r\n");
-                ps1.Append(string.Format("$csvdata = Import-Csv -Path $filename{0}\r\n\r\n", nameparam));
+
+                // PowerShell skip lines requires different csv function
+                if (csvdef.SkipLines > 0) {
+                    ps1.Append(string.Format("$csvdata = Get-Content -Path $filename | Select-Object -Skip {0} | ConvertFrom-Csv{1}\r\n\r\n", csvdef.SkipLines, nameparam));
+                } else {
+                    ps1.Append(string.Format("$csvdata = Import-Csv -Path $filename{0}\r\n\r\n", nameparam));
+                }
             }
 
             // column types
@@ -997,7 +1013,7 @@ namespace CSVLint
             ScriptHeader(ps1, "Data filter suggestions");
             // -------------------------------------
             ps1.Append("# filter on value or date range\r\n");
-            ps1.Append(string.Format("$filteredData = $data | Where - Object { $_.{0} - gt[DateTime]::Parse(\"{1}-01-01\") -and $_.{0} -lt [DateTime]::Parse(\"{1}-07-01\") }\r\n", exampleDate, exampleYear));
+            ps1.Append(string.Format("#$csvdata = $csvdata | Where-Object {{ $_.{0} -gt [DateTime]::Parse(\"{1}-01-01\") -and $_.{0} -lt [DateTime]::Parse(\"{1}-07-01\") }}\r\n", exampleDate, exampleYear));
 
             ps1.Append("# Reorder or remove columns (edit code below)\r\n");
             ps1.Append("$csvnew = $csvdata | ForEach-Object {\r\n");
@@ -1006,12 +1022,12 @@ namespace CSVLint
             ps1.Append(col_order);
 
             // -------------------------------------
-            ScriptHeader(ps1, "Data transformation suggestions");
+            // ScriptHeader(ps1, "Data transformation suggestions");
             // -------------------------------------
 
-            ps1.Append("#\t\t# Add columns\r\n");
+            ps1.Append("#\t\t# Data transformation suggestions\r\n");
             ps1.Append(string.Format("#\t\t{0} = $_.{1}.ToString(\"yyyy-MM-dd\")\r\n", exampleDate.PadRight(MAX_COLNAME, ' '), exampleDate));
-            ps1.Append(string.Format("#\t\t{0} = switch ($_.YesNoValue) {{\r\n", "YesNo_code".PadRight(MAX_COLNAME, ' ')));
+            ps1.Append(string.Format("#\t\t{0} = switch ($_.YesNo_str) {{\r\n", "YesNo_int".PadRight(MAX_COLNAME, ' ')));
             ps1.Append("#\t\t\t\t\"No\" {\"0\"}\r\n");
             ps1.Append("#\t\t\t\t\"Yes\" {\"1\"}\r\n");
             ps1.Append("#\t\t\t\tdefault {$_}\r\n");
