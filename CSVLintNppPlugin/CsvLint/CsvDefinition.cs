@@ -979,7 +979,7 @@ namespace CSVLint
         /// when editing, sorting or copying a data file, also copy the first comment lines
         /// </summary>
         /// <param name="data"> csv data </param>
-        public void CopyCommentLinesAtStart(StreamReader strdata, StringBuilder sb, string prefix)
+        public void CopyCommentLinesAtStart(StreamReader strdata, StringBuilder sb, string prefix, string CRLF)
         {
             // how many lines of comment to skip
             int skip = (this.SkipLines >= 0 ? this.SkipLines : 0);
@@ -992,7 +992,7 @@ namespace CSVLint
                 // copy and add prefix and line feed
                 sb.Append(prefix);
                 sb.Append(line);
-                sb.Append("\n");
+                sb.Append(CRLF);
 
                 skip--;
             }

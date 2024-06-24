@@ -91,6 +91,16 @@ namespace CSVLint
             return res;
         }
 
+        private static string getEditorEOLchars(EndOfLine EOL)
+        {
+            switch (EOL)
+            {
+                case EndOfLine.CR: return "\r";
+                case EndOfLine.LF: return "\n";
+                default: return "\r\n"; // default is EndOfLine.CRLF
+            }
+        }
+
         /// <summary>
         /// reformat file for date, decimal and separator
         /// </summary>
@@ -129,6 +139,7 @@ namespace CSVLint
 
             // handle to editor
             ScintillaGateway scintillaGateway = PluginBase.CurrentScintillaGateway;
+            var CRLF = getEditorEOLchars(scintillaGateway.GetEOLMode());
 
             // use stringreader to go line by line
             var strdata = ScintillaStreams.StreamAllText();
@@ -155,7 +166,7 @@ namespace CSVLint
             }
 
             // copy any comment lines
-            csvdef.CopyCommentLinesAtStart(strdata, datanew, "");
+            csvdef.CopyCommentLinesAtStart(strdata, datanew, "", CRLF);
 
             // read all lines
             while (!strdata.EndOfStream)
@@ -266,7 +277,7 @@ namespace CSVLint
                     };
 
                     // add line break
-                    datanew.Append("\n");
+                    datanew.Append(CRLF);
                 };
             }
 
@@ -450,6 +461,7 @@ namespace CSVLint
             if (enumcols1 != "") sb.Append(string.Format("-- Enumeration columns (optional)\r\n/*\r\n{0}{1}*/\r\n", enumcols1, enumcols2));
 
             // add comment table
+            comment.Insert(0, "Table imported using");
             var tabcomment = string.Join("\r\n", comment).Replace("'", "''");
             sb.Append("-- Table comment\r\n");
             switch (Main.Settings.DataConvertSQL)
@@ -475,7 +487,7 @@ namespace CSVLint
             int lastend = -1;  // last line end character
 
             // copy any comment lines
-            csvdef.CopyCommentLinesAtStart(strdata, sb, "-- ");
+            csvdef.CopyCommentLinesAtStart(strdata, sb, "-- ", "\r\n");
 
             while (!strdata.EndOfStream)
             {
@@ -663,7 +675,7 @@ namespace CSVLint
             // copy any comment lines
             if (csvdef.SkipLines > 0) {
                 sb.Append("\t<!--\n");
-                csvdef.CopyCommentLinesAtStart(strdata, sb, "\t");
+                csvdef.CopyCommentLinesAtStart(strdata, sb, "\t", "\r\n");
                 sb.Append("\t-->\n");
             }
 
@@ -1013,6 +1025,10 @@ namespace CSVLint
                 return;
             }
 
+            // handle to editor
+            ScintillaGateway scintillaGateway = PluginBase.CurrentScintillaGateway;
+            var CRLF = getEditorEOLchars(scintillaGateway.GetEOLMode());
+
             // examine data and keep list of all data lines
             // Note: can be a dictionary, not a list, because the sortable values are guaranteed to be unique
             Dictionary<string, string> sortlines = new Dictionary<string, string>();
@@ -1031,7 +1047,7 @@ namespace CSVLint
             StringBuilder sbsort = new StringBuilder();
 
             // copy any comment lines
-            csvdef.CopyCommentLinesAtStart(strdata, sbsort, "");
+            csvdef.CopyCommentLinesAtStart(strdata, sbsort, "", CRLF);
 
             // if first line is header column names
             if (csvdef.ColNameHeader) {
@@ -1040,7 +1056,7 @@ namespace CSVLint
 
                 sbsort.Append(csvdef.ConstructLine(values, iscomm));
 
-                sbsort.Append("\n");
+                sbsort.Append(CRLF);
             }
 
             string sortval = "";
@@ -1084,11 +1100,10 @@ namespace CSVLint
             // add all lines, sort by count
             foreach (KeyValuePair<string, string> rec in sortlines)
             {
-                sbsort.Append(string.Format("{0}\n", rec.Value));
+                sbsort.Append(string.Format("{0}{1}", rec.Value, CRLF));
             }
 
             // update text in editor
-            ScintillaGateway scintillaGateway = PluginBase.CurrentScintillaGateway;
             scintillaGateway.SetText(sbsort.ToString());
         }
 
@@ -1101,6 +1116,7 @@ namespace CSVLint
         {
             // handle to editor
             ScintillaGateway scintillaGateway = PluginBase.CurrentScintillaGateway;
+            var CRLF = getEditorEOLchars(scintillaGateway.GetEOLMode());
 
             // use stringreader to go line by line
             var strdata = ScintillaStreams.StreamAllText();
@@ -1161,7 +1177,7 @@ namespace CSVLint
             }
 
             // copy any comment lines
-            csvdef.CopyCommentLinesAtStart(strdata, datanew, "");
+            csvdef.CopyCommentLinesAtStart(strdata, datanew, "", CRLF);
 
             // list for building new columns
             List<string> newcols = new List<string>();
@@ -1180,7 +1196,7 @@ namespace CSVLint
 
                 datanew.Append(csvnew.ConstructLine(newcols, false));
 
-                datanew.Append("\n");
+                datanew.Append(CRLF);
             }
 
             // read all lines
@@ -1324,7 +1340,7 @@ namespace CSVLint
                     datanew.Append(csvnew.ConstructLine(newcols, iscomm));
 
                     // add line break
-                    datanew.Append("\n");
+                    datanew.Append(CRLF);
                 }
             };
 
