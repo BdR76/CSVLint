@@ -194,7 +194,7 @@ for col in range(1, 100):
             else:
                 val = ("%d.%s" % ( random.randint(1, 12), random_digits_string(2)))
         elif col == 42:
-            val = ("%d.%s" % ( random.randint(-9, 9), random_digits_string(3))).replace("0.", ".")
+            val = ("%d.%s" % ( random.randint(-9, 9), random_digits_string(random.randint(1, 3)))).replace("0.", ".")
         elif col == 43:
             val = ("%d.%s" % ( random.randint(-50, 20), random_digits_string(3)))
         elif col == 44:
@@ -261,9 +261,11 @@ for col in range(1, 100):
         elif col == 67:
             val = random.choices(["NEG", "POS", "readrror", "-"], weights=(30, 10, 2, 2))[0]
         elif col == 68:
-            val = random.choices(["NEG", "POS", "readrror", "-"], weights=(30, 10, 2, 2))[0]
+            if random.randint(1, 100) < 10:
+                val = random.choice(["Hb", "LDL", "HDL"])
         elif col == 69:
-            val = random.choice(["Hb", "LDL", "HDL"])
+            if random.randint(1, 100) < 10:
+                val = random_lorem_string(10, 50)
         elif col == 70:
             val = random.choices(["mmol/L", "µmol/L", "mg/mL", "g/L", "g/dL", "g/100mL", "g%"], weights=(30, 20, 20, 5, 5, 5, 2))[0]
         # random texts
@@ -287,19 +289,27 @@ for col in range(1, 100):
             val = random_lorem_string(0, 40)
         elif col == 80:
             val = random_lorem_string(0, 50)
-        # random texts
+        # various edge cases
         elif col == 81:
-            val = random_lorem_string(10)
+            if random.randint(1, 100) < 10:
+                val = random_lorem_string(10)
         elif col == 82:
-            val = random_lorem_string(10)
+            val = random_datetime_string("%d%m%y", -80)
         elif col == 83:
-            val = random_lorem_string(10)
+            val = "yes"
         elif col == 84:
-            val = random_lorem_string(10)
+            if random.randint(1, 100) < 95:
+                val = ("%d.%s" % ( random.randint(0, 1), random_digits_string(random.randint(1, 2))))
+            else:
+                r_int = random.randint(0, 1)
+                val = ("%d.%sE-%02d" % ( random.randint(1, 9), random_digits_string(3), random.randint(5, 20)))
         elif col == 85:
-            val = random_lorem_string(10)
+            val = ("%02d.%02d.%d" % ( random.randint(1, 12), random.randint(1, 12), random.randint(curryear-10, curryear)))
         elif col == 86:
-            val = random_lorem_string(10)
+            if row < 95:
+                val = ("%02d/%02d/%d" % ( random.randint(1, 12), random.randint(1, 12), random.randint(curryear-10, curryear)))
+            else:
+                val = ("%02d/%02d/%d" % ( random.randint(13, 28), random.randint(1, 12), random.randint(curryear-10, curryear)))
         elif col == 87:
             val = random_lorem_string(10)
         elif col == 88:
@@ -360,8 +370,10 @@ for col in range(1, 100):
         colprefix = "decimal"
     elif 51 <= col <= 60:
         colprefix = "currency"
-    elif 71 <= col <= 89:
+    elif 71 <= col <= 80:
         colprefix = "text"
+    elif 81 <= col <= 89:
+        colprefix = "edgecase"
     elif col >= 90:
         colprefix = "random"
     else:

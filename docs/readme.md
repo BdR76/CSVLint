@@ -37,7 +37,7 @@ file it's still uncolored.
 
 There are four pre-defined color schemes you can select using the
 `Highlighting` button on the `Plugins > CSV Lint > Setttings` dialog.
-At first time startup, the plug-in will select normal or darkmode color scheme,
+At first time startup, the plug-in will select light or darkmode color scheme,
 depending on the Dark Mode setting in the Notepad++ `config.xml`.
 
 ![CSV Lint color styles for syntax highlighting](/docs/csvlint_color_styles.png?raw=true "CSV Lint plug-in color styles for syntax highlighting")
@@ -323,6 +323,9 @@ Note, that the resulting new dataset will have quotes applied according to the
 current `Apply quotes` setting in the Reformat dialog.
 
 ![CSV Lint sort data dialog](/docs/csvlint_sort_data.png?raw=true "CSV Lint plug-in sort data dialog")
+
+Sort on **value** to sort on the actual values, for example date value `31-01-2024` is lower than `01-12-2024`.  
+Sort on **length of value** to sort on the character length of the values, for example `xray` has a smaller length than `abdominal`.
 
 Sort **ascending** start with low values, end with high values `0 -> 9, A -> Z`  
 Sort **descending** start with high values, end with low values `Z -> A, 9 -> 0`
@@ -644,7 +647,7 @@ and they are stored in a settings file `%USERPROFILE%\AppData\Roaming\Notepad++\
 
 About
 -----
-An about window
+An about dialog with the version number, contact information and a link to the documentation.
 
 Disclaimer
 ----------
@@ -676,5 +679,6 @@ History
 02-may-2023 - v0.4.6.4 Comment character and dark mode support  
 04-jun-2023 - v0.4.6.5 Support enum/coded values and various updates  
 16-dec-2023 - v0.4.6.6 PowerShell support and various updates  
+25-jun-2024 - v0.4.6.7 Reformat bugfix, improved enumeration, sort on length  
 
 BdR©2019-2024 Free to use - send questions or comments: Bas de Reuver - bdr1976@gmail.com

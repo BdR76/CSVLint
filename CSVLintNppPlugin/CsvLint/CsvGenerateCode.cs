@@ -535,7 +535,7 @@ namespace CSVLint
                         || ((col.DataType == ColumnType.DateTime) && (col.Mask != csvdef.DateTimeFormat))
                     ) notsup = true;
             }
-            if (notsup) comment += "\r\n; NOTE: some CSV Lint features are not supported by the ODBC Text driver, that is why these lines are are commented out";
+            if (notsup) comment += "\r\n; NOTE: some CSV Lint features are not supported by the ODBC Text driver, that is why these lines are commented out";
 
             // also add filename
             string FILE_NAME = Path.GetFileName(notepad.GetCurrentFilePath());

@@ -1308,6 +1308,12 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public void SetCaretLineBack(Colour back)
         {
             Win32.SendMessage(scintilla, SciMsg.SCI_SETCARETLINEBACK, back.Value, (IntPtr) Unused);
+            //Win32.SendMessage(scintilla, SciMsg.SC_ELEMENT_CARET_LINE_BACK, back.Value, (IntPtr)Unused);
+        }
+
+        public void SetElementColor(int element, ColourAlpha clr)
+        {
+            Win32.SendMessage(scintilla, SciMsg.SCI_SETELEMENTCOLOUR, element, clr.Value);
         }
 
         /// <summary>

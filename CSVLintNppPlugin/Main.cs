@@ -16,7 +16,7 @@ using Kbg.NppPluginNET.PluginInfrastructure;
 
 namespace Kbg.NppPluginNET
 {
-    class Main
+    partial class Main
     {
         internal const string PluginName = "CSV Lint";
         public static Settings Settings = new Settings();
@@ -193,14 +193,43 @@ namespace Kbg.NppPluginNET
             {
                 // check if cursor line currently has alpha value
                 var editor = new ScintillaGateway(PluginBase.GetCurrentScintilla());
+                var test123 = editor.GetCaretLineBackAlpha();
+
+                //if (test123 == Alpha.NOALPHA || test123 == Alpha.OPAQUE)
                 if (editor.GetCaretLineBackAlpha() == Alpha.NOALPHA)
                 {
+                    // OLD OLD OLD OLD OLD
                     // set cursor line transparency
                     editor.SetCaretLineBackAlpha((Alpha)16 + 8);
                     //editor.SetCaretLineBack(sCaretLineBack);
                     editor.SetCaretLineBack(new Colour(0)); // Main.CheckConfigDarkMode() ? 0xFFFFFF : 0
                     editor.SetCaretLineLayer(Layer.UNDER_TEXT); // *IMPORTANT*
+                    // OLD OLD OLD OLD OLD
+
+                    // // NEW NEW NEW NEW NEW
+                    // //int safeoldcolor = static_cast<int>(CallScintilla(view, SCI_GETELEMENTCOLOUR, SC_ELEMENT_CARET_LINE_BACK, 0));
+                    // int safeoldcolor = 0x808080;
+                    // 
+                    // // set to transparent
+                    // INotepadPPGateway notepad = new NotepadPPGateway();
+                    // int hiddenColor = notepad.IsDarkModeEnabled() ? 0xD0D0D0 : 0x202020;
+                    // 
+                    // //ColourAlpha clr = new ColourAlpha(hiddenColor | ((int)SciMsg.SC_ALPHA_OPAQUE << 24));
+                    // ColourAlpha clr = new ColourAlpha(hiddenColor | (64 << 24));
+                    // 
+                    // editor.SetElementColor((int)SciMsg.SC_ELEMENT_HIDDEN_LINE, clr);
+                    // 
+                    // editor.SetCaretLineBackAlpha((Alpha)16 + 8);
+                    // 
+                    // //const intptr_t alpha = ((100 - caretLineTransp) * SC_ALPHA_OPAQUE / 100);
+                    // int alpha = 24;
+                    // ColourAlpha newclr = new ColourAlpha( (safeoldcolor & 0xFFFFFF) | (alpha << 24));
+                    // editor.SetElementColor((int)SciMsg.SC_ELEMENT_CARET_LINE_BACK, newclr);
+                    // editor.SetCaretLineLayer(Layer.UNDER_TEXT);
+                    // // NEW NEW NEW NEW NEW
+
                 }
+
             }
         }
 
