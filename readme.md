@@ -29,8 +29,8 @@ With CSV Lint you can take a dataset and:
 
 CSV Lint doesn't require an internet connection and doesn't use any cloud service.
 All data processing is done offline on the pc that runs Notepad++.
-The plug-in is stable and usable for most general use-cases, but it is a work-in-progress, 
-so if you encounter any bugs or unexpected output I encourage you to [report issues here](https://github.com/BdR76/CSVLint/issues).
+The plug-in is stable and works for most use-cases, if you encounter any bugs or
+unexpected behaviour feel free to [report any issues here](https://github.com/BdR76/CSVLint/issues).
 CSVLint is based on a prototype project [Dataset MultiTool](https://github.com/BdR76/datasetmultitool)
 
 **If you find the CSV Lint plug-in useful you can buy me a coffee!** ☕  
