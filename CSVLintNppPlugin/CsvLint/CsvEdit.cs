@@ -328,7 +328,7 @@ namespace CSVLint
             // apply brackets or quotes, only if needed
             TABLE_NAME = SQLSafeName(TABLE_NAME);
 
-            string SQL_TYPE = (Main.Settings.DataConvertSQL <= 1 ? (Main.Settings.DataConvertSQL == 0 ? "mySQL" : "MS-SQL") : "PostgreSQL");
+            string SQL_TYPE = (Main.Settings.DataConvertSQL <= 1 ? (Main.Settings.DataConvertSQL == 0 ? "MySQL" : "MS-SQL") : "PostgreSQL");
 
             // default comment
             List<String> comment = ScriptInfo(notepad);
@@ -352,45 +352,49 @@ namespace CSVLint
                 case 2: // PostgreSQL
                     sb.Append(string.Format("{0} SERIAL PRIMARY KEY,\r\n\t", recidname));
                     break;
-                default: // 0=mySQL
+                default: // 0=MySQL
                     sb.Append(string.Format("{0} int AUTO_INCREMENT NOT NULL,\r\n\t", recidname));
                     break;
             }
 
             var cols = "\t";
+            var colscom = "";
             var enumcols1 = "";
             var enumcols2 = "";
 
             for (var r = 0; r < csvdef.Fields.Count; r++)
             {
-                // determine sql column name -> mySQL = `colname`, MS-SQL = [colname], PostgreSQL = "colname"
+                // determine sql column name -> MySQL = `colname`, MS-SQL = [colname], PostgreSQL = "colname"
                 string sqlname = SQLSafeName(csvdef.Fields[r].Name);
 
                 // determine sql datatype
                 var sqltype = "varchar";
-                var colcomment = "";
+                var widunk = "";
+                var comm = "";
 
                 if (csvdef.Fields[r].DataType == ColumnType.Integer) sqltype = "integer";
-                if (csvdef.Fields[r].DataType == ColumnType.DateTime) sqltype = (Main.Settings.DataConvertSQL < 2 ? "datetime" : "timestamp"); // mySQL/MS-SQL = datetime, Postgress=timestamp
+                if (csvdef.Fields[r].DataType == ColumnType.DateTime) sqltype = (Main.Settings.DataConvertSQL < 2 ? "datetime" : "timestamp"); // MySQL/MS-SQL = datetime, Postgress=timestamp
                 //if (csvdef.Fields[r].DataType == ColumnType.Guid) sqltype = "varchar(36)";
                 if (csvdef.Fields[r].DataType == ColumnType.Decimal)
                 {
                     sqltype = string.Format("numeric({0},{1})", csvdef.Fields[r].MaxWidth, csvdef.Fields[r].Decimals);
                 }
-                // for SQL date format always needs to be ISO format
+                // column varchar
                 if (csvdef.Fields[r].DataType == ColumnType.String)
                 {
                     var wd = csvdef.Fields[r].MaxWidth;
                     if (wd == 0)
                     {
-                        colcomment = (wd == 0 ? " -- width unknown" : "");
+                        // Create column varchar(0) results in SQL error, always requires a width
+                        widunk = " -- width unknown";
                         wd = 10;
                     }
                     sqltype = string.Format("varchar({0})", wd);
                 }
                 // for SQL date format always needs to be ISO format
-                //if (csvdef.Fields[r].DataType == ColumnType.DateTime)
-                //{
+                if (csvdef.Fields[r].DataType == ColumnType.DateTime)
+                {
+                    comm = csvdef.Fields[r].Mask;
                 //    string masknew = "";
                 //    if (csvdef.Fields[r].Mask.IndexOf("yy") >= 0) masknew += "yyyy-MM-dd";
                 //    if (csvdef.Fields[r].Mask.IndexOf("H") >= 0) masknew += " HH:mm";
@@ -398,12 +402,12 @@ namespace CSVLint
                 //    if (csvdef.Fields[r].Mask.IndexOf("f") >= 0) masknew += ".fff";
                 //
                 //    csvdef.Fields[r].Mask = masknew.Trim();
-                //}
+                };
 
-                // no comma after last column, except for mySQL
+                // no comma after last column, except for MySQL
                 var comma = (r < csvdef.Fields.Count - 1 || Main.Settings.DataConvertSQL == 0 ? "," : "");
 
-                sb.Append(string.Format("{0} {1}{2}{3}", sqlname, sqltype, comma, colcomment));
+                sb.Append(string.Format("{0} {1}{2}{3}", sqlname, sqltype, comma, widunk));
                 cols += sqlname;
                 if (r < csvdef.Fields.Count - 1)
                 {
@@ -415,6 +419,7 @@ namespace CSVLint
                 if (csvdef.Fields[r].isCodedValue)
                 {
                     var enumvals = string.Join("\", \"", csvdef.Fields[r].CodedList).Replace("'", "''");
+                    comm = string.Join(", ", csvdef.Fields[r].CodedList).Replace("'", "''");
                     switch (Main.Settings.DataConvertSQL)
                     {
                         case 1: // MS-SQL
@@ -442,41 +447,38 @@ namespace CSVLint
                             // for PostgreSQL, insert statements on ENUM column must always use quotes, so ('0', '1', '2') instead of (0, 1, 2)
                             if (csvdef.Fields[r].DataType == ColumnType.Integer) csvdef.Fields[r].DataType = ColumnType.String;
                             break;
-                        default: // 0=mySQL
-                            enumvals = enumvals.Replace("\"", "'"); // ENUM on mySQL is always treated as string value
+                        default: // 0=MySQL
+                            enumvals = enumvals.Replace("\"", "'"); // ENUM on MySQL is always treated as string value
                             enumcols1 += string.Format("ALTER TABLE {0} MODIFY COLUMN {1} ENUM('{2}');\r\n", TABLE_NAME, sqlname, enumvals);
-                            // for mySQL, insert statements on ENUM column must always use quotes, so ('0', '1', '2') instead of (0, 1, 2)
+                            // for MySQL, insert statements on ENUM column must always use quotes, so ('0', '1', '2') instead of (0, 1, 2)
                             if (csvdef.Fields[r].DataType == ColumnType.Integer) csvdef.Fields[r].DataType = ColumnType.String;
                             break;
                     }
                 }
+
+                // column comments
+                if (comm != "") comm = " (" + comm + ")";
+                switch (Main.Settings.DataConvertSQL)
+                {
+                    case 1: // MS-SQL
+                        colscom += string.Format("EXEC sp_addextendedproperty N'ColLabel', N'{0}{2} comment', N'USER', DBO, N'VIEW', {1}, N'COLUMN', '{0}';\r\n", sqlname, TABLE_NAME, comm);
+                        break;
+                    case 2: // PostgreSQL
+                        colscom += string.Format("COMMENT ON COLUMN {1}.{0} IS '{0}{2} comment';\r\n", sqlname, TABLE_NAME, comm);
+                        break;
+                    default: // 0=MySQL
+                        colscom += string.Format("MODIFY COLUMN {0} {1} COMMENT '{0}{2} comment'{3}\r\n", sqlname, sqltype, comm, (r < csvdef.Fields.Count-1 ? "," : ";"));
+                        break;
+                }
             };
 
-            // primary key definition for mySQL
+            // primary key definition for MySQL
             if (Main.Settings.DataConvertSQL == 0) sb.Append(string.Format("\r\n\tprimary key({0})", recidname));
 
             sb.Append("\r\n);\r\n");
 
             // add enumeration columns
             if (enumcols1 != "") sb.Append(string.Format("-- Enumeration columns (optional)\r\n/*\r\n{0}{1}*/\r\n", enumcols1, enumcols2));
-
-            // add comment table
-            comment.Insert(0, "Table imported using");
-            var tabcomment = string.Join("\r\n", comment).Replace("'", "''");
-            sb.Append("-- Table comment\r\n");
-            switch (Main.Settings.DataConvertSQL)
-            {
-                case 1:
-                    sb.Append(string.Format("EXEC sp_addextendedproperty 'Comment', N'{1}', N'SCHEMA', DBO, N'TABLE', {0}\r\nGO\r\n", TABLE_NAME, tabcomment)); // MS-SQL
-                    //sb.Append(string.Format("EXEC sys.sp_addextendedproperty @name = N'comment', @value = N'{0}' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'{1}'\r\nGO\r\n", coment, tablemmaf)); // MS-SQL alt
-                    break;
-                case 2:
-                    sb.Append(string.Format("COMMENT ON TABLE {0} IS '{1}';\r\n", TABLE_NAME, tabcomment)); // PostgreSQL
-                    break;
-                default: // 0=mySQL
-                    sb.Append(string.Format("ALTER TABLE {0} COMMENT '{1}';\r\n", TABLE_NAME, tabcomment)); // mySQL
-                    break;
-            }
 
             // use stringreader to go line by line
             var strdata = ScintillaStreams.StreamAllText();
@@ -598,6 +600,39 @@ namespace CSVLint
             // batch comment, insert record count
             // note: not possible to insert now because the ammount of records is unknown at this point
             if (batchcomm > -1) sb.Insert(batchcomm, string.Format("{0} - {1}", batchstart, lineCount));
+
+            sb.Append("\r\n-- -------------------------------------\r\n");
+            sb.Append("-- Add comments (recommended, especially when archiving)\r\n");
+            sb.Append("-- -------------------------------------\r\n\r\n");
+
+            // add comment table
+            comment.Insert(0, "Table imported using");
+            var tabcomment = string.Join("\r\n", comment).Replace("'", "''");
+            sb.Append("-- Table comment\r\n");
+            switch (Main.Settings.DataConvertSQL)
+            {
+                case 1:
+                    sb.Append(string.Format("EXEC sp_addextendedproperty 'Comment', N'{1}', N'SCHEMA', DBO, N'TABLE', {0};", TABLE_NAME, tabcomment)); // MS-SQL
+                    //sb.Append(string.Format("EXEC sys.sp_addextendedproperty @name = N'comment', @value = N'{0}' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'{1}'\r\nGO\r\n", coment, tablemmaf)); // MS-SQL alt
+                    break;
+                case 2:
+                    sb.Append(string.Format("COMMENT ON TABLE {0} IS '{1}';", TABLE_NAME, tabcomment)); // PostgreSQL
+                    break;
+                default: // 0=MySQL
+                    sb.Append(string.Format("ALTER TABLE {0} COMMENT '{1}';", TABLE_NAME, tabcomment)); // MySQL
+                    break;
+            }
+
+            sb.Append("\r\n\r\n-- Column comments\r\n/*\r\n");
+            if (Main.Settings.DataConvertSQL == 0) // MySQL
+            {
+                sb.Append("-- NOTE! MySQL requires repeating the name and datatype when modifying a column,\r\n");
+                sb.Append("-- so it's easier to add column comments at the CREATE TABLE statement.\r\n");
+                sb.Append("-- If you have changed any column datatypes make sure they are still the same here!\r\n");
+                sb.Append(string.Format("ALTER TABLE {0}\r\n", TABLE_NAME));
+            }
+            sb.Append(colscom);
+            sb.Append("*/\r\n");
 
             // create new file
             notepad.FileNew();
