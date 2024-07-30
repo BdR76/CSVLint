@@ -467,11 +467,14 @@ namespace CSVLint
             python.Append("# Remove or uncomment the script parts below to filter, transform, merge as needed\r\n\r\n");
 
             // -------------------------------------
-            ScriptHeader(python, "Data filtering suggestions");
+            ScriptHeader(python, "Data filter and sort suggestions");
             // -------------------------------------
             python.Append("# filter on value or date range\r\n");
             python.Append("#df = df[(df[\"date_column\"] == \"test\")]\r\n");
             python.Append(string.Format("#df = df[(df[\"{0}\"] >= \"{1}-01-01\") & (df[\"{0}\"] < \"{1}-07-01\")]\r\n\r\n", exampleDate, exampleYear));
+
+            python.Append("# sort on column\r\n");
+            python.Append(string.Format("#df = df.sort_values(\"{0}\") # or descending; .sort_values(by=[\"{0}\"], ascending=False)\r\n\r\n", exampleDate));
 
             python.Append("# Reorder or remove columns (edit code below)\r\n");
             python.Append(string.Format("df = df[[\r\n{0}]]\r\n\r\n", col_names));
@@ -596,7 +599,7 @@ namespace CSVLint
             var col_numbs = "";
             var col_enums = "";
 
-            var exampleDate = "myDateField";
+            var exampleDate = "";
 
             var r_dec = "";
 
@@ -647,7 +650,7 @@ namespace CSVLint
                         var rtype = (msk.IndexOf("H") == -1 ? "Date" : "POSIXct"); // date OR datetime
 
                         col_dates += string.Format("df${0} <- as.{1}(df${0}, format=\"{2}\")\r\n", colname, rtype, msk);
-                        exampleDate = colname;
+                        if (exampleDate == "") exampleDate = colname;
                         break;
                     case ColumnType.Integer:
                         col_types += string.Format("\"{0}\" = \"integer\"{1}\r\n", colname, comma);
@@ -735,16 +738,20 @@ namespace CSVLint
             }
 
             // R-script examples of typical data transformations
+            if (exampleDate == "") exampleDate = "myDateField";
             var exampleYear = DateTime.Now.Year;
             rscript.Append("# Remove or uncomment the script parts below to filter, transform, merge as needed\r\n\r\n");
 
             // -------------------------------------
-            ScriptHeader(rscript, "Filter suggestions");
+            ScriptHeader(rscript, "Data filter and sort suggestions");
             // -------------------------------------
 
             rscript.Append("# filter on value or date range\r\n");
             rscript.Append("#filtered_df <- df[df$study == \"123\"), ]\r\n");
             rscript.Append(string.Format("#filtered_df <- df[df${0} >= as.Date(\"{1}-01-01\") & df${0} < as.Date(\"{1}-07-01\"), ]\r\n\r\n", exampleDate, exampleYear));
+
+            rscript.Append("# sort on column\r\n");
+            rscript.Append(string.Format("#df <- df[order(df${0}), ] # or descending: order(df${0}, decreasing=TRUE)\r\n\r\n", exampleDate));
 
             rscript.Append("# Reorder or remove columns (edit code below)\r\n");
             rscript.Append(string.Format("colOrder <- {0}", col_names));
@@ -915,7 +922,6 @@ namespace CSVLint
 
             // no decimals, then not technically needed but nice to have as example code
             if (r_dec == "") r_dec = ".";
-            if (exampleDate == "") exampleDate = "myDateField";
 
             // csv-parameters
             var nameparam = "";
@@ -1007,13 +1013,17 @@ namespace CSVLint
             }
 
             // PowerShell examples of typical data transformations
+            if (exampleDate == "") exampleDate = "myDateField";
             var exampleYear = DateTime.Now.Year;
             ps1.Append("# Remove or uncomment the script parts below to filter, transform, merge as needed\r\n\r\n");
             // -------------------------------------
-            ScriptHeader(ps1, "Data filter suggestions");
+            ScriptHeader(ps1, "Data filter and sort suggestions");
             // -------------------------------------
             ps1.Append("# filter on value or date range\r\n");
-            ps1.Append(string.Format("#$csvdata = $csvdata | Where-Object {{ $_.{0} -gt [DateTime]::Parse(\"{1}-01-01\") -and $_.{0} -lt [DateTime]::Parse(\"{1}-07-01\") }}\r\n", exampleDate, exampleYear));
+            ps1.Append(string.Format("#$csvdata = $csvdata | Where-Object {{ $_.{0} -gt [DateTime]::Parse(\"{1}-01-01\") -and $_.{0} -lt [DateTime]::Parse(\"{1}-07-01\") }}\r\n\r\n", exampleDate, exampleYear));
+
+            ps1.Append("# sort on column\r\n");
+            ps1.Append(string.Format("#$csvdata = $csvdata | Sort-Object -Property \"{0}\" # -Descending\r\n\r\n", exampleDate));
 
             ps1.Append("# Reorder or remove columns (edit code below)\r\n");
             ps1.Append("$csvnew = $csvdata | ForEach-Object {\r\n");
