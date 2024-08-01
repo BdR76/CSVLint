@@ -974,7 +974,14 @@ namespace CSVLint
 
         private static string SortableString(string val, CsvColumn csvcol)
         {
-            if ( (csvcol.DataType == ColumnType.Integer) || (csvcol.DataType == ColumnType.Decimal)) // integer or decimal
+            if (csvcol.isCodedValue)
+            {
+                // 1+ because .IndexOf returns -1 for invalid codes and .ToString("D10") turns that into "-0000000001"
+                // change -1 to 0 so that invalid codes are sorted to beginning, and any correct codes after that
+                var codeint = 1 + csvcol.CodedList.IndexOf(val);
+                return codeint.ToString("D10");
+            }
+            else if ( (csvcol.DataType == ColumnType.Integer) || (csvcol.DataType == ColumnType.Decimal)) // integer or decimal
             {
                 // decimal, pad decimals first
                 if (csvcol.DataType == ColumnType.Decimal)
@@ -1049,7 +1056,7 @@ namespace CSVLint
         /// </summary>
         /// <param name="data">csv data</param>
         /// <param name="AscDesc">true = ascending, true = decending</param>
-        public static void SortData(CsvDefinition csvdef, int SortIdx, bool AscDesc, bool ValLen)
+        public static void SortData(CsvDefinition csvdef, int SortIdx, bool AscDesc, bool OnValue)
         {
             // this should never happen
             if (SortIdx > csvdef.Fields.Count - 1)
@@ -1094,7 +1101,7 @@ namespace CSVLint
                 sbsort.Append(CRLF);
             }
 
-            string sortval = "";
+            string sortkey = "";
 
             // read all data lines
             while (!strdata.EndOfStream)
@@ -1109,17 +1116,17 @@ namespace CSVLint
                     var val = (SortIdx < values.Count ? values[SortIdx] : "");
 
                     // sort on values or on length of values
-                    if (ValLen)
-                        sortval = SortableString(val, csvcol); // sort on values
+                    if (OnValue)
+                        sortkey = SortableString(val, csvcol); // sort on values
                     else
-                        sortval = val.Length.ToString().PadLeft(8, '0');  // sort on length of values. Implicit assumption: max. string length = 99999999 characters
+                        sortkey = val.Length.ToString().PadLeft(8, '0');  // sort on length of values. Implicit assumption: max. string length = 99999999 characters
                 }
 
                 // reconstruct original line of data
                 var line = csvdef.ConstructLine(values, iscomm);
 
                 // add to list
-                sortlines.Add(sortval + linecount.ToString("D10"), line); // add linecount so guaranteed unique + retain original sort order for equal values
+                sortlines.Add(sortkey + linecount.ToString("D10"), line); // add linecount so guaranteed unique + retain original sort order for equal values
 
                 // next line
                 linecount += 1;
