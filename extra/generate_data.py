@@ -15,19 +15,29 @@ from datetime import timedelta
 
 # constants
 FILE_NAME = "cardio.txt"
-MAX_LINES = 100000 # 1000 lines is approx. 92KB
+TOTAL_LINES = 100000 # 1000 lines is approx. 92KB
+#TOTAL_LINES = 24000000 # generate ~2GB takes about 3m40s depending on hardware factors
 MAX_PERSONS = 2000
 protos = ("XW duur", "CWRT X Watt", "Diabetes HIIT X - Y", "Hart XW duur", "Hart Interval X-YW  (2-2)", "Hart Interval X-YW  (3-4)", "Hart interval Y-X 4'-3'", "Interval X - Y", "Long HIIT XW 30 sec.", "Long HIIT XW 45 sec.", "Long HIIT XW 60 sec.", "Long Interval X - Y W", "Long duur X W", "ONCO XW duur", "ONCO Interval X- Y (3.00-4.00)", "transplantatie CWRT X watt")  # replace X and Y with random nrs 10,15,20,25..220
 stages = ("Warmup", "Training", "Recovery")
 durats = (130, 1760, 220)
 hrtavg = (60, 100, 80)
 
+# Average time interval, 10 min to 30 min for 100000 lines, or smaller time steps when generating more lines
+VISIT_AVG = int((600 * 100000) / TOTAL_LINES)
+# Cannot be smaller than 1, so clamp value between 1 and 600
+VISIT_AVG = min(max(VISIT_AVG, 1), 600)
+
+# display start time
+run_t0 = datetime.datetime.now() # start
+print("%s Generate data, file=%s, lines=%d" % (run_t0, FILE_NAME, TOTAL_LINES))
+
 # list of dates
 alldates = []
 testdate = datetime.datetime.now()
 curryear = testdate.year
-for i in range(int(MAX_LINES / 3)+1):
-    sec = random.randrange(300,900) # 5 min to 15 min
+for i in range(int(TOTAL_LINES / 3)+1):
+    sec = random.randrange(VISIT_AVG, (3*VISIT_AVG))
     testdate = testdate - datetime.timedelta(seconds=sec)
     # skip night-time
     if testdate.hour <= 7:
@@ -69,7 +79,7 @@ w.writerow(('TestDate', 'Protocol', 'CustomId', 'SubjectId', 'BirthDate', 'Gende
 
 # write random lines to file
 s = 99
-for i in range(MAX_LINES):
+for i in range(TOTAL_LINES):
     if s > 3:
         # next time
         testdate = alldates.pop()
@@ -119,3 +129,8 @@ for i in range(MAX_LINES):
     s = s + 1
 
 g.close()
+
+# display time to finish
+run_tf = datetime.datetime.now() # finish
+difference = run_tf - run_t0
+print("%s Ready, duration time = %s" % (run_tf, str(difference)))

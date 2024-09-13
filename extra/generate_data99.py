@@ -13,6 +13,8 @@ from datetime import timedelta
 import string
 
 # constants
+TOTAL_LINES = 100
+#TOTAL_LINES = 2000000 # ~2GB would take approx >40minutes(?) not tested, this script is not optimized for such large output!
 FILE_NAME = "columns_99.txt"
 
 lorem_arr = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.".split(' ')
@@ -94,13 +96,16 @@ df = pd.DataFrame()
 #    print(random_lorem_string(10))
 #quit() # quit at this point
 
-print("Generating 99 columns:")
+# display start time
+run_t0 = datetime.datetime.now() # start
+print("%s Generate 99 columns with random data\nfile = %s\nlines = %d" % (run_t0, FILE_NAME, TOTAL_LINES))
+print("")
 
 for col in range(1, 100):
     print(("%s.." % col), end = '')
     tmpval = []
-    for row in range(1, 100):
-        # differnt columns values
+    for row in range(1, TOTAL_LINES):
+        # different columns values
         val = None
         # integers
         if col == 1:
@@ -383,12 +388,12 @@ for col in range(1, 100):
     # add column to dataframe
     df[colname] = tmpval
 
-# Generating columns iss ready
+# Generating columns is ready
+run_tf = datetime.datetime.now() # finish
+difference = run_tf - run_t0
 print("")
-print("ready.")
-
-# Observe the result
-print(df)
+print("")
+print("%s Ready, duration time = %s" % (run_tf, str(difference)))
 
 # csv write new output
 df.to_csv(FILE_NAME, sep='\t', na_rep='', header=True, index=False, encoding='utf-8')
