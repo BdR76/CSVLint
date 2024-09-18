@@ -202,7 +202,7 @@ namespace CsvQuery.PluginInfrastructure
 
             ContextMenuStrip cm = new ContextMenuStrip();
 
-            //var img = CSVLintNppPlugin.Properties.Resources.clover;
+            //var img = CSVLintNppPlugin.Properties.Resources.earth;
             //ContextMenuStrip cm = new ContextMenuStrip("Light mode (background colors)", img, colorMenuItem_Click);
             cm.Items.Add("Light mode (background colors)", CSVLintNppPlugin.Properties.Resources.setcolor1, colorMenuItem_Click);
             cm.Items.Add("Light mode (foreground colors)", CSVLintNppPlugin.Properties.Resources.setcolor2, colorMenuItem_Click);

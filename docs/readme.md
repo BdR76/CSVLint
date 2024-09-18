@@ -330,6 +330,9 @@ Sort on **length of value** to sort on the character length of the values, for e
 Sort **ascending** start with low values, end with high values `0 -> 9, A -> Z`  
 Sort **descending** start with high values, end with low values `Z -> A, 9 -> 0`
 
+When sorting on value, text columns will be sorted alphabetically, integer and
+decimal columns are sorted numerically and datetime values are sorted chronologically.
+
 When sorting on a column that contains several of the same values, then the
 sort order for the lines with those values will not change. Meaning that lines
 with the same value will be in the sort order as they were before sorting.
@@ -597,7 +600,18 @@ File and column metadata in [W3C CSV schema JSON](https://www.w3.org/TR/tabular-
 
 ### Datadictionary CSV ###
 
-File and column metadata in CSV format.
+Column metadata in CSV format, generates comma-separated metadata
+which contains the following columns:
+
+| Column      | Description                                      | Example               |
+|-------------|--------------------------------------------------|-----------------------|
+| Nr          | Column sequence number                           | 1, 2, 3 etc           |
+| ColumnName  | Column name                                      | PAT_ID, VisitDate etc |
+| DataType    | String, Integer, Decimal, DateTime, Date or Time |                       |
+| Width       | Column maximum width total                       |                       |
+| Decimals    | Nr of decimals, only for DataType=Decimal        | 1, 2, 3 etc           |
+| Mask        | Mask only for DataType=Decimal or DateTime       | #0.00, dd-MM-yyyy etc |
+| Enumeration | Enumeration items separated by pipe character    | No\|Yes\|Unknown      |
 
 ### Python ###
 

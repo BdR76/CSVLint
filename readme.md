@@ -124,7 +124,7 @@ right. It will check the input data for the following errors:
 * Non-numeric values in numeric columns, example value "n/a" when column datatype is Integer
 * Incorrect decimal separator, example value "12.34" when DecimalSymbol is set to comma
 * Too many decimals, example value "12.345" when NumberDigits=2.
-* Incorrect date format, example value "12/31/2018" when DateTimeFormat=dd/mm/yyyy
+* Incorrect date format, example value "12/31/2024" when DateTimeFormat=dd/mm/yyyy
 
 Roadmap/goals
 -------------
