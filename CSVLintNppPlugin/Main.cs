@@ -440,7 +440,7 @@ namespace Kbg.NppPluginNET
                 else
                 {
                     // analyze and determine csv definition
-                    csvdef = CsvAnalyze.InferFromData(true, '\0', "", false, 0, Main.Settings.CommentCharacter); // parameters "", false, 0 -> defaults
+                    csvdef = CsvAnalyze.InferFromData(true, '\0', "", false, 0, Main.Settings.CommentCharacter, false); // parameters "", false, 0 -> defaults
                 }
                 FileCsvDef.Add(filename, csvdef);
             }

@@ -181,6 +181,9 @@ namespace CSVLint
     /// </summary>
     public class CsvDefinition
     {
+        /// <summary>True if and only if the current file has more than <see cref="int.MaxValue"/> bytes</summary>
+        public bool FileIsTooBig { get; set; } = false;
+
         public int DefaultLanguageId { get; set; } = 0;
 
         /// column separator character
