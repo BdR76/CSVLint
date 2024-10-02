@@ -9,24 +9,32 @@
     public class ScintillaStreams
     {
         /// <summary>
-        /// Reads the whole document as a text stream, trying to use the right encoding
+        /// If the current document has more than <see cref="int.MaxValue"/> bytes:<br></br>
+        /// * throw up a MessageBox as described in <see cref="Helper.TryGetLengthAsInt(IScintillaGateway, out int)"/><br></br>
+        /// * return false and reader is null<br></br>
+        /// Otherwise, return true, and reader is a StreamReader tha treads the whole document as a text stream, trying to use the right encoding
         /// </summary>
-        public static StreamReader StreamAllText()
+        public static bool TryStreamAllText(out StreamReader reader, bool notifyUser = true)
         {
+            reader = null;
             var doc = PluginBase.CurrentScintillaGateway;
+            if (!Helper.TryGetLengthAsInt(doc, notifyUser, out _))
+                return false;
             var codepage = doc.GetCodePage();
             var encoding = codepage == (int)SciMsg.SC_CP_UTF8 ? Encoding.UTF8 : Encoding.Default;
-            return new StreamReader(StreamAllRawText(), encoding);
+            reader = new StreamReader(StreamAllRawText(), encoding);
+            return true;
         }
 
         /// <summary>
-        /// Reads the whole document as a byte stream.
-        /// Will likely throw exceptions if the document is edited while the stream is open.
+        /// Reads the whole document as a byte stream.<br></br>
+        /// Will likely throw exceptions if the document is edited while the stream is open.<br></br>
+        /// Will also throw an exception if the document has more than <see cref="int.MaxValue"/> characters.
         /// </summary>
         public static Stream StreamAllRawText()
         {
             var doc = PluginBase.CurrentScintillaGateway;
-            var length = doc.GetLength();
+            var length = (int)doc.GetLength();
 
             // When editing a document Scintilla divides it into two - one before the cursor and one after, calling the break point the "gap"
             int gap = doc.GetGapPosition();

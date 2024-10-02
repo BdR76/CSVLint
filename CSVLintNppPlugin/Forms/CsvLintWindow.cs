@@ -21,7 +21,13 @@ namespace Kbg.NppPluginNET
         {
             // clear message to user when no columns found
             var msg = "";
-            if ((csvdef.Fields.Count == 1) && (csvdef.Fields[0].DataType == ColumnType.String) && (csvdef.Fields[0].MaxWidth >= 9999))
+            if (csvdef.FileIsTooBig)
+            {
+                msg += "; *********************************\r\n";
+                msg += "; File is too large for CsvLint to analyze\r\n";
+                msg += "; *********************************\r\n";
+            }
+            else if ((csvdef.Fields.Count == 1) && (csvdef.Fields[0].DataType == ColumnType.String) && (csvdef.Fields[0].MaxWidth >= 9999))
             {
                 // give a clear message
                 msg += "; *********************************\r\n";
@@ -75,7 +81,7 @@ namespace Kbg.NppPluginNET
                 var dtStart = DateTime.Now;
 
                 // analyze and determine csv definition
-                CsvDefinition csvdef = CsvAnalyze.InferFromData(chkAutoDetect.Checked, sep, widths, header, skip, comm);
+                CsvDefinition csvdef = CsvAnalyze.InferFromData(chkAutoDetect.Checked, sep, widths, header, skip, comm, true);
 
                 Main.UpdateCSVChanges(csvdef, false);
 
@@ -106,7 +112,8 @@ namespace Kbg.NppPluginNET
                 // validate data
                 CsvValidate csvval = new CsvValidate();
 
-                var sr = ScintillaStreams.StreamAllText();
+                if (!ScintillaStreams.TryStreamAllText(out var sr))
+                    return;
 
                 csvval.ValidateData(sr, csvdef);
 
