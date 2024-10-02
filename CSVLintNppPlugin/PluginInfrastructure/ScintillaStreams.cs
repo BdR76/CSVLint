@@ -14,7 +14,7 @@
         /// * return false and reader is null<br></br>
         /// Otherwise, return true, and reader is a StreamReader tha treads the whole document as a text stream, trying to use the right encoding
         /// </summary>
-        public static bool TryStreamAllText(out StreamReader reader, bool notifyUser = false)
+        public static bool TryStreamAllText(out StreamReader reader, bool notifyUser = true)
         {
             reader = null;
             var doc = PluginBase.CurrentScintillaGateway;
