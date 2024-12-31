@@ -38,6 +38,7 @@
             this.btnReformat = new System.Windows.Forms.Button();
             this.btnDetectColumns = new System.Windows.Forms.Button();
             this.txtSchemaIni = new System.Windows.Forms.TextBox();
+            this.btnSettings = new System.Windows.Forms.Button();
             this.btnValidate = new System.Windows.Forms.Button();
             this.txtOutput = new System.Windows.Forms.TextBox();
             this.tooltipCsvLint = new System.Windows.Forms.ToolTip(this.components);
@@ -69,6 +70,7 @@
             // 
             // splitContainer1.Panel2
             // 
+            this.splitContainer1.Panel2.Controls.Add(this.btnSettings);
             this.splitContainer1.Panel2.Controls.Add(this.btnValidate);
             this.splitContainer1.Panel2.Controls.Add(this.txtOutput);
             this.splitContainer1.Size = new System.Drawing.Size(1170, 352);
@@ -170,6 +172,18 @@
             this.txtSchemaIni.TabIndex = 5;
             this.txtSchemaIni.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtSchemaIni_KeyDown);
             // 
+            // btnSettings
+            // 
+            this.btnSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSettings.Image = global::CSVLintNppPlugin.Properties.Resources.settings;
+            this.btnSettings.Location = new System.Drawing.Point(675, 3);
+            this.btnSettings.Name = "btnSettings";
+            this.btnSettings.Size = new System.Drawing.Size(32, 32);
+            this.btnSettings.TabIndex = 12;
+            this.tooltipCsvLint.SetToolTip(this.btnSettings, "CSV Lint settings");
+            this.btnSettings.UseVisualStyleBackColor = true;
+            this.btnSettings.Click += new System.EventHandler(this.btnSettings_Click);
+            // 
             // btnValidate
             // 
             this.btnValidate.Location = new System.Drawing.Point(3, 3);
@@ -235,5 +249,6 @@
         private System.Windows.Forms.CheckBox chkAutoDetect;
         private System.Windows.Forms.Button btnSort;
         private System.Windows.Forms.Button btnEnableDisable;
+        private System.Windows.Forms.Button btnSettings;
     }
 }

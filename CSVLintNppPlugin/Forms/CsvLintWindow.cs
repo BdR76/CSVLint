@@ -529,5 +529,10 @@ namespace Kbg.NppPluginNET
             }
         }
 
+        private void btnSettings_Click(object sender, EventArgs e)
+        {
+            // run settings
+            Main.DoSettings();
+        }
     }
 }
