@@ -64,13 +64,13 @@ namespace CSVLintNppPlugin.Forms
             string obj = "";
             Image img = CSVLintNppPlugin.Properties.Resources.easteregg;
 
-            int daymonth = today.Month * 100 + today.Day;
+            int monthday = today.Month * 100 + today.Day;
 
-            switch (daymonth)
+            switch (monthday)
             {
                 case 422: // April 22nd
                 case 605: // June 5th
-                    msg = (daymonth == 422 ? "Earth Day" : "World Environment Day") + ", support your local climate change organizations";
+                    msg = (monthday == 422 ? "Earth Day" : "World Environment Day") + ", support your local climate change organizations";
                     obj = "a globe";
                     img = CSVLintNppPlugin.Properties.Resources.earth;
                     break;
@@ -81,7 +81,7 @@ namespace CSVLintNppPlugin.Forms
                     break;
                 case 101: // January 1st
                 case 1231: // December 31th
-                    msg = "New Year" + (daymonth == 1231 ? "'s Eve" : "");
+                    msg = "New Year" + (monthday == 1231 ? "'s Eve" : "");
                     obj = "an oliebol";
                     img = CSVLintNppPlugin.Properties.Resources.oliebol;
                     break;
@@ -163,17 +163,17 @@ namespace CSVLintNppPlugin.Forms
             if (picEasterEgg.Tag.ToString() == "0") {
                 ForceEasterEgg++;
 
-                if (ForceEasterEgg % 5 == 0)
+                if (ForceEasterEgg % 3 == 0)
                 {
                     // show image
-                    if (ForceEasterEgg <= 5)       picEasterEgg.Image = CSVLintNppPlugin.Properties.Resources.easteregg; // click 5 times
-                    else if (ForceEasterEgg <= 10) picEasterEgg.Image = CSVLintNppPlugin.Properties.Resources.pumpkin;    // click 5 more times etc.
-                    else if (ForceEasterEgg <= 15) picEasterEgg.Image = CSVLintNppPlugin.Properties.Resources.oliebol;
-                    else                           picEasterEgg.Image = CSVLintNppPlugin.Properties.Resources.earth;
+                    if (ForceEasterEgg <= 3)      picEasterEgg.Image = CSVLintNppPlugin.Properties.Resources.easteregg; // click 3 times
+                    else if (ForceEasterEgg <= 6) picEasterEgg.Image = CSVLintNppPlugin.Properties.Resources.pumpkin;   // click 3 more times etc.
+                    else if (ForceEasterEgg <= 9) picEasterEgg.Image = CSVLintNppPlugin.Properties.Resources.oliebol;
+                    else                          picEasterEgg.Image = CSVLintNppPlugin.Properties.Resources.earth;
 
                     // update help text + counter
                     helperTip.SetToolTip(picEasterEgg, "On certain days in the year you'll find an easter egg here ;)");
-                    if (ForceEasterEgg >= 20) ForceEasterEgg = 0; // cycle back to first
+                    if (ForceEasterEgg >= 12) ForceEasterEgg = 0; // cycle back to first
                 }
             }
         }

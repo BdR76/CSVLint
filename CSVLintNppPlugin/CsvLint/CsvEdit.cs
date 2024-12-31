@@ -461,7 +461,7 @@ namespace CSVLint
                 switch (Main.Settings.DataConvertSQL)
                 {
                     case 1: // MS-SQL
-                        colscom += string.Format("EXEC sp_addextendedproperty N'ColLabel', N'{0}{2} comment', N'USER', DBO, N'VIEW', {1}, N'COLUMN', '{0}';\r\n", sqlname, TABLE_NAME, comm);
+                        colscom += string.Format("EXEC sp_addextendedproperty N'ColLabel', N'{0}{2} comment', N'USER', DBO, N'TABLE', {1}, N'COLUMN', '{0}';\r\n", sqlname, TABLE_NAME, comm);
                         break;
                     case 2: // PostgreSQL
                         colscom += string.Format("COMMENT ON COLUMN {1}.{0} IS '{0}{2} comment';\r\n", sqlname, TABLE_NAME, comm);

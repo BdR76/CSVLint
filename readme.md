@@ -186,7 +186,7 @@ Disclaimer
 ----------
 This software is free-to-use and it is provided as-is without warranty of any kind.  
 Always back-up your data files to prevent data loss.  
-All [test files](../testdata/), examples and screenshots provided in this github repository contain fictitious and 
+All [test files](../../tree/master/testdata/), examples and screenshots provided in this github repository contain fictitious and 
 [randomly generated](https://github.com/BdR76/RandomValuesNPP) data,
 any resemblance to real-life cases is the result of chance.
 

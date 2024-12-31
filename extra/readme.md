@@ -47,4 +47,4 @@ Syntax highlighting configuration for different predefined color sets
 | CSVLint_12_colors.xml | 12 colors optimized, default colors in v0.4.6  |
 | CSVLint_16_colors.xml | 16 colors optimized                            |
 
-BdR 2022 Free to use - questions or comments: bdr1976@gmail.com
+BdR©2019-2024 Free to use - send questions or comments: Bas de Reuver - bdr1976@gmail.com

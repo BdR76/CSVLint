@@ -44,6 +44,8 @@ depending on the Dark Mode setting in the Notepad++ `config.xml`.
 
 These predefined color sets have been [carefully selected](https://github.com/BdR76/CSVLint/tree/master/extra#generate_colorspy)
 so that each column color is as different as possible from the next.
+This makes it easier to distinguish columns and also makes it more accessible
+for people who are [color blind](https://github.com/BdR76/CSVLint/tree/master/extra/colorblind_vision1.png).
 The color scheme settings are stored in a file `CSVLint.xml` which is
 automatically created at first time startup or when the file is missing,
 also see an example [CSVLint.xml file here](https://github.com/BdR76/CSVLint/blob/master/extra/).

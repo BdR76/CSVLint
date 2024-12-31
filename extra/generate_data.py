@@ -9,6 +9,7 @@
 
 import csv
 import random
+import math
 import array as arr
 import datetime
 from datetime import timedelta
@@ -22,6 +23,10 @@ protos = ("XW duur", "CWRT X Watt", "Diabetes HIIT X - Y", "Hart XW duur", "Hart
 stages = ("Warmup", "Training", "Recovery")
 durats = (130, 1760, 220)
 hrtavg = (60, 100, 80)
+# display progress when generating lots of lines (nearest base 10 factor)
+line_upd = TOTAL_LINES / 15
+fac10 = 10 ** (math.floor(math.log10(line_upd)))
+PROGRESS_UPDATE = round( line_upd / fac10) * fac10
 
 # Average time interval, 10 min to 30 min for 100000 lines, or smaller time steps when generating more lines
 VISIT_AVG = int((600 * 100000) / TOTAL_LINES)
@@ -80,6 +85,10 @@ w.writerow(('TestDate', 'Protocol', 'CustomId', 'SubjectId', 'BirthDate', 'Gende
 # write random lines to file
 s = 99
 for i in range(TOTAL_LINES):
+    # progress message
+    if (i % PROGRESS_UPDATE == 0) and (i > 0):
+        print(i, "lines generated")
+    
     if s > 3:
         # next time
         testdate = alldates.pop()
