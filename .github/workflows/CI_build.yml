@@ -6,7 +6,7 @@ jobs:
   build:
     runs-on: windows-2019
     strategy:
-      max-parallel: 4
+      fail-fast: false
       matrix:
         build_configuration: [Release, Debug]
         build_platform: [x64, x86]
@@ -16,22 +16,29 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Add msbuild to PATH
-      uses: microsoft/setup-msbuild@v2.0.0
+      uses: microsoft/setup-msbuild@v2
 
     - name: MSBuild of solution
       run: msbuild CsvLintSolution.sln /p:configuration="${{ matrix.build_configuration }}" /p:platform="${{ matrix.build_platform }}" /m /verbosity:minimal
 
-    - name: Archive artifacts for x64
+    - name: zip artifacts for ${{ matrix.build_platform }}
       if: matrix.build_platform == 'x64' && matrix.build_configuration == 'Release'
-      uses: actions/upload-artifact@v4
-      with:
-          name: plugin_dll_x64
-          path: CSVLintNppPlugin\bin\${{ matrix.build_configuration }}-x64\CSVLint.dll
+      run: 7z a CSVLint_${{ matrix.build_platform }}.zip .\CSVLintNppPlugin\bin\${{ matrix.build_configuration }}-x64\CSVLint.dll
 
-    - name: Archive artifacts for x86
+    - name: zip artifacts for ${{ matrix.build_platform }}
       if: matrix.build_platform == 'x86' && matrix.build_configuration == 'Release'
+      run: 7z a CSVLint_${{ matrix.build_platform }}.zip .\CSVLintNppPlugin\bin\${{ matrix.build_configuration }}\CSVLint.dll
+
+    - name: Archive artifacts for ${{ matrix.build_platform }}
+      if: matrix.build_configuration == 'Release'
       uses: actions/upload-artifact@v4
       with:
-          name: plugin_dll_x86
-          path: CSVLintNppPlugin\bin\${{ matrix.build_configuration }}\CSVLint.dll
+          name: CSVLint_${{ matrix.build_platform }}.zip
+          path: CSVLint_${{ matrix.build_platform }}.zip
+
+    - name: Create release on tagging
+      uses: softprops/action-gh-release@v2
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+          files: CSVLint_${{ matrix.build_platform }}.zip
 
