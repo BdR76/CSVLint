@@ -58,6 +58,16 @@ open you'll immediately see the changes as you edit them. Note that selecting a
 default color scheme in `Setttings` will overwrite any changes made in
 the Style Configurator dialog.
 
+### Default extension ###
+
+By default the plugin applies syntax highlighting to files with the extension
+`.csv`. If you also want this for files with extension `.ssv` or `.tsv` then
+you can change this in the Notepad++ settings.
+Go to `Settings > Style Configuration` and select `CSV Linter`, go to the
+textbox "User ext.". Add `ssv` and click the "Save & Close" button. If you
+want to add more than one extension then separate them by space,
+so for example `ssv tsv tab`.
+
 CSV Lint window
 ---------------
 Click the toolbar icon or select the menu item `Plugins > CSVLint > CSV Lint window`
