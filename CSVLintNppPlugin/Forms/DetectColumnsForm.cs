@@ -151,7 +151,8 @@ namespace CSVLintNppPlugin.Forms
             if (dialogResult == DialogResult.OK)
             {
                 // paste column positions
-                CsvDefinition csvdef = Main.GetCurrentCsvDef();
+                if (!Main.TryGetCurrentCsvDef(out CsvDefinition csvdef))
+                    return;
                 txtFixedWidthPos.Text = csvdef.GetColumnWidths(true);
             }
         }
