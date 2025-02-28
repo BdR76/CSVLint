@@ -456,18 +456,20 @@ namespace CSVLint
                     }
                 }
 
+                // column header name without quotes or brackets
+                var str_colheader = csvdef.Fields[r].Name.Replace("'", "''");
                 // column comments
                 if (comm != "") comm = " (" + comm + ")";
                 switch (Main.Settings.DataConvertSQL)
                 {
                     case 1: // MS-SQL
-                        colscom += string.Format("EXEC sp_addextendedproperty N'ColLabel', N'{0}{2} comment', N'USER', DBO, N'TABLE', {1}, N'COLUMN', '{0}';\r\n", sqlname, TABLE_NAME, comm);
+                        colscom += string.Format("EXEC sp_addextendedproperty N'ColLabel', N'{2}{3} comment', N'USER', DBO, N'TABLE', {0}, N'COLUMN', {1};\r\n", TABLE_NAME, sqlname, str_colheader, comm);
                         break;
                     case 2: // PostgreSQL
-                        colscom += string.Format("COMMENT ON COLUMN {1}.{0} IS '{0}{2} comment';\r\n", sqlname, TABLE_NAME, comm);
+                        colscom += string.Format("COMMENT ON COLUMN {0}.{1} IS '{2}{3} comment';\r\n", TABLE_NAME, sqlname, str_colheader, comm);
                         break;
                     default: // 0=MySQL
-                        colscom += string.Format("MODIFY COLUMN {0} {1} COMMENT '{0}{2} comment'{3}\r\n", sqlname, sqltype, comm, (r < csvdef.Fields.Count-1 ? "," : ";"));
+                        colscom += string.Format("MODIFY COLUMN {0} {1} COMMENT '{2}{3} comment'{4}\r\n", sqlname, sqltype, str_colheader, comm, (r < csvdef.Fields.Count-1 ? "," : ";"));
                         break;
                 }
             };
@@ -623,12 +625,12 @@ namespace CSVLint
                     break;
             }
 
-            sb.Append("\r\n\r\n-- Column comments\r\n/*\r\n");
+            sb.Append("\r\n\r\n-- Column comments (optional)\r\n/*\r\n");
             if (Main.Settings.DataConvertSQL == 0) // MySQL
             {
-                sb.Append("-- NOTE! MySQL requires repeating the name and datatype when modifying a column,\r\n");
-                sb.Append("-- so it's easier to add column comments at the CREATE TABLE statement.\r\n");
-                sb.Append("-- If you have changed any column datatypes make sure they are still the same here!\r\n");
+                sb.Append("-- NOTE! MySQL requires repeating the name AND datatype when modifying a column,\r\n");
+                sb.Append("-- so if you have changed any column datatypes make sure they are the same here!\r\n");
+                sb.Append("-- It is safer to add any column comments at the CREATE TABLE statement instead of using MODIFY COLUMN.\r\n");
                 sb.Append(string.Format("ALTER TABLE {0}\r\n", TABLE_NAME));
             }
             sb.Append(colscom);

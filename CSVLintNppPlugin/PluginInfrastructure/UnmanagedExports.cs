@@ -123,7 +123,6 @@ namespace Kbg.NppPluginNET
 
         private static Delegate ilexer_implementation = new ILexerImpDelegate(ILexer.ILexerImplementation);
 
-
         [DllExport(CallingConvention = CallingConvention.StdCall)]
         static Delegate GetLexerFactory(int index)
         {

@@ -131,7 +131,7 @@ indicate whether or not the first line contains the column names.
 
 When selecting "Fixed Widths" you can optionally provide a comma separated
 list of the column ending positions in "Column end positions". For example
-the text data `2024-10-15HbA1c 123.5` has column end positions `10, 16, 21`.
+the text data `2025-10-15HbA1c 123.5` has column end positions `10, 16, 21`.
 The plug-in expects the column character positions, but if you instead enter
 the individual column widths, so `10, 6, 5` in this example, that will also
 work in most cases. Leave "Fixed positions" empty and the plug-in will
@@ -318,7 +318,7 @@ right. It will check the input data for the following errors:
 * Non-numeric values in numeric columns, example value "n/a" when column datatype is Integer
 * Incorrect decimal separator, example value "12.34" when DecimalSymbol is set to comma
 * Too many decimals, example value "12.345" when NumberDigits=2.
-* Incorrect date format, example value "12/31/2024" when DateTimeFormat=dd/mm/yyyy
+* Incorrect date format, example value "12/31/2025" when DateTimeFormat=dd/mm/yyyy
 
 Important note: If you've edited the data file, for example changed the column
 separator or added columns using the Split function, make sure to also update
@@ -336,7 +336,7 @@ current `Apply quotes` setting in the Reformat dialog.
 
 ![CSV Lint sort data dialog](/docs/csvlint_sort_data.png?raw=true "CSV Lint plug-in sort data dialog")
 
-Sort on **value** to sort on the actual values, for example date value `31-01-2024` is lower than `01-12-2024`.  
+Sort on **value** to sort on the actual values, for example date value `31-01-2025` is lower than `01-12-2025`.  
 Sort on **length of value** to sort on the character length of the values, for example `xray` has a smaller length than `abdominal`.
 
 Sort **ascending** start with low values, end with high values `0 -> 9, A -> Z`  
@@ -344,6 +344,10 @@ Sort **descending** start with high values, end with low values `Z -> A, 9 -> 0`
 
 When sorting on value, text columns will be sorted alphabetically, integer and
 decimal columns are sorted numerically and datetime values are sorted chronologically.
+Columns with enumeration are sorted according to the enumeration codelist indexes.
+For example, when sorting a column with `Enumeration Never|Sometimes|Often|Always`
+the records will be sorted starting with `Never`, then `Sometimes`,
+then `Often` and ending with `Always`.
 
 When sorting on a column that contains several of the same values, then the
 sort order for the lines with those values will not change. Meaning that lines
@@ -419,7 +423,7 @@ as a date value formated as `dd-mm-yyyy`, see some example results below:
 | 15-04-2023 | 15-04-2023   |              |
 | 23-05-2021 | 23-05-2021   |              |
 | 07/26/2024 |              | 07/26/2024   |
-| 18-09-2024 | 18-09-2024   |              |
+| 18-09-2025 | 18-09-2025   |              |
 | No show    |              | No show      |
 
 ### Split on character ###
@@ -445,7 +449,7 @@ examples below
 | stringval             | stringval (2) | stringval (3) |
 |-----------------------|---------------|---------------|
 | usr/medic/p01/img.nii | usr/medic/p01 | img.nii       |
-| 31/12/2024            | 31/12         | 2024          |
+| 31/12/2025            | 31/12         | 2025          |
 | Creatinine            | Creatinine    |               |
 | /MED-0001             |               | MED-0001      |
 | mo/tu/we/th/fr        | mo/tu/we/th   | fr            |
@@ -460,7 +464,7 @@ other examples below
 | position        | position (2) | position (3) |
 |-----------------|--------------|--------------|
 | ZKH\21-006-2516 | ZKH          | \21-006-2516 |
-| 1-6-2024        | 1-6          | -2024        |
+| 1-6-2025        | 1-6          | -2025        |
 | TGAGCATCGGAC    | TGA          | GCATCGGAC    |
 | 1.2650          | 1.2          | 650          |
 | 4015672111745   | 401          | 5672111745   |
@@ -472,7 +476,7 @@ see other examples below
 | posneg         | posneg (2) | posneg (3) |
 |----------------|------------|------------|
 | medication.txt | medication | .txt       |
-| 31-12-2024     | 31-12-     | 2024       |
+| 31-12-2025     | 31-12-     | 2025       |
 | ACGAGTATCATG   | ACGAGTAT   | CATG       |
 | 12.345         | 12         | .345       |
 | M978196A002    | M978196    | A002       |
@@ -561,29 +565,29 @@ use the current filename as table name.
 See below for an example of an SQL insert script the plugin will generate:
 
     -- -------------------------------------
-    -- CSV Lint plug-in v0.4.6
+    -- CSV Lint plug-in: v0.4.6.8
     -- File: cardio.txt
-    -- SQL type: mySQL
+    -- SQL type: MySQL
     -- -------------------------------------
     CREATE TABLE cardio(
-        `_record_number` int AUTO_INCREMENT NOT NULL,
-        `patid` integer,
-        `visitdat` datetime,
-        `labpth` numeric(5,1),
-        primary key(`_record_number`)
+        _record_number int AUTO_INCREMENT NOT NULL,
+        patid integer,
+        visitdat datetime,
+        labpth numeric(5,1),
+        primary key(_record_number)
     );
     
     -- -------------------------------------
     -- insert records 1 - 1000
     -- -------------------------------------
-    insert into cardio(
-        `patid`,
-        `visitdat`,
-        `labpth`
-    ) values
-    (1001, '2024-08-21', 10.8),
-    (2002, '2024-09-05', 143.5),
-    (3003, '2024-09-24', 76.4),
+    INSERT INTO cardio(
+        patid,
+        visitdat,
+        labpth
+    ) VALUES
+    (1001, '2025-08-21', 10.8),
+    (2002, '2025-09-05', 143.5),
+    (3003, '2025-09-24', 76.4),
     -- etc.
 
 Select XML or JSON to convert the data to an XML or JSON dataset.
@@ -706,5 +710,6 @@ History
 04-jun-2023 - v0.4.6.5 Support enum/coded values and various updates  
 16-dec-2023 - v0.4.6.6 PowerShell support and various updates  
 25-jun-2024 - v0.4.6.7 Reformat bugfix, improved enumeration, sort on length  
+28-feb-2025 - v0.4.6.8 Improved sorting for enumeration columns, minor updates  
 
-BdR©2019-2024 Free to use - send questions or comments: Bas de Reuver - bdr1976@gmail.com
+BdR©2019-2025 Free to use - send questions or comments: Bas de Reuver - bdr1976@gmail.com

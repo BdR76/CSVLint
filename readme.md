@@ -54,8 +54,8 @@ want to install the plug-in manually:
 
 * Go to the [releases page](https://github.com/BdR76/CSVLint/releases)
 * Find the latest release
-* 32bit version; unzip [CSVLint.dll (32bit)](../../releases/download/0.4.6.7/CSVLint_x86.zip/) to folder `.\Program Files (x86)\Notepad++\plugins\CSVLint\CSVLint.dll`.
-* 64bit version; unzip [CSVLint.dll (64bit)](../../releases/download/0.4.6.7/CSVLint_x64.zip/) to folder `.\Program Files\Notepad++\plugins\CSVLint\CSVLint.dll`.
+* 32bit version; unzip [CSVLint.dll (32bit)](../../releases/download/0.4.6.8/CSVLint_x86.zip/) to folder `.\Program Files (x86)\Notepad++\plugins\CSVLint\CSVLint.dll`.
+* 64bit version; unzip [CSVLint.dll (64bit)](../../releases/download/0.4.6.8/CSVLint_x64.zip/) to folder `.\Program Files\Notepad++\plugins\CSVLint\CSVLint.dll`.
 * restart Notepad++
 
 How to use it
@@ -124,7 +124,7 @@ right. It will check the input data for the following errors:
 * Non-numeric values in numeric columns, example value "n/a" when column datatype is Integer
 * Incorrect decimal separator, example value "12.34" when DecimalSymbol is set to comma
 * Too many decimals, example value "12.345" when NumberDigits=2.
-* Incorrect date format, example value "12/31/2024" when DateTimeFormat=dd/mm/yyyy
+* Incorrect date format, example value "12/31/2025" when DateTimeFormat=dd/mm/yyyy
 
 Roadmap/goals
 -------------
@@ -160,7 +160,7 @@ unexpected validation results, try saving the datafile or refreshing the meta
 data before clicking "Detect columns".
 
 * When you press "Detect columns" the datetime format of the data isn't always
-detected correctly. Especially when the data contains values like `05/06/2024`
+detected correctly. Especially when the data contains values like `05/06/2025`
 the order of day and month can be incorrect. You can adjust it manually to
 match your data before pressing the "Validate data" button.
 
@@ -190,4 +190,4 @@ All [test files](../../tree/master/testdata/), examples and screenshots provided
 [randomly generated](https://github.com/BdR76/RandomValuesNPP) data,
 any resemblance to real-life cases is the result of chance.
 
-BdR©2019-2024 Free to use - send questions or comments: Bas de Reuver - bdr1976@gmail.com
+BdR©2019-2025 Free to use - send questions or comments: Bas de Reuver - bdr1976@gmail.com
