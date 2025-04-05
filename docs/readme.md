@@ -557,10 +557,10 @@ table and inserts all records from the csv datafile into that table.
 The insert statement will be grouped in batches of X lines of csv data,
 as set by the Batch size number in the plug-in Settings.
 
-Selected the database type MySQL, MS-SQL or PostgreSQL, and the create table
-part and the autonumber field `_record_number` will be slightly different
-according to the database type. Enter a table name to use, or leave it empty to
-use the current filename as table name.
+Depending on which database type you select, MySQL, MS-SQL or PostgreSQL,
+the create table part and the autonumber field `_record_number` will be
+slightly different. Enter a table name to use, or leave it empty to use the
+current filename as table name.
 
 See below for an example of an SQL insert script the plugin will generate:
 
@@ -610,6 +610,10 @@ possible data errors and you'll need to write additional code.
 File and column metadata in [schema.ini](https://docs.microsoft.com/en-us/sql/odbc/microsoft/schema-ini-file-text-file-driver?view=sql-server-ver15)
 format for the Microsoft Jet OLE DB, also known as the ODBC text driver.
 
+Note that some CSV Lint features are [not supported](https://learn.microsoft.com/en-us/answers/questions/1640430/query-odbc-text-data-using-schema-ini-and-skipline)
+by the ODBC Text driver, such as [SkipLines, CommentChar](https://feedback.azure.com/d365community/search/?q=schema.ini), Enumeration columns or columns with different datetime formats.
+That is why the lines with those features are commented out.
+
 ### schema JSON ###
 
 File and column metadata in [W3C CSV schema JSON](https://www.w3.org/TR/tabular-data-primer/) format.
@@ -650,7 +654,7 @@ datatypes, and it is meant as a starting point for further script development.
 
 Settings
 --------
-Some plug-in settings can be changed in the menu item `Plugins > CSVLint > settings`
+The CSV Lint plug-in settings can be changed in the menu item `Plugins > CSVLint > settings`
 and they are stored in a settings file `%USERPROFILE%\AppData\Roaming\Notepad++\plugins\config\CSVLint.ini`
 
 ![CSV Lint settings window](/docs/csvlint_settings.png?raw=true "CSV Lint plug-in settings window")
@@ -663,16 +667,18 @@ and they are stored in a settings file `%USERPROFILE%\AppData\Roaming\Notepad++\
 | ErrorTolerance   | Error tolerance percentage, when analyzing allow X % errors. For example when a column with a 1000 values contains all integers except for 9 or fewer non-integer values, then it's still interpreted as an integer column. | 1 |
 | IntegerDigitsMax | Maximum amount of digits for integer values, if a value has more then it's considered a text value. Applies to both autodetecting datatypes and validating data. Useful to distinguish (bar)codes and actual numeric values  | 12 |
 | UniqueValuesMax  | Maximum unique values when reporting or detecting coded values, if column contains more than it's not reported. |   15    | 
-| YearMinimum      | When detecting date or datetime values, years smaller than this value will be considered an out-of-range date.  | 1900    |
 | YearMaximum      | When detecting date or datetime values, years larger than this value will be considered an out-of-range date.   | 2050    |
-| TwoDigitYearMax  | Maximum year for two digit year date values. For example, when set to 2024 the year values 24 and 25 will be interpreted as 2024 and 1925. Set as CurrentYear for current year. | CurrentYear |
+| YearMinimum      | When detecting date or datetime values, years smaller than this value will be considered an out-of-range date.  | 1900    |
+| ReformatQuotes   | Reformat dataset, apply quotes option: 0 = None minimal, 1 = Values with spaces, 2 = All string values, 3 = All non-numeric values, 4 = Always | 0       |
+| TrimValues       | Trim values before analyzing or editing (recommended).                                                          | true    |
+| TwoDigitYearMax  | Maximum year for two digit year date values. For example, when set to 2030 the year values 30 and 31 will be interpreted as 2030 and 1931. Set as CurrentYear for current year. | CurrentYear |
+| AutoSyntaxLimit  | Convert data, automatically apply syntax highlighting to resulting file, only when it's smaller than this size. Prevent Notepad++ from freezing on large files. |1024*1024|
 | DefaultQuoteChar | Default quote character, typically a double quote " or a single quote '                                         | "       |
 | FontDock         | Default font for text boxes in CSV Lint docking window. Changing the font requires closing and opening the CSV docked window.  | Courier New, 11.25pt  |
 | NullKeyword      | A case-sensitive keyword that will be treated as an empty value, typically `NULL`, `NaN`, `NA` or `None` depending on your data | NaN     |
 | SeparatorColor   | Include separator in syntax highlighting colors. Set to false and the separator characters are always white.    | false   |
 | Separators       | Preferred characters when automatically detecting the separator character. For special characters like tab, use \\t or hexadecimal escape sequence \\u0009 or \\x09. | ,;\t&#124; |
 | TransparentCursor| Transparent cursor line, changing this setting will require a restart of Notepad++                              | true    |
-| TrimValues       | Trim values before analyzing or editing (recommended).                                                          | true    |
 | UserPref section | Various input settings for the CSV Lint dialogs for Convert Data, Reformat, Split Column etc.                   |         |
 
 About

@@ -59,7 +59,7 @@ namespace Kbg.NppPluginNET
             Category("Analyze"), DefaultValue(2050)]
         public int YearMaximum { get; set; }
 
-        [Description("Maximum year for two digit year date values. For example, when set to 2024 the year values 24 and 25 will be interpreted as 2024 and 1925. Set as CurrentYear for current year."),
+        [Description("Maximum year for two digit year date values. For example, when set to 2030 the year values 30 and 31 will be interpreted as 2030 and 1931. Set as CurrentYear for current year."),
             Category("Edit"), DefaultValue("CurrentYear")]
         public string TwoDigitYearMax
         {
