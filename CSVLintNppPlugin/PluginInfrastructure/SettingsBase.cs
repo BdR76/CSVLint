@@ -114,7 +114,7 @@ namespace CsvQuery.PluginInfrastructure
             // Win32.WritePrivateProfileSection (that NppPlugin uses) doesn't work well with non-ASCII characters. So we roll our own.
             using (var fp = new StreamWriter(filename, false, Encoding.UTF8))
             {
-                fp.WriteLine("; {0} settings file", Main.PluginName);
+                fp.WriteLine("; {0} for Notepad++", Main.PluginName);
 
                 foreach (var section in GetType()
                     .GetProperties()

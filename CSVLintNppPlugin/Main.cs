@@ -303,8 +303,9 @@ namespace Kbg.NppPluginNET
                     writer.WriteStartElement("LexerStyles");
                     writer.WriteStartElement("LexerType");
                     writer.WriteAttributeString("name", "CSVLint");
-                    writer.WriteAttributeString("desc", "CSV Linter and validator");
+                    writer.WriteAttributeString("desc", "CSV Lint");
                     writer.WriteAttributeString("excluded", "no");
+                    writer.WriteAttributeString("ext", "ssv tsv skv");
 
                     var coloridx = 0;
                     for (int ps = 0; ps < presets.Length; ps++)
@@ -312,18 +313,12 @@ namespace Kbg.NppPluginNET
                         // comment preset name
                         writer.WriteComment(presets[ps]);
 
+                        // this colorset is commented out
                         if (presetidx != ps) writer.WriteRaw("\r\n<!--");
 
+                        // all column colors for this colorset
                         for (int i = 0; i < COLORS_PER_SET; i++)
                         {
-                            //writer.WriteStartElement("WordsStyle");
-                            //writer.WriteAttributeString("styleID", i.ToString());
-                            //writer.WriteAttributeString("name", (i == 0 ? "Default" : "ColumnColor" + i.ToString()));
-                            //writer.WriteAttributeString("fgColor", "000000");
-                            //writer.WriteAttributeString("bgColor", colors[i]);
-                            //writer.WriteAttributeString("fontName", "");
-                            //writer.WriteAttributeString("fontStyle", "0");
-                            //writer.WriteEndElement();
                             var name = i == 0 ? "Default" : "ColumnColor" + i.ToString();
                             var fgcolor = DefaultColorsets[coloridx].ToString("X6");
                             var bgcolor = DefaultColorsets[coloridx + 1].ToString("X6");
@@ -335,7 +330,9 @@ namespace Kbg.NppPluginNET
                             coloridx += 2;
                         }
 
+                        // this colorset is commented out
                         if (presetidx != ps) writer.WriteRaw("\r\n-->");
+
                         writer.WriteRaw("\r\n\t\t");
                     };
 
