@@ -12,6 +12,7 @@ using System.Text;
 using CSVLint.Tools;
 using CsvQuery.PluginInfrastructure;
 using Kbg.NppPluginNET.PluginInfrastructure;
+using System.Text.RegularExpressions;
 
 namespace CSVLint
 {
@@ -44,7 +45,8 @@ namespace CSVLint
             var occurrences = new Dictionary<char, int>();              // occurences of letters in entire dataset
             var frequenciesQuoted = new List<Dictionary<char, int>>();  // frequencies of quoted letters per line
             var occurrencesQuoted = new Dictionary<char, int>();        // occurences of quoted letters in entire dataset
-            var bigSpaces = new Dictionary<int, int>();                 // fixed width data; more than 1 spaces
+            var multiSpaces = new Dictionary<int, int>();               // fixed width data; more than 1 spaces
+            var multiZeroes = new Dictionary<int, int>();               // fixed width data; more than one '0' character
             var wordStarts = new Dictionary<int, int>();                // fixed width data; places after space where characters starts again, or switch from numeric to alphacharacter
             var inQuotes = false;
             var letterFrequencyQuoted = new Dictionary<char, int>();
@@ -90,7 +92,7 @@ namespace CSVLint
                     wordStarts.Increase(line.Length);
 
                     // process characters in this line
-                    int spaces = 0, pos = 0, num = -1; // num  0 = text value  1 = numeric value  -1 = currently unknown
+                    int spaces = 0, zeroes = 0, pos = 0, num = -1; // num  0 = text value  1 = numeric value  -1 = currently unknown
                     foreach (var chr in line)
                     {
                         // check for separators
@@ -108,6 +110,8 @@ namespace CSVLint
                             int newcol = 0;
                             if (chr == ' ')
                             {
+                                zeroes = 0;
+
                                 // a space after a numeric value
                                 if (num == 1)
                                 {
@@ -116,7 +120,7 @@ namespace CSVLint
                                 }
 
                                 // 2 spaces or more could indicate new column
-                                if (++spaces > 1) bigSpaces.Increase(pos + 1);
+                                if (++spaces > 1) multiSpaces.Increase(pos + 1);
                             }
                             else
                             {
@@ -126,6 +130,15 @@ namespace CSVLint
 
                                 // switch between alpha and numeric characters could indicate new column
                                 int isdigit = "0123456789".IndexOf(chr);
+
+                                // check for consecutive zeroes
+                                if (isdigit == 0) {
+                                    // 2 zeroes or more could indicate new column
+                                    if (++zeroes > 1) multiZeroes.Increase(pos - 1);
+                                } else {
+                                    zeroes = 0;
+                                }
+
                                 // ignore characters that can be both numeric or alpha values example "A.B." or "Smith-Johnson"
                                 // Digits connected by certain characters can be one single column, not multiple,
                                 // For example date, time, telephonenr "12:34","555-890-4327" etc.
@@ -260,7 +273,9 @@ namespace CSVLint
             if (result.Separator == '\0')
             {
                 // Sort big spaces descending, i.e. go from end of the line to the beginning
-                var commonSpace = bigSpaces.Where(x => x.Value >= lineContent-1).Select(x => x.Key).OrderByDescending(x => x);
+                var commonSpace = multiSpaces.Where(x => x.Value >= lineContent-1).Select(x => x.Key).OrderByDescending(x => x);
+                var commonZero = multiZeroes.Where(x => x.Value >= lineContent - 1 && x.Key != 0).Select(x => x.Key).OrderBy(x => x);
+                
                 var lastvalue = 0;
                 int lastStart = 0;
                 var foundfieldWidths = new List<int>();
@@ -290,8 +305,20 @@ namespace CSVLint
                         lastvalue = space;
                     }
 
+                    // Go forwards and find the start positions of zeroes, i.e. the left-most part of consecutive zeroes
+                    foreach (var zero in commonZero)
+                    {
+                        if (zero != lastvalue + 1)
+                        {
+                            if (!foundfieldWidths.Contains(zero))
+                                foundfieldWidths.Add(zero);
+                            lastStart = zero;
+                        }
+                        lastvalue = zero;
+                    }
+
                     // new columns or numeric/alpha 
-                    var commonBreaks = wordStarts.Where(x => x.Value == lineContent).Select(x => x.Key).OrderBy(x => x);
+                    var commonBreaks = wordStarts.Where(x => x.Value >= lineContent - 1).Select(x => x.Key).OrderBy(x => x);
 
                     //foundfieldWidths.AddRange(commonBreaks); // AddRange simply adds duplicates
 
@@ -301,7 +328,7 @@ namespace CSVLint
                             foundfieldWidths.Add(br);
                 }
                 foundfieldWidths.Sort();
-                if (foundfieldWidths.Count < 3) return result; // unlikely fixed width
+                //if (foundfieldWidths.Count < 3) return result; // unlikely fixed width
 
                 // widths now contain column end positions, convert to individual column widths, example pos [8, 14, 15, 22, 25] -> widths [8, 6, 1, 7, 3]
                 var pos1 = 0;
@@ -411,7 +438,8 @@ namespace CSVLint
 
                 // if value in first row (=Names) is empty then probably not header names
                 // Note: always Trim() and ignore settings.TrimValues for name detection
-                if (namcol.Name.Trim() == "") emptyname = true;
+                var testname = Regex.Replace(namcol.Name, @"\d", ""); // remove all digits
+                if (testname.Trim() == "") emptyname = true;
 
                 // TODO: carriage returns in header name not supported
                 // replace with space so that schema.ini can at least be validated
