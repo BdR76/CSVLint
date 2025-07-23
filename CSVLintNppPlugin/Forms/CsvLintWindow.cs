@@ -101,7 +101,7 @@ namespace Kbg.NppPluginNET
             CsvDefinition csvdef = new CsvDefinition(txtSchemaIni.Text);
 
             // check if valid dictionary
-            if (csvdef.Fields.Count > 0)
+            if (Main.CheckValidCsvDef(csvdef, "validate data"))
             {
                 // validate data
                 CsvValidate csvval = new CsvValidate();
@@ -222,18 +222,18 @@ namespace Kbg.NppPluginNET
 
         private void OnBtnReformat_Click(object sender, EventArgs e)
         {
-            bool ok = GetReformatParameters(out string editSeparator, out bool updateSeparator, out string editDataTime, out string editDecimal, out string replaceCrLf, out bool alignVert);
-            if (ok)
+            // clear any previous output
+            txtOutput.Clear();
+            txtOutput.Update();
+
+            // get dictionary
+            CsvDefinition csvdef = new CsvDefinition(txtSchemaIni.Text);
+
+            // check if valid dictionary
+            if (Main.CheckValidCsvDef(csvdef, "reformat data"))
             {
-                // clear any previous output
-                txtOutput.Clear();
-                txtOutput.Update();
-
-                // get dictionary
-                CsvDefinition csvdef = new CsvDefinition(txtSchemaIni.Text);
-
-                // check if valid dictionary
-                if (csvdef.Fields.Count > 0)
+                bool ok = GetReformatParameters(out string editSeparator, out bool updateSeparator, out string editDataTime, out string editDecimal, out string replaceCrLf, out bool alignVert);
+                if (ok)
                 {
                     var dtStart = DateTime.Now;
 
@@ -341,7 +341,7 @@ namespace Kbg.NppPluginNET
             CsvDefinition csvdef = new CsvDefinition(txtSchemaIni.Text);
 
             // check if valid dictionary
-            if (csvdef.Fields.Count > 0)
+            if (Main.CheckValidCsvDef(csvdef, "sort data"))
             {
                 // show split column dialog
                 var frmsort = new SortForm();
@@ -386,7 +386,7 @@ namespace Kbg.NppPluginNET
             CsvDefinition csvdef = new CsvDefinition(txtSchemaIni.Text);
 
             // check if valid dictionary
-            if (csvdef.Fields.Count > 0)
+            if (Main.CheckValidCsvDef(csvdef, "add new column"))
             {
                 // show split column dialog
                 var frmsplit = new ColumnSplitForm();
