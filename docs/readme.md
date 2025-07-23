@@ -63,10 +63,10 @@ the Style Configurator dialog.
 By default the plugin applies syntax highlighting to files with the extension
 `.csv`. If you also want this for files with extension `.ssv` or `.tsv` then
 you can change this in the Notepad++ settings.
-Go to `Settings > Style Configuration` and select `CSV Linter`, go to the
-textbox "User ext.". Add `ssv` and click the "Save & Close" button. If you
-want to add more than one extension then separate them by space,
-so for example `ssv tsv tab`.
+Go to `Settings > Style Configuration` and in the Language dropdown select
+`CSV Linter and validator`. Then go to the textbox "User ext." and add `ssv`
+and click the "Save & Close" button. If you want to add more than one
+extension then separate them by space, so for example `ssv tsv skv`.
 
 CSV Lint window
 ---------------
@@ -126,10 +126,12 @@ numeric, non-numeric and space characters start or end.
 
 You can manually override the auto-detection by unchecking the auto-detect
 checkbox. When the auto-detect is not checked and you press "Detect columns",
-a dialog will appear where you can manually enter the column separator and
-indicate whether or not the first line contains the column names.
+a dialog will appear where you can manually enter the properties of the datafile.
 
-When selecting "Fixed Widths" you can optionally provide a comma separated
+![CSV Lint detect columns manually dialog](/docs/csvlint_detect_columns.png?raw=true "CSV Lint plug-in detect columns manually dialog")
+
+Here you can enter the column separator character or Fixed Width.
+When selecting "Fixed Width" you can optionally provide a comma separated
 list of the column ending positions in "Column end positions". For example
 the text data `2025-10-15HbA1c 123.5` has column end positions `10, 16, 21`.
 The plug-in expects the column character positions, but if you instead enter
@@ -145,8 +147,6 @@ Note that the `SkipLines` keyword is not officially part of the schema.ini forma
 so applications that use the ODBC Text driver will ignore this setting.
 
 You can also indicate a comment character, any lines starting with this character will be skipped.
-
-![CSV Lint detect columns manually dialog](/docs/csvlint_detect_columns.png?raw=true "CSV Lint plug-in detect columns manually dialog")
 
 ### Save icon ###
 
@@ -210,7 +210,7 @@ so applications that use the ODBC Text driver will ignore this setting.
 
 Enumeration, or coded values, is when a column may only contain a certain set of values.
 For example boolean columns that can only contain `true`/`false` or `Yes`/`No`,
-or a variable "TestStage" that can only contain `Recovery`, `Training` or `Warmup`.
+or a variable "TestStage" that can only contain `Warmup`, `Training` or `Recovery`.
 
 This type of column is also not supported by the schema.ini format, but
 CSV Lint does support this using the `Enumeration` keyword followed by the
