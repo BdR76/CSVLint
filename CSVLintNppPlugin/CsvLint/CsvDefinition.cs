@@ -1171,6 +1171,36 @@ namespace CSVLint
         }
 
         /// <summary>
+        /// Based on the CsvDefinition, construct one line with the columns header names
+        /// </summary>
+        public string ConstructHeader()
+        {
+            string res = "";
+
+            for (int c = 0; c < this.Fields.Count; c++)
+            {
+                // get field name
+                var nam  = this.Fields[c].Name;
+
+                if (this.Separator == '\0')
+                {
+                    // fixed width
+                    res += nam.PadRight(Fields[c].MaxWidth, ' ');
+                }
+                else
+                {
+                    // apply quotes
+                    nam = CsvEdit.ApplyQuotesToString(nam, this.Separator, ColumnType.String);
+
+                    // character separated
+                    res += (c > 0 ? this.Separator.ToString() : "") + nam;
+                }
+            }
+
+            return res;
+        }
+
+        /// <summary>
         /// Based on the CsvDefinition, take array of data values and (re)constructs one line of output
         /// </summary>
         public string ConstructLine(List<string> values, bool iscomment)
@@ -1211,7 +1241,7 @@ namespace CSVLint
         }
 
         /// <summary>
-        /// Based on the CsvDefinition, return column positions based on column widths
+        /// Based on the CsvDefinition, return column positions as a comma-separated string based on column widths
         /// </summary>
         /// <param name="abspos"> absolute column positions or column widths</param>
         public string GetColumnWidths(bool abspos)

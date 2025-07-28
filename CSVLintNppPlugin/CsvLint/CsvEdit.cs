@@ -9,6 +9,7 @@ using Kbg.NppPluginNET;
 using Kbg.NppPluginNET.PluginInfrastructure;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -424,7 +425,7 @@ namespace CSVLint
                     {
                         case 1: // MS-SQL
                         //case 2: // PostgreSQL
-                        // constrains name is based on column name, for example "[test]" -> "[CHK_test]"
+                            // constrains name is based on column name, for example "[test]" -> "[CHK_test]"
                             var chkname = SQLSafeName("CHK_" + csvdef.Fields[r].Name);
                             var mscolate = "";
                             // Constrains for string or integer values
@@ -1395,6 +1396,117 @@ namespace CSVLint
 
             // add columns to csv definition
             //csvdef.AddColumn() ??
+        }
+
+        /// <summary>
+        /// rearrange columns
+        /// </summary>
+        /// <param name="data">csv data</param>
+        public static void RearrangeColumns(CsvDefinition csvdef, string selectedList)
+        {
+            // determine indexes of columns to select
+            List<int> sel_idx = new List<int>();
+            String[] sel_cols = selectedList.Split('|');
+            foreach (string colname in sel_cols)
+            {
+                // find column index
+                var idx = csvdef.Fields.FindIndex(c => c.Name.Equals(colname, StringComparison.OrdinalIgnoreCase));
+                if (idx >= 0) sel_idx.Add(idx);
+            }
+
+            // new output definition
+            CsvDefinition csvnew = new CsvDefinition(csvdef.Separator);
+            for (int c = 0; c < sel_idx.Count; c++)
+            {
+                var idx = sel_idx[c];
+                var coldef = csvdef.Fields[idx];
+
+                // copy column definition to new csv defintion
+                csvnew.AddColumn(c, coldef.Name, coldef.MaxWidth, coldef.DataType, coldef.Mask);
+            }
+
+            // handle to editor
+            ScintillaGateway scintillaGateway = PluginBase.CurrentScintillaGateway;
+            var CRLF = getEditorEOLchars(scintillaGateway.GetEOLMode());
+
+            // use stringreader to go line by line
+            var strdata = ScintillaStreams.StreamAllText();
+
+            //var s = new StringReader(data);
+            int linenr = 0;
+
+            StringBuilder datanew = new StringBuilder();
+
+            // convert to fixed width, skip header line from source data because there is no room for column names in Fixed Width due to columns width can be 1 or 2 characters
+            bool skipheader = csvdef.ColNameHeader;
+
+            // copy any comment lines
+            csvdef.CopyCommentLinesAtStart(strdata, datanew, "", CRLF);
+
+            // add header line
+            if (csvdef.ColNameHeader)
+            {
+                datanew.Append(csvnew.ConstructHeader());
+                datanew.Append(CRLF);
+            }
+
+            // read all lines
+            while (!strdata.EndOfStream)
+            {
+                // get values from line
+                List<String> values = csvdef.ParseNextLine(strdata, out bool iscomm);
+
+                if (iscomm)
+                {
+                    csvdef.CopyCommentLine(values, datanew, "", "");
+                }
+                else
+                {
+                    // next data line
+                    linenr++;
+
+                    // skip header line in source data, no header line in Fixed Width output data
+                    if ((linenr == 1) && skipheader) continue;
+
+
+                    List<string> valselect = new List<string>();
+
+                    foreach (int idx in sel_idx)
+                    {
+                        if (idx >= 0 && idx < values.Count) // Safety check
+                        {
+                            valselect.Add(values[idx]);
+                        }
+                    }
+
+                    // add selected values as new data line
+                    datanew.Append(csvnew.ConstructLine(valselect, false));
+
+                    // add line break
+                    datanew.Append(CRLF);
+                }
+            }
+
+            strdata.Dispose();
+
+            // create new file
+            if (Main.Settings.RearrangeColNewfile)
+            {
+                // get access to Notepad++
+                INotepadPPGateway notepad = new NotepadPPGateway();
+                notepad.FileNew();
+            }
+
+            // add csv def for this new list
+            Main.CSVChangeFileTab();
+            Main.UpdateCSVChanges(csvnew, false);
+
+            // file content
+            IScintillaGateway editor = new ScintillaGateway(PluginBase.GetCurrentScintilla());
+            editor.SetText(datanew.ToString());
+
+            // update text in editor
+            //scintillaGateway.SetText(datanew.ToString());
         }
     }
 }

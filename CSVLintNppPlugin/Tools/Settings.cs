@@ -297,6 +297,19 @@ namespace Kbg.NppPluginNET
         [Category("UserDialogs"), Browsable(false), DefaultValue(false)]
         public bool SplitRemoveOrg { get; set; }
 
+        // REARRANGE COLUMNS user preferences
+        [Description("Rearrange columns"), Category("UserDialogs"), Browsable(false), DefaultValue("")]
+        public string RearrangeColSelect { get; set; }
+
+        [Category("UserDialogs"), Browsable(false), DefaultValue(true)]
+        public bool RearrangeColNewfile { get; set; }
+
+        [Category("UserDialogs"), Browsable(false), DefaultValue(false)]
+        public bool RearrangeColDistinct { get; set; }
+
+        [Category("UserDialogs"), Browsable(false), DefaultValue(true)]
+        public bool RearrangeColSort { get; set; }
+
         // COUNT UNIQUE VALUES user preferences
         [Description("Count unique values"), Category("UserDialogs"), Browsable(false), DefaultValue("")]
         public string UniqueColumns { get; set; }

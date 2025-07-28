@@ -169,13 +169,14 @@ namespace Kbg.NppPluginNET
             PluginBase.SetCommand(1, "---", null);
             PluginBase.SetCommand(2, "Analyse data report", AnalyseDataReport);
             PluginBase.SetCommand(3, "Count unique values", CountUniqueValues);
-            PluginBase.SetCommand(4, "---", null);
-            PluginBase.SetCommand(5, "Convert data", convertData);
-            PluginBase.SetCommand(6, "Generate metadata", generateMetaData);
-            PluginBase.SetCommand(7, "---", null);
-            PluginBase.SetCommand(8, "&Settings", DoSettings);
-            PluginBase.SetCommand(9, "&Documentation", DoDocumentation);
-            PluginBase.SetCommand(10, "About", DoAboutForm);
+            PluginBase.SetCommand(4, "Rearrange columns", rearrangeColumns);
+            PluginBase.SetCommand(5, "---", null);
+            PluginBase.SetCommand(6, "Convert data", convertData);
+            PluginBase.SetCommand(7, "Generate metadata", generateMetaData);
+            PluginBase.SetCommand(8, "---", null);
+            PluginBase.SetCommand(9, "&Settings", DoSettings);
+            PluginBase.SetCommand(10, "&Documentation", DoDocumentation);
+            PluginBase.SetCommand(11, "About", DoAboutForm);
 
             RefreshFromSettings();
         }
@@ -597,6 +598,46 @@ namespace Kbg.NppPluginNET
         {
             using (var about = new AboutForm())
                 about.ShowDialog();
+        }
+
+        internal static void rearrangeColumns()
+        {
+            // get dictionary
+            CsvDefinition csvdef = GetCurrentCsvDef();
+
+            // check if valid dictionary
+            if (Main.CheckValidCsvDef(csvdef, "rearrange columns"))
+            {
+                // show split column dialog
+                var frmarr = new ColumnRearrangeForm();
+                frmarr.InitialiseSetting(csvdef);
+                DialogResult r = frmarr.ShowDialog();
+
+                // user clicked OK or Cancel
+                String sellst = frmarr.RearrangeColumns;
+                bool dst = frmarr.RearrangeDistinct;
+
+                // clear up
+                frmarr.Dispose();
+
+                // return true (OK) or false (Cancel)
+                if (r == DialogResult.OK)
+                {
+                    //var dtStart = DateTime.Now;
+
+                    // split column
+                    CsvEdit.RearrangeColumns(csvdef, sellst);
+
+                    //var dtElapsed = (DateTime.Now - dtStart).ToString(@"hh\:mm\:ss\.fff");
+
+                    // display process message
+                    //var colname = csvdef.Fields[idx].Name;
+                    //txtOutput.Text = string.Format("Rearrange columns is ready, time elapsed {0}\r\n", dtElapsed); ;
+
+                    // refresh datadefinition
+                    //OnBtnDetectColumns_Click(sender, e);
+                }
+            }
         }
 
         internal static void convertData()
