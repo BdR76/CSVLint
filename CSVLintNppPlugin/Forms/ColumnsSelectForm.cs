@@ -43,7 +43,7 @@ namespace CSVLintNppPlugin.Forms
             this._csvdef = csvdef;
 
             // get selected columns from previous session
-            var selcols = Main.Settings.RearrangeColSelect.Split('|').ToList();
+            var selcols = Main.Settings.SelectCols.Split('|').ToList();
 
             // temporary list of all available columns names (in case the settings incorrectly contains duplicates)
             var allcols = csvdef.Fields.Select(f => f.Name).ToList();
@@ -66,9 +66,9 @@ namespace CSVLintNppPlugin.Forms
             RefreshAvailableColumns();
 
             // load user preferences
-            chkNewFile.Checked = Main.Settings.RearrangeColNewfile;
-            chkDistinctCount.Checked = Main.Settings.RearrangeColDistinct;
-            chkDistinctSort.Checked = Main.Settings.RearrangeColSort;
+            chkNewFile.Checked = Main.Settings.SelectColsNewfile;
+            chkDistinctCount.Checked = Main.Settings.SelectColsDistinct;
+            chkDistinctSort.Checked = Main.Settings.SelectColsSort;
 
             EvaluateOkButton();
         }
@@ -133,10 +133,10 @@ namespace CSVLintNppPlugin.Forms
         private void btnOk_Click(object sender, EventArgs e)
         {
             // save user preferences
-            Main.Settings.RearrangeColSelect = string.Join("|", listSelectedColumns.Items.Cast<string>());
-            Main.Settings.RearrangeColNewfile = chkNewFile.Checked;
-            Main.Settings.RearrangeColDistinct = chkDistinctCount.Checked;
-            Main.Settings.RearrangeColSort = chkDistinctSort.Checked;
+            Main.Settings.SelectCols = string.Join("|", listSelectedColumns.Items.Cast<string>());
+            Main.Settings.SelectColsNewfile = chkNewFile.Checked;
+            Main.Settings.SelectColsDistinct = chkDistinctCount.Checked;
+            Main.Settings.SelectColsSort = chkDistinctSort.Checked;
 
             // save to file
             Main.Settings.SaveToIniFile();
@@ -144,6 +144,7 @@ namespace CSVLintNppPlugin.Forms
 
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ColumnsSelectForm));
             this.lblDescription = new System.Windows.Forms.Label();
             this.pnlDistinctOptions = new System.Windows.Forms.Panel();
             this.chkDistinctSort = new System.Windows.Forms.CheckBox();
@@ -183,8 +184,8 @@ namespace CSVLintNppPlugin.Forms
             // 
             // lblTitle
             // 
-            this.lblTitle.Size = new System.Drawing.Size(148, 20);
-            this.lblTitle.Text = "Rearrange columns";
+            this.lblTitle.Size = new System.Drawing.Size(117, 20);
+            this.lblTitle.Text = "Select columns";
             // 
             // lblHorizontalLine
             // 
@@ -202,9 +203,7 @@ namespace CSVLintNppPlugin.Forms
             this.lblDescription.Name = "lblDescription";
             this.lblDescription.Size = new System.Drawing.Size(668, 33);
             this.lblDescription.TabIndex = 12;
-            this.lblDescription.Text = "Rearrange columns by selecting one or more columns and press OK. Check \"Distinct " +
-    "count\" to select all unique values or combinations of values, including a new \"D" +
-    "istinct count\" column.";
+            this.lblDescription.Text = resources.GetString("lblDescription.Text");
             // 
             // pnlDistinctOptions
             // 
@@ -232,9 +231,9 @@ namespace CSVLintNppPlugin.Forms
             this.chkDistinctCount.AutoSize = true;
             this.chkDistinctCount.Location = new System.Drawing.Point(12, 25);
             this.chkDistinctCount.Name = "chkDistinctCount";
-            this.chkDistinctCount.Size = new System.Drawing.Size(159, 17);
+            this.chkDistinctCount.Size = new System.Drawing.Size(150, 17);
             this.chkDistinctCount.TabIndex = 0;
-            this.chkDistinctCount.Text = "Count distinct unique values";
+            this.chkDistinctCount.Text = "Select distinct values and ";
             this.chkDistinctCount.UseVisualStyleBackColor = true;
             // 
             // chkNewFile
@@ -405,7 +404,7 @@ namespace CSVLintNppPlugin.Forms
             this.listSelectedColumns.SelectedIndexChanged += new System.EventHandler(this.list_SelectedIndexChanged);
             this.listSelectedColumns.DoubleClick += new System.EventHandler(this.listSelectedColumns_DoubleClick);
             // 
-            // ColumnRearrangeForm
+            // ColumnsSelectForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.ClientSize = new System.Drawing.Size(684, 477);
@@ -414,8 +413,8 @@ namespace CSVLintNppPlugin.Forms
             this.Controls.Add(this.tblColSelect);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.MinimumSize = new System.Drawing.Size(600, 432);
-            this.Name = "ColumnRearrangeForm";
-            this.Text = "Rearrange columns";
+            this.Name = "ColumnsSelectForm";
+            this.Text = "Select columns";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ColumnRearrangeForm_FormClosing);
             this.Controls.SetChildIndex(this.btnOk, 0);
             this.Controls.SetChildIndex(this.btnCancel, 0);

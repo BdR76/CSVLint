@@ -1480,7 +1480,7 @@ namespace CSVLint
             strdata.Dispose();
 
             // create new file
-            if (Main.Settings.RearrangeColNewfile)
+            if (Main.Settings.SelectColsNewfile)
             {
                 // get access to Notepad++
                 INotepadPPGateway notepad = new NotepadPPGateway();

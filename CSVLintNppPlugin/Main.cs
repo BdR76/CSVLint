@@ -625,7 +625,7 @@ namespace Kbg.NppPluginNET
                 {
                     // determine indexes of selected columns
                     List<int> colidx = new List<int>();
-                    String[] sel_cols = Main.Settings.RearrangeColSelect.Split('|');
+                    String[] sel_cols = Main.Settings.SelectCols.Split('|');
                     foreach (string colname in sel_cols)
                     {
                         // find column index
@@ -643,9 +643,9 @@ namespace Kbg.NppPluginNET
                     //var dtStart = DateTime.Now;
 
                     // rearrange columns or count unique
-                    if (Main.Settings.RearrangeColDistinct) {
+                    if (Main.Settings.SelectColsDistinct) {
                         // count unique
-                        CsvAnalyze.CountUniqueValues(csvdef, colidx, Main.Settings.RearrangeColSort, false, false);
+                        CsvAnalyze.CountUniqueValues(csvdef, colidx, Main.Settings.SelectColsSort, false, false);
                     } else {
                         // rearrange columns
                         CsvEdit.RearrangeColumns(csvdef, colidx);
