@@ -1402,25 +1402,8 @@ namespace CSVLint
         /// rearrange columns
         /// </summary>
         /// <param name="data">csv data</param>
-        public static void RearrangeColumns(CsvDefinition csvdef, string selectedList)
+        public static void RearrangeColumns(CsvDefinition csvdef, List<int> sel_idx)
         {
-            // determine indexes of columns to select
-            List<int> sel_idx = new List<int>();
-            String[] sel_cols = selectedList.Split('|');
-            foreach (string colname in sel_cols)
-            {
-                // find column index
-                for (int i = 0; i < csvdef.Fields.Count; i++)
-                {
-                    // in case of duplicate column names, also check if selected name not already selected
-                    if (!sel_idx.Contains(i) && csvdef.Fields[i].Name == colname)
-                    {
-                        sel_idx.Add(i);
-                        break;
-                    }
-                }
-            }
-
             // new output definition
             CsvDefinition csvnew = new CsvDefinition(csvdef.Separator);
             for (int c = 0; c < sel_idx.Count; c++)

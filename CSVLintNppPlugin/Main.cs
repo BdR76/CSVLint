@@ -609,7 +609,7 @@ namespace Kbg.NppPluginNET
             if (Main.CheckValidCsvDef(csvdef, "rearrange columns"))
             {
                 // show split column dialog
-                var frmarr = new ColumnRearrangeForm();
+                var frmarr = new ColumnsSelectForm();
                 frmarr.InitialiseSetting(csvdef);
                 DialogResult r = frmarr.ShowDialog();
 
@@ -623,10 +623,33 @@ namespace Kbg.NppPluginNET
                 // return true (OK) or false (Cancel)
                 if (r == DialogResult.OK)
                 {
+                    // determine indexes of selected columns
+                    List<int> colidx = new List<int>();
+                    String[] sel_cols = Main.Settings.RearrangeColSelect.Split('|');
+                    foreach (string colname in sel_cols)
+                    {
+                        // find column index
+                        for (int i = 0; i < csvdef.Fields.Count; i++)
+                        {
+                            // in case of duplicate column names, also check if selected name not already selected
+                            if (!colidx.Contains(i) && csvdef.Fields[i].Name == colname)
+                            {
+                                colidx.Add(i);
+                                break;
+                            }
+                        }
+                    }
+
                     //var dtStart = DateTime.Now;
 
-                    // split column
-                    CsvEdit.RearrangeColumns(csvdef, sellst);
+                    // rearrange columns or count unique
+                    if (Main.Settings.RearrangeColDistinct) {
+                        // count unique
+                        CsvAnalyze.CountUniqueValues(csvdef, colidx, Main.Settings.RearrangeColSort, false, false);
+                    } else {
+                        // rearrange columns
+                        CsvEdit.RearrangeColumns(csvdef, colidx);
+                    }
 
                     //var dtElapsed = (DateTime.Now - dtStart).ToString(@"hh\:mm\:ss\.fff");
 

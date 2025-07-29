@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 namespace CSVLintNppPlugin.Forms
 {
-    public partial class ColumnRearrangeForm : CSVLintNppPlugin.Forms.CsvEditFormBase
+    public partial class ColumnsSelectForm : CSVLintNppPlugin.Forms.CsvEditFormBase
     {
         private Label lblDescription;
         private Panel pnlDistinctOptions;
@@ -30,7 +30,7 @@ namespace CSVLintNppPlugin.Forms
 
         private CsvDefinition _csvdef;
 
-        public ColumnRearrangeForm()
+        public ColumnsSelectForm()
         {
             InitializeComponent();
         }
@@ -146,9 +146,9 @@ namespace CSVLintNppPlugin.Forms
         {
             this.lblDescription = new System.Windows.Forms.Label();
             this.pnlDistinctOptions = new System.Windows.Forms.Panel();
-            this.chkNewFile = new System.Windows.Forms.CheckBox();
-            this.chkDistinctCount = new System.Windows.Forms.CheckBox();
             this.chkDistinctSort = new System.Windows.Forms.CheckBox();
+            this.chkDistinctCount = new System.Windows.Forms.CheckBox();
+            this.chkNewFile = new System.Windows.Forms.CheckBox();
             this.tblColSelect = new System.Windows.Forms.TableLayoutPanel();
             this.gbxAvailableColumns = new System.Windows.Forms.GroupBox();
             this.listAvailableColumns = new System.Windows.Forms.ListBox();
@@ -196,7 +196,7 @@ namespace CSVLintNppPlugin.Forms
             // 
             // lblDescription
             // 
-            this.lblDescription.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.lblDescription.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lblDescription.Location = new System.Drawing.Point(12, 48);
             this.lblDescription.Name = "lblDescription";
@@ -217,15 +217,15 @@ namespace CSVLintNppPlugin.Forms
             this.pnlDistinctOptions.Size = new System.Drawing.Size(365, 45);
             this.pnlDistinctOptions.TabIndex = 11;
             // 
-            // chkNewFile
+            // chkDistinctSort
             // 
-            this.chkNewFile.AutoSize = true;
-            this.chkNewFile.Location = new System.Drawing.Point(12, 3);
-            this.chkNewFile.Name = "chkNewFile";
-            this.chkNewFile.Size = new System.Drawing.Size(108, 17);
-            this.chkNewFile.TabIndex = 0;
-            this.chkNewFile.Text = "Result in new tab";
-            this.chkNewFile.UseVisualStyleBackColor = true;
+            this.chkDistinctSort.AutoSize = true;
+            this.chkDistinctSort.Location = new System.Drawing.Point(185, 26);
+            this.chkDistinctSort.Name = "chkDistinctSort";
+            this.chkDistinctSort.Size = new System.Drawing.Size(90, 17);
+            this.chkDistinctSort.TabIndex = 0;
+            this.chkDistinctSort.Text = "Sort on count";
+            this.chkDistinctSort.UseVisualStyleBackColor = true;
             // 
             // chkDistinctCount
             // 
@@ -236,18 +236,16 @@ namespace CSVLintNppPlugin.Forms
             this.chkDistinctCount.TabIndex = 0;
             this.chkDistinctCount.Text = "Count distinct unique values";
             this.chkDistinctCount.UseVisualStyleBackColor = true;
-            this.chkDistinctCount.Visible = false;
             // 
-            // chkDistinctSort
+            // chkNewFile
             // 
-            this.chkDistinctSort.AutoSize = true;
-            this.chkDistinctSort.Location = new System.Drawing.Point(185, 26);
-            this.chkDistinctSort.Name = "chkDistinctSort";
-            this.chkDistinctSort.Size = new System.Drawing.Size(90, 17);
-            this.chkDistinctSort.TabIndex = 0;
-            this.chkDistinctSort.Text = "Sort on count";
-            this.chkDistinctSort.UseVisualStyleBackColor = true;
-            this.chkDistinctSort.Visible = false;
+            this.chkNewFile.AutoSize = true;
+            this.chkNewFile.Location = new System.Drawing.Point(12, 3);
+            this.chkNewFile.Name = "chkNewFile";
+            this.chkNewFile.Size = new System.Drawing.Size(108, 17);
+            this.chkNewFile.TabIndex = 0;
+            this.chkNewFile.Text = "Result in new tab";
+            this.chkNewFile.UseVisualStyleBackColor = true;
             // 
             // tblColSelect
             // 

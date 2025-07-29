@@ -76,7 +76,7 @@
     <Compile Include="CsvLint\CsvGenerateCode.cs" />
     <Compile Include="CsvLint\CsvSchemaIni.cs" />
     <Compile Include="CsvLint\CsvValidate.cs" />
-    <Compile Include="Forms\ColumnRearrangeForm.cs">
+    <Compile Include="Forms\ColumnsSelectForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\DetectColumnsForm.cs">
@@ -184,8 +184,8 @@
     <EmbeddedResource Include="Forms\AboutForm.resx">
       <DependentUpon>AboutForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\ColumnRearrangeForm.resx">
-      <DependentUpon>ColumnRearrangeForm.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\ColumnsSelectForm.resx">
+      <DependentUpon>ColumnsSelectForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\DetectColumnsForm.resx">
       <DependentUpon>DetectColumnsForm.cs</DependentUpon>
