@@ -1410,8 +1410,15 @@ namespace CSVLint
             foreach (string colname in sel_cols)
             {
                 // find column index
-                var idx = csvdef.Fields.FindIndex(c => c.Name.Equals(colname, StringComparison.OrdinalIgnoreCase));
-                if (idx >= 0) sel_idx.Add(idx);
+                for (int i = 0; i < csvdef.Fields.Count; i++)
+                {
+                    // in case of duplicate column names, also check if selected name not already selected
+                    if (!sel_idx.Contains(i) && csvdef.Fields[i].Name == colname)
+                    {
+                        sel_idx.Add(i);
+                        break;
+                    }
+                }
             }
 
             // new output definition
