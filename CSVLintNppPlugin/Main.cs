@@ -169,7 +169,7 @@ namespace Kbg.NppPluginNET
             PluginBase.SetCommand(1, "---", null);
             PluginBase.SetCommand(2, "Analyse data report", AnalyseDataReport);
             PluginBase.SetCommand(3, "Count unique values", CountUniqueValues);
-            PluginBase.SetCommand(4, "Rearrange columns", rearrangeColumns);
+            PluginBase.SetCommand(4, "Select columns", selectColumns);
             PluginBase.SetCommand(5, "---", null);
             PluginBase.SetCommand(6, "Convert data", convertData);
             PluginBase.SetCommand(7, "Generate metadata", generateMetaData);
@@ -600,13 +600,13 @@ namespace Kbg.NppPluginNET
                 about.ShowDialog();
         }
 
-        internal static void rearrangeColumns()
+        internal static void selectColumns()
         {
             // get dictionary
             CsvDefinition csvdef = GetCurrentCsvDef();
 
             // check if valid dictionary
-            if (Main.CheckValidCsvDef(csvdef, "rearrange columns"))
+            if (Main.CheckValidCsvDef(csvdef, "select columns"))
             {
                 // show split column dialog
                 var frmarr = new ColumnsSelectForm();
@@ -614,8 +614,8 @@ namespace Kbg.NppPluginNET
                 DialogResult r = frmarr.ShowDialog();
 
                 // user clicked OK or Cancel
-                String sellst = frmarr.RearrangeColumns;
-                bool dst = frmarr.RearrangeDistinct;
+                String sellst = frmarr.SelectedColumns;
+                bool dst = frmarr.SelectDistinct;
 
                 // clear up
                 frmarr.Dispose();
@@ -642,20 +642,20 @@ namespace Kbg.NppPluginNET
 
                     //var dtStart = DateTime.Now;
 
-                    // rearrange columns or count unique
+                    // count unique or select columns
                     if (Main.Settings.SelectColsDistinct) {
                         // count unique
                         CsvAnalyze.CountUniqueValues(csvdef, colidx, Main.Settings.SelectColsSort, false, false);
                     } else {
-                        // rearrange columns
-                        CsvEdit.RearrangeColumns(csvdef, colidx);
+                        // select and/or rearrange columns
+                        CsvEdit.SelectColumns(csvdef, colidx);
                     }
 
                     //var dtElapsed = (DateTime.Now - dtStart).ToString(@"hh\:mm\:ss\.fff");
 
                     // display process message
                     //var colname = csvdef.Fields[idx].Name;
-                    //txtOutput.Text = string.Format("Rearrange columns is ready, time elapsed {0}\r\n", dtElapsed); ;
+                    //txtOutput.Text = string.Format("Select columns is ready, time elapsed {0}\r\n", dtElapsed); ;
 
                     // refresh datadefinition
                     //OnBtnDetectColumns_Click(sender, e);

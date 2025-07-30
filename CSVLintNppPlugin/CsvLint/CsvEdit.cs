@@ -1399,10 +1399,10 @@ namespace CSVLint
         }
 
         /// <summary>
-        /// rearrange columns
+        /// select and/or rearrange columns
         /// </summary>
         /// <param name="data">csv data</param>
-        public static void RearrangeColumns(CsvDefinition csvdef, List<int> sel_idx)
+        public static void SelectColumns(CsvDefinition csvdef, List<int> sel_idx)
         {
             // new output definition
             CsvDefinition csvnew = new CsvDefinition(csvdef.Separator);

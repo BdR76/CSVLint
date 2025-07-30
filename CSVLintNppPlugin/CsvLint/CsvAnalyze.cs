@@ -606,6 +606,19 @@ namespace CSVLint
             // n=45          : NO
             // n=6           : UNKOWN
 
+            // check any empty fieldnames
+            var nameempty = "";
+            for (int i = 0; i < csvdef.Fields.Count; i++)
+            {
+                if (csvdef.Fields[i].Name == "") nameempty += string.Format("{0}, ", i + 1);
+            }
+            if (nameempty != "")
+            {
+                // remove last comma
+                nameempty = nameempty.Remove(nameempty.Length - 2);
+                sb.Append(string.Format("**Warning: empty column name(s) (column {0}) **\r\n", nameempty));
+            }
+
             // ChatGPT generated this LinQ code :D
             var duplicateNames = colstats.GroupBy(c => c.Name) // Group the columns by their Name property
                                  .Where(g => g.Count() > 1) // Only keep groups with more than one element (i.e. duplicates)

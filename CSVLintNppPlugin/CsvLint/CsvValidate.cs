@@ -57,6 +57,20 @@ namespace CSVLint
                 return;
             }
 
+            // check any empty fieldnames
+            var nameempty  = "";
+            for (int i = 0; i < csvdef.Fields.Count; i++)
+            {
+                if (csvdef.Fields[i].Name == "") nameempty += string.Format("{0}, ", i+1);
+            }
+            if (nameempty != "")
+            {
+                // remove last comma
+                nameempty = nameempty.Remove(nameempty.Length - 2);
+                string msg = string.Format("empty column names (column {0})", nameempty);
+                this.log.Add(new LogLine(msg, -1, 0));
+            }
+
             // ChatGPT generated this LinQ code :D
             var duplicateNames = csvdef.Fields.GroupBy(c => c.Name) // Group the columns by their Name property
                                         .Where(g => g.Count() > 1) // Only keep groups with more than one element (i.e. duplicates)

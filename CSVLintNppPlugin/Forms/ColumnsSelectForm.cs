@@ -34,8 +34,8 @@ namespace CSVLintNppPlugin.Forms
         {
             InitializeComponent();
         }
-        public string RearrangeColumns { get; set; }
-        public bool RearrangeDistinct { get; set; }
+        public string SelectedColumns { get; set; }
+        public bool SelectDistinct { get; set; }
 
         public void InitialiseSetting(CsvDefinition csvdef)
         {
@@ -123,11 +123,11 @@ namespace CSVLintNppPlugin.Forms
             btnColMoveDown.Enabled = (listSelectedColumns.SelectedItem != null && listSelectedColumns.SelectedIndex < listSelectedColumns.Items.Count - 1);
         }
 
-        private void ColumnRearrangeForm_FormClosing(object sender, FormClosingEventArgs e)
+        private void ColumnsSelectForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             // pass split parameters to previous form
-            RearrangeColumns = string.Join("|", listSelectedColumns.Items.Cast<string>());
-            RearrangeDistinct = true;
+            SelectedColumns = string.Join("|", listSelectedColumns.Items.Cast<string>());
+            SelectDistinct = true;
         }
 
         private void btnOk_Click(object sender, EventArgs e)
@@ -180,7 +180,7 @@ namespace CSVLintNppPlugin.Forms
             // picHelpIcon
             // 
             this.picHelpIcon.Location = new System.Drawing.Point(656, 8);
-            this.picHelpIcon.Tag = "rearrange-columns";
+            this.picHelpIcon.Tag = "select-columns";
             // 
             // lblTitle
             // 
@@ -415,7 +415,7 @@ namespace CSVLintNppPlugin.Forms
             this.MinimumSize = new System.Drawing.Size(600, 432);
             this.Name = "ColumnsSelectForm";
             this.Text = "Select columns";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ColumnRearrangeForm_FormClosing);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ColumnsSelectForm_FormClosing);
             this.Controls.SetChildIndex(this.btnOk, 0);
             this.Controls.SetChildIndex(this.btnCancel, 0);
             this.Controls.SetChildIndex(this.lblHorizontalLine, 0);
