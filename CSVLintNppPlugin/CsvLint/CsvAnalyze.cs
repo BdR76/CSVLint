@@ -709,7 +709,7 @@ namespace CSVLint
         /// Data statistical analysis report
         /// <param name="data"></param>
         /// <returns></returns>
-        public static void CountUniqueValues(CsvDefinition csvdef, List<int> colidx, bool sortBy, bool sortValue, bool sortDesc)
+        public static void CountUniqueValues(CsvDefinition csvdef, List<int> colidx, bool sortBy, bool sortAsc)
         {
             // examine data and keep list of counters per unique values
             Dictionary<string, int> uniquecount = new Dictionary<string, int>();
@@ -788,16 +788,14 @@ namespace CSVLint
                 // new csv defintion
                 csvnew.AddColumn(i, colname, csvdef.Fields[colidx[i]].MaxWidth, csvdef.Fields[colidx[i]].DataType, csvdef.Fields[colidx[i]].Mask);
             }
-            sb.Append("count_unique\r\n");
+            sb.Append("count_distinct\r\n");
 
             // if sorting
             if (sortBy)
             {
                 // apply sorting, note that obj.Key actually contains the column value(s) and obj.Value contains the unique counter
-                if ((sortValue == true ) && (sortDesc == false)) uniquecount = uniquecount.OrderBy          (obj => obj.Key  ).ToDictionary(obj => obj.Key, obj => obj.Value);
-                if ((sortValue == true ) && (sortDesc == true )) uniquecount = uniquecount.OrderByDescending(obj => obj.Key  ).ToDictionary(obj => obj.Key, obj => obj.Value);
-                if ((sortValue == false) && (sortDesc == false)) uniquecount = uniquecount.OrderBy          (obj => obj.Value).ToDictionary(obj => obj.Key, obj => obj.Value);
-                if ((sortValue == false) && (sortDesc == true )) uniquecount = uniquecount.OrderByDescending(obj => obj.Value).ToDictionary(obj => obj.Key, obj => obj.Value);
+                if (sortAsc == true ) uniquecount = uniquecount.OrderBy          (obj => obj.Value).ToDictionary(obj => obj.Key, obj => obj.Value);
+                if (sortAsc == false) uniquecount = uniquecount.OrderByDescending(obj => obj.Value).ToDictionary(obj => obj.Key, obj => obj.Value);
             }
 
             // add all unique values, sort by count
@@ -807,7 +805,7 @@ namespace CSVLint
                 sb.Append(string.Format("{0}{1}{2}\r\n", unqcnt.Key, newsep, unqcnt.Value));
                 if (maxwidth < unqcnt.Value) maxwidth = unqcnt.Value;
             }
-            csvnew.AddColumn("count_unique", maxwidth.ToString().Length, ColumnType.Integer);
+            csvnew.AddColumn("count_distinct", maxwidth.ToString().Length, ColumnType.Integer);
 
             // create new file
             notepad.FileNew();

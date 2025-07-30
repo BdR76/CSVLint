@@ -168,15 +168,14 @@ namespace Kbg.NppPluginNET
             PluginBase.SetCommand(0, "CSV Lint window", myDockableDialog); idMyDlg = 0;
             PluginBase.SetCommand(1, "---", null);
             PluginBase.SetCommand(2, "Analyse data report", AnalyseDataReport);
-            PluginBase.SetCommand(3, "Count unique values", CountUniqueValues);
-            PluginBase.SetCommand(4, "Select columns", selectColumns);
-            PluginBase.SetCommand(5, "---", null);
-            PluginBase.SetCommand(6, "Convert data", convertData);
-            PluginBase.SetCommand(7, "Generate metadata", generateMetaData);
-            PluginBase.SetCommand(8, "---", null);
-            PluginBase.SetCommand(9, "&Settings", DoSettings);
-            PluginBase.SetCommand(10, "&Documentation", DoDocumentation);
-            PluginBase.SetCommand(11, "About", DoAboutForm);
+            PluginBase.SetCommand(3, "Select columns", selectColumns);
+            PluginBase.SetCommand(4, "---", null);
+            PluginBase.SetCommand(5, "Convert data", convertData);
+            PluginBase.SetCommand(6, "Generate metadata", generateMetaData);
+            PluginBase.SetCommand(7, "---", null);
+            PluginBase.SetCommand(8, "&Settings", DoSettings);
+            PluginBase.SetCommand(9, "&Documentation", DoDocumentation);
+            PluginBase.SetCommand(10, "About", DoAboutForm);
 
             RefreshFromSettings();
         }
@@ -645,7 +644,7 @@ namespace Kbg.NppPluginNET
                     // count unique or select columns
                     if (Main.Settings.SelectColsDistinct) {
                         // count unique
-                        CsvAnalyze.CountUniqueValues(csvdef, colidx, Main.Settings.SelectColsSort, false, false);
+                        CsvAnalyze.CountUniqueValues(csvdef, colidx, (Main.Settings.SelectColsSort != 0), (Main.Settings.SelectColsSort == 1));
                     } else {
                         // select and/or rearrange columns
                         CsvEdit.SelectColumns(csvdef, colidx);
@@ -760,37 +759,6 @@ namespace Kbg.NppPluginNET
             {
                 // validate data
                 CsvAnalyze.StatisticalReportData(csvdef);
-            }
-        }
-
-        internal static void CountUniqueValues()
-        {
-            // get dictionary
-            CsvDefinition csvdef = GetCurrentCsvDef();
-
-            // check if valid csv metadata
-            if (CheckValidCsvDef(csvdef, "count unique values"))
-            {
-                // show unique values parameters form
-                var frmunq = new UniqueValuesForm();
-                frmunq.InitialiseSetting(csvdef);
-                DialogResult r = frmunq.ShowDialog();
-
-                // user clicked OK or Cancel
-                List<int> colidx = new List<int>(frmunq.ColumnIndexes);
-                bool sortBy = frmunq.SortBy;
-                bool sortValue = frmunq.SortValue;
-                bool sortDesc = frmunq.SortDesc;
-
-                // clear up
-                frmunq.Dispose();
-
-                // return true (OK) or false (Cancel)
-                if (r == DialogResult.OK)
-                {
-                    // count unique values
-                    CsvAnalyze.CountUniqueValues(csvdef, colidx, sortBy, sortValue, sortDesc);
-                }
             }
         }
 

@@ -121,12 +121,6 @@
     <Compile Include="Forms\SortForm.Designer.cs">
       <DependentUpon>SortForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\UniqueValuesForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\UniqueValuesForm.Designer.cs">
-      <DependentUpon>UniqueValuesForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="PluginInfrastructure\DarkMode.cs" />
     <Compile Include="PluginInfrastructure\Lexer.cs" />
     <Compile Include="Tools\MenuButton.cs">
@@ -186,6 +180,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ColumnsSelectForm.resx">
       <DependentUpon>ColumnsSelectForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\DetectColumnsForm.resx">
       <DependentUpon>DetectColumnsForm.cs</DependentUpon>
@@ -210,9 +205,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\SortForm.resx">
       <DependentUpon>SortForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\UniqueValuesForm.resx">
-      <DependentUpon>UniqueValuesForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

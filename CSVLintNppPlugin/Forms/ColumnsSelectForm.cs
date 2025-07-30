@@ -13,7 +13,6 @@ namespace CSVLintNppPlugin.Forms
         private Panel pnlDistinctOptions;
         private CheckBox chkNewFile;
         private CheckBox chkDistinctCount;
-        private CheckBox chkDistinctSort;
         private TableLayoutPanel tblColSelect;
         private Panel pnlColSelect;
         private Button btnAllSelect;
@@ -27,7 +26,8 @@ namespace CSVLintNppPlugin.Forms
         private ListBox listAvailableColumns;
         private GroupBox gbxSelectedColumns;
         private ListBox listSelectedColumns;
-
+        private RadioButton rdbSortDesc;
+        private RadioButton rdbSortAsc;
         private CsvDefinition _csvdef;
 
         public ColumnsSelectForm()
@@ -68,8 +68,10 @@ namespace CSVLintNppPlugin.Forms
             // load user preferences
             chkNewFile.Checked = Main.Settings.SelectColsNewfile;
             chkDistinctCount.Checked = Main.Settings.SelectColsDistinct;
-            chkDistinctSort.Checked = Main.Settings.SelectColsSort;
+            rdbSortAsc.Checked = (Main.Settings.SelectColsSort == 1);  // 1 = ascending
+            rdbSortDesc.Checked = (Main.Settings.SelectColsSort == 2); // 2 = descending
 
+            OnChkbx_CheckedChanged(chkDistinctCount, null);
             EvaluateOkButton();
         }
 
@@ -136,7 +138,7 @@ namespace CSVLintNppPlugin.Forms
             Main.Settings.SelectCols = string.Join("|", listSelectedColumns.Items.Cast<string>());
             Main.Settings.SelectColsNewfile = chkNewFile.Checked;
             Main.Settings.SelectColsDistinct = chkDistinctCount.Checked;
-            Main.Settings.SelectColsSort = chkDistinctSort.Checked;
+            Main.Settings.SelectColsSort = (rdbSortAsc.Checked ? 1 : (rdbSortDesc.Checked ? 2 : 0)); // 0 = no sort
 
             // save to file
             Main.Settings.SaveToIniFile();
@@ -147,7 +149,8 @@ namespace CSVLintNppPlugin.Forms
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ColumnsSelectForm));
             this.lblDescription = new System.Windows.Forms.Label();
             this.pnlDistinctOptions = new System.Windows.Forms.Panel();
-            this.chkDistinctSort = new System.Windows.Forms.CheckBox();
+            this.rdbSortDesc = new System.Windows.Forms.RadioButton();
+            this.rdbSortAsc = new System.Windows.Forms.RadioButton();
             this.chkDistinctCount = new System.Windows.Forms.CheckBox();
             this.chkNewFile = new System.Windows.Forms.CheckBox();
             this.tblColSelect = new System.Windows.Forms.TableLayoutPanel();
@@ -208,7 +211,8 @@ namespace CSVLintNppPlugin.Forms
             // pnlDistinctOptions
             // 
             this.pnlDistinctOptions.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.pnlDistinctOptions.Controls.Add(this.chkDistinctSort);
+            this.pnlDistinctOptions.Controls.Add(this.rdbSortDesc);
+            this.pnlDistinctOptions.Controls.Add(this.rdbSortAsc);
             this.pnlDistinctOptions.Controls.Add(this.chkDistinctCount);
             this.pnlDistinctOptions.Controls.Add(this.chkNewFile);
             this.pnlDistinctOptions.Location = new System.Drawing.Point(4, 420);
@@ -216,25 +220,43 @@ namespace CSVLintNppPlugin.Forms
             this.pnlDistinctOptions.Size = new System.Drawing.Size(365, 45);
             this.pnlDistinctOptions.TabIndex = 11;
             // 
-            // chkDistinctSort
+            // rdbSortDesc
             // 
-            this.chkDistinctSort.AutoSize = true;
-            this.chkDistinctSort.Location = new System.Drawing.Point(185, 26);
-            this.chkDistinctSort.Name = "chkDistinctSort";
-            this.chkDistinctSort.Size = new System.Drawing.Size(90, 17);
-            this.chkDistinctSort.TabIndex = 0;
-            this.chkDistinctSort.Text = "Sort on count";
-            this.chkDistinctSort.UseVisualStyleBackColor = true;
+            this.rdbSortDesc.AutoSize = true;
+            this.rdbSortDesc.Location = new System.Drawing.Point(267, 24);
+            this.rdbSortDesc.Name = "rdbSortDesc";
+            this.rdbSortDesc.Size = new System.Drawing.Size(80, 17);
+            this.rdbSortDesc.TabIndex = 1;
+            this.rdbSortDesc.TabStop = true;
+            this.rdbSortDesc.Tag = "1";
+            this.rdbSortDesc.Text = "descending";
+            this.rdbSortDesc.UseVisualStyleBackColor = true;
+            this.rdbSortDesc.MouseDown += new System.Windows.Forms.MouseEventHandler(this.rdbtns_MouseDown);
+            // 
+            // rdbSortAsc
+            // 
+            this.rdbSortAsc.AutoSize = true;
+            this.rdbSortAsc.Location = new System.Drawing.Point(189, 24);
+            this.rdbSortAsc.Name = "rdbSortAsc";
+            this.rdbSortAsc.Size = new System.Drawing.Size(74, 17);
+            this.rdbSortAsc.TabIndex = 1;
+            this.rdbSortAsc.TabStop = true;
+            this.rdbSortAsc.Tag = "1";
+            this.rdbSortAsc.Text = "ascending";
+            this.rdbSortAsc.UseVisualStyleBackColor = true;
+            this.rdbSortAsc.MouseDown += new System.Windows.Forms.MouseEventHandler(this.rdbtns_MouseDown);
             // 
             // chkDistinctCount
             // 
             this.chkDistinctCount.AutoSize = true;
             this.chkDistinctCount.Location = new System.Drawing.Point(12, 25);
             this.chkDistinctCount.Name = "chkDistinctCount";
-            this.chkDistinctCount.Size = new System.Drawing.Size(150, 17);
+            this.chkDistinctCount.Size = new System.Drawing.Size(167, 17);
             this.chkDistinctCount.TabIndex = 0;
-            this.chkDistinctCount.Text = "Select distinct values and ";
+            this.chkDistinctCount.Tag = "1";
+            this.chkDistinctCount.Text = "Select distinct values and sort";
             this.chkDistinctCount.UseVisualStyleBackColor = true;
+            this.chkDistinctCount.CheckedChanged += new System.EventHandler(this.OnChkbx_CheckedChanged);
             // 
             // chkNewFile
             // 
@@ -531,6 +553,19 @@ namespace CSVLintNppPlugin.Forms
         private void list_SelectedIndexChanged(object sender, EventArgs e)
         {
             EvaluateOkButton();
+        }
+
+        private void OnChkbx_CheckedChanged(object sender, EventArgs e)
+        {
+            // which checkbox, see index in Tag property
+            bool chk = (sender as CheckBox).Checked;
+            ToggleControlBasedOnControl(sender as CheckBox, chk);
+        }
+
+        private void rdbtns_MouseDown(object sender, MouseEventArgs e)
+        {
+            // right click to de-select (select none for no sorting)
+            if (e.Button == MouseButtons.Right) (sender as RadioButton).Checked = false;
         }
     }
 }

@@ -307,21 +307,8 @@ namespace Kbg.NppPluginNET
         [Category("UserDialogs"), Browsable(false), DefaultValue(false)]
         public bool SelectColsDistinct { get; set; }
 
-        [Category("UserDialogs"), Browsable(false), DefaultValue(true)]
-        public bool SelectColsSort { get; set; }
-
-        // COUNT UNIQUE VALUES user preferences
-        [Description("Count unique values"), Category("UserDialogs"), Browsable(false), DefaultValue("")]
-        public string UniqueColumns { get; set; }
-
-        [Category("UserDialogs"), Browsable(false), DefaultValue(true)]
-        public bool UniqueSortBy { get; set; }
-
-        [Category("UserDialogs"), Browsable(false), DefaultValue(false)]
-        public bool UniqueSortAsc { get; set; }
-
-        [Category("UserDialogs"), Browsable(false), DefaultValue(false)]
-        public bool UniqueSortValue { get; set; }
+        [Category("UserDialogs"), Browsable(false), DefaultValue(1)]
+        public int SelectColsSort { get; set; }
 
         // helper function for "CurrentYear" as year values
         private int GetYearFromString(string yr)
