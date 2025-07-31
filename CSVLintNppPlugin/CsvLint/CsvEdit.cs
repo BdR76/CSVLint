@@ -312,7 +312,7 @@ namespace CSVLint
         public static void ConvertToSQL(CsvDefinition csvdef)
         {
             StringBuilder sb = new StringBuilder();
-            int MAX_SQL_ROWS = Main.Settings.DataConvertBatch;
+            int SQL_BATCH_SIZE = Main.Settings.DataConvertBatch;
 
             // if csv already contains "_record_number"
             var recidname = csvdef.GetUniqueColumnName("_record_number", out int postfix);
@@ -329,7 +329,7 @@ namespace CSVLint
             // apply brackets or quotes, only if needed
             TABLE_NAME = SQLSafeName(TABLE_NAME);
 
-            string SQL_TYPE = (Main.Settings.DataConvertSQL <= 1 ? (Main.Settings.DataConvertSQL == 0 ? "MySQL" : "MS-SQL") : "PostgreSQL");
+            string SQL_TYPE = (Main.Settings.DataConvertSQL <= 1 ? (Main.Settings.DataConvertSQL == 0 ? "MySQL / MariaDB" : "MS-SQL") : "PostgreSQL");
 
             // default comment
             List<String> comment = ScriptInfo(notepad);
@@ -353,7 +353,7 @@ namespace CSVLint
                 case 2: // PostgreSQL
                     sb.Append(string.Format("{0} SERIAL PRIMARY KEY,\r\n\t", recidname));
                     break;
-                default: // 0=MySQL
+                default: // 0=MySQL/MariaDB
                     sb.Append(string.Format("{0} int AUTO_INCREMENT NOT NULL,\r\n\t", recidname));
                     break;
             }
@@ -365,7 +365,7 @@ namespace CSVLint
 
             for (var r = 0; r < csvdef.Fields.Count; r++)
             {
-                // determine sql column name -> MySQL = `colname`, MS-SQL = [colname], PostgreSQL = "colname"
+                // determine sql column name -> MySQL/MariaDB = `colname`, MS-SQL = [colname], PostgreSQL = "colname"
                 string sqlname = SQLSafeName(csvdef.Fields[r].Name);
 
                 // determine sql datatype
@@ -374,7 +374,7 @@ namespace CSVLint
                 var comm = "";
 
                 if (csvdef.Fields[r].DataType == ColumnType.Integer) sqltype = "integer";
-                if (csvdef.Fields[r].DataType == ColumnType.DateTime) sqltype = (Main.Settings.DataConvertSQL < 2 ? "datetime" : "timestamp"); // MySQL/MS-SQL = datetime, Postgress=timestamp
+                if (csvdef.Fields[r].DataType == ColumnType.DateTime) sqltype = (Main.Settings.DataConvertSQL < 2 ? "datetime" : "timestamp"); // MySQL/MariaDB/MS-SQL = datetime, Postgress=timestamp
                 //if (csvdef.Fields[r].DataType == ColumnType.Guid) sqltype = "varchar(36)";
                 if (csvdef.Fields[r].DataType == ColumnType.Decimal)
                 {
@@ -405,7 +405,7 @@ namespace CSVLint
                 //    csvdef.Fields[r].Mask = masknew.Trim();
                 };
 
-                // no comma after last column, except for MySQL
+                // no comma after last column, except for MySQL/MariaDB
                 var comma = (r < csvdef.Fields.Count - 1 || Main.Settings.DataConvertSQL == 0 ? "," : "");
 
                 sb.Append(string.Format("{0} {1}{2}{3}", sqlname, sqltype, comma, widunk));
@@ -448,10 +448,10 @@ namespace CSVLint
                             // for PostgreSQL, insert statements on ENUM column must always use quotes, so ('0', '1', '2') instead of (0, 1, 2)
                             if (csvdef.Fields[r].DataType == ColumnType.Integer) csvdef.Fields[r].DataType = ColumnType.String;
                             break;
-                        default: // 0=MySQL
-                            enumvals = enumvals.Replace("\"", "'"); // ENUM on MySQL is always treated as string value
+                        default: // 0=MySQL/MariaDB
+                            enumvals = enumvals.Replace("\"", "'"); // ENUM on MySQL/MariaDB is always treated as string value
                             enumcols1 += string.Format("ALTER TABLE {0} MODIFY COLUMN {1} ENUM('{2}');\r\n", TABLE_NAME, sqlname, enumvals);
-                            // for MySQL, insert statements on ENUM column must always use quotes, so ('0', '1', '2') instead of (0, 1, 2)
+                            // for MySQL/MariaDB, insert statements on ENUM column must always use quotes, so ('0', '1', '2') instead of (0, 1, 2)
                             if (csvdef.Fields[r].DataType == ColumnType.Integer) csvdef.Fields[r].DataType = ColumnType.String;
                             break;
                     }
@@ -469,13 +469,13 @@ namespace CSVLint
                     case 2: // PostgreSQL
                         colscom += string.Format("COMMENT ON COLUMN {0}.{1} IS '{2}{3} comment';\r\n", TABLE_NAME, sqlname, str_colheader, comm);
                         break;
-                    default: // 0=MySQL
+                    default: // 0=MySQL/MariaDB
                         colscom += string.Format("MODIFY COLUMN {0} {1} COMMENT '{2}{3} comment'{4}\r\n", sqlname, sqltype, str_colheader, comm, (r < csvdef.Fields.Count-1 ? "," : ";"));
                         break;
                 }
             };
 
-            // primary key definition for MySQL
+            // primary key definition for MySQL/MariaDB
             if (Main.Settings.DataConvertSQL == 0) sb.Append(string.Format("\r\n\tprimary key({0})", recidname));
 
             sb.Append("\r\n);\r\n");
@@ -488,7 +488,7 @@ namespace CSVLint
 
             int lineCount = csvdef.ColNameHeader ? -1 : 0;
             int batchcomm = -1;  // batch comment line
-            int batchstart = -1; // batch starting line
+            int batchstart = 1; // batch starting line
             int lastend = -1;  // last line end character
 
             // copy any comment lines
@@ -506,28 +506,32 @@ namespace CSVLint
                 }
                 else
                 {
-                    // add in batches of maximal <MAX_SQL_ROWS> rows
-                    if (lineCount % MAX_SQL_ROWS == 0)
-                    {
-                        // batch comment, insert record count
-                        // note: not possible to insert now because the ammount of records is unknown at this point
-                        if (batchcomm > -1) sb.Insert(batchcomm, string.Format("{0} - {1}", batchstart, lineCount));
-
-                        // remember next batch
-                        batchstart = lineCount + 1;
-
-                        sb.Append("\r\n-- -------------------------------------\r\n");
-                        sb.Append("-- insert records \r\n");
-                        batchcomm = sb.Length - 2; // -2 because of the 2 characters \r\n
-                        sb.Append("-- -------------------------------------\r\n");
-                        sb.Append(string.Format("INSERT INTO {0} (\r\n", TABLE_NAME));
-                        sb.Append(cols);
-                        sb.Append("\r\n) VALUES\r\n");
-                    }
-
                     // skip header line
                     if (lineCount >= 0)
                     {
+                        // add in batches of maximum <SQL_BATCH_SIZE> rows
+                        if (lineCount % SQL_BATCH_SIZE == 0)
+                        {
+                            // batch comment, insert record count
+                            if ( (batchcomm > -1) && (SQL_BATCH_SIZE > 1) ) {
+                                sb.Insert(batchcomm, string.Format("{0} - {1}", batchstart, lineCount));
+                                // remember next batch
+                                batchstart = lineCount + 1;
+                            }
+
+                            // repeat count-comment per batch, or when batch==1 then add count-comment only once at the start
+                            if ((SQL_BATCH_SIZE > 1) || (batchcomm == -1) ) {
+                                // note: not possible to insert from-to count because the ammount of records remaining is unknown at this point
+                                sb.Append("\r\n-- -------------------------------------\r\n");
+                                sb.Append("-- insert records \r\n");
+                                batchcomm = sb.Length - 2; // -2 because of the 2 characters \r\n
+                                sb.Append("-- -------------------------------------\r\n");
+                            }
+                            sb.Append(string.Format("INSERT INTO {0} (\r\n", TABLE_NAME));
+                            sb.Append(cols);
+                            sb.Append("\r\n) VALUES\r\n");
+                        }
+
                         // next line of values
                         sb.Append("(");
 
@@ -585,7 +589,7 @@ namespace CSVLint
                         }
 
                         // end line with comma , or semicolon at end of a batch
-                        sb.Append(string.Format("){0}\r\n", ((lineCount+1) % MAX_SQL_ROWS != 0 ? "," : ";")));
+                        sb.Append(string.Format("){0}\r\n", ((lineCount+1) % SQL_BATCH_SIZE != 0 ? "," : ";")));
                         lastend = sb.Length - 3; // -3 because -1 for ,/; character and  -2 for characters \r\n
                     }
 
@@ -600,8 +604,7 @@ namespace CSVLint
                 sb.Insert(lastend, ";"); // replace with semi-colon
             }
 
-            // batch comment, insert record count
-            // note: not possible to insert now because the ammount of records is unknown at this point
+            // batch comment, insert record count of any last remaining batch
             if (batchcomm > -1) sb.Insert(batchcomm, string.Format("{0} - {1}", batchstart, lineCount));
 
             sb.Append("\r\n-- -------------------------------------\r\n");
@@ -621,15 +624,15 @@ namespace CSVLint
                 case 2:
                     sb.Append(string.Format("COMMENT ON TABLE {0} IS '{1}';", TABLE_NAME, tabcomment)); // PostgreSQL
                     break;
-                default: // 0=MySQL
-                    sb.Append(string.Format("ALTER TABLE {0} COMMENT '{1}';", TABLE_NAME, tabcomment)); // MySQL
+                default: // 0=MySQL/MariaDB
+                    sb.Append(string.Format("ALTER TABLE {0} COMMENT '{1}';", TABLE_NAME, tabcomment)); // MySQL/MariaDB
                     break;
             }
 
             sb.Append("\r\n\r\n-- Column comments (optional)\r\n/*\r\n");
-            if (Main.Settings.DataConvertSQL == 0) // MySQL
+            if (Main.Settings.DataConvertSQL == 0) // MySQL/MariaDB
             {
-                sb.Append("-- NOTE! MySQL requires repeating the name AND datatype when modifying a column,\r\n");
+                sb.Append("-- NOTE! MySQL/MariaDB requires repeating the name AND datatype when modifying a column,\r\n");
                 sb.Append("-- so if you have changed any column datatypes make sure they are the same here!\r\n");
                 sb.Append("-- It is safer to add any column comments at the CREATE TABLE statement instead of using MODIFY COLUMN.\r\n");
                 sb.Append(string.Format("ALTER TABLE {0}\r\n", TABLE_NAME));

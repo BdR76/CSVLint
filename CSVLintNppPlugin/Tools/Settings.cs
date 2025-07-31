@@ -202,7 +202,7 @@ namespace Kbg.NppPluginNET
             get { return _sqlbatch; }
             set
             {
-                _sqlbatch = Math.Max(value, 10);
+                _sqlbatch = Math.Max(value, 1); // batch size cannot be <= 0
             }
         }
 

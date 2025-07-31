@@ -120,12 +120,12 @@ namespace CSVLintNppPlugin.Forms
             this.cmbSQLtype.Enabled = false;
             this.cmbSQLtype.FormattingEnabled = true;
             this.cmbSQLtype.Items.AddRange(new object[] {
-            "MySQL",
+            "MySQL / MariaDB",
             "MS-SQL",
             "PostgreSQL"});
             this.cmbSQLtype.Location = new System.Drawing.Point(192, 109);
             this.cmbSQLtype.Name = "cmbSQLtype";
-            this.cmbSQLtype.Size = new System.Drawing.Size(111, 21);
+            this.cmbSQLtype.Size = new System.Drawing.Size(192, 21);
             this.cmbSQLtype.TabIndex = 8;
             this.cmbSQLtype.Tag = "1";
             // 
@@ -159,7 +159,7 @@ namespace CSVLintNppPlugin.Forms
             0,
             0});
             this.numSQLBatchSize.Minimum = new decimal(new int[] {
-            10,
+            1,
             0,
             0,
             0});
