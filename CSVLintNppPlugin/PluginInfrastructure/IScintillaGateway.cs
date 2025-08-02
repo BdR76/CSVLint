@@ -55,7 +55,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         void ClearDocumentStyle();
 
         /// <summary>Returns the number of bytes in the document. (Scintilla feature 2006)</summary>
-        int GetLength();
+        long GetLength();
 
         /// <summary>Returns the character byte at the position. (Scintilla feature 2007)</summary>
         int GetCharAt(int pos);

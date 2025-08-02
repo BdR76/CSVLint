@@ -143,7 +143,8 @@ namespace CSVLint
             var CRLF = getEditorEOLchars(scintillaGateway.GetEOLMode());
 
             // use stringreader to go line by line
-            var strdata = ScintillaStreams.StreamAllText();
+            if (!ScintillaStreams.TryStreamAllText(out StreamReader strdata))
+                return;
 
             //var s = new StringReader(data);
             int linenr = 0;
@@ -484,7 +485,8 @@ namespace CSVLint
             if (enumcols1 != "") sb.Append(string.Format("-- Enumeration columns (optional)\r\n/*\r\n{0}{1}*/\r\n", enumcols1, enumcols2));
 
             // use stringreader to go line by line
-            var strdata = ScintillaStreams.StreamAllText();
+            if (!ScintillaStreams.TryStreamAllText(out StreamReader strdata))
+                return;
 
             int lineCount = csvdef.ColNameHeader ? -1 : 0;
             int batchcomm = -1;  // batch comment line
@@ -709,7 +711,8 @@ namespace CSVLint
             sb.Append("\t-->\r\n");
 
             // use stringreader to go line by line
-            var strdata = ScintillaStreams.StreamAllText();
+            if (!ScintillaStreams.TryStreamAllText(out StreamReader strdata))
+                return;
 
             int lineCount = (csvdef.ColNameHeader ? -1 : 0);
 
@@ -853,7 +856,8 @@ namespace CSVLint
             sb.Append("\t\"JSONdata\":[");
 
             // use stringreader to go line by line
-            var strdata = ScintillaStreams.StreamAllText();
+            if (!ScintillaStreams.TryStreamAllText(out StreamReader strdata))
+                return;
 
             int lineCount = (csvdef.ColNameHeader ? -1 : 0);
 
@@ -1080,7 +1084,8 @@ namespace CSVLint
             // examine data and keep list of all data lines
             // Note: can be a dictionary, not a list, because the sortable values are guaranteed to be unique
             Dictionary<string, string> sortlines = new Dictionary<string, string>();
-            var strdata = ScintillaStreams.StreamAllText();
+            if (!ScintillaStreams.TryStreamAllText(out StreamReader strdata))
+                return;
 
             // variables to read original data file
             List<string> values;
@@ -1167,7 +1172,8 @@ namespace CSVLint
             var CRLF = getEditorEOLchars(scintillaGateway.GetEOLMode());
 
             // use stringreader to go line by line
-            var strdata = ScintillaStreams.StreamAllText();
+            if (!ScintillaStreams.TryStreamAllText(out StreamReader strdata))
+                return;
 
             //var s = new StringReader(data);
             int linenr = 0;
