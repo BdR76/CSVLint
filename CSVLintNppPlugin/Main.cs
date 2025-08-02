@@ -774,37 +774,6 @@ namespace Kbg.NppPluginNET
             }
         }
 
-        internal static void CountUniqueValues()
-        {
-            // get dictionary
-            CsvDefinition csvdef = GetCurrentCsvDef();
-
-            // check if valid csv metadata
-            if (CheckValidCsvDef(csvdef, "count unique values"))
-            {
-                // show unique values parameters form
-                var frmunq = new UniqueValuesForm();
-                frmunq.InitialiseSetting(csvdef);
-                DialogResult r = frmunq.ShowDialog();
-
-                // user clicked OK or Cancel
-                List<int> colidx = new List<int>(frmunq.ColumnIndexes);
-                bool sortBy = frmunq.SortBy;
-                bool sortValue = frmunq.SortValue;
-                bool sortDesc = frmunq.SortDesc;
-
-                // clear up
-                frmunq.Dispose();
-
-                // return true (OK) or false (Cancel)
-                if (r == DialogResult.OK)
-                {
-                    // count unique values
-                    CsvAnalyze.CountUniqueValues(csvdef, colidx, sortBy, sortValue, sortDesc);
-                }
-            }
-        }
-
         internal static void myDockableDialog()
         {
             if (frmCsvLintDlg == null)
