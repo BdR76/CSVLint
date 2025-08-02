@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -1429,7 +1430,7 @@ namespace CSVLint
             var CRLF = getEditorEOLchars(scintillaGateway.GetEOLMode());
 
             // use stringreader to go line by line
-            var strdata = ScintillaStreams.StreamAllText();
+            ScintillaStreams.TryStreamAllText(out StreamReader strdata);
 
             //var s = new StringReader(data);
             int linenr = 0;

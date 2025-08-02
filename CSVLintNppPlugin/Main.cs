@@ -611,7 +611,8 @@ namespace Kbg.NppPluginNET
         internal static void selectColumns()
         {
             // get dictionary
-            CsvDefinition csvdef = GetCurrentCsvDef();
+            if (!TryGetCurrentCsvDef(out CsvDefinition csvdef))
+                return;
 
             // check if valid dictionary
             if (Main.CheckValidCsvDef(csvdef, "select columns"))
