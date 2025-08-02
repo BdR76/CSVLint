@@ -10,6 +10,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using CSVLint;
+using CSVLint.Tools;
 using CSVLintNppPlugin.CsvLint;
 using CSVLintNppPlugin.Forms;
 using Kbg.NppPluginNET.PluginInfrastructure;
@@ -437,7 +438,7 @@ namespace Kbg.NppPluginNET
                 else
                 {
                     // analyze and determine csv definition
-                    csvdef = CsvAnalyze.InferFromData(true, '\0', "", false, 0, Main.Settings.CommentCharacter); // parameters "", false, 0 -> defaults
+                    csvdef = CsvAnalyze.InferFromData(true, '\0', "", false, 0, Main.Settings.CommentCharacter, false); // parameters "", false, 0 -> defaults
                 }
                 FileCsvDef.Add(filename, csvdef);
             }
@@ -478,7 +479,8 @@ namespace Kbg.NppPluginNET
         public static void EnableDisableLanguage()
         {
             Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_GETCURRENTLANGTYPE, 0, out int currentLanguageId);
-            CsvDefinition csvdef = GetCurrentCsvDef();
+            if (!TryGetCurrentCsvDef(out CsvDefinition csvdef))
+                return;
             int newLanguageId;
             if (currentLanguageId == CsvLanguageId.Value)
             {
@@ -537,13 +539,20 @@ namespace Kbg.NppPluginNET
             }
         }
 
-        public static CsvDefinition GetCurrentCsvDef()
+        /// <summary>
+        /// If this returns false, csvdef is null.<br></br>
+        /// Otherwise, csvdef is the CsvDefinition for the current file.
+        /// </summary>
+        public static bool TryGetCurrentCsvDef(out CsvDefinition csvdef)
         {
+            csvdef = null;
+            if (!Helper.TryGetLengthAsInt(PluginBase.CurrentScintillaGateway, true, out _))
+                return false;
             // Notepad++ switc to a different file tab
             INotepadPPGateway notepad = new NotepadPPGateway();
             string filename = notepad.GetCurrentFilePath();
 
-            return FileCsvDef.TryGetValue(filename, out CsvDefinition result) ? result : null;
+            return FileCsvDef.TryGetValue(filename, out csvdef);
         }
 
         public static bool CheckValidCsvDef(CsvDefinition csvdef, string errmsg)
@@ -602,7 +611,8 @@ namespace Kbg.NppPluginNET
         internal static void selectColumns()
         {
             // get dictionary
-            CsvDefinition csvdef = GetCurrentCsvDef();
+            if (!TryGetCurrentCsvDef(out CsvDefinition csvdef))
+                return;
 
             // check if valid dictionary
             if (Main.CheckValidCsvDef(csvdef, "select columns"))
@@ -665,7 +675,8 @@ namespace Kbg.NppPluginNET
         internal static void convertData()
         {
             // get dictionary
-            CsvDefinition csvdef = GetCurrentCsvDef();
+            if (!TryGetCurrentCsvDef(out CsvDefinition csvdef))
+                return;
 
             // check if valid csv metadata
             if (CheckValidCsvDef(csvdef, "convert data"))
@@ -707,7 +718,8 @@ namespace Kbg.NppPluginNET
         internal static void generateMetaData()
         {
             // get dictionary
-            CsvDefinition csvdef = GetCurrentCsvDef();
+            if (!TryGetCurrentCsvDef(out CsvDefinition csvdef))
+                return;
 
             // check if valid csv metadata
             if (CheckValidCsvDef(csvdef, "generate script"))
@@ -752,7 +764,8 @@ namespace Kbg.NppPluginNET
         internal static void AnalyseDataReport()
         {
             // get dictionary
-            CsvDefinition csvdef = GetCurrentCsvDef();
+            if (!TryGetCurrentCsvDef(out CsvDefinition csvdef))
+                return;
 
             // check if valid csv metadata
             if (CheckValidCsvDef(csvdef, "run Analyze Data Report"))

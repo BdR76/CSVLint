@@ -24,11 +24,16 @@ namespace CSVLint
         /// <param name="autodetect">automatically detect separator and header names</param>
         /// <param name="mansep">Override automatic detection, manually provided column separator</param>
         /// <param name="manhead">Override automatic detection, manually set first header row contains columns names</param>
+        /// <param name="userRequested">if the inference was explicitly requested by the user (rather than auto-triggered on opening a file)</param>
         /// <returns></returns>
-        public static CsvDefinition InferFromData(bool autodetect, char mansep, string manwid, bool manhead, int manskip, char commchar)
+        public static CsvDefinition InferFromData(bool autodetect, char mansep, string manwid, bool manhead, int manskip, char commchar, bool userRequested)
         {
             // First do a letter frequency analysis on each row
-            var strfreq = ScintillaStreams.StreamAllText();
+            if (!ScintillaStreams.TryStreamAllText(out StreamReader strfreq, userRequested))
+            {
+                var csvdef = new CsvDefinition { FileIsTooBig = true };
+                return csvdef;
+            }
             string line;
             int lineCount = 0, linesQuoted = 0, lineContent = 0;
 
@@ -353,7 +358,7 @@ namespace CSVLint
             // reset string reader to first line is not possible, create a new one
             bool fixedwidth = result.Separator == '\0';
 
-            var strdata = ScintillaStreams.StreamAllText();
+            ScintillaStreams.TryStreamAllText(out var strdata);
 
             // examine data and keep statistics for each column
             List<CsvAnalyzeColumn> colstats = new List<CsvAnalyzeColumn>();
@@ -531,7 +536,8 @@ namespace CSVLint
             int lineCount = 0;
             bool fixedwidth = csvdef.Separator == '\0';
 
-            var strdata = ScintillaStreams.StreamAllText();
+            if (!ScintillaStreams.TryStreamAllText(out var strdata))
+                return;
 
             // skip any comment lines
             int commentCount = csvdef.SkipCommentLinesAtStart(strdata);
@@ -713,7 +719,8 @@ namespace CSVLint
         {
             // examine data and keep list of counters per unique values
             Dictionary<string, int> uniquecount = new Dictionary<string, int>();
-            var strdata = ScintillaStreams.StreamAllText();
+            if (!ScintillaStreams.TryStreamAllText(out var strdata))
+                return;
             List<string> values;
 
             bool iscomm = false;
