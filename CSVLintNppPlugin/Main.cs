@@ -425,6 +425,10 @@ namespace Kbg.NppPluginNET
             INotepadPPGateway notepad = new NotepadPPGateway();
             string filename = notepad.GetCurrentFilePath();
 
+            // check the current selected language
+            Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_GETCURRENTLANGTYPE, 0, out int currentLanguageId);
+            var is_csv = (currentLanguageId == CsvLanguageId.Value);
+
             // check if already in list
             if (!FileCsvDef.TryGetValue(filename, out CsvDefinition csvdef))
             {
@@ -438,7 +442,7 @@ namespace Kbg.NppPluginNET
                 else
                 {
                     // analyze and determine csv definition
-                    csvdef = CsvAnalyze.InferFromData(true, '\0', "", false, 0, Main.Settings.CommentCharacter, false); // parameters "", false, 0 -> defaults
+                    csvdef = CsvAnalyze.InferFromData(true, '\0', "", false, 0, Main.Settings.CommentCharacter, false, is_csv); // parameters "", false, 0 -> defaults
                 }
                 FileCsvDef.Add(filename, csvdef);
             }
@@ -558,7 +562,7 @@ namespace Kbg.NppPluginNET
         public static bool CheckValidCsvDef(CsvDefinition csvdef, string errmsg)
         {
             // check if valid dictionary
-            if ((csvdef.Fields.Count == 1) && (csvdef.Fields[0].DataType == ColumnType.String) && (csvdef.Fields[0].MaxWidth >= 9999))
+            if ( (csvdef.Fields.Count == 0) ||  ( (csvdef.Fields[0].DataType == ColumnType.String) && (csvdef.Fields[0].MaxWidth >= 9999) ) )
             {
                 // show warning message and solution
                 errmsg = string.Format("Cannot {0} without valid csv metadata.\nOpen the CSV Lint window, press [Detect columns] and try again.", errmsg);
@@ -825,7 +829,7 @@ namespace Kbg.NppPluginNET
                     0, frmCsvLintDlg.Handle);
             }
 
-            // immediately show currnet csv metadata when activated
+            // immediately show current csv metadata when activated
             CSVChangeFileTab();
         }
 
@@ -839,7 +843,7 @@ namespace Kbg.NppPluginNET
             {
                 ver = ver.Substring(0, ver.Length - 2);
             }
-            return ver;
+            return ver + "β3";
         }
     }
 }

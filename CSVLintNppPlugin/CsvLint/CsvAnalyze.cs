@@ -594,14 +594,14 @@ namespace CSVLint
             INotepadPPGateway notepad = new NotepadPPGateway();
             IScintillaGateway editor = new ScintillaGateway(PluginBase.GetCurrentScintilla());
 
-            string FILE_NAME = Path.GetFileName(notepad.GetCurrentFilePath());
-            string strhead = csvdef.ColNameHeader ? " (+1 header line)" : "";
+            // title and default comment
+            sb.Append("Analyze data report\r\n");
+            List<String> comment = CsvEdit.ScriptInfo(notepad);
+            foreach (var str in comment) sb.Append(string.Format("{0}\r\n", str));
 
-            sb.Append("Analyze dataset\r\n");
-            sb.Append(string.Format("File: {0}\r\n", FILE_NAME));
-            sb.Append(string.Format("Date: {0}\r\n", DateTime.Now.ToString("dd-MMM-yyyy HH:mm")));
-            sb.Append(string.Format("CSV Lint: v{0}\r\n\r\n", Main.GetVersion()));
-            sb.Append(string.Format("Data records: {0}{1}\r\n", lineCount, strhead));
+            // display data file and analysis properties
+            string strhead = csvdef.ColNameHeader ? " (+1 header line)" : "";
+            sb.Append(string.Format("\r\nData records: {0}{1}\r\n", lineCount, strhead));
             if (commentCount > 0) sb.Append(string.Format("Comment lines total: {0}\r\n", commentCount));
             sb.Append(string.Format("Max.unique values: {0}\r\n", Main.Settings.UniqueValuesMax));
             sb.Append("\r\n");

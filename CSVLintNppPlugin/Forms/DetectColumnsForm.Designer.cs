@@ -105,6 +105,8 @@ namespace CSVLintNppPlugin.Forms
             // 
             // txtFixedWidthPos
             // 
+            this.txtFixedWidthPos.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtFixedWidthPos.Enabled = false;
             this.txtFixedWidthPos.Location = new System.Drawing.Point(192, 77);
             this.txtFixedWidthPos.Name = "txtFixedWidthPos";
@@ -114,7 +116,8 @@ namespace CSVLintNppPlugin.Forms
             // 
             // btnFixedWidthPos
             // 
-            this.btnFixedWidthPos.Location = new System.Drawing.Point(384, 77);
+            this.btnFixedWidthPos.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnFixedWidthPos.Location = new System.Drawing.Point(384, 76);
             this.btnFixedWidthPos.Name = "btnFixedWidthPos";
             this.btnFixedWidthPos.Size = new System.Drawing.Size(30, 23);
             this.btnFixedWidthPos.TabIndex = 3;
@@ -122,6 +125,7 @@ namespace CSVLintNppPlugin.Forms
             this.btnFixedWidthPos.Text = "..";
             this.btnFixedWidthPos.UseVisualStyleBackColor = true;
             this.btnFixedWidthPos.Click += new System.EventHandler(this.btnFixedWidthPos_Click);
+            this.btnFixedWidthPos.MouseUp += new System.Windows.Forms.MouseEventHandler(this.btnFixedWidthPos_MouseUp);
             // 
             // chkHeaderNames
             // 
@@ -194,6 +198,9 @@ namespace CSVLintNppPlugin.Forms
             this.Controls.Add(this.lblFixedWidthPos);
             this.Controls.Add(this.cmbColumnSeparator);
             this.Controls.Add(this.lblColumnSeparator);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
+            this.MaximumSize = new System.Drawing.Size(960, 291);
+            this.MinimumSize = new System.Drawing.Size(439, 291);
             this.Name = "DetectColumnsForm";
             this.Text = "Detect columns manually";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.DetectColumnsForm_FormClosing);

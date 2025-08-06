@@ -3,6 +3,7 @@ using Kbg.NppPluginNET;
 using System;
 using System.Linq;
 using System.Net.NetworkInformation;
+using System.Reflection;
 using System.Windows.Forms;
 
 namespace CSVLintNppPlugin.Forms
@@ -218,7 +219,7 @@ namespace CSVLintNppPlugin.Forms
             this.pnlDistinctOptions.Location = new System.Drawing.Point(4, 420);
             this.pnlDistinctOptions.Name = "pnlDistinctOptions";
             this.pnlDistinctOptions.Size = new System.Drawing.Size(365, 45);
-            this.pnlDistinctOptions.TabIndex = 11;
+            this.pnlDistinctOptions.TabIndex = 13;
             // 
             // rdbSortDesc
             // 
@@ -226,7 +227,7 @@ namespace CSVLintNppPlugin.Forms
             this.rdbSortDesc.Location = new System.Drawing.Point(267, 24);
             this.rdbSortDesc.Name = "rdbSortDesc";
             this.rdbSortDesc.Size = new System.Drawing.Size(82, 17);
-            this.rdbSortDesc.TabIndex = 14;
+            this.rdbSortDesc.TabIndex = 17;
             this.rdbSortDesc.TabStop = true;
             this.rdbSortDesc.Tag = "1";
             this.rdbSortDesc.Text = "Descending";
@@ -239,7 +240,7 @@ namespace CSVLintNppPlugin.Forms
             this.rdbSortAsc.Location = new System.Drawing.Point(189, 24);
             this.rdbSortAsc.Name = "rdbSortAsc";
             this.rdbSortAsc.Size = new System.Drawing.Size(75, 17);
-            this.rdbSortAsc.TabIndex = 13;
+            this.rdbSortAsc.TabIndex = 16;
             this.rdbSortAsc.TabStop = true;
             this.rdbSortAsc.Tag = "1";
             this.rdbSortAsc.Text = "Ascending";
@@ -252,7 +253,7 @@ namespace CSVLintNppPlugin.Forms
             this.chkDistinctCount.Location = new System.Drawing.Point(12, 25);
             this.chkDistinctCount.Name = "chkDistinctCount";
             this.chkDistinctCount.Size = new System.Drawing.Size(167, 17);
-            this.chkDistinctCount.TabIndex = 12;
+            this.chkDistinctCount.TabIndex = 15;
             this.chkDistinctCount.Tag = "1";
             this.chkDistinctCount.Text = "Select distinct values and sort";
             this.chkDistinctCount.UseVisualStyleBackColor = true;
@@ -264,7 +265,7 @@ namespace CSVLintNppPlugin.Forms
             this.chkNewFile.Location = new System.Drawing.Point(12, 3);
             this.chkNewFile.Name = "chkNewFile";
             this.chkNewFile.Size = new System.Drawing.Size(108, 17);
-            this.chkNewFile.TabIndex = 11;
+            this.chkNewFile.TabIndex = 14;
             this.chkNewFile.Text = "Result in new tab";
             this.chkNewFile.UseVisualStyleBackColor = true;
             // 
@@ -298,7 +299,7 @@ namespace CSVLintNppPlugin.Forms
             this.gbxAvailableColumns.Location = new System.Drawing.Point(3, 3);
             this.gbxAvailableColumns.Name = "gbxAvailableColumns";
             this.gbxAvailableColumns.Size = new System.Drawing.Size(221, 326);
-            this.gbxAvailableColumns.TabIndex = 17;
+            this.gbxAvailableColumns.TabIndex = 3;
             this.gbxAvailableColumns.TabStop = false;
             this.gbxAvailableColumns.Text = "Available columns";
             // 
@@ -314,6 +315,7 @@ namespace CSVLintNppPlugin.Forms
             this.listAvailableColumns.TabIndex = 3;
             this.listAvailableColumns.SelectedIndexChanged += new System.EventHandler(this.list_SelectedIndexChanged);
             this.listAvailableColumns.DoubleClick += new System.EventHandler(this.listAvailableColumns_DoubleClick);
+            this.listAvailableColumns.KeyDown += new System.Windows.Forms.KeyEventHandler(this.listAvailableColumns_KeyDown);
             // 
             // pnlColSelect
             // 
@@ -327,7 +329,7 @@ namespace CSVLintNppPlugin.Forms
             this.pnlColSelect.Location = new System.Drawing.Point(230, 3);
             this.pnlColSelect.Name = "pnlColSelect";
             this.pnlColSelect.Size = new System.Drawing.Size(104, 326);
-            this.pnlColSelect.TabIndex = 2;
+            this.pnlColSelect.TabIndex = 4;
             // 
             // btnAllRemove
             // 
@@ -335,7 +337,7 @@ namespace CSVLintNppPlugin.Forms
             this.btnAllRemove.Location = new System.Drawing.Point(0, 242);
             this.btnAllRemove.Name = "btnAllRemove";
             this.btnAllRemove.Size = new System.Drawing.Size(100, 30);
-            this.btnAllRemove.TabIndex = 7;
+            this.btnAllRemove.TabIndex = 8;
             this.btnAllRemove.Text = "<< All";
             this.btnAllRemove.UseVisualStyleBackColor = true;
             this.btnAllRemove.Click += new System.EventHandler(this.btnAllRemove_Click);
@@ -346,7 +348,7 @@ namespace CSVLintNppPlugin.Forms
             this.btnAllSelect.Location = new System.Drawing.Point(0, 206);
             this.btnAllSelect.Name = "btnAllSelect";
             this.btnAllSelect.Size = new System.Drawing.Size(100, 30);
-            this.btnAllSelect.TabIndex = 6;
+            this.btnAllSelect.TabIndex = 7;
             this.btnAllSelect.Text = "All >>";
             this.btnAllSelect.UseVisualStyleBackColor = true;
             this.btnAllSelect.Click += new System.EventHandler(this.btnAllSelect_Click);
@@ -356,7 +358,7 @@ namespace CSVLintNppPlugin.Forms
             this.btnColRemove.Location = new System.Drawing.Point(0, 84);
             this.btnColRemove.Name = "btnColRemove";
             this.btnColRemove.Size = new System.Drawing.Size(100, 30);
-            this.btnColRemove.TabIndex = 5;
+            this.btnColRemove.TabIndex = 6;
             this.btnColRemove.Text = "<<";
             this.btnColRemove.UseVisualStyleBackColor = true;
             this.btnColRemove.Click += new System.EventHandler(this.btnColRemove_Click);
@@ -366,7 +368,7 @@ namespace CSVLintNppPlugin.Forms
             this.btnColSelect.Location = new System.Drawing.Point(0, 48);
             this.btnColSelect.Name = "btnColSelect";
             this.btnColSelect.Size = new System.Drawing.Size(100, 30);
-            this.btnColSelect.TabIndex = 4;
+            this.btnColSelect.TabIndex = 5;
             this.btnColSelect.Text = ">>";
             this.btnColSelect.UseVisualStyleBackColor = true;
             this.btnColSelect.Click += new System.EventHandler(this.btnColSelect_Click);
@@ -378,14 +380,14 @@ namespace CSVLintNppPlugin.Forms
             this.pnlColMove.Location = new System.Drawing.Point(567, 3);
             this.pnlColMove.Name = "pnlColMove";
             this.pnlColMove.Size = new System.Drawing.Size(103, 310);
-            this.pnlColMove.TabIndex = 3;
+            this.pnlColMove.TabIndex = 10;
             // 
             // btnColMoveDown
             // 
             this.btnColMoveDown.Location = new System.Drawing.Point(0, 84);
             this.btnColMoveDown.Name = "btnColMoveDown";
             this.btnColMoveDown.Size = new System.Drawing.Size(100, 30);
-            this.btnColMoveDown.TabIndex = 10;
+            this.btnColMoveDown.TabIndex = 12;
             this.btnColMoveDown.Text = "Move down";
             this.btnColMoveDown.UseVisualStyleBackColor = true;
             this.btnColMoveDown.Click += new System.EventHandler(this.btnColMoveDown_Click);
@@ -395,7 +397,7 @@ namespace CSVLintNppPlugin.Forms
             this.btnColMoveUp.Location = new System.Drawing.Point(0, 48);
             this.btnColMoveUp.Name = "btnColMoveUp";
             this.btnColMoveUp.Size = new System.Drawing.Size(100, 30);
-            this.btnColMoveUp.TabIndex = 9;
+            this.btnColMoveUp.TabIndex = 11;
             this.btnColMoveUp.Text = "Move up";
             this.btnColMoveUp.UseVisualStyleBackColor = true;
             this.btnColMoveUp.Click += new System.EventHandler(this.btnColMoveUp_Click);
@@ -409,7 +411,7 @@ namespace CSVLintNppPlugin.Forms
             this.gbxSelectedColumns.Location = new System.Drawing.Point(340, 3);
             this.gbxSelectedColumns.Name = "gbxSelectedColumns";
             this.gbxSelectedColumns.Size = new System.Drawing.Size(221, 326);
-            this.gbxSelectedColumns.TabIndex = 18;
+            this.gbxSelectedColumns.TabIndex = 9;
             this.gbxSelectedColumns.TabStop = false;
             this.gbxSelectedColumns.Text = "Selected columns";
             // 
@@ -422,9 +424,10 @@ namespace CSVLintNppPlugin.Forms
             this.listSelectedColumns.Location = new System.Drawing.Point(4, 18);
             this.listSelectedColumns.Name = "listSelectedColumns";
             this.listSelectedColumns.Size = new System.Drawing.Size(213, 303);
-            this.listSelectedColumns.TabIndex = 8;
+            this.listSelectedColumns.TabIndex = 9;
             this.listSelectedColumns.SelectedIndexChanged += new System.EventHandler(this.list_SelectedIndexChanged);
             this.listSelectedColumns.DoubleClick += new System.EventHandler(this.listSelectedColumns_DoubleClick);
+            this.listSelectedColumns.KeyDown += new System.Windows.Forms.KeyEventHandler(this.listSelectedColumns_KeyDown);
             // 
             // ColumnsSelectForm
             // 
@@ -517,11 +520,33 @@ namespace CSVLintNppPlugin.Forms
             // double click to add column
             btnColSelect_Click(sender, e);
         }
+        private void listAvailableColumns_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter) btnColSelect_Click(sender, e);
+        }
 
         private void listSelectedColumns_DoubleClick(object sender, EventArgs e)
         {
             // double click to remove column
             btnColRemove_Click(sender, e);
+        }
+
+        private void listSelectedColumns_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                btnColRemove_Click(sender, e);
+            }
+            else if (e.Control && e.KeyCode == Keys.Up)
+            {
+                btnColMoveUp_Click(sender, e);
+                listSelectedColumns.SelectedIndex++;
+            }
+            else if (e.Control && e.KeyCode == Keys.Down)
+            {
+                btnColMoveDown_Click(sender, e);
+                listSelectedColumns.SelectedIndex--;
+            }
         }
 
         private void btnColMoveUp_Click(object sender, EventArgs e)

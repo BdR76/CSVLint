@@ -1,5 +1,6 @@
 ﻿using CSVLint;
 using Kbg.NppPluginNET;
+using Kbg.NppPluginNET.PluginInfrastructure;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -19,7 +20,7 @@ namespace CSVLintNppPlugin.Forms
             InitializeComponent();
 
             // tooltip initialization
-            helperTip.SetToolTip(btnFixedWidthPos, "Column end positions based on current column widths");
+            helperTip.SetToolTip(btnFixedWidthPos, "Column end positions based on current column widths\n(right-click for columns widths instead)");
         }
 
         public char Separator { get; set; }
@@ -146,15 +147,27 @@ namespace CSVLintNppPlugin.Forms
 
         private void btnFixedWidthPos_Click(object sender, EventArgs e)
         {
+            // left-lick for absolute positions or right-click for individual widths, treat keyboard as left-click
+            var abspos = true;
+            if (e is MouseEventArgs me) abspos = (me.Button == MouseButtons.Left);
+            var poswid = (abspos ? "end positions" : "widths");
+
             // show dialog
-            DialogResult dialogResult = MessageBox.Show("Paste column end positions based on the current column widths?", "Paste end positions", MessageBoxButtons.OKCancel);
+            DialogResult dialogResult = MessageBox.Show("Paste column " + poswid + " based on the current column widths?", "Paste " + poswid, MessageBoxButtons.OKCancel);
             if (dialogResult == DialogResult.OK)
             {
                 // paste column positions
                 if (!Main.TryGetCurrentCsvDef(out CsvDefinition csvdef))
                     return;
-                txtFixedWidthPos.Text = csvdef.GetColumnWidths(true);
+                txtFixedWidthPos.Text = csvdef.GetColumnWidths(abspos);
             }
+        }
+
+        private void btnFixedWidthPos_MouseUp(object sender, MouseEventArgs e)
+        {
+            // Use MouseUp instead of MouseDown, because MouseDown is not triggered when using keyboard
+            if (e.Button == MouseButtons.Right)
+                btnFixedWidthPos_Click(sender, e);
         }
     }
 }

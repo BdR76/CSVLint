@@ -152,6 +152,11 @@ namespace CSVLintNppPlugin.Forms
             // numSQLBatchSize
             // 
             this.numSQLBatchSize.Enabled = false;
+            this.numSQLBatchSize.Increment = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
             this.numSQLBatchSize.Location = new System.Drawing.Point(192, 141);
             this.numSQLBatchSize.Maximum = new decimal(new int[] {
             99999999,

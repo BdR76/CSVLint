@@ -301,7 +301,7 @@ namespace CSVLint
             string VERSION_NO = Main.GetVersion();
             string FILE_NAME = Path.GetFileName(notepad.GetCurrentFilePath());
 
-            list.Add(string.Format("CSV Lint plug-in: v{0}", VERSION_NO));
+            list.Add(string.Format("Notepad++ CSV Lint plug-in: v{0}", VERSION_NO));
             list.Add(string.Format("File: {0}", FILE_NAME));
             list.Add(string.Format("Date: {0}", DateTime.Now.ToString("dd-MMM-yyyy HH:mm")));
 
@@ -582,6 +582,10 @@ namespace CSVLint
                                         //str = ??
                                     }
                                 }
+                                // Exception for MySQL/MariaDB escape backslashes
+                                if (Main.Settings.DataConvertSQL == 0) // 0=MySQL/MariaDB
+                                    colvalue = colvalue.Replace("\\", "\\\\");
+
                                 // sql single quotes
                                 colvalue = colvalue.Replace("'", "''");
                                 colvalue = string.Format("'{0}'", colvalue);
