@@ -26,12 +26,12 @@ namespace CSVLint
         /// <param name="manhead">Override automatic detection, manually set first header row contains columns names</param>
         /// <param name="userRequested">if the inference was explicitly requested by the user (rather than auto-triggered on opening a file)</param>
         /// <returns></returns>
-        public static CsvDefinition InferFromData(bool autodetect, char mansep, string manwid, bool manhead, int manskip, char commchar, bool userRequested)
+        public static CsvDefinition InferFromData(bool autodetect, char mansep, string manwid, bool manhead, int manskip, char commchar, bool userRequested, bool isCsv)
         {
             // First do a letter frequency analysis on each row
             if (!ScintillaStreams.TryStreamAllText(out StreamReader strfreq, userRequested))
             {
-                var csvdef = new CsvDefinition { FileIsTooBig = true };
+                var csvdef = new CsvDefinition { ScanState = CsvScanState.TooBig };
                 return csvdef;
             }
             string line;
@@ -224,6 +224,9 @@ namespace CSVLint
             // The char with lowest variance is most likely the separator
             CsvDefinition result = new CsvDefinition(Separator);
 
+            // if requested by user or type=csv then full scan of all columns, else quick scan
+            result.ScanState = (userRequested || isCsv ? CsvScanState.FullScan : CsvScanState.QuickScan);
+
             //var Separator = GetSeparatorFromVariance(variances, occurrences, lineCount, out var uncertancy);
             var separatorQuoted = GetSeparatorFromVariance(variancesQuoted, occurrencesQuoted, linesQuoted, out var uncertancyQuoted);
             if (uncertancyQuoted < uncertancy)
@@ -350,6 +353,10 @@ namespace CSVLint
 
                 result.FieldWidths = foundfieldWidths;
             }
+
+            // if only quick scan, no columns, then can stop here
+            if (result.ScanState == CsvScanState.QuickScan)
+                return result;
 
             // -----------------------------------------------------------------------------
             // determine data types for columns

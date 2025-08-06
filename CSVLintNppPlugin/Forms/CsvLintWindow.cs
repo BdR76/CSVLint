@@ -21,7 +21,7 @@ namespace Kbg.NppPluginNET
         {
             // clear message to user when no columns found
             var msg = "";
-            if (csvdef.FileIsTooBig)
+            if (csvdef.ScanState == CsvScanState.TooBig)
             {
                 msg += "; *********************************\r\n";
                 msg += "; File is too large for CsvLint to analyze\r\n";
@@ -81,7 +81,7 @@ namespace Kbg.NppPluginNET
                 var dtStart = DateTime.Now;
 
                 // analyze and determine csv definition
-                CsvDefinition csvdef = CsvAnalyze.InferFromData(chkAutoDetect.Checked, sep, widths, header, skip, comm, true);
+                CsvDefinition csvdef = CsvAnalyze.InferFromData(chkAutoDetect.Checked, sep, widths, header, skip, comm, true, true);
 
                 Main.UpdateCSVChanges(csvdef, false);
 

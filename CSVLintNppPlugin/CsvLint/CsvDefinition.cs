@@ -17,6 +17,18 @@ using System.Windows.Forms;
 namespace CSVLint
 {
     /// <summary>
+    /// CSV Definition state
+    /// </summary>
+    public enum CsvScanState
+    {
+        None = 0, // quick scan first 20 lines, file is not of csv type (.csv .ssv .tsv etc) but still determing column separator for when user selects csv syntax
+        QuickScan = 1, // quick scan first 20 lines, file is not of csv type (.csv .ssv .tsv etc) but still determing column separator for when user selects csv syntax
+        FullScan = 2,  // full file scan, scan entire file for column data types, widths, codes etc
+        LoadIni = 3,   // loaded from ini file, presumably all column data types, widths, codes etc is available
+        TooBig = 99    // file exceeds 2GB, cannot be scanned
+    }
+
+    /// <summary>
     /// Type of data in a column. Higher values can always include lower (i.e. a decimal column can have an integer, but not the other way)
     /// </summary>
     public enum ColumnType
@@ -181,8 +193,8 @@ namespace CSVLint
     /// </summary>
     public class CsvDefinition
     {
-        /// <summary>True if and only if the current file has more than <see cref="int.MaxValue"/> bytes</summary>
-        public bool FileIsTooBig { get; set; } = false;
+        /// <summary>TooBig if the current file has more than <see cref="int.MaxValue"/> bytes</summary>
+        public CsvScanState ScanState { get; set; } = CsvScanState.None;
 
         public int DefaultLanguageId { get; set; } = 0;
 
@@ -417,7 +429,7 @@ namespace CSVLint
             // so instead of "labvalue (3) (1)"
             var namepart = SplitColumnNamePostfix(fieldname, out postfix);
 
-            // check if name already exists in current fieldnames
+            // check all current fieldnames if name already exists
             foreach (var col in Fields)
             {
                 // check if exact name already exist
@@ -432,7 +444,7 @@ namespace CSVLint
         }
 
         /// <summary>
-        /// Create a new csv definition from ini lines.
+        /// Create a new csv definition from ini lines in docked CSV Window text box.
         /// </summary>
         /// <param name="inilines">contains inifile sections
         /// <example>"NumberDigits=1\nCol1=participant_id etc."</example></param>
