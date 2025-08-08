@@ -12,7 +12,8 @@ CSV Lint plug-in documentation
 
 Use the **CSV Lint** plug-in to quickly and easily inspect csv data files,
 apply syntax highlighting to columns, detect technical errors and fix datetime
-and decimal formatting. It's not meant as a replacement for a spreadsheet
+and decimal formatting. It's not meant as a replacement for a
+[spreadsheet](https://www.reddit.com/r/datascience/comments/1dsnbww/youre_not_helping_excel_please_stop_helping/)
 program, but rather it's a quality control tool to examine, verify or polish up
 a dataset before further processing.
 
@@ -138,6 +139,8 @@ The plug-in expects the column character positions, but if you instead enter
 the individual column widths, so `10, 6, 5` in this example, that will also
 work in most cases. Leave "Fixed positions" empty and the plug-in will
 try to detect fixed width columns same as auto-detect.
+Click the `[..]` button to paste the current column widths into the textbox,
+either as absolute column positions or right-click for individual column widths.
 
 You can select the "Skip lines" option and the column detection process will skip the first X lines of the file.
 For example when the first line of data (including header names) starts on
@@ -523,28 +526,31 @@ In this example the seventh column has a header name `TestStage`,
 and it only contains the values `Recovery`, `Training` and `Warmup` and empty values.
 The amount of each of these 3 values is listed under "Unique values".
 
-Count unique values
--------------------
-Count unique values, this will list all unique values in a column, or
+Select Columns
+--------------
+Select columns and/or put columns in a different order.
+Select one or more columns.
+
+![CSV Lint select columns dialog](/docs/csvlint_select_columns.png?raw=true "CSV Lint plug-in select columns dialog")
+
+Check the `Select distinct values` checkbox to list all unique values in a column, or
 combination of columns, and count how often that unique value or combination
 of values was found. This can be useful to check if the dataset contains the
 expected amount of unique names, patients, product codes, barcodes etc.
-
-![CSV Lint unique values dialog](/docs/csvlint_unique_values.png?raw=true "CSV Lint plug-in unique values dialog")
 
 As an example, if you have a data file where each line is one blood pressure
 measurement of a participant, and you want to verify that each participant in
 the data file has exactly 3 measurements. In that case you can select just the
 column participantId and select sort by `count`, to sort the result by the new
-`count_unique` column.
+`count_distinct` column.
 
-If the data is correct, it should list all participantId with a `count_unique`
-value of 3. And, because it's sorted by `count_unique`, you can check the
+If the data is correct, it should list all participantId with a `count_distinct`
+value of 3. And, because it's sorted by `count_distinct`, you can check the
 beginning and end of the list to see if there are any participants with fewer
 or more than 3 measurements.
 
-When you disable sorting, the resulting list of values will be in the order as
-the values were first found in the dataset.
+Right-click Ascending or Descing to disable sorting, the resulting list
+of values will be in the order as the values were first found in the dataset.
 
 Convert data
 ------------
@@ -552,20 +558,26 @@ Convert the currently selected CSV file to SQL, XML or JSON format.
 
 ![CSV Lint Convert data dialog](/docs/csvlint_convert_data.png?raw=true "CSV Lint plug-in Convert data dialog")
 
+Select XML or JSON to convert the data to an XML or JSON dataset.
+The plug-in will automatically apply formatting based on the metadata,
+as well as applying character escaping where needed for these formats.
+For XML, enter a `Table/tag name` to use as tag name for each record,
+or leave it empty to use the current filename.
+
 Select SQL to convert the data to an SQL script to create a database
 table and inserts all records from the csv datafile into that table.
 The insert statement will be grouped in batches of X lines of csv data,
 as set by the Batch size number in the plug-in Settings.
 
-Depending on which database type you select, MySQL, MS-SQL or PostgreSQL,
-the create table part and the autonumber field `_record_number` will be
-slightly different. Enter a table name to use, or leave it empty to use the
-current filename as table name.
+Depending on which database type you select, MySQL/MariaDB, MS-SQL or
+PostgreSQL, the create table part and the autonumber field `_record_number`
+will be slightly different. Enter a table name to use, or leave it empty to
+use the current filename as table name.
 
 See below for an example of an SQL insert script the plugin will generate:
 
     -- -------------------------------------
-    -- CSV Lint plug-in: v0.4.6.8
+    -- CSV Lint plug-in: v0.4.7
     -- File: cardio.txt
     -- SQL type: MySQL
     -- -------------------------------------
@@ -585,16 +597,26 @@ See below for an example of an SQL insert script the plugin will generate:
         visitdat,
         labpth
     ) VALUES
-    (1001, '2025-08-21', 10.8),
-    (2002, '2025-09-05', 143.5),
-    (3003, '2025-09-24', 76.4),
+    (1001, '2025-08-21 00:00:00', 10.8),
+    (2002, '2025-09-05 00:00:00', 143.5),
+    (3003, '2025-09-24 00:00:00', 76.4),
     -- etc.
 
-Select XML or JSON to convert the data to an XML or JSON dataset.
-The plug-in will automatically apply formatting based on the metadata,
-as well as applying character escaping where needed for these formats.
-For XML, enter a `Table/tag name` to use as tag name for each record,
-or leave it empty to use the current filename.
+Note: Oracle is not supported as Database type, but you can work around this by
+using Database type `MySQL / MariaDB` and setting the Batch size to `1`.
+If there are any Date or DateTime values, then add this line
+at the top of the script.
+
+	ALTER SESSION SET NLS_DATE_FORMAT = 'YYYY-MM-DD HH24:MI:SS';
+
+Or, alternatively, use Notepad++ Search and Replace to apply `TO_DATE()`
+to any datetime values, so in the resulting INSERT script press `Ctrl + H`
+and then:
+
+	Find what:    '(\d{4}-\d{2}-\d{2} \d{1,2}:\d{2}:\d{2})'
+	Replace with: TO_DATE\('\1', 'YYYY-MM-DD HH24:MI:SS'\)
+	Search mode:  Regular expression
+	-> [Replace all]
 
 Generate metadata
 -----------------
@@ -717,5 +739,6 @@ History
 16-dec-2023 - v0.4.6.6 PowerShell support and various updates  
 25-jun-2024 - v0.4.6.7 Reformat bugfix, improved enumeration, sort on length  
 28-feb-2025 - v0.4.6.8 Improved sorting for enumeration columns, minor updates  
+08-aug-2025 - v0.4.7 Select columns, large files warning, Fixed Width detection improved, minor updates  
 
 BdR©2019-2025 Free to use - send questions or comments: Bas de Reuver - bdr1976@gmail.com

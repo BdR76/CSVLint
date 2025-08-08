@@ -94,7 +94,7 @@ namespace CSVLintNppPlugin.Forms
             this.rdbtnXML.Location = new System.Drawing.Point(256, 46);
             this.rdbtnXML.Name = "rdbtnXML";
             this.rdbtnXML.Size = new System.Drawing.Size(47, 17);
-            this.rdbtnXML.TabIndex = 4;
+            this.rdbtnXML.TabIndex = 5;
             this.rdbtnXML.TabStop = true;
             this.rdbtnXML.Tag = "2";
             this.rdbtnXML.Text = "XML";
@@ -107,7 +107,7 @@ namespace CSVLintNppPlugin.Forms
             this.rdbtnJSON.Location = new System.Drawing.Point(318, 46);
             this.rdbtnJSON.Name = "rdbtnJSON";
             this.rdbtnJSON.Size = new System.Drawing.Size(53, 17);
-            this.rdbtnJSON.TabIndex = 4;
+            this.rdbtnJSON.TabIndex = 6;
             this.rdbtnJSON.TabStop = true;
             this.rdbtnJSON.Tag = "3";
             this.rdbtnJSON.Text = "JSON";
@@ -170,7 +170,7 @@ namespace CSVLintNppPlugin.Forms
             0});
             this.numSQLBatchSize.Name = "numSQLBatchSize";
             this.numSQLBatchSize.Size = new System.Drawing.Size(111, 20);
-            this.numSQLBatchSize.TabIndex = 10;
+            this.numSQLBatchSize.TabIndex = 9;
             this.numSQLBatchSize.Tag = "1";
             this.numSQLBatchSize.Value = new decimal(new int[] {
             1000,
@@ -183,7 +183,7 @@ namespace CSVLintNppPlugin.Forms
             this.txtTablename.Location = new System.Drawing.Point(192, 77);
             this.txtTablename.Name = "txtTablename";
             this.txtTablename.Size = new System.Drawing.Size(192, 20);
-            this.txtTablename.TabIndex = 6;
+            this.txtTablename.TabIndex = 7;
             this.txtTablename.Tag = "1,2";
             // 
             // lblTablename

@@ -11,7 +11,8 @@ can detect data formatting errors and adjust datetime and decimal formats.
 
 You can use CSV Lint to analyse, validate, convert and reformat text data
 files. It is _not_ meant to be a replacement for spreadsheet programs like
-Excel or SPSS, but rather it's a quality control tool to examine, verify or
+[Excel](https://www.reddit.com/r/datascience/comments/1dsnbww/youre_not_helping_excel_please_stop_helping/)
+or SPSS, but rather it's a quality control tool to examine, verify or
 polish up a dataset before further processing.
 
 With CSV Lint you can take a dataset and:

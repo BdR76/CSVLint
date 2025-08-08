@@ -218,13 +218,13 @@ namespace CSVLintNppPlugin.Forms
             this.pnlDistinctOptions.Controls.Add(this.chkNewFile);
             this.pnlDistinctOptions.Location = new System.Drawing.Point(4, 420);
             this.pnlDistinctOptions.Name = "pnlDistinctOptions";
-            this.pnlDistinctOptions.Size = new System.Drawing.Size(365, 45);
+            this.pnlDistinctOptions.Size = new System.Drawing.Size(389, 45);
             this.pnlDistinctOptions.TabIndex = 13;
             // 
             // rdbSortDesc
             // 
             this.rdbSortDesc.AutoSize = true;
-            this.rdbSortDesc.Location = new System.Drawing.Point(267, 24);
+            this.rdbSortDesc.Location = new System.Drawing.Point(296, 24);
             this.rdbSortDesc.Name = "rdbSortDesc";
             this.rdbSortDesc.Size = new System.Drawing.Size(82, 17);
             this.rdbSortDesc.TabIndex = 17;
@@ -237,7 +237,7 @@ namespace CSVLintNppPlugin.Forms
             // rdbSortAsc
             // 
             this.rdbSortAsc.AutoSize = true;
-            this.rdbSortAsc.Location = new System.Drawing.Point(189, 24);
+            this.rdbSortAsc.Location = new System.Drawing.Point(216, 24);
             this.rdbSortAsc.Name = "rdbSortAsc";
             this.rdbSortAsc.Size = new System.Drawing.Size(75, 17);
             this.rdbSortAsc.TabIndex = 16;
@@ -252,10 +252,10 @@ namespace CSVLintNppPlugin.Forms
             this.chkDistinctCount.AutoSize = true;
             this.chkDistinctCount.Location = new System.Drawing.Point(12, 25);
             this.chkDistinctCount.Name = "chkDistinctCount";
-            this.chkDistinctCount.Size = new System.Drawing.Size(167, 17);
+            this.chkDistinctCount.Size = new System.Drawing.Size(197, 17);
             this.chkDistinctCount.TabIndex = 15;
             this.chkDistinctCount.Tag = "1";
-            this.chkDistinctCount.Text = "Select distinct values and sort";
+            this.chkDistinctCount.Text = "Select distinct values and sort count";
             this.chkDistinctCount.UseVisualStyleBackColor = true;
             this.chkDistinctCount.CheckedChanged += new System.EventHandler(this.OnChkbx_CheckedChanged);
             // 
@@ -437,7 +437,7 @@ namespace CSVLintNppPlugin.Forms
             this.Controls.Add(this.pnlDistinctOptions);
             this.Controls.Add(this.tblColSelect);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
-            this.MinimumSize = new System.Drawing.Size(600, 432);
+            this.MinimumSize = new System.Drawing.Size(640, 432);
             this.Name = "ColumnsSelectForm";
             this.Text = "Select columns";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ColumnsSelectForm_FormClosing);
