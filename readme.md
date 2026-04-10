@@ -4,7 +4,7 @@ CSV Lint - Notepad++ plugin
 
 CSV Lint plug-in for [Notepad++](http://notepad-plus-plus.org/) adds
 syntax highlighting to [comma-separated values](https://en.wikipedia.org/wiki/Comma-separated_values)
-(csv) and fixed width data files. It automatically detects column datatypes,
+(CSV) and fixed-width data files. It automatically detects column datatypes,
 can detect data formatting errors and adjust datetime and decimal formats.
 
 ![preview screenshot](/csvlint_preview.png?raw=true "CSVLint plug-in preview")
@@ -12,24 +12,25 @@ can detect data formatting errors and adjust datetime and decimal formats.
 You can use CSV Lint to analyse, validate, convert and reformat text data
 files. It is _not_ meant to be a replacement for spreadsheet programs like
 [Excel](https://www.reddit.com/r/datascience/comments/1dsnbww/youre_not_helping_excel_please_stop_helping/)
-or SPSS, but rather it's a quality control tool to examine, verify or
+or SPSS, but rather a quality control tool to examine, verify or
 polish up a dataset before further processing.
 
 With CSV Lint you can take a dataset and:
 
 * Scan for metadata, i.e. detect columns and datatypes
-* Create schema.ini based on metadata
+* Create a schema.ini file based on metadata
 * Validate data against schema.ini
 * Convert datetime/decimal values to different formats
-* Convert between comma, semicolon, tab separated, fixed width formats
+* Convert between comma, semicolon, tab separated, fixed-width formats
 * Split valid/invalid values into two separate columns
-* Count unique values of one or more columns
-* Sort based on one of the columns
-* Convert csv data to SQL insert script or XML or JSON format.
+* Count unique values in one or more columns
+* Sort based on a column
+* Convert CSV data to SQL INSERT script, XML, or JSON format.
+* Export metadata in various formats
 * Generate Python, R or PowerShell scripts
 
 CSV Lint doesn't require an internet connection and doesn't use any cloud service.
-All data processing is done offline on the pc that runs Notepad++.
+All data processing is done offline on the PC that runs Notepad++.
 The plug-in is stable and works for most use-cases, if you encounter any bugs or
 unexpected behaviour feel free to [report any issues here](https://github.com/BdR76/CSVLint/issues).
 CSVLint is based on a prototype project [Dataset MultiTool](https://github.com/BdR76/datasetmultitool)
@@ -74,7 +75,7 @@ SQL insert script.
 
 Also see this quick tour video, which shows how the plug-in works.
 
-[![Watch video, CSV Lint plug-in features oveview](http://img.youtube.com/vi/_Me-ICCBu60/mqdefault.jpg)](http://www.youtube.com/watch?v=_Me-ICCBu60 "CSV Lint plug-in Notepad++") [![Watch video, CSV File: View, Add Column Colors and Sort Data using Notepad++](http://img.youtube.com/vi/k6w5BcaSqHc/mqdefault.jpg)](http://www.youtube.com/watch?v=k6w5BcaSqHc "CSV File: View, Add Column Colors and Sort Data using Notepad++")
+[![Watch video, CSV Lint plug-in features overview](http://img.youtube.com/vi/_Me-ICCBu60/mqdefault.jpg)](http://www.youtube.com/watch?v=_Me-ICCBu60 "CSV Lint plug-in Notepad++") [![Watch video, CSV File: View, Add Column Colors and Sort Data using Notepad++](http://img.youtube.com/vi/k6w5BcaSqHc/mqdefault.jpg)](http://www.youtube.com/watch?v=k6w5BcaSqHc "CSV File: View, Add Column Colors and Sort Data using Notepad++")
 
 
 Schema.ini
@@ -82,11 +83,11 @@ Schema.ini
 The metadata uses the standard schema.ini format, see documentation
 [here](https://docs.microsoft.com/en-us/sql/odbc/microsoft/schema-ini-file-text-file-driver?view=sql-server-ver15)
 
-When you open a csv file the plug-in try to determine the column meta data.
+When you open a CSV file the plug-in tries to determine the column metadata.
 It will first look for a `schema.ini` file in the same folder as the data
 file, and check to see if it contains a section with the filename. If the file
 or section doesn't exist, it will scan the data and try to infer the columns
-and datatypes. You can manually change the meta data and press the blue disk
+and datatypes. You can manually change the metadata and press the blue disk
 icon to save it to a `schema.ini` file in the same folder as the data file for
 later use.
 
@@ -103,7 +104,7 @@ See schema.ini example below:
 	Col4=OrderDate DateTime Width 10
 
 Format can be `TabDelimited` for tabs, `CSVDelimited` for commas, for any other
-delimiter use for example `Format=Delimited(;)`. Use `FixedLength` for fixed
+delimiter use for example `Format=Delimited(;)`. Use `FixedLength` for fixed-
 width text files and set the `Width` for each column.
 
 DateTimeFormat is not case sensitive and uses `dd/mm/yyyy` or
@@ -124,12 +125,16 @@ right. It will check the input data for the following errors:
 * Values that are too long, example value "abcde" when column is "Width 4"
 * Non-numeric values in numeric columns, example value "n/a" when column datatype is Integer
 * Incorrect decimal separator, example value "12.34" when DecimalSymbol is set to comma
-* Too many decimals, example value "12.345" when NumberDigits=2.
+* Too many decimals, example value "12.345" when NumberDigits=2
 * Incorrect date format, example value "12/31/2025" when DateTimeFormat=dd/mm/yyyy
+* Date value out of range, example value "01/01/2205" when YearMaximum=2050
+* Too few or too many columns
+* Invalid enumeration, example value "Cooldown" when Enumeration="Warmup|Training|Recovery"
+* Unexpected column names, name found in first header row doesn't match metadata, only when `ColNameHeader=True`
 
 Roadmap/goals
 -------------
-The CSV Lint plugin is work-in-progress, here is list of features I want to add (~~strikethrough~~ is done)
+The CSV Lint plugin is a work in progress, here is a list of features I want to add (~~strikethrough~~ is done)
 
 - [x] ~~Convert datetime values to different formats~~
 - [x] ~~Convert decimal symbol to point/comma~~
@@ -153,21 +158,22 @@ The CSV Lint plugin is work-in-progress, here is list of features I want to add 
 - [x] ~~Search/replace in single column~~
 - [x] ~~Split column into new column ("123/456" -> "123", "456")~~
 
-Trouble shooting / Known issues
+Troubleshooting / Known issues
 -------------------------------
 * When you press the "Validate Data" button after editing the data file, the
-text and metadata are not always synchronised immediately. if you get
-unexpected validation results, try saving the datafile or refreshing the meta
-data before clicking "Detect columns".
+text and metadata are not always synchronised immediately. If you get
+unexpected validation results, try saving the data file or refreshing the
+metadata before clicking "Detect columns".
 
 * When you press "Detect columns" the datetime format of the data isn't always
 detected correctly. Especially when the data contains values like `05/06/2025`
-the order of day and month can be incorrect. You can adjust it manually to
-match your data before pressing the "Validate data" button.
+the order of day and month can be incorrect. Also, formats with `AM`/`PM`
+or `T` for the time part are not automatically detected. You can adjust it
+manually to match your data before pressing the "Validate data" button.
 
-* When you select `Language > CSVLint` to enable the syntax highlighing colors,
+* When you select `Language > CSVLint` to enable the syntax highlighting colors,
 or change the metadata manually, the column colors aren't always updated
-immediately. Click inside the textfile or switch tabs to a different file and
+immediately. Click inside the text file or switch tabs to a different file and
 then back and it should display correctly.
 
 Acknowledgements

@@ -2,7 +2,7 @@ CSV Lint plug-in documentation
 ==============================
 
 **CSV Lint** is a plug-in for Notepad++ to work with [comma-separated values](https://en.wikipedia.org/wiki/Comma-separated_values)
-(csv) and fixed width data files.
+(CSV) and fixed-width data files.
 
 
 * [CSV Lint plug-in](https://github.com/BdR76/CSVLint/)
@@ -10,20 +10,20 @@ CSV Lint plug-in documentation
 
 ![preview screenshot](../csvlint_preview.png?raw=true "CSVLint plug-in preview")
 
-Use the **CSV Lint** plug-in to quickly and easily inspect csv data files,
+Use the **CSV Lint** plug-in to quickly and easily inspect CSV data files,
 apply syntax highlighting to columns, detect technical errors and fix datetime
 and decimal formatting. It's not meant as a replacement for a
 [spreadsheet](https://www.reddit.com/r/datascience/comments/1dsnbww/youre_not_helping_excel_please_stop_helping/)
-program, but rather it's a quality control tool to examine, verify or polish up
+program, but rather as a quality control tool to examine, verify or polish up
 a dataset before further processing.
 
 First install and open Notepad++, then go to the menu item `Plugins > Plugins Admin...`,
 search for "csv lint", check the checkbox and press Install. This will add
 CSV Lint under the `Plugins > CSV Lint` menu item and a CSV Lint icon in the
-toolbar icon.
+toolbar.
 
 CSV Lint doesn't require an internet connection and doesn't use any cloud service.
-All data processing is done offline on the pc that runs Notepad++.
+All data processing is done offline on the PC that runs Notepad++.
 
 **If you find the CSV Lint plug-in useful you can buy me a coffee!** ☕  
 [![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/donate/?hosted_button_id=T8QZSFBNAPERL)
@@ -37,7 +37,7 @@ happen that the beginning of the file displays column colors but at the end of t
 file it's still uncolored.
 
 There are four pre-defined color schemes you can select using the
-`Highlighting` button on the `Plugins > CSV Lint > Setttings` dialog.
+`Highlighting` button on the `Plugins > CSV Lint > Settings` dialog.
 At first time startup, the plug-in will select light or darkmode color scheme,
 depending on the Dark Mode setting in the Notepad++ `config.xml`.
 
@@ -81,13 +81,13 @@ displayed. This contains information about the file, which separator is used
 and if it has column headers, as well as all the definitions for each column,
 such as datatype and width.
 
-The metadata is very important for the other functionality to work. When the
+The metadata is very important for the other features to work. When the
 content of the file and the metadata get out-of-sync, for example when editing
-the data file, the plug-in will detect the columns incorrectly. This can lead
+the data file, the plug-in may detect the columns incorrectly. This can lead
 to unexpected results when reformatting or validating the data.
 
-The metadata is based on the `schema.ini` format and it is important for the
-edit options in the plug-in to work correctly. You can press "Detect columns"
+The metadata is based on the `schema.ini` format and is required for the editing
+features in the plug-in to work correctly. You can press "Detect columns"
 to automatically detect the metadata from the datafile, and/or manually
 edit the metadata in the textbox. When manually editing the metadata, always
 press the save icon (blue disk) to apply it before continuing.
@@ -96,7 +96,7 @@ press the save icon (blue disk) to apply it before continuing.
 
 Press the "Detect columns" button to auto-detect column types from the
 currently active file. The auto-detection function will try to infer the
-column separator character and column data types by looking at the data.
+column separator character and column datatypes by looking at the data.
 When a file is opened and no schema.ini is found then
 this auto-detection feature will also run once by default.
 
@@ -135,10 +135,10 @@ Here you can enter the column separator character or Fixed Width.
 When selecting "Fixed Width" you can optionally provide a comma separated
 list of the column ending positions in "Column end positions". For example
 the text data `2025-10-15HbA1c 123.5` has column end positions `10, 16, 21`.
-The plug-in expects the column character positions, but if you instead enter
+The plug-in expects column character positions, but if you instead enter
 the individual column widths, so `10, 6, 5` in this example, that will also
 work in most cases. Leave "Fixed positions" empty and the plug-in will
-try to detect fixed width columns same as auto-detect.
+try to detect fixed width columns the same way as auto-detect.
 Click the `[..]` button to paste the current column widths into the textbox,
 either as absolute column positions or right-click for individual column widths.
 
@@ -159,7 +159,7 @@ in the same folder as the data file. The next time you open the datafile with
 the plug-in, it will automatically load the metadata from this file.
 
 The file and column metadata will be saved under a section with the filename.
-A `schema.ini` file can contain the meta data for more
+A `schema.ini` file can contain the metadata for more
 than one data file, using a separate section for each file.
 
 ### Toggle syntax highlighting ###
@@ -203,7 +203,7 @@ decimals digits for example `NumberDigits=2` for values like "1.23" or
 ### Comment lines
 
 Some data files contain comments or documentation about the data.
-CSV Lint supports a `SkipLines` option to skip at start of the file, and a `CommentChar` option to skip lines thst start with this character.
+CSV Lint supports a `SkipLines` option to skip at start of the file, and a `CommentChar` option to skip lines that start with this character.
 
 Note that the `SkipLines` and `CommentChar` keywords are not officially part of the schema.ini format,
 (please upvote [the suggestion here](https://feedback.azure.com/d365community/search/?q=schema.ini)),
@@ -213,7 +213,8 @@ so applications that use the ODBC Text driver will ignore this setting.
 
 Enumeration, or coded values, is when a column may only contain a certain set of values.
 For example boolean columns that can only contain `true`/`false` or `Yes`/`No`,
-or a variable "TestStage" that can only contain `Warmup`, `Training` or `Recovery`.
+or a variable "TestStage" that can only contain `Warmup`, `Training` or `Recovery`,
+or a multiple choice variable can only contain `1`, `2`, `3`, `4` or `5`.
 
 This type of column is also not supported by the schema.ini format, but
 CSV Lint does support this using the `Enumeration` keyword followed by the
@@ -225,8 +226,11 @@ enumeration items separated by a `|` character, see example below
     Col7=TestStage Text Width 8
     ;Col7=TestStage Enumeration Recovery|Training|Warmup
 	
+    Col13=Question1 Integer Width 1
+    ;Col13=Question1 Enumeration 1|2|3|4|5
+	
 Auto-detect will check the unique values for string or integer columns, if the unique value count is less than or equal to the `UniqueValuesMax` setting, then 
-it will be treated as a enumeration column, and stored as such in the meta data.
+it will be automatically detected and anotated with the `Enumeration` keyword in the metadata.
 
 The plug-in menu options `Convert data` and `Generate metadata` will also export these enumeration metadata, where possible.
 When converting the data to an SQL insert statements, the script will also contain column constrains or enum types, depending on the SQL database type.
@@ -262,15 +266,19 @@ or add `00:00:00` as a time part to all values.
 
 ### Decimal separator ###
 
-Set the decimal separator for all decimal/float values, select either the dot `.` or the comma `,`.
+Set the decimal separator for all decimal/float values,
+select either the dot `.` or the comma `,`.
 
 ### Replace CrLf within values ###
 
-Replace new-line characters (carriage return / line feed) within quoted values with a given string.
-New lines usually indicate the next record in a dataset. However, quoted values may also contain a new line character.
-Sometimes this can cause problems and these values aren't processed correctly.
-You can use this option to replace the new-lines with for example `<br>` or `\par` or just a space ` `.
-The plug-in will only replace the new-line characters within a quoted value, not the new-lines at the end of each record.
+Replace new-line characters (carriage return / line feed) within quoted values
+with a given string. New lines usually indicate the next record in a dataset.
+However, quoted values may also contain a new line character. In some
+applications this can cause problems and these values aren't processed
+correctly. You can use this option to replace the new-lines with
+for example `<br>` or `\par` or just a space ` `.
+The plug-in will only replace the new-line characters within a quoted value,
+not the new-lines at the end of each record.
 
 ### Align vertically ###
 
@@ -312,7 +320,7 @@ Also see `Plugins > CSV Lint > Settings`.
 
 Validate data
 -------------
-Validate data based on the meta data. When you press "Validate data",
+Validate data based on the metadata. When you press "Validate data",
 the input data will be checked for technical errors based on the given metadata.
 The line and column numbers of any errors will be logged in the textbox on the
 right. It will check the input data for the following errors:
@@ -320,8 +328,12 @@ right. It will check the input data for the following errors:
 * Values that are too long, example value "abcde" when column is "Width 4"
 * Non-numeric values in numeric columns, example value "n/a" when column datatype is Integer
 * Incorrect decimal separator, example value "12.34" when DecimalSymbol is set to comma
-* Too many decimals, example value "12.345" when NumberDigits=2.
+* Too many decimals, example value "12.345" when NumberDigits=2
 * Incorrect date format, example value "12/31/2025" when DateTimeFormat=dd/mm/yyyy
+* Date value out of range, example value "01/01/2205" when YearMaximum=2050
+* Too few or too many columns
+* Invalid enumeration code, example value "Cooldown" when Enumeration="Warmup|Training|Recovery"
+* Unexpected column names, name found in first header row doesn't match metadata, only when `ColNameHeader=True`
 
 Important note: If you've edited the data file, for example changed the column
 separator or added columns using the Split function, make sure to also update
@@ -331,10 +343,10 @@ then saving it.
 
 Sort data
 ---------
-Sort data on a single column, and take into account the data type of the column.
+Sort data on a single column, and take into account the datatype of the column.
 String text columns will be sorted alphabetically. Integer, decimal and
 datetime columns will be sorted according to their respective values.
-Note, that the resulting new dataset will have quotes applied according to the
+Note, that the resulting dataset will have quotes applied according to the
 current `Apply quotes` setting in the Reformat dialog.
 
 ![CSV Lint sort data dialog](/docs/csvlint_sort_data.png?raw=true "CSV Lint plug-in sort data dialog")
@@ -400,7 +412,7 @@ value `PT123` into `PT12300`, see other examples below:
 ### Search and replace ###
 
 Search and replace a string with another string for all values in a column.
-Unlike the default "Search and replace" function of Notepad++, this only affect
+Unlike the default "Search and replace" function of Notepad++, this only affects
 the values in a single column, not the values of any other columns. Note that
 this is case-sensitive, for example search for `no` and replace with `False`:
 
@@ -419,7 +431,7 @@ contains string values like `error` or `N/A`. This option will create two new
 columns, one with just the valid values and one containing the invalid values.
 
 As an example, if there is a column VISITDAT and in the metadata it is defined
-as a date value formated as `dd-mm-yyyy`, see some example results below:
+as a date value formatted as `dd-mm-yyyy`, see some example results below:
 
 | visitdat   | visitdat (2) | visitdat (3) |
 |------------|--------------|--------------|
@@ -432,7 +444,7 @@ as a date value formated as `dd-mm-yyyy`, see some example results below:
 ### Split on character ###
 
 Split on a character, split the value on the Nth occurrence of character or
-string. For example split on `/` with Nth occurrence `1` will split the orginal
+string. For example split on `/` with Nth occurrence `1` will split the original
 value `121/84` into `121` and `84`, see examples below:
 
 | bpvalue              | bpvalue (2) | bpvalue (3)     |
@@ -528,28 +540,29 @@ The amount of each of these 3 values is listed under "Unique values".
 
 Select Columns
 --------------
-Select columns and/or put columns in a different order.
-Select one or more columns.
+Select columns and/or rearrange to put columns in a different order using the
+`Move Up` or `Move Down` buttons.
 
 ![CSV Lint select columns dialog](/docs/csvlint_select_columns.png?raw=true "CSV Lint plug-in select columns dialog")
 
-Check the `Select distinct values` checkbox to list all unique values in a column, or
-combination of columns, and count how often that unique value or combination
-of values was found. This can be useful to check if the dataset contains the
-expected amount of unique names, patients, product codes, barcodes etc.
+Check the `Select distinct values` checkbox to list only distinct
+unique values of a column or combination of columns, and count how often that
+unique value or combination of values was found. This can be useful to check
+if the dataset contains the expected amount of unique names, patients,
+product codes, barcodes etc.
 
 As an example, if you have a data file where each line is one blood pressure
-measurement of a participant, and you want to verify that each participant in
+measurement of a patient, and you want to verify that each patient in
 the data file has exactly 3 measurements. In that case you can select just the
-column participantId and select sort by `count`, to sort the result by the new
+column patientId and select sort by `count`, to sort the result by the new
 `count_distinct` column.
 
-If the data is correct, it should list all participantId with a `count_distinct`
+If the data is correct, it should list all patientId with a `count_distinct`
 value of 3. And, because it's sorted by `count_distinct`, you can check the
-beginning and end of the list to see if there are any participants with fewer
+beginning and end of the list to see if there are any patients with fewer
 or more than 3 measurements.
 
-Right-click Ascending or Descing to disable sorting, the resulting list
+Right-click Ascending or Descending to disable sorting, the resulting list
 of values will be in the order as the values were first found in the dataset.
 
 Convert data
@@ -565,8 +578,8 @@ For XML, enter a `Table/tag name` to use as tag name for each record,
 or leave it empty to use the current filename.
 
 Select SQL to convert the data to an SQL script to create a database
-table and inserts all records from the csv datafile into that table.
-The insert statement will be grouped in batches of X lines of csv data,
+table and inserts all records from the CSV datafile into that table.
+The insert statement will be grouped in batches of X lines of CSV data,
 as set by the Batch size number in the plug-in Settings.
 
 Depending on which database type you select, MySQL/MariaDB, MS-SQL or
@@ -604,19 +617,10 @@ See below for an example of an SQL insert script the plugin will generate:
 
 Note: Oracle is not supported as Database type, but you can work around this by
 using Database type `MySQL / MariaDB` and setting the Batch size to `1`.
-If there are any Date or DateTime values, then add this line
+If there are any Date or DateTime values, then add the following line
 at the top of the script.
 
 	ALTER SESSION SET NLS_DATE_FORMAT = 'YYYY-MM-DD HH24:MI:SS';
-
-Or, alternatively, use Notepad++ Search and Replace to apply `TO_DATE()`
-to any datetime values, so in the resulting INSERT script press `Ctrl + H`
-and then:
-
-	Find what:    '(\d{4}-\d{2}-\d{2} \d{1,2}:\d{2}:\d{2})'
-	Replace with: TO_DATE\('\1', 'YYYY-MM-DD HH24:MI:SS'\)
-	Search mode:  Regular expression
-	-> [Replace all]
 
 Generate metadata
 -----------------
@@ -657,20 +661,20 @@ which contains the following columns:
 
 ### Python ###
 
-Generates a [Python](https://www.python.org/) script to read the csv data file
+Generates a [Python](https://www.python.org/) script to read the CSV data file
 as a dataframe. It contains the required scripting for the appropriate
 datatypes, and it is meant as a starting point for further script development.
 
 ### R-script ###
 
-Generates an [R-script](https://www.r-project.org/) to read the csv data file
+Generates an [R-script](https://www.r-project.org/) to read the CSV data file
 as a dataframe. It contains the required scripting for the appropriate
 datatypes, and it is meant as a starting point for further script development in
 [R-Studio](https://www.rstudio.com/products/rstudio/).
 
 ### PowerShell ###
 
-Generates a [PowerShell](https://en.wikipedia.org/wiki/PowerShell) script to read the csv data file
+Generates a [PowerShell](https://en.wikipedia.org/wiki/PowerShell) script to read the CSV data file
 as a dataset variable. It contains the required scripting for the appropriate
 datatypes, and it is meant as a starting point for further script development.
 
