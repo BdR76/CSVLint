@@ -335,21 +335,26 @@ namespace CSVLint
 
         public void KeepMinMaxDecimal(string value, char dec)
         {
-            // try parse as integer
+            // in order to use TryParse, string value must contain local culture decimal separator
+            var orgval = value;
+            if ((dec != Main.localDecimalSep) && (value.IndexOf(dec) >= 0))
+                value = value.Replace(dec, Main.localDecimalSep);
+
+            // try parse as decimal
             if (float.TryParse(value, out float valdbl))
             {
                 // keep the minimum values
                 if ((valdbl < stat_mindbl) || (stat_mindbl_org == ""))
                 {
                     stat_mindbl = valdbl;
-                    stat_mindbl_org = value;
+                    stat_mindbl_org = orgval;
                 }
 
                 // keep the maximum values
                 if ((valdbl > stat_maxdbl) || (stat_maxdbl_org == ""))
                 {
                     stat_maxdbl = valdbl;
-                    stat_maxdbl_org = value;
+                    stat_maxdbl_org = orgval;
                 }
             }
         }

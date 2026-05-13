@@ -327,6 +327,7 @@ namespace CSVLint
             // user supplied table name, or use file name if empty
             string TABLE_NAME = Main.Settings.DataConvertName;
             if (TABLE_NAME == "") TABLE_NAME = StringToVariable(Path.GetFileNameWithoutExtension(notepad.GetCurrentFilePath()));
+            var constr_table = TABLE_NAME;
 
             // apply brackets or quotes, only if needed
             TABLE_NAME = SQLSafeName(TABLE_NAME);
@@ -372,7 +373,7 @@ namespace CSVLint
 
                 // determine sql datatype
                 var sqltype = "varchar";
-                var widunk = "";
+                var widunk = (r == 0 ? " -- NOT NULL" : "");
                 var comm = "";
 
                 if (csvdef.Fields[r].DataType == ColumnType.Integer) sqltype = "integer";
@@ -418,7 +419,16 @@ namespace CSVLint
                     cols += ",\r\n\t";
                 };
 
-                // build SQL for Enum columns
+                // add SQL constraints examples, primary key and unique for first column
+                if (r == 0)
+                {
+                    var pk_name = SQLSafeName(StringToVariable("PK_" + constr_table + "_" + csvdef.Fields[r].Name));
+                    var uq_name = SQLSafeName(StringToVariable("UQ_" + constr_table + "_" + csvdef.Fields[r].Name));
+                    enumcols1 += string.Format("ALTER TABLE cardio ADD CONSTRAINT {0} PRIMARY KEY({1}); --note: pk column(s) must also be NOT NULL\r\n", pk_name, sqlname);
+                    enumcols1 += string.Format("ALTER TABLE cardio ADD CONSTRAINT {0} UNIQUE({1}); --any column(s) that should be unique\r\n\r\n", uq_name, sqlname);
+                }
+
+                // add SQL constraints for Enum columns
                 if (csvdef.Fields[r].isCodedValue)
                 {
                     var enumvals = string.Join("\", \"", csvdef.Fields[r].CodedList).Replace("'", "''");
@@ -481,9 +491,6 @@ namespace CSVLint
             if (Main.Settings.DataConvertSQL == 0) sb.Append(string.Format("\r\n\tprimary key({0})", recidname));
 
             sb.Append("\r\n);\r\n");
-
-            // add enumeration columns
-            if (enumcols1 != "") sb.Append(string.Format("-- Enumeration columns (optional)\r\n/*\r\n{0}{1}*/\r\n", enumcols1, enumcols2));
 
             // use stringreader to go line by line
             if (!ScintillaStreams.TryStreamAllText(out StreamReader strdata))
@@ -614,9 +621,16 @@ namespace CSVLint
             // batch comment, insert record count of any last remaining batch
             if (batchcomm > -1) sb.Insert(batchcomm, string.Format("{0} - {1}", batchstart, lineCount));
 
+            // Add example constrains and enumeration check constrains
+            sb.Append("\r\n-- -------------------------------------\r\n");
+            sb.Append("-- Add extra table constraints (optional)\r\n");
+            sb.Append("-- -------------------------------------\r\n");
+
+            sb.Append(string.Format("/*\r\n{0}{1}*/\r\n", enumcols1, enumcols2));
+
             sb.Append("\r\n-- -------------------------------------\r\n");
             sb.Append("-- Add comments (recommended, especially when archiving)\r\n");
-            sb.Append("-- -------------------------------------\r\n\r\n");
+            sb.Append("-- -------------------------------------\r\n");
 
             // add comment table
             comment.Insert(0, "Table imported using");

@@ -501,8 +501,10 @@ namespace CSVLint
             python.Append("#merged_df = pd.merge(df1, df2, how='left', on='patient_id') # same key column name\r\n");
             python.Append("#merged_df = pd.merge(df1, df2, how='left', left_on='df1 key', right_on='df2 id') # different key column names\r\n\r\n");
 
+            // -------------------------------------
+            ScriptHeader(python, "Export new csv");
+            // -------------------------------------
             if (csvdef.Separator == '\0') separator = ",";
-            python.Append("# csv write new output\r\n");
             python.Append("filenew = \"output.txt\"\r\n");
             python.Append(string.Format("df.to_csv(filenew, sep='{0}', decimal=',', na_rep='', header=True, index=False, encoding='utf-8')\r\n", separator));
 
@@ -781,7 +783,9 @@ namespace CSVLint
             rscript.Append("#merged_df <- merge(df1, df2, all.x=TRUE, by=c('patient_id')) # same key column name\r\n");
             rscript.Append("#merged_df <- merge(df1, df2, all.x=TRUE, by.x=c('df1 key'), by.y=c('df2 id')) # different key column name\r\n\r\n");
 
-            rscript.Append("# csv write new output\r\n");
+            // -------------------------------------
+            ScriptHeader(rscript, "Export new csv");
+            // -------------------------------------
             rscript.Append("filenew = \"output.txt\"\r\n");
             rscript.Append("write.table(df, file=filenew, sep=\";\", dec=\",\", na=\"\", row.names=FALSE)\r\n");
 
@@ -1055,7 +1059,9 @@ namespace CSVLint
             ps1.Append("##Install-Module -Name Join-Object\r\n");
             ps1.Append("##$merged_df = Join-Object -Left $patients -Right $visits -LeftJoinProperty 'PATIENT_ID' -RightJoinProperty 'PATIENT_ID' -ExcludeRightProperties 'Junk' -Prefix 'R_' | Format-Table\r\n\r\n");
 
-            ps1.Append("# csv write new output\r\n");
+            // -------------------------------------
+            ScriptHeader(ps1, "Export new csv");
+            // -------------------------------------
             ps1.Append("$filenew = $pathname + \"output.txt\"\r\n");
             ps1.Append(string.Format("$csvnew | Export-Csv -Path $filenew -Encoding utf8 -Delimiter \"`t\" -NoTypeInformation\r\n\r\n", separator));
 
