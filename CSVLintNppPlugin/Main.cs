@@ -22,6 +22,7 @@ namespace Kbg.NppPluginNET
         internal const string PluginName = "CSV Lint";
         public static Settings Settings = new Settings();
         public static CultureInfo dummyCulture;
+        public static readonly char localDecimalSep = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator[0];
 
         static string userConfigPath = null;
         static CsvLintWindow frmCsvLintDlg = null;
