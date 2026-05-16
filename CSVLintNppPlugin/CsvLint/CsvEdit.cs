@@ -1001,6 +1001,323 @@ namespace CSVLint
             }
         }
 
+
+        private static int BgrToRgb(int bgr)
+        {
+            return ((bgr & 0xFF) << 16) | (bgr & 0xFF00) | ((bgr >> 16) & 0xFF);
+        }
+
+        private static string generateCSS(CsvDefinition csvdef, int style_idx)
+        {
+            // none, no style
+            if (style_idx == 0) return "";
+
+            // generate CSS
+            var style_str = @"  <style type=""text/css"">
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #fff;
+    color: #000;
+}
+
+/* Table structure */
+.csvlint-table {
+    border-collapse: collapse;
+}
+
+/* Column headers */
+.csvlint-table thead th {
+    background: #dbeafe;
+    padding: 8px 12px;
+    border-bottom: 2px solid #9bbce3;
+}
+
+/* Table cells */
+.csvlint-table td {
+    padding: 8px 12px;
+    border-bottom: 1px solid #ddd;
+}
+
+/* rows columns */
+";
+            var hl_clr = "#eef5ff";
+
+            // adjustment per style
+            switch (style_idx)
+            {
+                case 1: // minimal UI
+                    style_str = style_str.Replace("font-family: ", "font-family: system-ui, -apple-system, \"Segoe UI\", Roboto, ");
+                    style_str = style_str.Replace("background: #dbeafe;\r\n", "font-weight: 600;\r\n");
+                    style_str = style_str.Replace("solid #9bbce3;\r\n", "solid #000;\r\n");
+                    style_str = style_str.Replace("/* rows columns */\r\n", "");
+                    break;
+                case 2: // zebra rows
+                    style_str = style_str.Replace("/* rows columns */\r\n", "/* Zebra rows */\r\n.csvlint-table tr:nth-child(even) {\r\n\tbackground: #f6f9fc;\r\n}\r\n\r\n");
+                    break;
+                case 3: // zebra columns
+                    style_str = style_str.Replace("/* rows columns */\r\n", "/* Zebra columns */\r\n.csvlint-table td:nth-child(even) {\r\n\tbackground: #f6f9fc;\r\n}\r\n\r\n");
+                    break;
+                case 4: // color columns
+
+                    // get current colors
+                    var colmax = -1;
+
+                    var tmpedit = new ScintillaGateway(PluginBase.GetCurrentScintilla());
+                    var bg_prev = -1;
+                    var fg_prev = -1;
+                    var colors_list = new List<(int fg, int bg)>();
+
+                    // go through styles last to first
+                    for (var stl = 32; stl >= 0; stl--)
+                    {
+                        // get next style, Note: colors are stored as BGR but want to write to CSS/HTML as RGB
+                        var bg = tmpedit.StyleGetBack(stl).Value;
+                        var fg = tmpedit.StyleGetFore(stl).Value;
+
+                        // search for last style that that is not exactly the same as previous color
+                        // if not declared then style defaults to Notepad++ default color (black or white)
+                        if ((colmax == -1) && (stl != 32) && ((bg != bg_prev) || (fg != fg_prev)))
+                        {
+                            colmax = stl;
+                        }
+
+                        // store all last to first colors in reverse order
+                        colors_list.Insert(0, (fg, bg));
+
+                        // remember for next step
+                        bg_prev = bg;
+                        fg_prev = fg;
+                    }
+
+                    // default foreground/backrground colors for quick reference
+                    var bg_def = BgrToRgb(colors_list[0].bg);
+                    var fg_def = BgrToRgb(colors_list[0].fg);
+
+                    // output all colors as css color style
+                    var csscolors = "/* CSV Lint columns */\r\n";
+
+                    // for each color attribute
+                    for (var i = 1; i <= colmax; i++)
+                    {
+                        // foreground color and background color
+                        var hexclr = "color: #" + BgrToRgb(colors_list[i].fg).ToString("X6") + ";";
+                        var hexback = "background: #" + BgrToRgb(colors_list[i].bg).ToString("X6") + ";";
+
+                        var padspace = (i < 10 ? " " : "");
+                        csscolors += string.Format(".csvlint-table th:nth-child({0}n+{1}), {4}.csvlint-table td:nth-child({0}n+{1}) {4}{{{2}{3}}}\r\n", colmax, i, hexclr, hexback, padspace);
+                    }
+
+                    // background/foreground could be either light-mode or dark-mode
+                    style_str = style_str.Replace("background: #fff;\r\n", string.Format("background: #{0};\r\n", bg_def.ToString("X6")));
+                    style_str = style_str.Replace("color: #000;\r\n", string.Format("color: #{0};\r\n", fg_def.ToString("X6")));
+                    style_str = style_str.Replace("solid #9bbce3;\r\n", "solid #ddd;\r\n");
+
+                    // update style
+                    style_str = style_str.Replace("background: #dbeafe;\r\n", "");
+                    if (fg_def > 0x808080) hl_clr = "#110a00";
+                    style_str = style_str.Replace("/* rows columns */", csscolors);
+                    break;
+            }
+
+            // check if any numeric columns
+            var num = new List<int>();
+            for (int i = 0; i < csvdef.Fields.Count; i++)
+            {
+                if (csvdef.Fields[i].DataType == ColumnType.Decimal || csvdef.Fields[i].DataType == ColumnType.Integer)
+                    num.Add(i+1);
+            }
+
+            // if any numeric columns
+            if (num.Count > 0)
+            {
+                style_str += "/* Numeric columns */\r\n";
+                for (int i = 0; i < num.Count; i++)
+                {
+                    var end = (i == num.Count-1 ? " {" : ",");
+                    style_str += string.Format(".csvlint-table td:nth-child({0}){1}\r\n", num[i], end);
+                }
+                style_str += "\ttext-align: right;\r\n}\r\n";
+            }
+
+            // hover highlight, except not for Minimal UI
+            if (style_idx != 1) // not Minimal UI
+            {
+                style_str += "\r\n/* Optional hover highlight */\r\n.csvlint-table tbody tr:hover td {\r\n    background: " + hl_clr + ";\r\n}";
+            }
+
+            // close tag
+            style_str += "\r\n</style>\r\n";
+
+            // return css
+            return style_str;
+        }
+
+        /// <summary>
+        /// convert csv data to HTML table
+        /// </summary>
+        public static void ConvertToHTML(CsvDefinition csvdef)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            // get access to Notepad++
+            INotepadPPGateway notepad = new NotepadPPGateway();
+            IScintillaGateway editor = new ScintillaGateway(PluginBase.GetCurrentScintilla());
+
+            // record tag name
+            string TABLE_NAME = Path.GetFileName(notepad.GetCurrentFilePath());
+
+            int HTML_BATCH_SIZE = Main.Settings.DataConvertBatch;
+
+            // build css style
+            var cssstyle = generateCSS(csvdef, Main.Settings.DataConvertStyle);
+
+            // default comment
+            List<String> comment = ScriptInfo(notepad);
+
+            // build HTML table document
+            sb.Append("<!DOCTYPE html>\r\n<html>\r\n<head>\r\n");
+            sb.Append("\t<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\r\n");
+            sb.Append(string.Format("\t<meta name=\"generator\" content=\"CSV Lint {0}\">\r\n", Main.GetVersion()));
+            sb.Append(string.Format("\t<title>{0}</title>\r\n", TABLE_NAME));
+
+            // css style and colors
+            sb.Append(cssstyle);
+            sb.Append("</head>\r\n");
+
+            // HTML table info
+            sb.Append("<body>\r\n<p>\r\n");
+            foreach (var str in comment)
+            {
+                sb.Append(string.Format("{0}<br/>\r\n", str));
+            }
+            sb.Append("</p>\r\n");
+
+            // use stringreader to go line by line
+            if (!ScintillaStreams.TryStreamAllText(out StreamReader strdata))
+                return;
+
+            // html table headers
+            var htmlTableStart = "<table class=\"csvlint-table\">\r\n\t<thead>\r\n\t\t<tr>\r\n";
+            for (var col = 0; col < csvdef.Fields.Count; col++) {
+                var colname = csvdef.Fields[col].Name;
+                htmlTableStart += string.Format("\t\t\t<th>{0}</th>\r\n", colname);
+            };
+            htmlTableStart += "\t\t</tr>\r\n\t</thead>\r\n";
+
+            int lineCount = csvdef.ColNameHeader ? -1 : 0;
+            int batchcomm = -1;  // batch comment line
+            int batchstart = 1; // batch starting line
+            int lastend = -1;  // last line end character
+
+            // copy any comment lines
+            if (csvdef.SkipLines > 0)
+            {
+                sb.Append("<p>\r\n");
+                csvdef.CopyCommentLinesAtStart(strdata, sb, "", "</br>\r\n");
+                sb.Append("</p>\r\n");
+            }
+
+            while (!strdata.EndOfStream)
+            {
+
+                // get next 'record' from csv data
+                List<string> list = csvdef.ParseNextLine(strdata, out bool iscomm);
+
+                // copy any comment lines
+                if (iscomm)
+                {
+                    csvdef.CopyCommentLine(list, sb, "<p>", "</p>");
+                }
+                else
+                {
+                    // skip header line
+                    if (lineCount >= 0)
+                    {
+                        // add in batches of maximum <SQL_BATCH_SIZE> rows
+                        if (lineCount % HTML_BATCH_SIZE == 0)
+                        {
+                            // close table
+                            if (lineCount > 0) sb.Append("\t</tbody>\r\n</table>\r\n</body>\r\n</html>\r\n");
+
+                            // batch comment, insert record count
+                            if ((batchcomm > -1) && (HTML_BATCH_SIZE > 1))
+                            {
+                                // insert batch label and remember next batch
+                                sb.Insert(batchcomm, string.Format("{0} - {1}", batchstart, lineCount));
+                                batchstart = lineCount + 1;
+                            }
+
+                            // repeat count-comment per batch, or when batch==1 then add count-comment only once at the start
+                            if ((HTML_BATCH_SIZE > 1) || (batchcomm == -1))
+                            {
+                                // note: not possible to insert from-to count because the ammount of records remaining is unknown at this point
+                                sb.Append("<p>HTML table, records </p>\r\n");
+                                batchcomm = sb.Length - 6; // -6 because of characters "</p>\r\n"
+                            }
+                            
+                            sb.Append(htmlTableStart);
+                            sb.Append("\t<tbody>\r\n");
+                        }
+
+                        // next record
+                        sb.Append("\t\t<tr>\r\n");
+
+                        for (var col = 0; col < csvdef.Fields.Count; col++)
+                        {
+                            // format next value, quotes for varchar and datetime
+                            var colvalue = "";
+                            if (col < list.Count) colvalue = list[col];
+
+                            //var colname = csvdef.Fields[col].Name;
+                            var colname = XMLSafeName(csvdef.Fields[col].Name);
+
+                            // adjust for quoted values, trim first because can be a space before the first quote, example .., "BMI",..
+                            var strtrim = colvalue.Trim();
+                            if ((strtrim.Length > 0) && (strtrim[0] == Main.Settings.DefaultQuoteChar))
+                            {
+                                colvalue = colvalue.Trim();
+                                colvalue = colvalue.Trim(Main.Settings.DefaultQuoteChar);
+                            }
+
+                            // next value to evaluate
+                            if (Main.Settings.TrimValues) colvalue = colvalue.Trim();
+
+                            // HTML table, display csv values as-is, don't convert date or decimals
+
+                            // HTML escape characters
+                            colvalue = colvalue.Replace("&", "&amp;"); // ampersnd
+                            colvalue = colvalue.Replace("<", "&lt;"); // less than
+                            colvalue = colvalue.Replace(">", "&gt;"); // greater than
+
+                            colvalue = colvalue.Replace("\r\n", "<br/>"); // \n New line
+                            colvalue = colvalue.Replace("\n", "<br/>"); // \n New line
+                            colvalue = colvalue.Replace("\r", "<br/>"); // \r Carriage return
+
+                            sb.Append(string.Format("\t\t\t<td>{0}</td>\r\n", colvalue));
+                        }
+
+                        sb.Append("\t\t</tr>\r\n");
+                    }
+
+                    // next line
+                    lineCount++;
+                }
+            }
+
+            // finalise script
+            sb.Append("\t</tbody>\r\n</table>\r\n</body>\r\n</html>\r\n");
+
+            // batch comment, insert record count of any last remaining batch
+            if (batchcomm > -1) sb.Insert(batchcomm, string.Format("{0} - {1}", batchstart, lineCount));
+
+            // create new file
+            notepad.FileNew();
+            editor.SetText(sb.ToString());
+            if (sb.Length < Main.Settings.AutoSyntaxLimit) {
+                notepad.SetCurrentLanguage(LangType.L_HTML);
+            }
+        }
+
         private static string SortableString(string val, CsvColumn csvcol)
         {
             if (csvcol.isCodedValue)

@@ -194,17 +194,20 @@ namespace Kbg.NppPluginNET
         public bool AutoDetectColumns { get; set; }
 		
         // CONVERT DATA user preferences
-        private int _sqlbatch;
+        private int _convertbatch;
 
         [Description("Convert data dialog"), Category("UserDialogs"), Browsable(false), DefaultValue(1000)]
         public int DataConvertBatch
         {
-            get { return _sqlbatch; }
+            get { return _convertbatch; }
             set
             {
-                _sqlbatch = Math.Max(value, 1); // batch size cannot be <= 0
+                _convertbatch = Math.Max(value, 1); // batch size cannot be <= 0
             }
         }
+
+        [Category("UserDialogs"), Browsable(false), DefaultValue(1)]
+        public int DataConvertStyle { get; set; }
 
         [Category("UserDialogs"), Browsable(false), DefaultValue("")]
         public string DataConvertName { get; set; }

@@ -708,6 +708,9 @@ namespace Kbg.NppPluginNET
                         case 2: // JSON
                             CsvEdit.ConvertToJSON(csvdef);
                             break;
+                        case 3: // HTML
+                            CsvEdit.ConvertToHTML(csvdef);
+                            break;
                         default: // case 0: SQL
                             CsvEdit.ConvertToSQL(csvdef);
                             break;
