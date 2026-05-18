@@ -1013,29 +1013,30 @@ namespace CSVLint
             if (style_idx == 0) return "";
 
             // generate CSS
-            var style_str = @"  <style type=""text/css"">
+            var style_str = @"	<style type=""text/css"">
 body {
-    font-family: Arial, Helvetica, sans-serif;
-    background: #fff;
-    color: #000;
+	font-family: Arial, Helvetica, sans-serif;
+	background: #fff;
+	color: #000;
 }
 
 /* Table structure */
 .csvlint-table {
-    border-collapse: collapse;
+	border-collapse: collapse;
 }
 
 /* Column headers */
 .csvlint-table thead th {
-    background: #dbeafe;
-    padding: 8px 12px;
-    border-bottom: 2px solid #9bbce3;
+	background: #dbeafe;
+	padding: 8px 12px;
+	border-bottom: 2px solid #9bbce3;
 }
 
 /* Table cells */
 .csvlint-table td {
-    padding: 8px 12px;
-    border-bottom: 1px solid #ddd;
+	padding: 8px 12px;
+	border-bottom: 1px solid #ddd;
+	white-space: nowrap;
 }
 
 /* rows columns */
@@ -1113,7 +1114,7 @@ body {
                     style_str = style_str.Replace("solid #9bbce3;\r\n", "solid #ddd;\r\n");
 
                     // update style
-                    style_str = style_str.Replace("background: #dbeafe;\r\n", "");
+                    style_str = style_str.Replace("\tbackground: #dbeafe;\r\n", "");
                     if (fg_def > 0x808080) hl_clr = "#110a00";
                     style_str = style_str.Replace("/* rows columns */", csscolors);
                     break;
@@ -1142,11 +1143,11 @@ body {
             // hover highlight, except not for Minimal UI
             if (style_idx != 1) // not Minimal UI
             {
-                style_str += "\r\n/* Optional hover highlight */\r\n.csvlint-table tbody tr:hover td {\r\n    background: " + hl_clr + ";\r\n}";
+                style_str += "\r\n/* Optional hover highlight */\r\n.csvlint-table tbody tr:hover td {\r\n\tbackground: " + hl_clr + ";\r\n}\r\n";
             }
 
             // close tag
-            style_str += "\r\n</style>\r\n";
+            style_str += "\t</style>\r\n";
 
             // return css
             return style_str;
@@ -1177,7 +1178,7 @@ body {
             // build HTML table document
             sb.Append("<!DOCTYPE html>\r\n<html>\r\n<head>\r\n");
             sb.Append("\t<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\r\n");
-            sb.Append(string.Format("\t<meta name=\"generator\" content=\"CSV Lint {0}\">\r\n", Main.GetVersion()));
+            sb.Append(string.Format("\t<meta name=\"generator\" content=\"{0}\">\r\n", comment[0]));
             sb.Append(string.Format("\t<title>{0}</title>\r\n", TABLE_NAME));
 
             // css style and colors
@@ -1264,7 +1265,7 @@ body {
 
                         for (var col = 0; col < csvdef.Fields.Count; col++)
                         {
-                            // format next value, quotes for varchar and datetime
+                            // next column value
                             var colvalue = "";
                             if (col < list.Count) colvalue = list[col];
 
@@ -1283,17 +1284,20 @@ body {
                             if (Main.Settings.TrimValues) colvalue = colvalue.Trim();
 
                             // HTML table, display csv values as-is, don't convert date or decimals
+                            if (colvalue == "") {
+                                sb.Append("\t\t\t<td/>\r\n"); // use <td/> instead of <td></td>
+                            } else {
+                                // HTML escape characters
+                                colvalue = colvalue.Replace("&", "&amp;"); // ampersnd
+                                colvalue = colvalue.Replace("<", "&lt;");  // less than
+                                colvalue = colvalue.Replace(">", "&gt;");  // greater than
 
-                            // HTML escape characters
-                            colvalue = colvalue.Replace("&", "&amp;"); // ampersnd
-                            colvalue = colvalue.Replace("<", "&lt;"); // less than
-                            colvalue = colvalue.Replace(">", "&gt;"); // greater than
+                                colvalue = colvalue.Replace("\r\n", "<br/>"); // \r\n Carriage return + New line (win)
+                                colvalue = colvalue.Replace("\n", "<br/>"); // \n   New line (mac/linux)
+                                colvalue = colvalue.Replace("\r", "<br/>"); // \r   Carriage return (old mac)
 
-                            colvalue = colvalue.Replace("\r\n", "<br/>"); // \n New line
-                            colvalue = colvalue.Replace("\n", "<br/>"); // \n New line
-                            colvalue = colvalue.Replace("\r", "<br/>"); // \r Carriage return
-
-                            sb.Append(string.Format("\t\t\t<td>{0}</td>\r\n", colvalue));
+                                sb.Append(string.Format("\t\t\t<td>{0}</td>\r\n", colvalue));
+                            }
                         }
 
                         sb.Append("\t\t</tr>\r\n");
