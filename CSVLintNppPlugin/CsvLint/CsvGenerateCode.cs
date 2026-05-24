@@ -277,7 +277,15 @@ namespace CSVLint
             IScintillaGateway editor = new ScintillaGateway(PluginBase.GetCurrentScintilla());
 
             // Python requires forward slash for filepaths
-            string FILE_PATH = Path.GetDirectoryName(notepad.GetCurrentFilePath());
+            string FILE_PATH = "";
+            try
+            {
+                FILE_PATH = Path.GetDirectoryName(notepad.GetCurrentFilePath());
+            }
+            catch (Exception ex)
+            {
+                // Path.GetDirectoryName will crash on long filepath (>260 chars)
+            }
             string FILE_NAME = notepad.GetCurrentFilePath();
 
             FILE_PATH = FILE_PATH.Replace("\\", "\\\\");
@@ -565,7 +573,15 @@ namespace CSVLint
             IScintillaGateway editor = new ScintillaGateway(PluginBase.GetCurrentScintilla());
 
             // R-studio requires forward slash for filepaths
-            string FILE_PATH = Path.GetDirectoryName(notepad.GetCurrentFilePath());
+            string FILE_PATH = "";
+            try
+            {
+                FILE_PATH = Path.GetDirectoryName(notepad.GetCurrentFilePath());
+            }
+            catch (Exception ex)
+            {
+                // Path.GetDirectoryName will crash on long filepath (>260 chars)
+            }
             string FILE_NAME = notepad.GetCurrentFilePath();
 
             FILE_PATH = FILE_PATH.Replace("\\", "/");
@@ -808,7 +824,15 @@ namespace CSVLint
             IScintillaGateway editor = new ScintillaGateway(PluginBase.GetCurrentScintilla());
 
             // Python requires forward slash for filepaths
-            string FILE_PATH = Path.GetDirectoryName(notepad.GetCurrentFilePath()).TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar;
+            string FILE_PATH = "";
+            try
+            {
+                FILE_PATH = Path.GetDirectoryName(notepad.GetCurrentFilePath()).TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar;
+            }
+            catch (Exception ex)
+            {
+                // Path.GetDirectoryName will crash on long filepath (>260 chars)
+            }
             string FILE_NAME = Path.GetFileName(notepad.GetCurrentFilePath());
 
             StringBuilder ps1 = new StringBuilder();

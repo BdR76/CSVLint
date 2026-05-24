@@ -23,7 +23,18 @@ namespace CSVLintNppPlugin.CsvLint
         public static Dictionary<string, string> ReadIniSection(string filePath)
         {
             // file name and path of the file to be edited
-            string path = Path.GetDirectoryName(filePath);
+            string path = "";
+            try
+            {
+                path = Path.GetDirectoryName(filePath);
+            }
+            catch (Exception ex)
+            {
+                //will fail on long filepath names (>260 chars)
+                //simply ignore and don't read ini file from long paths
+                //MessageBox.Show(ex.ToString());
+            };
+            
             string file = Path.GetFileName(filePath);
 
             // schema.ini and section name
@@ -85,7 +96,20 @@ namespace CSVLintNppPlugin.CsvLint
         {
             errmsg = string.Empty;
             // file name and path of the edited file
-            string path = Path.GetDirectoryName(filePath);
+            string path = "";
+            try
+            {
+                path = Path.GetDirectoryName(filePath);
+            }
+            catch (Exception ex)
+            {
+                //will fail on long filepath names (>260 chars)
+                //cannot save ini file in long paths
+                //MessageBox.Show(ex.ToString());
+                errmsg = ex.Message;
+                return false;
+            }
+            ;
             string file = Path.GetFileName(filePath);
 
             // schema.ini and section name
