@@ -134,7 +134,7 @@ a dialog will appear where you can manually enter the properties of the datafile
 Here you can enter the column separator character or Fixed Width.
 When selecting "Fixed Width" you can optionally provide a comma separated
 list of the column ending positions in "Column end positions". For example
-the text data `2025-10-15HbA1c 123.5` has column end positions `10, 16, 21`.
+the text data `2026-10-15HbA1c 123.5` has column end positions `10, 16, 21`.
 The plug-in expects column character positions, but if you instead enter
 the individual column widths, so `10, 6, 5` in this example, that will also
 work in most cases. Leave "Fixed positions" empty and the plug-in will
@@ -329,7 +329,7 @@ right. It will check the input data for the following errors:
 * Non-numeric values in numeric columns, example value "n/a" when column datatype is Integer
 * Incorrect decimal separator, example value "12.34" when DecimalSymbol is set to comma
 * Too many decimals, example value "12.345" when NumberDigits=2
-* Incorrect date format, example value "12/31/2025" when DateTimeFormat=dd/mm/yyyy
+* Incorrect date format, example value "12/31/2026" when DateTimeFormat=dd/mm/yyyy
 * Date value out of range, example value "01/01/2205" when YearMaximum=2050
 * Too few or too many columns
 * Invalid enumeration code, example value "Cooldown" when Enumeration="Warmup|Training|Recovery"
@@ -351,7 +351,7 @@ current `Apply quotes` setting in the Reformat dialog.
 
 ![CSV Lint sort data dialog](/docs/csvlint_sort_data.png?raw=true "CSV Lint plug-in sort data dialog")
 
-Sort on **value** to sort on the actual values, for example date value `31-01-2025` is lower than `01-12-2025`.  
+Sort on **value** to sort on the actual values, for example date value `31-01-2026` is lower than `01-12-2026`.  
 Sort on **length of value** to sort on the character length of the values, for example `xray` has a smaller length than `abdominal`.
 
 Sort **ascending** start with low values, end with high values `0 -> 9, A -> Z`  
@@ -435,10 +435,10 @@ as a date value formatted as `dd-mm-yyyy`, see some example results below:
 
 | visitdat   | visitdat (2) | visitdat (3) |
 |------------|--------------|--------------|
-| 15-04-2023 | 15-04-2023   |              |
-| 23-05-2021 | 23-05-2021   |              |
-| 07/26/2024 |              | 07/26/2024   |
-| 18-09-2025 | 18-09-2025   |              |
+| 15-04-2024 | 15-04-2024   |              |
+| 23-05-2022 | 23-05-2022   |              |
+| 07/26/2025 |              | 07/26/2025   |
+| 18-09-2026 | 18-09-2026   |              |
 | No show    |              | No show      |
 
 ### Split on character ###
@@ -464,7 +464,7 @@ examples below
 | stringval             | stringval (2) | stringval (3) |
 |-----------------------|---------------|---------------|
 | usr/medic/p01/img.nii | usr/medic/p01 | img.nii       |
-| 31/12/2025            | 31/12         | 2025          |
+| 31/12/2026            | 31/12         | 2026          |
 | Creatinine            | Creatinine    |               |
 | /MED-0001             |               | MED-0001      |
 | mo/tu/we/th/fr        | mo/tu/we/th   | fr            |
@@ -479,7 +479,7 @@ other examples below
 | position        | position (2) | position (3) |
 |-----------------|--------------|--------------|
 | ZKH\21-006-2516 | ZKH          | \21-006-2516 |
-| 1-6-2025        | 1-6          | -2025        |
+| 1-6-2026        | 1-6          | -2026        |
 | TGAGCATCGGAC    | TGA          | GCATCGGAC    |
 | 1.2650          | 1.2          | 650          |
 | 4015672111745   | 401          | 5672111745   |
@@ -491,7 +491,7 @@ see other examples below
 | posneg         | posneg (2) | posneg (3) |
 |----------------|------------|------------|
 | medication.txt | medication | .txt       |
-| 31-12-2025     | 31-12-     | 2025       |
+| 31-12-2026     | 31-12-     | 2026       |
 | ACGAGTATCATG   | ACGAGTAT   | CATG       |
 | 12.345         | 12         | .345       |
 | M978196A002    | M978196    | A002       |
@@ -567,7 +567,7 @@ of values will be in the order as the values were first found in the dataset.
 
 Convert data
 ------------
-Convert the currently selected CSV file to SQL, XML or JSON format.
+Convert the currently selected CSV file to SQL, XML, JSON or HTML format.
 
 ![CSV Lint Convert data dialog](/docs/csvlint_convert_data.png?raw=true "CSV Lint plug-in Convert data dialog")
 
@@ -576,6 +576,10 @@ The plug-in will automatically apply formatting based on the metadata,
 as well as applying character escaping where needed for these formats.
 For XML, enter a `Table/tag name` to use as tag name for each record,
 or leave it empty to use the current filename.
+
+Select HTML to convert the data to an HTML table. Set the batch size to limit
+the number of records per table, possibly resulting in multiple tables
+depending on your dataset size.
 
 Select SQL to convert the data to an SQL script to create a database
 table and inserts all records from the CSV datafile into that table.
@@ -590,7 +594,7 @@ use the current filename as table name.
 See below for an example of an SQL insert script the plugin will generate:
 
     -- -------------------------------------
-    -- CSV Lint plug-in: v0.4.7
+    -- CSV Lint plug-in: v0.4.8
     -- File: cardio.txt
     -- SQL type: MySQL
     -- -------------------------------------
@@ -610,9 +614,9 @@ See below for an example of an SQL insert script the plugin will generate:
         visitdat,
         labpth
     ) VALUES
-    (1001, '2025-08-21 00:00:00', 10.8),
-    (2002, '2025-09-05 00:00:00', 143.5),
-    (3003, '2025-09-24 00:00:00', 76.4),
+    (1001, '2026-08-21 00:00:00', 10.8),
+    (2002, '2026-09-05 00:00:00', 143.5),
+    (3003, '2026-09-24 00:00:00', 76.4),
     -- etc.
 
 Note: Oracle is not supported as Database type, but you can work around this by
@@ -744,5 +748,6 @@ History
 25-jun-2024 - v0.4.6.7 Reformat bugfix, improved enumeration, sort on length  
 28-feb-2025 - v0.4.6.8 Improved sorting for enumeration columns, minor updates  
 08-aug-2025 - v0.4.7 Select columns, large files warning, Fixed Width detection improved, minor updates  
+20-jun-2026 - v0.4.8 Fix random crashes, add HTML table option, minor updates  
 
-BdR©2019-2025 Free to use - send questions or comments: Bas de Reuver - bdr1976@gmail.com
+BdR©2019-2026 Free to use - send questions or comments: Bas de Reuver - bdr1976@gmail.com

@@ -108,8 +108,7 @@ namespace CSVLintNppPlugin.CsvLint
                 //MessageBox.Show(ex.ToString());
                 errmsg = ex.Message;
                 return false;
-            }
-            ;
+            };
             string file = Path.GetFileName(filePath);
 
             // schema.ini and section name

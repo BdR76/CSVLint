@@ -50,8 +50,8 @@ The CSV Lint plugin is available in Notepad++ in the Plugins Admin menu.
 * Click `Yes` to quit Notepad++ and "continue the operations"
 * Click `Yes` on the Windows notification "Allow app to make changes"
 
-Note: the plug-in is available in the Plugins Admin menu starting with
-Notepad++ v8.1.9.1. If you have a Notepad++ version older than v8.1.9.1 or
+Note: the plug-in is available in the Plugins Admin menu since
+Notepad++ v8.1.9.1 (november 2021). If you have an older Notepad++ version or
 want to install the plug-in manually:
 
 * Go to the [releases page](https://github.com/BdR76/CSVLint/releases)
@@ -126,7 +126,7 @@ right. It will check the input data for the following errors:
 * Non-numeric values in numeric columns, example value "n/a" when column datatype is Integer
 * Incorrect decimal separator, example value "12.34" when DecimalSymbol is set to comma
 * Too many decimals, example value "12.345" when NumberDigits=2
-* Incorrect date format, example value "12/31/2025" when DateTimeFormat=dd/mm/yyyy
+* Incorrect date format, example value "12/31/2026" when DateTimeFormat=dd/mm/yyyy
 * Date value out of range, example value "01/01/2205" when YearMaximum=2050
 * Too few or too many columns
 * Invalid enumeration, example value "Cooldown" when Enumeration="Warmup|Training|Recovery"
@@ -166,7 +166,7 @@ unexpected validation results, try saving the data file or refreshing the
 metadata before clicking "Detect columns".
 
 * When you press "Detect columns" the datetime format of the data isn't always
-detected correctly. Especially when the data contains values like `05/06/2025`
+detected correctly. Especially when the data contains values like `05/06/2026`
 the order of day and month can be incorrect. Also, formats with `AM`/`PM`
 or `T` for the time part are not automatically detected. You can adjust it
 manually to match your data before pressing the "Validate data" button.
@@ -189,6 +189,11 @@ With thanks to:
 The CSV Lint plug-in couldn't have been created without their source examples, suggestions and valuable feedback.
 For a similar plug-in for Visual Studio Code check out [Rainbow CSV](https://github.com/mechatroner/vscode_rainbow_csv).
 
+Testimonials
+------------
+* "Sniff out rogue separators and messy lines like a data snob." -- [Bardo Schütz, Team 14](https://www.linkedin.com/pulse/first-time-i-opened-xml-file-used-excel-still-have-bardo-sch%C3%BCtz-40rme/)
+
+
 Disclaimer
 ----------
 This software is free-to-use and it is provided as-is without warranty of any kind.  
@@ -197,4 +202,4 @@ All [test files](../../tree/master/testdata/), examples and screenshots provided
 [randomly generated](https://github.com/BdR76/RandomValuesNPP) data,
 any resemblance to real-life cases is the result of chance.
 
-BdR©2019-2025 Free to use - send questions or comments: Bas de Reuver - bdr1976@gmail.com
+BdR©2019-2026 Free to use - send questions or comments: Bas de Reuver - bdr1976@gmail.com
