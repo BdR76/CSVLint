@@ -37,7 +37,7 @@ jobs:
           path: CSVLint_${{ matrix.build_platform }}.zip
 
     - name: Create release on tagging
-      uses: softprops/action-gh-release@v2
+      uses: softprops/action-gh-release@v3
       if: startsWith(github.ref, 'refs/tags/')
       with:
           files: CSVLint_${{ matrix.build_platform }}.zip
