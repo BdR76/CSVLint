@@ -62,12 +62,12 @@ the Style Configurator dialog.
 ### Default extension ###
 
 By default the plugin applies syntax highlighting to files with the extension
-`.csv`. If you also want this for files with extension `.ssv` or `.tsv` then
+`.csv`. If you also want this for files with extension `.tsv` or `.txt` then
 you can change this in the Notepad++ settings.
 Go to `Settings > Style Configuration` and in the Language dropdown select
-`CSV Linter and validator`. Then go to the textbox "User ext." and add `ssv`
+`CSV Linter and validator`. Then go to the textbox "User ext." and add `tsv`
 and click the "Save & Close" button. If you want to add more than one
-extension then separate them by space, so for example `ssv tsv skv`.
+extension then separate them by space, so for example `tsv txt ssv`.
 
 CSV Lint window
 ---------------
@@ -359,10 +359,10 @@ Sort **descending** start with high values, end with low values `Z -> A, 9 -> 0`
 
 When sorting on value, text columns will be sorted alphabetically, integer and
 decimal columns are sorted numerically and datetime values are sorted chronologically.
-Columns with enumeration are sorted according to the enumeration codelist indexes.
-For example, when sorting a column with `Enumeration Never|Sometimes|Often|Always`
-the records will be sorted starting with `Never`, then `Sometimes`,
-then `Often` and ending with `Always`.
+Columns with enumeration are sorted according to the order of the enumeration
+codelist. For example, when sorting on an Enumeration column with options
+`Never|Sometimes|Often|Always` the records will be sorted starting with
+`Never`, then `Sometimes`, then `Often` and ending with `Always`.
 
 When sorting on a column that contains several of the same values, then the
 sort order for the lines with those values will not change. Meaning that lines
@@ -490,7 +490,7 @@ see other examples below
 
 | posneg         | posneg (2) | posneg (3) |
 |----------------|------------|------------|
-| medication.txt | medication | .txt       |
+| medication.hl7 | medication | .hl7       |
 | 31-12-2026     | 31-12-     | 2026       |
 | ACGAGTATCATG   | ACGAGTAT   | CATG       |
 | 12.345         | 12         | .345       |
@@ -595,7 +595,7 @@ See below for an example of an SQL insert script the plugin will generate:
 
     -- -------------------------------------
     -- CSV Lint plug-in: v0.4.8
-    -- File: cardio.txt
+    -- File: cardio.csv
     -- SQL type: MySQL
     -- -------------------------------------
     CREATE TABLE cardio(
@@ -696,7 +696,7 @@ and they are stored in a settings file `%USERPROFILE%\AppData\Roaming\Notepad++\
 |DecimalLeadingZero| Decimal values must have leading zero, set to false to accept values like .5 or .01                             | true    |
 | ErrorTolerance   | Error tolerance percentage, when analyzing allow X % errors. For example when a column with a 1000 values contains all integers except for 9 or fewer non-integer values, then it's still interpreted as an integer column. | 1 |
 | IntegerDigitsMax | Maximum amount of digits for integer values, if a value has more then it's considered a text value. Applies to both autodetecting datatypes and validating data. Useful to distinguish (bar)codes and actual numeric values  | 12 |
-| UniqueValuesMax  | Maximum unique values when reporting or detecting coded values, if column contains more than it's not reported. |   15    | 
+| UniqueValuesMax  | Maximum unique values when detecting or reporting enumeration values, if a column has more then it's interpreted as having datatype text and not coded values. |   15    |
 | YearMaximum      | When detecting date or datetime values, years larger than this value will be considered an out-of-range date.   | 2050    |
 | YearMinimum      | When detecting date or datetime values, years smaller than this value will be considered an out-of-range date.  | 1900    |
 | ReformatQuotes   | Reformat dataset, apply quotes option: 0 = None minimal, 1 = Values with spaces, 2 = All string values, 3 = All non-numeric values, 4 = Always | 0       |

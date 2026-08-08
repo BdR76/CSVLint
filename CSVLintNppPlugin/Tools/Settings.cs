@@ -14,7 +14,7 @@ namespace Kbg.NppPluginNET
         [Description("Comment character, when the first lines start with this character they will be skipped as comment lines"), Category("Analyze"), DefaultValue('#')]
         public char CommentCharacter { get; set; }
 
-        [Description("Maximum unique values when reporting or detecting coded values, if column contains more than it's not reported."),
+        [Description("Maximum unique values when detecting or reporting enumeration values, if a column has more unique values then it's interpreted as datatype text instead of coded values."),
             Category("Analyze"), DefaultValue(15)]
         public int UniqueValuesMax { get; set; }
 

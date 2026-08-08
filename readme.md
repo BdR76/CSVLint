@@ -192,7 +192,7 @@ For a similar plug-in for Visual Studio Code check out [Rainbow CSV](https://git
 Testimonials
 ------------
 * "Sniff out rogue separators and messy lines like a data snob." -- [Bardo Schütz, Team 14](https://www.linkedin.com/pulse/first-time-i-opened-xml-file-used-excel-still-have-bardo-sch%C3%BCtz-40rme/)
-
+* "Very cool! It brings instant value" "the column coloring alone is a game-changer" -- [Reddit](https://www.reddit.com/r/SQLServer/comments/yqgnxs/notepad_plugin_to_view_validate_and_import_csv/)[ users](https://www.reddit.com/r/SQLServer/comments/s0q10z/notepad_plugin_to_convert_csv_files_to_sql_insert/)
 
 Disclaimer
 ----------
