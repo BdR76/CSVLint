@@ -58,7 +58,7 @@ namespace CSVLintNppPlugin.Forms
         {
             // display easter egg icon on certain dates
             DateTime today = DateTime.Now.AddHours(-3); // day 'starts' in the morning and lasts after midnight (especially for new years eve etc.)
-            //DateTime today = new DateTime(2023, 12, 31); // testing
+            //DateTime today = new DateTime(2026, 12, 31); // testing
 
             string msg = "";
             string obj = "";
@@ -68,20 +68,27 @@ namespace CSVLintNppPlugin.Forms
 
             switch (monthday)
             {
-                case 422: // April 22nd
+                case  323: // March 23rd
+                case  422: // April 22nd
                 case 605: // June 5th
-                    msg = (monthday == 422 ? "Earth Day" : "World Environment Day") + ", support your local climate change organizations";
-                    obj = "a globe";
+                case 1024: // Oct 24th
+                    msg = monthday == 323 ? "World Meteorological Day" :
+                          monthday == 422 ? "Earth Day" :
+                          monthday == 605 ? "World Environment Day" :
+                          monthday == 1024 ? "International Day of Climate Action" : "";
+                    msg = "Today is " + msg + ", support your local climate change organizations :)";
                     img = CSVLintNppPlugin.Properties.Resources.earth;
                     break;
                 case 1031: // October 31st
-                    msg = "Halloween";
-                    obj = "a spooky pumpkin";
+                case 1111: // November 11th
+                    msg = "Happy " + (monthday == 1031 ? "Halloween!" : "St. Maarten!");
+                    obj = (monthday == 1031 ? "a spooky pumpkin" : "a lantern and candy");
                     img = CSVLintNppPlugin.Properties.Resources.pumpkin;
                     break;
+                case 828: // August 28th
                 case 101: // January 1st
                 case 1231: // December 31th
-                    msg = "New Year" + (monthday == 1231 ? "'s Eve" : "");
+                    msg = "Happy " + (monthday == 828 ? "Summer fair!" : "New Year" + (monthday == 1231 ? "'s Eve!" : "!"));
                     obj = "an oliebol";
                     img = CSVLintNppPlugin.Properties.Resources.oliebol;
                     break;
@@ -90,7 +97,7 @@ namespace CSVLintNppPlugin.Forms
                     if (easter > 0)
                     {
                         // March/April ?th, varies
-                        msg = string.Format("Easter {0}day", (easter == 1 ? "Sun" : "Mon"));
+                        msg = string.Format("Happy Easter {0}day!", (easter == 1 ? "Sun" : "Mon"));
                         obj = "an Easter egg";
                         img = CSVLintNppPlugin.Properties.Resources.easteregg;
                     };
@@ -100,8 +107,8 @@ namespace CSVLintNppPlugin.Forms
             // initialization easter egg
             if (msg != "")
             {
-                string tip = string.Format("Happy {0}! You've found {1} ;)", msg, obj);
-                helperTip.SetToolTip(picEasterEgg, tip);
+                if (obj != "") msg += string.Format(" You've found {0} ;)", obj);
+                helperTip.SetToolTip(picEasterEgg, msg);
                 picEasterEgg.Image = img;
                 picEasterEgg.Visible = true;
                 picEasterEgg.Tag = "1"; // today is day with actual easter egg
