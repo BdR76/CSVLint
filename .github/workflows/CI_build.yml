@@ -31,7 +31,7 @@ jobs:
 
     - name: Archive artifacts for ${{ matrix.build_platform }}
       if: matrix.build_configuration == 'Release'
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v7
       with:
           name: CSVLint_${{ matrix.build_platform }}.zip
           path: CSVLint_${{ matrix.build_platform }}.zip
