@@ -179,7 +179,7 @@ namespace Kbg.NppPluginNET
         public string _charSeparators;
         private string _strSeparators;
 
-        [Description("Transparent cursor line, changing this setting will require a restart of Notepad++."), Category("General"), DefaultValue(true)]
+        [Description("Transparent cursor line, changing this setting will require a restart of Notepad++. Note: enabling this can make the caret line and text selections hard to see or invisible, especially with dark themes, see issues #68 and #77."), Category("General"), DefaultValue(false)]
         public bool TransparentCursor { get; set; }
 
         //[Description("Maximum errors output, limit errors logging, or 0 for no limit."),

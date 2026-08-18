@@ -708,7 +708,7 @@ and they are stored in a settings file `%USERPROFILE%\AppData\Roaming\Notepad++\
 | NullKeyword      | A case-sensitive keyword that will be treated as an empty value, typically `NULL`, `NaN`, `NA` or `None` depending on your data | NaN     |
 | SeparatorColor   | Include separator in syntax highlighting colors. Set to false and the separator characters are always white.    | false   |
 | Separators       | Preferred characters when automatically detecting the separator character. For special characters like tab, use \\t or hexadecimal escape sequence \\u0009 or \\x09. | ,;\t&#124; |
-| TransparentCursor| Transparent cursor line, changing this setting will require a restart of Notepad++                              | true    |
+| TransparentCursor| Transparent cursor line, changing this setting will require a restart of Notepad++. Note: enabling this can make the caret line and text selections hard to see or invisible, especially with dark themes. | false   |
 | UserPref section | Various input settings for the CSV Lint dialogs for Convert Data, Reformat, Split Column etc.                   |         |
 
 About
