@@ -11,6 +11,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace CSVLint
 {
@@ -229,6 +230,17 @@ namespace CSVLint
                     if (coldef.CodedList.IndexOf(val) == -1)
                     {
                         msg = "is not a valid enumeration member";
+                        valid = false;
+                    }
+                }
+
+                // check regex value
+                if (coldef.isRegexValue)
+                {
+                    var RegexMask = new Regex(coldef.Mask, RegexOptions.IgnoreCase);
+                    if (!RegexMask.IsMatch(val))
+                    {
+                        msg = "does not match expected regex pattern";
                         valid = false;
                     }
                 }

@@ -66,13 +66,17 @@ patnrs = []
 patsex = []
 patdob = []
 for i in range(MAX_PERSONS):
-    n = random.randrange(10000000, 99999999)
-    glitch = random.randrange(1, 50)
+    # reduce chance of duplicate patient numbers (can still happen though)
+    for i in range(10):
+        n = ("0%d-%04d" % ( random.randint(1, 4), random.randint(1, 9999) ) )
+        if n not in patnrs:
+            break;
     patnrs.append(n)
     patsex.append(random.choice(['Male','Female']))
     rnddate = datetime.datetime(random.randrange(curryear-80,curryear-15), random.randrange(1,12), random.randrange(1,28))
     if i == 10: rnddate = rnddate - 900 * datetime.timedelta(days=365)
     dob = rnddate.strftime("%#d-%#m-%Y")
+    glitch = random.randrange(1, 50)
     if glitch == 1: dob = "NaN"
     patdob.append(dob)
 
@@ -110,10 +114,13 @@ for i in range(TOTAL_LINES):
         sex = patsex[idx]
         heartrate = random.randrange(80, 100) + ( 80.0 * (w1 / 220))
         # data entry error, extra space
-        if i == 120:
+        if i == 150: # must be divisible by 3
             pid = " " + str(pid)
-        # data entry error, entered current date for dob
+        # data entry error, incorrect patient format
         if i == 300:
+            pid = pid.replace("-", ".")
+        # data entry error, entered current date for dob
+        if i == 450:
             dob = testdate.strftime("%#d-%#m-%Y")
         # glitch error on purpose
         glitch = random.randrange(1, 15)

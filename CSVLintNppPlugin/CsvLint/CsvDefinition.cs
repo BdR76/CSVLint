@@ -76,6 +76,7 @@ namespace CSVLint
         public int iTag;    // depends on datatype, datetime=nr digits year (2 or 4), float=max decimals
         public bool isCodedValue = false;
         public List<string> CodedList;
+        public bool isRegexValue = false; // mask = regex pattern
 
         public CsvColumn(int idx)
         {
@@ -735,6 +736,21 @@ namespace CSVLint
                             val = "";
                         }
 
+                        // check for regular expression metadata
+                        var isRegex = false;
+                        var RegexMask = "";
+                        posalt = val.LastIndexOf("Regex");
+                        if (posalt >= 0)
+                        {
+                            int spcalt = val.IndexOf(" ", posalt);
+                            if (spcalt >= 0)
+                            {
+                                isRegex = true;
+                                RegexMask = val.Substring(spcalt, val.Length - spcalt).Trim();
+                            }
+                            val = "";
+                        }
+
                         // check for valid datatype must be at end of line
                         posalt = val.LastIndexOf("DateTime");
                         if (posalt >= 0)
@@ -754,7 +770,7 @@ namespace CSVLint
                         if (datatypestr == "Float") datatypealt = ColumnType.Decimal;
 
                         // additional metadata found, alternative datatype or coded values
-                        if ( (datatypealt != ColumnType.String) || (isCoded))
+                        if ( (datatypealt != ColumnType.String) || (isCoded) || (isRegex))
                         {
                             // look for index
                             for (int x = 0; x < this.Fields.Count; x++)
@@ -765,6 +781,12 @@ namespace CSVLint
                                     {
                                         this.Fields[x].isCodedValue = true;
                                         this.Fields[x].CodedList = new List<string>(CodedValues.Split('|'));
+                                    }
+                                    else if (isRegex)
+                                    {
+                                        this.Fields[x].DataType = ColumnType.String; // Regex must be text/string
+                                        this.Fields[x].isRegexValue = true;
+                                        this.Fields[x].Mask = RegexMask;
                                     }
                                     else
                                     {
@@ -912,6 +934,14 @@ namespace CSVLint
                     var codedlist = string.Join("|", col.CodedList);
                     // schma.ini doesn't support enumeration/coded values
                     com = string.Format(";Col{0}={1} Enumeration {2}\r\n", i + 1, def, codedlist);
+                }
+
+                // regular expression metadata
+                if (col.isRegexValue)
+                {
+                    var RegexMask = col.Mask;
+                    // schma.ini doesn't support regular expression values
+                    com = string.Format(";Col{0}={1} Regex {2}\r\n", i + 1, def, RegexMask);
                 }
 
                 // datatype
