@@ -99,10 +99,13 @@ namespace Kbg.NppPluginNET
         //[Description("Default font for text boxes in CSV Lint docking window. Changing this requires closing and opening the CSV docked window."), Category("General"), DefaultValue("Courier, 11.25pt")]
         //public string Font { get; set; }
 
-        private const string FontDockDefault = "Courier New, 11.25pt";
+        [Description("Automatically open the CSV Lint docked window when opening or switching to csv files"), Category("General"), DefaultValue(false)]
+        public bool DockAutoOpen { get; set; }
 
-        [Description("Default font for text boxes in CSV Lint docking window. Changing the font requires closing and opening the CSV docked window."), Category("General"), DefaultValue(typeof(Font), FontDockDefault)]
-        public Font FontDock { get; set; }
+        private const string DockFontDefault = "Courier New, 11.25pt";
+
+        [Description("Default font for text boxes in CSV Lint docking window. Changing the font requires closing and opening the CSV docked window."), Category("General"), DefaultValue(typeof(Font), DockFontDefault)]
+        public Font DockFont { get; set; }
 
         [Description("A case-sensitive keyword that will be treated as an empty value, typically NULL, NaN, NA or None depending on your data."),
             Category("General"), DefaultValue("NaN")]

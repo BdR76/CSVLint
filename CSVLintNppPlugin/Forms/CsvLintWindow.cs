@@ -462,8 +462,8 @@ namespace Kbg.NppPluginNET
             if (Visible)
             {
                 // set font
-                txtSchemaIni.Font = Main.Settings.FontDock;
-                txtOutput.Font = Main.Settings.FontDock;
+                txtSchemaIni.Font = Main.Settings.DockFont;
+                txtOutput.Font = Main.Settings.DockFont;
             }
         }
 

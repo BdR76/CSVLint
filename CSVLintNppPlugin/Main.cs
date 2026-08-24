@@ -118,6 +118,7 @@ namespace Kbg.NppPluginNET
                 (code == (uint)NppMsg.NPPN_LANGCHANGED))
             {
                 Main.CSVChangeFileTab();
+                Main.forceDockedOnCsv();
             }
 
             // when closing a file
@@ -167,7 +168,7 @@ namespace Kbg.NppPluginNET
 
             // menu items
             //PluginBase.SetCommand(0, "MyMenuCommand", myMenuFunction, new ShortcutKey(false, false, false, Keys.None));
-            PluginBase.SetCommand(0, "CSV Lint window", myDockableDialog); idMyDlg = 0;
+            PluginBase.SetCommand(0, "CSV Lint window", toggleDockableDialog); idMyDlg = 0;
             PluginBase.SetCommand(1, "---", null);
             PluginBase.SetCommand(2, "Analyse data report", AnalyseDataReport);
             PluginBase.SetCommand(3, "Select columns", selectColumns);
@@ -475,9 +476,34 @@ namespace Kbg.NppPluginNET
             }
             editor.SetIdleStyling(IdleStyling.ALL);
 
+            // auto open CSV Lint window
+            if (Settings.DockAutoOpen && is_csv)
+            {
+                // force dialog to open on csv
+                if (frmCsvLintDlg == null) {
+                    createDockableDialog();
+                }
+            }
+
             if (frmCsvLintDlg != null)
             {
                 frmCsvLintDlg.SetCsvDefinition(csvdef, false);
+            }
+        }
+
+        public static void forceDockedOnCsv()
+        {
+            // toggle on/off
+            if (Settings.DockAutoOpen && (frmCsvLintDlg != null)) {
+                // check the current selected language
+                Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_GETCURRENTLANGTYPE, 0, out int currentLanguageId);
+                var is_csv = (currentLanguageId == CsvLanguageId.Value);
+
+                if (frmCsvLintDlg.Visible != is_csv) {
+                    Win32.SendMessage(PluginBase.nppData._nppHandle,
+                    (uint)(frmCsvLintDlg.Visible ? NppMsg.NPPM_DMMHIDE : NppMsg.NPPM_DMMSHOW),
+                    0, frmCsvLintDlg.Handle);
+                }
             }
         }
 
@@ -783,47 +809,52 @@ namespace Kbg.NppPluginNET
             }
         }
 
-        internal static void myDockableDialog()
+        internal static void createDockableDialog() {
+            // show dialog for first time
+            frmCsvLintDlg = new CsvLintWindow();
+
+            // icon
+            using (Bitmap newBmp = new Bitmap(16, 16))
+            {
+                Graphics g = Graphics.FromImage(newBmp);
+                ColorMap[] colorMap = new ColorMap[1];
+                colorMap[0] = new ColorMap
+                {
+                    OldColor = Color.Fuchsia,
+                    NewColor = Color.FromKnownColor(KnownColor.ButtonFace)
+                };
+                ImageAttributes attr = new ImageAttributes();
+                attr.SetRemapTable(colorMap);
+                g.DrawImage(tbBmp_color, new Rectangle(0, 0, 16, 16), 0, 0, 16, 16, GraphicsUnit.Pixel, attr);
+                tbIcon = Icon.FromHandle(newBmp.GetHicon());
+            }
+
+            // dockable window struct data
+            var queryWindowData = new NppTbData
+            {
+                hClient = frmCsvLintDlg.Handle,
+                pszName = "CSV Lint",
+                dlgID = idMyDlg,
+                uMask = NppTbMsg.DWS_DF_CONT_BOTTOM | NppTbMsg.DWS_ICONTAB | NppTbMsg.DWS_ICONBAR,
+                hIconTab = (uint)tbIcon.Handle,
+                pszModuleName = PluginName
+            };
+            var queryWindowPointer = Marshal.AllocHGlobal(Marshal.SizeOf(queryWindowData));
+            Marshal.StructureToPtr(queryWindowData, queryWindowPointer, false);
+
+            Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_DMMREGASDCKDLG, 0, queryWindowPointer);
+
+            // set darkmode at first activated
+            INotepadPPGateway notepad = new NotepadPPGateway();
+            frmCsvLintDlg.ToggleDarkLightTheme(notepad.IsDarkModeEnabled());
+        }
+
+        internal static void toggleDockableDialog()
         {
             if (frmCsvLintDlg == null)
             {
                 // show dialog for first time
-                frmCsvLintDlg = new CsvLintWindow();
-
-                // icon
-                using (Bitmap newBmp = new Bitmap(16, 16))
-                {
-                    Graphics g = Graphics.FromImage(newBmp);
-                    ColorMap[] colorMap = new ColorMap[1];
-                    colorMap[0] = new ColorMap
-                    {
-                        OldColor = Color.Fuchsia,
-                        NewColor = Color.FromKnownColor(KnownColor.ButtonFace)
-                    };
-                    ImageAttributes attr = new ImageAttributes();
-                    attr.SetRemapTable(colorMap);
-                    g.DrawImage(tbBmp_color, new Rectangle(0, 0, 16, 16), 0, 0, 16, 16, GraphicsUnit.Pixel, attr);
-                    tbIcon = Icon.FromHandle(newBmp.GetHicon());
-                }
-
-                // dockable window struct data
-                var queryWindowData = new NppTbData
-                {
-                    hClient = frmCsvLintDlg.Handle,
-                    pszName = "CSV Lint",
-                    dlgID = idMyDlg,
-                    uMask = NppTbMsg.DWS_DF_CONT_BOTTOM | NppTbMsg.DWS_ICONTAB | NppTbMsg.DWS_ICONBAR,
-                    hIconTab = (uint)tbIcon.Handle,
-                    pszModuleName = PluginName
-                };
-                var queryWindowPointer = Marshal.AllocHGlobal(Marshal.SizeOf(queryWindowData));
-                Marshal.StructureToPtr(queryWindowData, queryWindowPointer, false);
-
-                Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_DMMREGASDCKDLG, 0, queryWindowPointer);
-
-                // set darkmode at first activated
-                INotepadPPGateway notepad = new NotepadPPGateway();
-                frmCsvLintDlg.ToggleDarkLightTheme(notepad.IsDarkModeEnabled());
+                createDockableDialog();
             }
             else
             {
