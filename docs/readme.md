@@ -505,7 +505,9 @@ columns but also keep the original values.
 
 Note that you can also right-click the radio buttons to deselect them.
 By not selecting any of the options and checking the "Remove original column" 
-you can press OK to simply remove the selected original column.
+you can press OK to simply delete the selected original column. Although it's
+easier and recommended to delete and reorder columns using the
+`Select Columns` dialog instead.
 
 Analyse data report
 -------------------
@@ -540,8 +542,12 @@ The amount of each of these 3 values is listed under "Unique values".
 
 Select Columns
 --------------
-Select columns and/or rearrange to put columns in a different order using the
-`Move Up` or `Move Down` buttons.
+Using the `Select Columns` dialog you can create a subset of columns, delete
+columns and rearrange columns. Select only the columns you want from
+"Available columns" on the left to create a subset of columns. To delete
+column(s) you can click `All >>` to select all columns and then click the `<<`
+button, or double-click in the list, to remove any unwanted column(s). Use the
+`Move Up` or `Move Down` buttons to rearrange the order of the selected columns.
 
 ![CSV Lint select columns dialog](/docs/csvlint_select_columns.png?raw=true "CSV Lint plug-in select columns dialog")
 
