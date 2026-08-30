@@ -236,6 +236,38 @@ The plug-in menu options `Convert data` and `Generate metadata` will also export
 When converting the data to an SQL insert statements, the script will also contain column constrains or enum types, depending on the SQL database type.
 The Generate metadata option for "W3C CSV Schema JSON" will also export the coded value in the `format` tags.
 
+### Regular Expressions
+
+You can use Regular Expressions to validate columns of data.
+This type of column is not supported by the schema.ini format, but
+CSV Lint supports regular expressions using the `Regex` keyword followed by the
+regular expression. For example, if SubjectId may only contain values
+like `01-0123`, `02-0987` etc. See the example below.
+
+    Col4=SubjectId Text Width 7
+    ;Col4=SubjectId Regex ^\d{2}-\d{4}$
+
+Note: Regular Expressions cannot be automatically detected, you must enter
+these lines yourself (in the example `;Col4=..` etc.), and then
+click the blue disk icon to save, then click the Validate data button.
+See below for some examples of Regular Expressions you can use:
+
+| Column              | Example         | Regular Expression                               |
+|---------------------|-----------------|--------------------------------------------------|
+| Postal codes        | 30329           | ^\d{5}$                                          |
+| Dutch postcodes     | 9713 GZ         | ^[1-9][0-9]{3}\s?[A-Z]{2}$                       |
+| Email addresses     | contact@umc.nl  | ^[^\s@]+@[^\s@]+\.[^\s@]+$                       |
+| Telephone numbers   | +31-50-321-1234 | ^\+?[0-9\s().-]{7,20}$                           |
+| Scientific notation | 1.23E-05        | ^[+-]?\d{1}(?:[.,]\d+)?[Ee][+-]?\d{2}$           |
+| ATC codes           | N02BE01         | ^[A-Z][0-9]{2}(?:[A-Z](?:[A-Z](?:[0-9]{2})?)?)?$ |
+| ICD-10 codes        | E11.9           | ^[A-Z][0-9]{2}(?:\.[A-Z0-9]{1,4})?$              |
+| CRC32 hex 8         | 4dca83f6        | ^[A-Fa-f0-9]{8}$                                 |
+| IPv4 addresses      | 192.168.1.100   | ^\d{1,3}(\.\d{1,3}){3}$                          |
+
+To create custom regular expressions for your data, it is recommended to use
+[regex101](https://regex101.com/) or [regexr](https://regexr.com/)
+to test them before use in CSV Lint.
+
 Reformat
 --------
 Reformat data dialog has several options to reformat the entire data file.
@@ -503,11 +535,10 @@ By checking the "Remove original column" checkbox the original column will be
 removed after splitting it into new columns. Keep it unchecked to add the new
 columns but also keep the original values.
 
-Note that you can also right-click the radio buttons to deselect them.
-By not selecting any of the options and checking the "Remove original column" 
-you can press OK to simply delete the selected original column. Although it's
-easier and recommended to delete and reorder columns using the
-`Select Columns` dialog instead.
+Note that you can also right-click the radio buttons to deselect them. By not
+selecting any of the options and checking the "Remove original column" you can
+press OK to simply delete the selected original column. Although it's easier
+and recommended to instead use the `Select Columns` dialog to delete columns.
 
 Analyse data report
 -------------------
@@ -583,7 +614,9 @@ as well as applying character escaping where needed for these formats.
 For XML, enter a `Table/tag name` to use as tag name for each record,
 or leave it empty to use the current filename.
 
-Select HTML to convert the data to an HTML table. Set the batch size to limit
+Select HTML to convert the data to an HTML table. In the `HTML CSS Style`
+dropdown you can select the row and column colors; None, Minimal UI,
+Zebra rows, Zebra columns, CSV Lint colors. Set the batch size to limit
 the number of records per table, possibly resulting in multiple tables
 depending on your dataset size.
 
@@ -755,5 +788,6 @@ History
 28-feb-2025 - v0.4.6.8 Improved sorting for enumeration columns, minor updates  
 08-aug-2025 - v0.4.7 Select columns, large files warning, Fixed Width detection improved, minor updates  
 20-jun-2026 - v0.4.8 Fix random crashes, add HTML table option, minor updates  
+30-aug-2026 - v0.4.9 Validate Regular Expressions, auto-open docked window, minor updates  
 
 BdR©2019-2026 Free to use - send questions or comments: Bas de Reuver - bdr1976@gmail.com

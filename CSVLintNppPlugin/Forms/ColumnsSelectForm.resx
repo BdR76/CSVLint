@@ -118,6 +118,6 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="lblDescription.Text" xml:space="preserve">
-    <value>Select and rearrange columns or count unique values by selecting one or more columns and press OK. Check the option "Select distinct" to select only unique values or combinations of values, this option also adds a Count_distinct column.</value>
+    <value>Select a subset, delete column(s) or reorder columns by selecting one or more columns and pressing OK. Check the option "Select distinct" to select and count only the unique values of selected columns, this option also adds a new column Count_distinct.</value>
   </data>
 </root>
