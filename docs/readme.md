@@ -238,7 +238,8 @@ The Generate metadata option for "W3C CSV Schema JSON" will also export the code
 
 ### Regular Expressions
 
-You can use Regular Expressions to validate columns of data.
+You can use [Regular Expressions](https://en.wikipedia.org/wiki/Regular_expression#Basic_concepts)
+to validate columns of data.
 This type of column is not supported by the schema.ini format, but
 CSV Lint supports regular expressions using the `Regex` keyword followed by the
 regular expression. For example, if SubjectId may only contain values
@@ -743,7 +744,8 @@ and they are stored in a settings file `%USERPROFILE%\AppData\Roaming\Notepad++\
 | TwoDigitYearMax  | Maximum year for two digit year date values. For example, when set to 2030 the year values 30 and 31 will be interpreted as 2030 and 1931. Set as CurrentYear for current year. | CurrentYear |
 | AutoSyntaxLimit  | Convert data, automatically apply syntax highlighting to resulting file, only when it's smaller than this size. Prevent Notepad++ from freezing on large files. |1024*1024|
 | DefaultQuoteChar | Default quote character, typically a double quote " or a single quote '                                         | "       |
-| FontDock         | Default font for text boxes in CSV Lint docking window. Changing the font requires closing and opening the CSV docked window.  | Courier New, 11.25pt  |
+| DockAutoOpen     | Automatically open the CSV Lint docked window when opening or switching to csv files                            | false   |
+| DockFont         | Default font for text boxes in CSV Lint docking window. Changing the font requires closing and opening the CSV docked window.  | Courier New, 11.25pt  |
 | NullKeyword      | A case-sensitive keyword that will be treated as an empty value, typically `NULL`, `NaN`, `NA` or `None` depending on your data | NaN     |
 | SeparatorColor   | Include separator in syntax highlighting colors. Set to false and the separator characters are always white.    | false   |
 | Separators       | Preferred characters when automatically detecting the separator character. For special characters like tab, use \\t or hexadecimal escape sequence \\u0009 or \\x09. | ,;\t&#124; |
