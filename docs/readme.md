@@ -253,17 +253,17 @@ these lines yourself (in the example `;Col4=..` etc.), and then
 click the blue disk icon to save, then click the Validate data button.
 See below for some examples of Regular Expressions you can use:
 
-| Column              | Example         | Regular Expression                               |
-|---------------------|-----------------|--------------------------------------------------|
-| Postal codes        | 30329           | ^\d{5}$                                          |
-| Dutch postcodes     | 9713 GZ         | ^[1-9][0-9]{3}\s?[A-Z]{2}$                       |
-| Email addresses     | contact@umc.nl  | ^[^\s@]+@[^\s@]+\.[^\s@]+$                       |
-| Telephone numbers   | +31-50-321-1234 | ^\+?[0-9\s().-]{7,20}$                           |
-| Scientific notation | 1.23E-05        | ^[+-]?\d{1}(?:[.,]\d+)?[Ee][+-]?\d{2}$           |
-| ATC codes           | N02BE01         | ^[A-Z][0-9]{2}(?:[A-Z](?:[A-Z](?:[0-9]{2})?)?)?$ |
-| ICD-10 codes        | E11.9           | ^[A-Z][0-9]{2}(?:\.[A-Z0-9]{1,4})?$              |
-| CRC32 hex 8         | 4dca83f6        | ^[A-Fa-f0-9]{8}$                                 |
-| IPv4 addresses      | 192.168.1.100   | ^\d{1,3}(\.\d{1,3}){3}$                          |
+| Column              | Data example    | Regular Expression                                    |
+|---------------------|-----------------|-------------------------------------------------------|
+| Postal codes        | 30329           | `  ^\d{5}$                                          ` |
+| Dutch postcodes     | 9713 GZ         | `  ^[1-9][0-9]{3}\s?[A-Z]{2}$                       ` |
+| Email addresses     | contact@umc.nl  | `  ^[^\s@]+@[^\s@]+\.[^\s@]+$                       ` |
+| Telephone numbers   | +31-50-321-1234 | `  ^\+?[0-9\s().-]{7,20}$                           ` |
+| Scientific notation | 1.23E-05        | `  ^[+-]?\d{1}(?:[.,]\d+)?[Ee][+-]?\d{2}$           ` |
+| ATC codes           | N02BE01         | `  ^[A-Z][0-9]{2}(?:[A-Z](?:[A-Z](?:[0-9]{2})?)?)?$ ` |
+| ICD-10 codes        | E11.9           | `  ^[A-Z][0-9]{2}(?:\.[A-Z0-9]{1,4})?$              ` |
+| CRC32 hex 8         | 4dca83f6        | `  ^[A-Fa-f0-9]{8}$                                 ` |
+| IPv4 addresses      | 192.168.1.100   | `  ^\d{1,3}(\.\d{1,3}){3}$                          ` |
 
 To create custom regular expressions for your data, it is recommended to use
 [regex101](https://regex101.com/) or [regexr](https://regexr.com/)
