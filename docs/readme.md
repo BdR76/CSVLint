@@ -266,8 +266,8 @@ See below for some examples of Regular Expressions you can use:
 | IPv4 addresses      | 192.168.1.100   | `  ^\d{1,3}(\.\d{1,3}){3}$                          ` |
 
 To create custom regular expressions for your data, it is recommended to use
-[regex101](https://regex101.com/) or [regexr](https://regexr.com/)
-to test them before use in CSV Lint.
+[regex101](https://regex101.com/?regex=%5E%5B1-9%5D%5B0-9%5D%7B3%7D%5Cs%3F%5BA-Z%5D%7B2%7D%24&testString=Dutch+postcodes%3A%0A1234AB%0A9713GZ%0A3015+GD%0A89341AD%0A6229HXZ%0A7605BR%0A0971DA%0A8024AE%0A2711BD)
+or [regexr](https://regexr.com/) to test them before use in CSV Lint.
 
 Reformat
 --------
