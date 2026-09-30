@@ -357,7 +357,7 @@ namespace CSVLint
                     sb.Append(string.Format("{0} SERIAL PRIMARY KEY,\r\n\t", recidname));
                     break;
                 default: // 0=MySQL/MariaDB
-                    sb.Append(string.Format("{0} int AUTO_INCREMENT NOT NULL,\r\n\t", recidname));
+                    sb.Append(string.Format("{0} int NOT NULL AUTO_INCREMENT,\r\n\t", recidname));
                     break;
             }
 
@@ -424,8 +424,8 @@ namespace CSVLint
                 {
                     var pk_name = SQLSafeName(StringToVariable("PK_" + constr_table + "_" + csvdef.Fields[r].Name));
                     var uq_name = SQLSafeName(StringToVariable("UQ_" + constr_table + "_" + csvdef.Fields[r].Name));
-                    enumcols1 += string.Format("ALTER TABLE cardio ADD CONSTRAINT {0} PRIMARY KEY({1}); --note: pk column(s) must also be NOT NULL\r\n", pk_name, sqlname);
-                    enumcols1 += string.Format("ALTER TABLE cardio ADD CONSTRAINT {0} UNIQUE({1}); --any column(s) that should be unique\r\n\r\n", uq_name, sqlname);
+                    enumcols1 += string.Format("ALTER TABLE {0} ADD CONSTRAINT {1} PRIMARY KEY({2}); --note: pk column(s) must also be NOT NULL\r\n", constr_table, pk_name, sqlname);
+                    enumcols1 += string.Format("ALTER TABLE {0} ADD CONSTRAINT {1} UNIQUE({2}); --any column(s) that should be unique\r\n", constr_table, uq_name, sqlname);
                 }
 
                 // add SQL constraints for Enum columns
