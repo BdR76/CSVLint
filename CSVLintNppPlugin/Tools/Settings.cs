@@ -313,6 +313,9 @@ namespace Kbg.NppPluginNET
         [Category("UserDialogs"), Browsable(false), DefaultValue(false)]
         public bool SelectColsDistinct { get; set; }
 
+        [Category("UserDialogs"), Browsable(false), DefaultValue(false)]
+        public bool SelectColsCountDistinct { get; set; }
+
         [Category("UserDialogs"), Browsable(false), DefaultValue(1)]
         public int SelectColsSort { get; set; }
 

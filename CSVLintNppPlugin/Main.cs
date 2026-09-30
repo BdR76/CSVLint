@@ -685,7 +685,7 @@ namespace Kbg.NppPluginNET
                     // count unique or select columns
                     if (Main.Settings.SelectColsDistinct) {
                         // count unique
-                        CsvAnalyze.CountUniqueValues(csvdef, colidx, (Main.Settings.SelectColsSort != 0), (Main.Settings.SelectColsSort == 1));
+                        CsvAnalyze.CountUniqueValues(csvdef, colidx, Main.Settings.SelectColsCountDistinct, Main.Settings.SelectColsSort);
                     } else {
                         // select and/or rearrange columns
                         CsvEdit.SelectColumns(csvdef, colidx);

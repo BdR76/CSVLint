@@ -3,15 +3,16 @@
 // Analyze csv data return a CsvDefinition,
 // infer settings, dateformat, columns, widths etc. from input data,
 // -------------------------------------
+using CSVLint.Tools;
+using CsvQuery.PluginInfrastructure;
 using Kbg.NppPluginNET;
+using Kbg.NppPluginNET.PluginInfrastructure;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
-using CSVLint.Tools;
-using CsvQuery.PluginInfrastructure;
-using Kbg.NppPluginNET.PluginInfrastructure;
 using System.Text.RegularExpressions;
 
 namespace CSVLint
@@ -722,7 +723,7 @@ namespace CSVLint
         /// Data statistical analysis report
         /// <param name="data"></param>
         /// <returns></returns>
-        public static void CountUniqueValues(CsvDefinition csvdef, List<int> colidx, bool sortBy, bool sortAsc)
+        public static void CountUniqueValues(CsvDefinition csvdef, List<int> colidx, bool addCount, int sortAsc)
         {
             // examine data and keep list of counters per unique values
             Dictionary<string, int> uniquecount = new Dictionary<string, int>();
@@ -797,26 +798,32 @@ namespace CSVLint
                 if (colname.IndexOf(newsep) >= 0) colname = string.Format("\"{0}\"", colname);
 
                 // new header
-                sb.Append(string.Format("{0}{1}", colname, newsep));
+                if (i != 0) sb.Append(newsep);
+                sb.Append(colname);
 
                 // new csv defintion
                 csvnew.AddColumn(i, colname, csvdef.Fields[colidx[i]].MaxWidth, csvdef.Fields[colidx[i]].DataType, csvdef.Fields[colidx[i]].Mask);
             }
-            sb.Append("count_distinct\r\n");
+            if (Main.Settings.SelectColsCountDistinct) sb.Append(string.Format("{0}{1}", newsep, "count_distinct"));
+            sb.Append("\r\n");
 
             // if sorting
-            if (sortBy)
+            if (Main.Settings.SelectColsCountDistinct && (sortAsc != 0) )
             {
                 // apply sorting, note that obj.Key actually contains the column value(s) and obj.Value contains the unique counter
-                if (sortAsc == true ) uniquecount = uniquecount.OrderBy          (obj => obj.Value).ToDictionary(obj => obj.Key, obj => obj.Value);
-                if (sortAsc == false) uniquecount = uniquecount.OrderByDescending(obj => obj.Value).ToDictionary(obj => obj.Key, obj => obj.Value);
+                if (sortAsc == 1) uniquecount = uniquecount.OrderBy          (obj => obj.Value).ToDictionary(obj => obj.Key, obj => obj.Value);
+                if (sortAsc == 2) uniquecount = uniquecount.OrderByDescending(obj => obj.Value).ToDictionary(obj => obj.Key, obj => obj.Value);
             }
 
             // add all unique values, sort by count
             var maxwidth = 0;
             foreach (KeyValuePair<string, int> unqcnt in uniquecount)
             {
-                sb.Append(string.Format("{0}{1}{2}\r\n", unqcnt.Key, newsep, unqcnt.Value));
+                if (addCount) {
+                    sb.Append(string.Format("{0}{1}{2}\r\n", unqcnt.Key, newsep, unqcnt.Value));
+                } else {
+                    sb.Append(string.Format("{0}\r\n", unqcnt.Key));
+                }
                 if (maxwidth < unqcnt.Value) maxwidth = unqcnt.Value;
             }
             csvnew.AddColumn("count_distinct", maxwidth.ToString().Length, ColumnType.Integer);
