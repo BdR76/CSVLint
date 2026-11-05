@@ -12,10 +12,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime;
 using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using System.Xml;
 
 namespace CSVLint
 {
@@ -693,6 +695,76 @@ namespace CSVLint
             return name;
         }
 
+        private static void AddXmlValue(
+            XmlDocument doc,
+            XmlNode root,
+            string xpath,
+            string value)
+        {
+            string[] parts = xpath.Split('/');
+
+            XmlNode current = root;
+
+            // Skip root element if already supplied
+            int start = parts[0] == root.Name ? 1 : 0;
+
+            for (int i = start; i < parts.Length; i++)
+            {
+                string part = parts[i];
+
+                // Attribute
+                if (part.StartsWith("@"))
+                {
+                    XmlElement element = current as XmlElement;
+
+                    part = XmlConvert.EncodeLocalName(part.Substring(1));
+
+                    if (element != null)
+                        element.SetAttribute(part, value);
+
+                    return;
+                }
+
+                // Text node
+                if (part == "text()")
+                {
+                    current.InnerText = value;
+                    return;
+                }
+
+                // Parse element name and optional index
+                string name = part;
+                int index = 1;
+
+                int bracket = part.IndexOf('[');
+
+                if (bracket >= 0)
+                {
+                    name = part.Substring(0, bracket);
+
+                    index = int.Parse(
+                        part.Substring(bracket + 1,
+                        part.Length - bracket - 2));
+                }
+
+                // Find existing elements with this name
+                name = XmlConvert.EncodeLocalName(name);
+                XmlNodeList nodes = current.SelectNodes(name);
+
+                // Create missing elements
+                while (nodes.Count < index)
+                {
+                    current.AppendChild(doc.CreateElement(name));
+                    nodes = current.SelectNodes(name);
+                }
+
+                current = nodes[index - 1];
+            }
+
+            // Path ends with an element
+            current.InnerText = value;
+        }
+
         /// <summary>
         /// convert to XML data
         /// </summary>
@@ -717,7 +789,7 @@ namespace CSVLint
             for (var col = 0; col < csvdef.Fields.Count; col++)
             {
                 var colname = csvdef.Fields[col].Name;
-                xmlnames.Add(XMLSafeName(colname));
+                xmlnames.Add(colname);
             }
 
             // build XML
@@ -737,104 +809,118 @@ namespace CSVLint
 
             // copy any comment lines
             if (csvdef.SkipLines > 0) {
-                sb.Append("\t<!--\n");
+                sb.Append("\t<!--\r\n");
                 csvdef.CopyCommentLinesAtStart(strdata, sb, "\t", "\r\n");
-                sb.Append("\t-->\n");
+                sb.Append("\t-->\r\n");
             }
 
-            while (!strdata.EndOfStream)
+            XmlWriterSettings settings = new XmlWriterSettings
             {
-                // get next 'record' from csv data
-                List<string> list = csvdef.ParseNextLine(strdata, out bool iscomm);
+                Indent = true,
+                IndentChars = "\t",
+                NewLineChars = "\r\n\t",
+                OmitXmlDeclaration = true,
+                ConformanceLevel = ConformanceLevel.Fragment
+            };
 
-                // copy any comment lines
-                if (iscomm)
+            using (StringWriter sw = new StringWriter(sb))
+            {
+                while (!strdata.EndOfStream)
                 {
-                    csvdef.CopyCommentLine(list, sb, "\t<!-- ", " -->");
-                }
-                else
-                {
-                    // skip header line
-                    if (lineCount >= 0)
+                    // get next 'record' from csv data
+                    List<string> list = csvdef.ParseNextLine(strdata, out bool iscomm);
+
+                    // copy any comment lines
+                    if (iscomm)
                     {
-                        // next record
-                        sb.Append(string.Format("\t<{0}>\r\n", TABLE_NAME));
-
-                        for (var col = 0; col < csvdef.Fields.Count; col++)
+                        csvdef.CopyCommentLine(list, sb, "\t<!-- ", " -->");
+                    }
+                    else
+                    {
+                        // skip header line
+                        if (lineCount >= 0)
                         {
-                            // format next value, quotes for varchar and datetime
-                            var colvalue = "";
-                            if (col < list.Count) colvalue = list[col];
+                            // next record, new XML document for this record only
+                            XmlDocument xmldoc = new XmlDocument();
+                            XmlElement xmlroot = xmldoc.CreateElement(TABLE_NAME);
+                            xmldoc.AppendChild(xmlroot);
 
-                            //var colname = csvdef.Fields[col].Name;
-                            var colname = xmlnames[col];
-
-                            // adjust for quoted values, trim first because can be a space before the first quote, example .., "BMI",..
-                            var strtrim = colvalue.Trim();
-                            if ((strtrim.Length > 0) && (strtrim[0] == Main.Settings.DefaultQuoteChar))
+                            for (var col = 0; col < csvdef.Fields.Count; col++)
                             {
-                                colvalue = colvalue.Trim();
-                                colvalue = colvalue.Trim(Main.Settings.DefaultQuoteChar);
-                            }
+                                // format next value, quotes for varchar and datetime
+                                var colvalue = "";
+                                if (col < list.Count) colvalue = list[col];
 
-                            // next value to evaluate
-                            if (Main.Settings.TrimValues) colvalue = colvalue.Trim();
+                                //var colname = csvdef.Fields[col].Name;
+                                var colname = xmlnames[col];
 
-                            if (csvdef.Fields[col].DataType == ColumnType.Decimal)
-                            {
-                                colvalue = colvalue.Replace((csvdef.Fields[col].DecimalSymbol == '.' ? "," : "."), ""); // remove thousand separator
-                                colvalue = colvalue.Replace(csvdef.Fields[col].DecimalSymbol, '.');
-                            }
-                            else if ((csvdef.Fields[col].DataType == ColumnType.DateTime)
-                                    && (colvalue != ""))
-                            {
-                                // sql datetime format
-                                try
+                                // adjust for quoted values, trim first because can be a space before the first quote, example .., "BMI",..
+                                var strtrim = colvalue.Trim();
+                                if ((strtrim.Length > 0) && (strtrim[0] == Main.Settings.DefaultQuoteChar))
                                 {
-                                    var dt = DateTime.ParseExact(colvalue, csvdef.Fields[col].Mask, Main.dummyCulture);
-                                    colvalue = dt.ToString("s"); // "s" -> format as sortable XML Schema
-                                    //colvalue = dt.ToString("yyyy-MM-ddTHH\\:mm\\:ss"); // no milliseconds or timezone
+                                    colvalue = colvalue.Trim();
+                                    colvalue = colvalue.Trim(Main.Settings.DefaultQuoteChar);
                                 }
-                                catch
+
+                                // next value to evaluate
+                                if (Main.Settings.TrimValues) colvalue = colvalue.Trim();
+
+                                if (csvdef.Fields[col].DataType == ColumnType.Decimal)
                                 {
-                                    // do nothing, just keep old value if error in date value
-                                    //str = ??
+                                    colvalue = colvalue.Replace((csvdef.Fields[col].DecimalSymbol == '.' ? "," : "."), ""); // remove thousand separator
+                                    colvalue = colvalue.Replace(csvdef.Fields[col].DecimalSymbol, '.');
                                 }
-                            }
-                            else if ((csvdef.Fields[col].DataType == ColumnType.String)
-                              && (colvalue != ""))
-                            {
-                                // XML escape characters
-                                colvalue = colvalue.Replace("&", "&amp;"); // ampersnd
-                                colvalue = colvalue.Replace("<", "&lt;"); // less than
-                                colvalue = colvalue.Replace(">", "&gt;"); // greater than
+                                else if ((csvdef.Fields[col].DataType == ColumnType.DateTime)
+                                        && (colvalue != ""))
+                                {
+                                    // sql datetime format
+                                    try
+                                    {
+                                        var dt = DateTime.ParseExact(colvalue, csvdef.Fields[col].Mask, Main.dummyCulture);
+                                        colvalue = dt.ToString("s"); // "s" -> format as sortable XML Schema
+                                        //colvalue = dt.ToString("yyyy-MM-ddTHH\\:mm\\:ss"); // no milliseconds or timezone
+                                    }
+                                    catch
+                                    {
+                                        // do nothing, just keep old value if error in date value
+                                        //str = ??
+                                    }
+                                }
+                                else if ((csvdef.Fields[col].DataType == ColumnType.String)
+                                  && (colvalue != ""))
+                                {
+                                    // XML escape characters
+                                    colvalue = colvalue.Replace("&", "&amp;"); // ampersnd
+                                    colvalue = colvalue.Replace("<", "&lt;"); // less than
+                                    colvalue = colvalue.Replace(">", "&gt;"); // greater than
 
-                                colvalue = colvalue.Replace("\b", "&#09;"); // \b Backspace(ascii code 08)
-                                colvalue = colvalue.Replace("\f", "&#0C;"); // \f Form feed(ascii code 0C)
-                                colvalue = colvalue.Replace("\n", "&#10;"); // \n New line
-                                colvalue = colvalue.Replace("\r", "&#13;"); // \r Carriage return
-                                colvalue = colvalue.Replace("\t", "&#09;"); // \t Tab
-                                colvalue = colvalue.Replace("\"", "&quote;"); // quote
-                                colvalue = colvalue.Replace("'", "&apos;"); // single quote/apostrophe
+                                    colvalue = colvalue.Replace("\b", "&#09;"); // \b Backspace(ascii code 08)
+                                    colvalue = colvalue.Replace("\f", "&#0C;"); // \f Form feed(ascii code 0C)
+                                    colvalue = colvalue.Replace("\n", "&#10;"); // \n New line
+                                    colvalue = colvalue.Replace("\r", "&#13;"); // \r Carriage return
+                                    colvalue = colvalue.Replace("\t", "&#09;"); // \t Tab
+                                    colvalue = colvalue.Replace("\"", "&quote;"); // quote
+                                    colvalue = colvalue.Replace("'", "&apos;"); // single quote/apostrophe
 
-                                colvalue = colvalue.Replace("'", "''");
+                                    colvalue = colvalue.Replace("'", "''");
+                                }
+
+                                // add value and incl. interpreting the XPath from column name
+                                AddXmlValue(xmldoc, xmlroot, colname, colvalue);
                             }
 
-                            if (colvalue == "")
+                            // Append this record's XML to the StringBuilder
+                            sb.Append("\t");
+                            using (XmlWriter writer = XmlWriter.Create(sw, settings))
                             {
-                                sb.Append(string.Format("\t\t<{0}/>\r\n", colname));
+                                xmlroot.WriteTo(writer);
                             }
-                            else
-                            {
-                                sb.Append(string.Format("\t\t<{0}>{1}</{0}>\r\n", colname, colvalue));
-                            }
+                            sb.Append("\r\n");
                         }
 
-                        sb.Append(string.Format("\t</{0}>\r\n", TABLE_NAME));
+                        // next line
+                        lineCount++;
                     }
-
-                    // next line
-                    lineCount++;
                 }
             }
 
